@@ -1,1 +1,3 @@
-# Java-21vp-group6
+# BSMS
+
+A simple Bookstore Management System made using Java.
