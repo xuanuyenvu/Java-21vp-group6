@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <Properties>
+    <Property name="autoscrolls" type="boolean" value="true"/>
+  </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -86,6 +89,7 @@
           <Connection code="SVGHelper.createSVGIconWithFilter(&#xa;    &quot;icons/add.svg&quot;,&#xa;    Color.black, Color.black,&#xa;    14, 14&#xa;)" type="code"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Create"/>
+        <Property name="toolTipText" type="java.lang.String" value="check"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
         </Property>
@@ -135,7 +139,7 @@
                   <Data value="2"/>
                 </Column>
                 <Column editable="false" title="Sale price" type="java.lang.Double"/>
-                <Column editable="false" title="Action" type="java.lang.Object"/>
+                <Column editable="true" title="Action" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value=""/>

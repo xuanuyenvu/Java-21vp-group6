@@ -3,6 +3,7 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
+import java.util.HashSet;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -19,11 +20,23 @@ public class BookCRUD extends javax.swing.JPanel {
                 Color.black, Color.black,
                 14, 14
         ));
-        
+        setUpTable();
+    }
+
+    public ActionPanel getActionPanelFromCell(int row, int column) {
+        if (table.isEditing() && table.getEditingRow() == row && table.getEditingColumn() == column) {
+            return (ActionPanel) table.getCellEditor(row, column).getTableCellEditorComponent(table, null, false, row, column);
+        } else {
+            return (ActionPanel) table.getCellRenderer(row, column).getTableCellRendererComponent(table, null, false, false, row, column);
+        }
+    }
+
+    private void setUpTable() {
         table.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
+
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
-        
+
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
@@ -31,11 +44,40 @@ public class BookCRUD extends javax.swing.JPanel {
         sorter.setSortable(1, false);
         sorter.setSortable(2, false);
         sorter.setSortable(5, false);
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);        
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+
+        TableActionEvent event = new TableActionEvent() {
+            private boolean isHiddenBtn;
+
+            @Override 
+            public void setIsHiddenBtn(boolean isHiddenBtn) {
+                this.isHiddenBtn = isHiddenBtn;
+            }
+
+            @Override 
+            public boolean isIsHiddenBtn() {
+                return isHiddenBtn;
+            }
+            
+            
+            @Override
+            public void onEdit(int row) {
+                System.out.println("Edit row " + row);
+            }
+
+            @Override
+            public void onHide(int row) {
+                System.out.println("Hide row " + row);
+                System.out.println(isIsHiddenBtn());
+                System.err.println();
+            }
+        };
+
+        table.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
     }
 
     @SuppressWarnings("unchecked")
@@ -48,6 +90,8 @@ public class BookCRUD extends javax.swing.JPanel {
         filterBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+
+        setAutoscrolls(true);
 
         bookLabel.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         bookLabel.setText("BOOKS");
@@ -66,6 +110,7 @@ public class BookCRUD extends javax.swing.JPanel {
             14, 14
         ));
         createBtn.setText("Create");
+        createBtn.setToolTipText("check");
         createBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         createBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         createBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -102,7 +147,7 @@ public class BookCRUD extends javax.swing.JPanel {
             java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Object.class
         };
         boolean[] canEdit = new boolean [] {
-            false, false, false, false, false, false
+            false, false, false, false, false, true
         };
 
         public Class getColumnClass(int columnIndex) {
