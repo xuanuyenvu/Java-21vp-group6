@@ -3,11 +3,63 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
-import java.util.HashSet;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
+interface TableActionEvent {
+
+    public void setIsHiddenBtn(boolean isHiddenBtn);
+
+    public boolean isIsHiddenBtn();
+
+    public void onEdit(int row);
+
+    public void onHide(int row);
+}
+
+class TableActionCellEditor extends DefaultCellEditor {
+
+    private TableActionEvent event;
+
+    public TableActionCellEditor(TableActionEvent event) {
+        super(new JCheckBox());
+        this.event = event;
+    }
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        ActionPanel action = new ActionPanel();
+        action.initEvent(event, row);
+//        action.setBackground(table.getSelectionBackground());
+        action.setBackground(Color.WHITE);
+        return action;
+    }
+
+}
+
+class TableActionCellRender extends DefaultTableCellRenderer {
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+        ActionPanel action = new ActionPanel();
+
+        action.setBackground(com.getBackground());
+        if (isSelected) {
+            System.err.println("done");
+        }
+        return action;
+    }
+}
 
 public class BookCRUD extends javax.swing.JPanel {
 
@@ -53,17 +105,16 @@ public class BookCRUD extends javax.swing.JPanel {
         TableActionEvent event = new TableActionEvent() {
             private boolean isHiddenBtn;
 
-            @Override 
+            @Override
             public void setIsHiddenBtn(boolean isHiddenBtn) {
                 this.isHiddenBtn = isHiddenBtn;
             }
 
-            @Override 
+            @Override
             public boolean isIsHiddenBtn() {
                 return isHiddenBtn;
             }
-            
-            
+
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
@@ -73,11 +124,23 @@ public class BookCRUD extends javax.swing.JPanel {
             public void onHide(int row) {
                 System.out.println("Hide row " + row);
                 System.out.println(isIsHiddenBtn());
-                System.err.println();
+                System.out.println();
             }
         };
 
         table.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
+
+        table.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int column = table.columnAtPoint(e.getPoint());
+
+                if (column == 5) {
+                    table.editCellAt(row, column);
+                }
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -88,7 +151,7 @@ public class BookCRUD extends javax.swing.JPanel {
         searchBar = new javax.swing.JTextField();
         createBtn = new javax.swing.JButton();
         filterBtn = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
 
         setAutoscrolls(true);
@@ -136,8 +199,14 @@ public class BookCRUD extends javax.swing.JPanel {
     table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
     table.setModel(new javax.swing.table.DefaultTableModel(
         new Object [][] {
-            {null, null, null,  new Integer(1), null, null},
-            {null, null, null,  new Integer(2), null, null}
+            {"Book1", "A", "B",  new Integer(12),  new Double(121.0), null},
+            {"Book2", "A", "B",  new Integer(2),  new Double(2121.0), null},
+            {"Book1", "A", "B",  new Integer(3),  new Double(121.0), null},
+            {"Book1", "A", "B",  new Integer(23),  new Double(212.0), null},
+            {"Book1", "A", "B",  new Integer(12),  new Double(21221.0), null},
+            {"Book1", "A", "B",  new Integer(12),  new Double(112.0), null},
+            {"Book1", "A", "B",  new Integer(21),  new Double(121.0), null},
+            {"Book1", "A", "B",  new Integer(12), null, null}
         },
         new String [] {
             "Title", "Author", "Publisher", "Quantity", "Sale price", "Action"
@@ -159,9 +228,10 @@ public class BookCRUD extends javax.swing.JPanel {
         }
     });
     table.setToolTipText("");
+    table.setFocusable(false);
     table.setRowHeight(40);
     table.getTableHeader().setReorderingAllowed(false);
-    jScrollPane1.setViewportView(table);
+    scrollBar.setViewportView(table);
     if (table.getColumnModel().getColumnCount() > 0) {
         table.getColumnModel().getColumn(0).setMinWidth(150);
         table.getColumnModel().getColumn(3).setPreferredWidth(20);
@@ -181,7 +251,7 @@ public class BookCRUD extends javax.swing.JPanel {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
+                        .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(48, 48, 48)
@@ -201,7 +271,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 .addComponent(createBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(18, 18, 18)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+            .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
             .addGap(30, 30, 30))
     );
     }// </editor-fold>//GEN-END:initComponents
@@ -222,7 +292,7 @@ public class BookCRUD extends javax.swing.JPanel {
     private javax.swing.JLabel bookLabel;
     private javax.swing.JButton createBtn;
     private javax.swing.JButton filterBtn;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane scrollBar;
     private javax.swing.JTextField searchBar;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables

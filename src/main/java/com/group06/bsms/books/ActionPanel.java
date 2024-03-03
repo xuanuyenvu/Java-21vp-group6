@@ -2,21 +2,35 @@ package com.group06.bsms.books;
 
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ActionPanel extends javax.swing.JPanel {
 
     private boolean isHideBtnHidden = false;
-    
+
     public boolean isIsHideBtnHidden() {
         return isHideBtnHidden;
     }
-    
+
     public ActionPanel() {
         initComponents();
+        editBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                editBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                editBtn.setCursor(Cursor.getDefaultCursor());
+            }
+        });
     }
-    
+
     public void initEvent(TableActionEvent event, int row) {
         editBtn.addActionListener(new ActionListener() {
             @Override
@@ -24,7 +38,7 @@ public class ActionPanel extends javax.swing.JPanel {
                 event.onEdit(row);
             }
         });
-        
+
         hideBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -35,7 +49,7 @@ public class ActionPanel extends javax.swing.JPanel {
             }
         });
     }
-    
+
     private void updateHideButtonAppearance() {
         if (isHideBtnHidden) {
             hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
@@ -45,7 +59,7 @@ public class ActionPanel extends javax.swing.JPanel {
             hideBtn.setToolTipText("Hide");
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
