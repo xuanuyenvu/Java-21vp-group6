@@ -23,8 +23,7 @@ public class Book {
     public int hiddenParentCount;
 
     // for update
-    public double maxImportPirce;
-
+    public double maxImportPrice;
     List<Category> categories;
     public Author author;
     public Publisher publisher;
@@ -50,26 +49,12 @@ public class Book {
         this.hiddenParentCount = hiddenParentCount;
     }
 
-    public void addCategory(Category category) {
-        if (categories == null)
-            categories = new ArrayList<>();
-        categories.add(category);
-    }
-
-    public void addCategories(List<Category> categories){
-        this.categories = categories;
-    }
-
-    public void changeCategories(List<Category> newCategories) {
-        this.categories = newCategories;
-    }
-
     @Override
     public String toString() {
         return "Book{" + "id=" + id + ", authorId=" + authorId + ", publisherId=" + publisherId + ", title=" + title
                 + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension
                 + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity
                 + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount
-                + ", author=" + author + ", publisher=" + publisher + '}';
+                + ", author=" + author + ", publisher=" + publisher +", maxImportPrice=" + maxImportPrice + '}';
     }
 }
