@@ -2,6 +2,8 @@ package com.group06.bsms.books;
 
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.publishers.Publisher;
+import com.group06.bsms.categories.Category;
+import java.util.*;
 import java.sql.Date;
 
 public class Book {
@@ -20,6 +22,10 @@ public class Book {
     public boolean isHidden;
     public int hiddenParentCount;
 
+    // for update
+    public double maxImportPirce;
+
+    List<Category> categories;
     public Author author;
     public Publisher publisher;
 
@@ -30,8 +36,7 @@ public class Book {
             int authorId, int publisherId, String title, int pageCount,
             Date publishDate, String dimension, String translatorName,
             String overview, int quantity, double salePrice,
-            int hiddenParentCount
-    ) {
+            int hiddenParentCount) {
         this.authorId = authorId;
         this.publisherId = publisherId;
         this.title = title;
@@ -45,8 +50,26 @@ public class Book {
         this.hiddenParentCount = hiddenParentCount;
     }
 
+    public void addCategory(Category category) {
+        if (categories == null)
+            categories = new ArrayList<>();
+        categories.add(category);
+    }
+
+    public void addCategories(List<Category> categories){
+        this.categories = categories;
+    }
+
+    public void changeCategories(List<Category> newCategories) {
+        this.categories = newCategories;
+    }
+
     @Override
     public String toString() {
-        return "Book{" + "id=" + id + ", authorId=" + authorId + ", publisherId=" + publisherId + ", title=" + title + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount + ", author=" + author + ", publisher=" + publisher + '}';
+        return "Book{" + "id=" + id + ", authorId=" + authorId + ", publisherId=" + publisherId + ", title=" + title
+                + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension
+                + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity
+                + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount
+                + ", author=" + author + ", publisher=" + publisher + '}';
     }
 }
