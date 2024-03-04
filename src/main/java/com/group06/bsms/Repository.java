@@ -6,6 +6,11 @@ import static java.sql.Types.NULL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jfree.data.json.impl.JSONObject;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class Repository<Entity extends Object> {
 
     public static enum Sort {
@@ -95,6 +100,96 @@ public class Repository<Entity extends Object> {
 
     /**
      *
+     * @param jsonSearchString optional (null if none)
+     * example: "{attribute1: value1, attribute2: value2}" temporarily only string
+     * @param start 
+     * @param count
+     * @param sortAttr optional (null if none)
+     * @param sortTerm Sort.ASC or Sort.DESC
+     * @param attributes
+     * @return [count] entity from the [start]'th entity of "select [attributes]
+     * from entity where [searchAttr] like '%[searchTerm]%' order by [sortAttr]
+     * [sortTerm]"
+     */
+    public List<Entity> selectAll1(
+            String jsonSearchString,
+            int start, int count,
+            String sortAttr, Sort sortTerm,
+            String... attributes
+    ) throws Exception {
+
+        try {
+            db.setAutoCommit(false);
+
+            if (!isValidIdentifier(sortAttr)) {
+                throw new Exception("Invalid sort attribute");
+            }
+
+            var attributesQuery = new StringBuilder();
+
+            for (var attribute : attributes) {
+                if (!isValidIdentifier(attribute)) {
+                    throw new Exception("Invalid select attribute: '" + attribute + "'");
+                }
+
+                attributesQuery.append(attribute).append(", ");
+            }
+
+            var searchQuery = new StringBuilder();
+
+            if (jsonSearchString != null) {
+                searchQuery.append("where");
+
+                jsonSearchString.replaceAll(".*\".*", "\\\"");
+                JsonObject json = new JsonParser().parse(jsonSearchString).getAsJsonObject();
+
+                for (String key : json.keySet()) {
+                    if (!isValidIdentifier(key)) {
+                        throw new Exception("Invalid search attribute");
+                    }
+                    if (searchQuery.length() > 0) {
+                        searchQuery.append(" and ");
+                        searchQuery.append(key).append(" ilike '").append(json.get(key)).append("'");
+                    }
+                }
+            }
+
+            var sortQuery = "";
+
+            if (sortAttr != null) {
+                sortQuery = "order by " + sortAttr + " " + sortTerm.toString();
+            }
+
+            attributesQuery.setLength(attributesQuery.length() - 2);
+
+            var query = db.prepareStatement(
+                    "select " + attributesQuery + " "
+                    + "from " + entityClass.getSimpleName() + " "
+                    + searchQuery + " "
+                    + sortQuery 
+                    + " limit ? offset ?"
+            );
+
+            query.setInt(1, count);
+            query.setInt(2, start);
+
+            var resultSet = query.executeQuery();
+            var result = new ArrayList<Entity>();
+
+            db.commit();
+
+            while (resultSet.next()) {
+                result.add(populate(resultSet));
+            }
+
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+    /**
+     *
      * @param searchAttr
      * @param searchTerm
      * @param start
@@ -163,6 +258,7 @@ public class Repository<Entity extends Object> {
             throw e;
         }
     }
+    
 
     public Entity selectById(int id) throws Exception {
 
