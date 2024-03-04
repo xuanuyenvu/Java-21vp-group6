@@ -1,8 +1,10 @@
 package com.group06.bsms.books;
 
+import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.publishers.Publisher;
 import java.sql.Date;
+import java.util.List;
 
 public class Book {
 
@@ -22,6 +24,10 @@ public class Book {
 
     public Author author;
     public Publisher publisher;
+
+    public List<Category> categories;
+
+    // definition
 
     public Book() {
     }

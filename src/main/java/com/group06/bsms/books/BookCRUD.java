@@ -1,18 +1,25 @@
 package com.group06.bsms.books;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.DB;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
-import java.util.HashSet;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public class BookCRUD extends javax.swing.JPanel {
-
+    private final BookService bookService;
+    private BookTableModel model;
     
     public BookCRUD() {
+        this(new BookService(new BookRepository(DB.db())));
+    }
+
+    public BookCRUD(BookService bookService) {
+        this.bookService = bookService;
+        this.model = new BookTableModel();
+
         initComponents();
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
@@ -21,6 +28,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 Color.black, Color.black,
                 14, 14
         ));
+
         setUpTable();
     }
 
@@ -38,8 +46,11 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
 
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        var books = bookService.getAllBooks();
+        model.loadAllBooks(books);
+
+        // DefaultTableModel model = (DefaultTableModel) table.getModel();
+        TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
         table.setRowSorter(sorter);
         sorter.setSortable(0, false);
         sorter.setSortable(1, false);
@@ -112,7 +123,7 @@ public class BookCRUD extends javax.swing.JPanel {
         ));
         createBtn.setText("Create");
         createBtn.setToolTipText("check");
-        createBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        createBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         createBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
         createBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -126,7 +137,7 @@ public class BookCRUD extends javax.swing.JPanel {
             Color.black, Color.black,
             14, 14));
     filterBtn.setText("Filter");
-    filterBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    filterBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     filterBtn.setHorizontalAlignment(javax.swing.SwingConstants.LEADING);
     filterBtn.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -135,40 +146,11 @@ public class BookCRUD extends javax.swing.JPanel {
     });
 
     table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-    table.setModel(new javax.swing.table.DefaultTableModel(
-        new Object [][] {
-            {null, null, null,  new Integer(1), null, null},
-            {null, null, null,  new Integer(2), null, null}
-        },
-        new String [] {
-            "Title", "Author", "Publisher", "Quantity", "Sale price", "Action"
-        }
-    ) {
-        Class[] types = new Class [] {
-            java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Object.class
-        };
-        boolean[] canEdit = new boolean [] {
-            false, false, false, false, false, true
-        };
-
-        public Class getColumnClass(int columnIndex) {
-            return types [columnIndex];
-        }
-
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return canEdit [columnIndex];
-        }
-    });
+    table.setModel(this.model);
     table.setToolTipText("");
     table.setRowHeight(40);
     table.getTableHeader().setReorderingAllowed(false);
     jScrollPane1.setViewportView(table);
-    if (table.getColumnModel().getColumnCount() > 0) {
-        table.getColumnModel().getColumn(0).setMinWidth(150);
-        table.getColumnModel().getColumn(3).setPreferredWidth(20);
-        table.getColumnModel().getColumn(4).setPreferredWidth(20);
-        table.getColumnModel().getColumn(5).setPreferredWidth(50);
-    }
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
