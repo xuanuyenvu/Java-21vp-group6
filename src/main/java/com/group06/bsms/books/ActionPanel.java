@@ -10,28 +10,25 @@ import java.awt.event.MouseEvent;
 
 public class ActionPanel extends javax.swing.JPanel {
 
-    private boolean isHideBtnHidden = false;
-
+    private boolean isHideBtnHidden;
+    public void setIsHideBtnHidden(boolean isHidden) {
+        this.isHideBtnHidden = isHidden;
+    }
+    
     public boolean isIsHideBtnHidden() {
         return isHideBtnHidden;
     }
 
-    public ActionPanel() {
+    public ActionPanel(boolean isHidden) {
         initComponents();
-        editBtn.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                editBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                editBtn.setCursor(Cursor.getDefaultCursor());
-            }
-        });
+        this.isHideBtnHidden = isHidden;
+        updateHideButtonAppearance();
     }
 
-    public void initEvent(TableActionEvent event, int row) {
+    public void initEvent(TableActionEvent event, int row, boolean isHidden) {
+        this.isHideBtnHidden = isHidden;
+        updateHideButtonAppearance();
+        System.out.println("action panel: " + isHidden);
         editBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -42,10 +39,10 @@ public class ActionPanel extends javax.swing.JPanel {
         hideBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("Action Panelll-----");
                 isHideBtnHidden = !isHideBtnHidden;
                 updateHideButtonAppearance();
-                event.onHide(row);
-                event.setIsHiddenBtn(isHideBtnHidden);
+                event.onHide(row, isHideBtnHidden);
             }
         });
     }
