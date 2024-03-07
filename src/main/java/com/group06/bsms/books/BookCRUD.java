@@ -6,6 +6,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -16,7 +20,6 @@ import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 interface TableActionEvent {
@@ -27,7 +30,7 @@ interface TableActionEvent {
 
     public void onEdit(int row);
 
-    public void onHide(int row, boolean isHidden);
+    public void onHide(int row, Boolean isHidden);
 }
 
 class TableActionCellEditor extends DefaultCellEditor {
@@ -41,11 +44,10 @@ class TableActionCellEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        boolean isHidden = (Boolean) table.getModel().getValueAt(row, 5);
-        System.out.println("row: " + row + " Editor hide: " + isHidden);
-
-//        if (row == 0) {
-//        }
+        BookTableModel model = (BookTableModel) table.getModel();
+        Boolean isHidden = (Boolean) model.getHiddenState(row);
+        // System.out.println("Row with title "+model.getValueAt(row, 0));
+        // System.out.println("Row: " + row + " Editor hide: " + isHidden);
 
         ActionPanel action = new ActionPanel(isHidden);
         action.initEvent(event, row, isHidden);
@@ -59,11 +61,9 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        boolean isHidden = (Boolean) table.getModel().getValueAt(row, 5);
-        if (row == 0) {
-            System.out.println("Row: " + row + " Render: " + isHidden);
-
-        }
+        boolean isHidden = ((BookTableModel) table.getModel()).getHiddenState(row);
+        // System.out.println("Row: " + row + " Render: " + isHidden);
+        
         Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         ActionPanel action = new ActionPanel(isHidden);
         action.setBackground(com.getBackground());
@@ -72,13 +72,12 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 }
 
 public class BookCRUD extends javax.swing.JPanel {
-
-    private Object[][] bookData = {
-        {"Book Title 1", "Author Name 1", "Publisher 1", 10, 20.0, true},
-        {"Book Title 2", "Author Name 2", "Publisher 2", 15, 30.0, false}, // Thêm các hàng khác tại đây
-    };
+    
+    private BookTableModel model;
 
     public BookCRUD() {
+        this.model = new BookTableModel();
+        
         initComponents();
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
@@ -87,6 +86,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 Color.black, Color.black,
                 14, 14
         ));
+        
         setUpTable();
         addBookData();
     }
@@ -100,9 +100,19 @@ public class BookCRUD extends javax.swing.JPanel {
     }
 
     private void addBookData() {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        for (Object[] row : bookData) {
-            model.addRow(row);
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date d1 = new Date(sdf.parse("01/01/2003").getTime());
+            Date d2 = new Date(sdf.parse("02/01/2010").getTime());
+            List<Book> bookData = new ArrayList<>();
+            bookData.add(new Book(1,1,"Book Title 1",100,d1,"Size 1","Translator Who","Book sucks", 100,145.500,0));
+            bookData.add(new Book(1,1,"Book Title 2",120,d2,"Size 2","Translator What","Book sucks very much", 103,90.500,1));
+            bookData.add(new Book(1,1,"Book Title 3",200,d2,"Size 3","Translator Which","Modern 21th Century Masterpiece TM", 103,90.500,1));
+            for (var book : bookData) {
+                model.addRow(book);
+            }
+        } catch (Exception e) {
+            System.err.println(e);
         }
     }
 
@@ -112,13 +122,13 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
 
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-//        sorter.setSortable(0, false);
-//        sorter.setSortable(1, false);
-//        sorter.setSortable(2, false);
-        sorter.setSortable(5, false);
+       TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
+    //    table.setRowSorter(sorter);
+    //    sorter.setSortable(0, false);
+    //    sorter.setSortable(1, false);
+    //    sorter.setSortable(2, false);
+    //    sorter.setSortable(5, false);
+            
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -185,30 +195,24 @@ public class BookCRUD extends javax.swing.JPanel {
             }
 
             @Override
-            public void onHide(int row, boolean isHidden) {
-//                DefaultTableModel model = (DefaultTableModel) table.getModel();
-//                model.setValueAt(isHidden, row, 5);
-                bookData[row][5] = isHidden;
-                System.out.println("Hide row " + row);
-                System.out.println(isIsHiddenBtn());
-                System.out.println("true value: " + bookData[row][5]);
-                System.out.println();
+            public void onHide(int row, Boolean isHidden) {                
+                model.setHiddenState(row);
+                System.out.println("True value of row " + row + ": " + model.getHiddenState(row));
             }
         };
 
         table.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
+        table.addMouseMotionListener(new MouseAdapter() {
+           @Override
+           public void mouseMoved(MouseEvent e) {
+               int row = table.rowAtPoint(e.getPoint());
+               int column = table.columnAtPoint(e.getPoint());
 
-//        table.addMouseMotionListener(new MouseAdapter() {
-//            @Override
-//            public void mouseMoved(MouseEvent e) {
-//                int row = table.rowAtPoint(e.getPoint());
-//                int column = table.columnAtPoint(e.getPoint());
-//
-//                if (column == 5) {
-//                    table.editCellAt(row, column);
-//                }
-//            }
-//        });
+               if (column == 5) {
+                   table.editCellAt(row, column);
+               }
+           }
+       });
     }
 
     @SuppressWarnings("unchecked")
@@ -267,40 +271,12 @@ public class BookCRUD extends javax.swing.JPanel {
     });
 
     table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-    table.setModel(new javax.swing.table.DefaultTableModel(
-        new Object [][] {
-
-        },
-        new String [] {
-            "Title", "Author", "Publisher", "Quantity", "Sale price", "Action"
-        }
-    ) {
-        Class[] types = new Class [] {
-            java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class
-        };
-        boolean[] canEdit = new boolean [] {
-            false, false, false, false, false, true
-        };
-
-        public Class getColumnClass(int columnIndex) {
-            return types [columnIndex];
-        }
-
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return canEdit [columnIndex];
-        }
-    });
+    table.setModel(this.model);
     table.setToolTipText("");
     table.setFocusable(false);
     table.setRowHeight(40);
     table.getTableHeader().setReorderingAllowed(false);
     scrollBar.setViewportView(table);
-    if (table.getColumnModel().getColumnCount() > 0) {
-        table.getColumnModel().getColumn(0).setMinWidth(150);
-        table.getColumnModel().getColumn(3).setPreferredWidth(20);
-        table.getColumnModel().getColumn(4).setPreferredWidth(20);
-        table.getColumnModel().getColumn(5).setPreferredWidth(50);
-    }
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);

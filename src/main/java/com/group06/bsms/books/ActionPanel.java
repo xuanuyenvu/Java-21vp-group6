@@ -10,7 +10,8 @@ import java.awt.event.MouseEvent;
 
 public class ActionPanel extends javax.swing.JPanel {
 
-    private boolean isHideBtnHidden;
+    private Boolean isHideBtnHidden;
+
     public void setIsHideBtnHidden(boolean isHidden) {
         this.isHideBtnHidden = isHidden;
     }
@@ -26,12 +27,16 @@ public class ActionPanel extends javax.swing.JPanel {
     }
 
     public void initEvent(TableActionEvent event, int row, boolean isHidden) {
+        
         this.isHideBtnHidden = isHidden;
+
         updateHideButtonAppearance();
-        System.out.println("action panel: " + isHidden);
+        System.out.println("Action panel init, isHidden value: " + isHidden);
+        
         editBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("Edit button clicked!!!");
                 event.onEdit(row);
             }
         });
@@ -39,15 +44,16 @@ public class ActionPanel extends javax.swing.JPanel {
         hideBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Action Panelll-----");
+                System.out.println("Hide button clicked!!!");
+                event.onHide(row, isHideBtnHidden);
                 isHideBtnHidden = !isHideBtnHidden;
                 updateHideButtonAppearance();
-                event.onHide(row, isHideBtnHidden);
             }
         });
     }
 
     private void updateHideButtonAppearance() {
+        System.out.println("Updated Hide Button Appearance. State of isHideBtnHidden: "+isHideBtnHidden);
         if (isHideBtnHidden) {
             hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
             hideBtn.setToolTipText("Unhide");
@@ -121,6 +127,7 @@ public class ActionPanel extends javax.swing.JPanel {
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
         // TODO add your handling code here:
+        System.out.println("Edit button clicked");
 
     }//GEN-LAST:event_editBtnActionPerformed
 
