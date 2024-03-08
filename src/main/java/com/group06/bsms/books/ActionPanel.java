@@ -45,15 +45,15 @@ public class ActionPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Hide button clicked!!!");
-                event.onHide(row, isHideBtnHidden);
-                isHideBtnHidden = !isHideBtnHidden;
+                isHideBtnHidden = (event.onHide(row));
+                
                 updateHideButtonAppearance();
             }
         });
     }
 
     private void updateHideButtonAppearance() {
-        System.out.println("Updated Hide Button Appearance. State of isHideBtnHidden: "+isHideBtnHidden);
+        // System.out.println("Updated Hide Button Appearance. State of isHideBtnHidden: "+isHideBtnHidden);
         if (isHideBtnHidden) {
             hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
             hideBtn.setToolTipText("Unhide");

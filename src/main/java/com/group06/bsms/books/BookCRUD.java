@@ -30,7 +30,7 @@ interface TableActionEvent {
 
     public void onEdit(int row);
 
-    public void onHide(int row, Boolean isHidden);
+    public boolean onHide(int row);
 }
 
 class TableActionCellEditor extends DefaultCellEditor {
@@ -45,9 +45,10 @@ class TableActionCellEditor extends DefaultCellEditor {
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         BookTableModel model = (BookTableModel) table.getModel();
+        row = table.convertRowIndexToModel(row);
         Boolean isHidden = (Boolean) model.getHiddenState(row);
-        System.out.println("Row with title "+model.getValueAt(row, 0));
-        System.out.println("Row: " + row + " Editor hide: " + isHidden);
+        System.out.println("Hover row with title "+model.getValueAt(row, 0)+", Editor hide: "+isHidden);
+        // System.out.println("Row: " + row + " Editor hide: " + isHidden);
 
         ActionPanel action = new ActionPanel(isHidden);
         action.initEvent(event, row, isHidden);
@@ -196,9 +197,11 @@ public class BookCRUD extends javax.swing.JPanel {
             }
 
             @Override
-            public void onHide(int row, Boolean isHidden) {                
+            public boolean onHide(int row) {   
+                System.out.println("Hide book with title "+model.getValueAt(row, 0));       
                 model.setHiddenState(row);
-                System.out.println("True value of row " + row + ": " + model.getHiddenState(row));
+                System.out.println("True value of book with title " + model.getValueAt(row, 0) + ": " + model.getHiddenState(row));
+                return model.getHiddenState(row);
             }
         };
 
