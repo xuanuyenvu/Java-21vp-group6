@@ -84,8 +84,6 @@ public class BookTableModel extends AbstractTableModel {
             default:
                 break;
         }
-        System.out.println(row + " " + col);
-        fireTableCellUpdated(row, col);
     }
 
     @Override

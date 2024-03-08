@@ -46,12 +46,13 @@ class TableActionCellEditor extends DefaultCellEditor {
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         BookTableModel model = (BookTableModel) table.getModel();
         Boolean isHidden = (Boolean) model.getHiddenState(row);
-        // System.out.println("Row with title "+model.getValueAt(row, 0));
-        // System.out.println("Row: " + row + " Editor hide: " + isHidden);
+        System.out.println("Row with title "+model.getValueAt(row, 0));
+        System.out.println("Row: " + row + " Editor hide: " + isHidden);
 
         ActionPanel action = new ActionPanel(isHidden);
         action.initEvent(event, row, isHidden);
         action.setBackground(Color.WHITE);
+
         return action;
     }
 
@@ -62,7 +63,7 @@ class TableActionCellRender extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         boolean isHidden = ((BookTableModel) table.getModel()).getHiddenState(row);
-        // System.out.println("Row: " + row + " Render: " + isHidden);
+        System.out.println("Row: " + row + " Render: " + isHidden);
         
         Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         ActionPanel action = new ActionPanel(isHidden);
@@ -123,7 +124,7 @@ public class BookCRUD extends javax.swing.JPanel {
         table.setShowVerticalLines(true);
 
        TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
-    //    table.setRowSorter(sorter);
+       table.setRowSorter(sorter);
     //    sorter.setSortable(0, false);
     //    sorter.setSortable(1, false);
     //    sorter.setSortable(2, false);
@@ -205,7 +206,7 @@ public class BookCRUD extends javax.swing.JPanel {
         table.addMouseMotionListener(new MouseAdapter() {
            @Override
            public void mouseMoved(MouseEvent e) {
-               int row = table.rowAtPoint(e.getPoint());
+               int row = table.convertRowIndexToModel(table.rowAtPoint(e.getPoint()));
                int column = table.columnAtPoint(e.getPoint());
 
                if (column == 5) {
