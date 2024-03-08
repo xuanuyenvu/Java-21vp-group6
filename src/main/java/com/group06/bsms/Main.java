@@ -6,6 +6,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.books.BookCRUD;
+import com.group06.bsms.books.CategorySelectionPanel;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -28,7 +29,8 @@ public class Main extends JFrame {
         layout = new CardLayout();
         panel.setLayout(layout);
 //        panel.add(new Login(), "login");
-        panel.add(new BookCRUD(), "Book");
+//        panel.add(new BookCRUD(), "Book");
+        panel.add(new CategorySelectionPanel(), "Category");
         panel.add(new Dashboard(), "dashboard");
 
         if (INDEV) {
