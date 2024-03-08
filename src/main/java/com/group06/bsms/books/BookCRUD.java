@@ -35,7 +35,7 @@ interface TableActionEvent {
 
 class TableActionCellEditor extends DefaultCellEditor {
 
-    private TableActionEvent event;
+    private final TableActionEvent event;
 
     public TableActionCellEditor(TableActionEvent event) {
         super(new JCheckBox());
@@ -50,7 +50,7 @@ class TableActionCellEditor extends DefaultCellEditor {
         System.out.println("Hover row with title "+model.getValueAt(row, 0)+", Editor hide: "+isHidden);
         // System.out.println("Row: " + row + " Editor hide: " + isHidden);
 
-        ActionPanel action = new ActionPanel(isHidden);
+        ActionBtn action = new ActionBtn(isHidden);
         action.initEvent(event, row, isHidden);
         action.setBackground(Color.WHITE);
 
@@ -63,11 +63,12 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        boolean isHidden = ((BookTableModel) table.getModel()).getHiddenState(row);
+        int modelRow = table.convertRowIndexToModel(row);
+        boolean isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
         System.out.println("Row: " + row + " Render: " + isHidden);
         
         Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        ActionPanel action = new ActionPanel(isHidden);
+        ActionBtn action = new ActionBtn(isHidden);
         action.setBackground(com.getBackground());
         return action;
     }
@@ -75,7 +76,7 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
 public class BookCRUD extends javax.swing.JPanel {
     
-    private BookTableModel model;
+    private final BookTableModel model;
 
     public BookCRUD() {
         this.model = new BookTableModel();
@@ -93,11 +94,11 @@ public class BookCRUD extends javax.swing.JPanel {
         addBookData();
     }
 
-    public ActionPanel getActionPanelFromCell(int row, int column) {
+    public ActionBtn getActionPanelFromCell(int row, int column) {
         if (table.isEditing() && table.getEditingRow() == row && table.getEditingColumn() == column) {
-            return (ActionPanel) table.getCellEditor(row, column).getTableCellEditorComponent(table, null, false, row, column);
+            return (ActionBtn) table.getCellEditor(row, column).getTableCellEditorComponent(table, null, false, row, column);
         } else {
-            return (ActionPanel) table.getCellRenderer(row, column).getTableCellRendererComponent(table, null, false, false, row, column);
+            return (ActionBtn) table.getCellRenderer(row, column).getTableCellRendererComponent(table, null, false, false, row, column);
         }
     }
 
@@ -107,7 +108,7 @@ public class BookCRUD extends javax.swing.JPanel {
             Date d1 = new Date(sdf.parse("01/01/2003").getTime());
             Date d2 = new Date(sdf.parse("02/01/2010").getTime());
             List<Book> bookData = new ArrayList<>();
-            bookData.add(new Book(1,1,"Book Title 1",100,d1,"Size 1","Translator Who","Book sucks", 100,145.500,0));
+            bookData.add(new Book(1,1,"Book Title 1",100,d1,"Size 1","Translator Who","Book sucks", 100,145.500, 0));
             bookData.add(new Book(1,1,"Book Title 2",120,d2,"Size 2","Translator What","Book sucks very much", 103,90.500,1));
             bookData.add(new Book(1,1,"Book Title 3",200,d2,"Size 3","Translator Which","Modern 21th Century Masterpiece TM", 103,90.500,1));
             for (var book : bookData) {
@@ -126,10 +127,7 @@ public class BookCRUD extends javax.swing.JPanel {
 
        TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
        table.setRowSorter(sorter);
-    //    sorter.setSortable(0, false);
-    //    sorter.setSortable(1, false);
-    //    sorter.setSortable(2, false);
-    //    sorter.setSortable(5, false);
+        sorter.setSortable(5, false);
             
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -229,6 +227,7 @@ public class BookCRUD extends javax.swing.JPanel {
         filterBtn = new javax.swing.JButton();
         scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        jComboBox1 = new javax.swing.JComboBox<>();
 
         setAutoscrolls(true);
 
@@ -282,6 +281,9 @@ public class BookCRUD extends javax.swing.JPanel {
     table.getTableHeader().setReorderingAllowed(false);
     scrollBar.setViewportView(table);
 
+    jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+    jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -297,7 +299,9 @@ public class BookCRUD extends javax.swing.JPanel {
                         .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
+                            .addGap(20, 20, 20)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(20, 20, 20)
                             .addComponent(createBtn)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(filterBtn)))
@@ -312,7 +316,8 @@ public class BookCRUD extends javax.swing.JPanel {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(18, 18, 18)
             .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
             .addGap(30, 30, 30))
@@ -335,6 +340,7 @@ public class BookCRUD extends javax.swing.JPanel {
     private javax.swing.JLabel bookLabel;
     private javax.swing.JButton createBtn;
     private javax.swing.JButton filterBtn;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JScrollPane scrollBar;
     private javax.swing.JTextField searchBar;
     private javax.swing.JTable table;
