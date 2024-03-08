@@ -206,7 +206,7 @@ public class BookCRUD extends javax.swing.JPanel {
         table.addMouseMotionListener(new MouseAdapter() {
            @Override
            public void mouseMoved(MouseEvent e) {
-               int row = table.convertRowIndexToModel(table.rowAtPoint(e.getPoint()));
+               int row = table.rowAtPoint(e.getPoint());
                int column = table.columnAtPoint(e.getPoint());
 
                if (column == 5) {
