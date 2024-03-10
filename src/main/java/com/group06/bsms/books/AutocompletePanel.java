@@ -16,24 +16,34 @@ public class AutocompletePanel extends javax.swing.JPanel {
         initComponents();
 
         autoCompleteButton.setEditable(true);
-        AutoCompleteDecorator.decorate(autoCompleteButton); 
+        AutoCompleteDecorator.decorate(autoCompleteButton);
         autoCompleteButton.putClientProperty(FlatClientProperties.STYLE, "arc: 9;");
 
         Icon icon = SVGHelper.createSVGIconWithFilter("icons/search.svg", Color.black, Color.black, 14, 14);
-        autoCompleteButton.setUI(new BasicComboBoxUI() {
-            @Override
-            protected JButton createArrowButton() {
-                JButton button = new JButton(icon);
-                button.setBackground(UIManager.getColor("ComboBox.background"));
-                button.setBorder(null);
-                return button;
-            }
-        });
+        autoCompleteButton.setUI(new CustomComboBoxUI(icon));
+
     }
 
     public void updateListButton(ArrayList<String> list) {
         for (String element : list) {
             autoCompleteButton.addItem(element);
+        }
+    }
+
+    public class CustomComboBoxUI extends BasicComboBoxUI {
+
+        private final Icon icon;
+
+        public CustomComboBoxUI(Icon icon) {
+            this.icon = icon;
+        }
+
+        @Override
+        protected JButton createArrowButton() {
+            JButton button = new JButton(icon);
+            button.setBackground(UIManager.getColor("ComboBox.background"));
+            button.setBorder(null);
+            return button;
         }
     }
 
@@ -44,6 +54,7 @@ public class AutocompletePanel extends javax.swing.JPanel {
         autoCompleteButton = new javax.swing.JComboBox<>();
 
         autoCompleteButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        autoCompleteButton.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
         autoCompleteButton.setPreferredSize(new java.awt.Dimension(72, 31));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

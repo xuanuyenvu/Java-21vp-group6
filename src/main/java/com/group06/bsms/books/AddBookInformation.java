@@ -322,7 +322,8 @@ public class AddBookInformation extends javax.swing.JPanel {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        // TODO add your handling code here:
+        String newBookInfo = titleField.getName();
+        System.out.print(newBookInfo);
     }//GEN-LAST:event_addButtonActionPerformed
 
 
