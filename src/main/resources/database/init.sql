@@ -122,7 +122,8 @@ insert into Category (name, isHidden) values
 
 insert into BookCategory (bookId, categoryId) values
     (1, 1),
-    (2, 2);
+    (2, 2),
+    (1, 2);
 
 insert into ImportSheet (employeeInChargeId, importDate, totalCost) values
     (1, current_date, 150.99),
