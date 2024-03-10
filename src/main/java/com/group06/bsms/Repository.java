@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import static java.sql.Types.NULL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import org.jfree.data.json.impl.JSONObject;
-
+import java.util.Map;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class Repository<Entity extends Object> {
 
@@ -111,19 +109,15 @@ public class Repository<Entity extends Object> {
      * from entity where [searchAttr] like '%[searchTerm]%' order by [sortAttr]
      * [sortTerm]"
      */
-    public List<Entity> selectAll1(
-            String jsonSearchString,
-            int start, int count,
+    public List<Entity> selectAll(
+            JsonObject searchJson,
+            int start, Integer count,
             String sortAttr, Sort sortTerm,
             String... attributes
     ) throws Exception {
 
         try {
             db.setAutoCommit(false);
-
-            if (!isValidIdentifier(sortAttr)) {
-                throw new Exception("Invalid sort attribute");
-            }
 
             var attributesQuery = new StringBuilder();
 
@@ -132,46 +126,63 @@ public class Repository<Entity extends Object> {
                     throw new Exception("Invalid select attribute: '" + attribute + "'");
                 }
 
-                attributesQuery.append(attribute).append(", ");
-            }
-
-            var searchQuery = new StringBuilder();
-
-            if (jsonSearchString != null) {
-                searchQuery.append("where");
-
-                jsonSearchString.replaceAll(".*\".*", "\\\"");
-                JsonObject json = new JsonParser().parse(jsonSearchString).getAsJsonObject();
-
-                for (String key : json.keySet()) {
-                    if (!isValidIdentifier(key)) {
-                        throw new Exception("Invalid search attribute");
-                    }
-                    if (searchQuery.length() > 0) {
-                        searchQuery.append(" and ");
-                        searchQuery.append(key).append(" ilike '").append(json.get(key)).append("'");
-                    }
-                }
-            }
-
-            var sortQuery = "";
-
-            if (sortAttr != null) {
-                sortQuery = "order by " + sortAttr + " " + sortTerm.toString();
+                attributesQuery.append(entityClass.getSimpleName() + "." + attribute).append(", ");
             }
 
             attributesQuery.setLength(attributesQuery.length() - 2);
 
+            //search query (different from filter, because of partially identical mapping)
+            
+            var conditionQuery = new StringBuilder();
+            Map<String, String> allowedSearches = new HashMap<>();
+
+            allowedSearches.put("title", "title ilike ?");
+            allowedSearches.put("author", "author.name ilike ?");
+            allowedSearches.put("publisher", "publisher.name ilike ?");
+
+            if (searchJson != null) {
+                conditionQuery.append("where ");
+
+                for (String key : searchJson.keySet()) {
+                    if (!isValidIdentifier(key) || !allowedSearches.containsKey(key)) {
+                        throw new Exception("Invalid search attribute");
+                    }
+                    if (conditionQuery.length() > 6) {
+                        conditionQuery.append(" and ");
+                    }
+                    conditionQuery.append(allowedSearches.get(key));
+                }
+            }
+
+
+            var sortQuery = "";
+
+            if (sortAttr != null) {
+                if (!isValidIdentifier(sortAttr)) {
+                    throw new Exception("Invalid sort attribute");
+                }
+                sortQuery = "order by " + sortAttr + " " + sortTerm.toString();
+            }
+
             var query = db.prepareStatement(
-                    "select " + attributesQuery + " "
-                    + "from " + entityClass.getSimpleName() + " "
-                    + searchQuery + " "
-                    + sortQuery 
-                    + " limit ? offset ?"
+                "select " + attributesQuery + " "
+                + "from " + entityClass.getSimpleName() + " "
+                + conditionQuery + " "
+                + sortQuery 
+                + ((count == null) ? "" : " limit ?")
+                + " offset ?"
             );
 
-            query.setInt(1, count);
-            query.setInt(2, start);
+            int nParameter = 1;
+
+            if (searchJson != null) {
+                for (var key : searchJson.keySet()) {
+                    query.setString(nParameter++, ("%" + searchJson.get(key).getAsString() + "%"));
+                }
+            }
+
+            if (count != null) query.setInt(nParameter++, count);
+            query.setInt(nParameter++, start);
 
             var resultSet = query.executeQuery();
             var result = new ArrayList<Entity>();
