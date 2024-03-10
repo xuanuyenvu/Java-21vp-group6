@@ -114,6 +114,8 @@ public class BookCRUD extends javax.swing.JPanel {
             for (var book : bookData) {
                 model.addRow(book);
             }
+            // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
+            table.getRowSorter().allRowsChanged();
         } catch (Exception e) {
             System.err.println(e);
         }
@@ -125,8 +127,8 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
 
-       TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
-       table.setRowSorter(sorter);
+        TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
+        table.setRowSorter(sorter);
         sorter.setSortable(5, false);
             
 
@@ -211,7 +213,7 @@ public class BookCRUD extends javax.swing.JPanel {
                int column = table.columnAtPoint(e.getPoint());
 
                if (column == 5) {
-                   table.editCellAt(row, column);
+                   table.editCellAt(table.convertColumnIndexToModel(row), column);
                }
            }
        });

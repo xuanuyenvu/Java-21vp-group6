@@ -63,6 +63,10 @@ public class BookTableModel extends AbstractTableModel {
      */
     @Override
     public void setValueAt(Object val, int row, int col) {
+        for (int i = 0; i < getRowCount(); i++) {
+            System.out.println(books.get(i));
+            System.out.println(action.get(i));
+        }
         Book book = books.get(row);
         switch (col) {
             case 0:
@@ -84,6 +88,7 @@ public class BookTableModel extends AbstractTableModel {
             default:
                 break;
         }
+        fireTableCellUpdated(row, col);
     }
 
     @Override
