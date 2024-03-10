@@ -40,9 +40,9 @@ public class BookTableModel extends AbstractTableModel {
             case 0:
                 return book.title;
             case 1:
-                return "";
+                return ((book.author == null) ? "" : book.author.name);
             case 2:
-                return "";
+                return ((book.publisher == null) ? "" : book.publisher.name);
             case 3:
                 return book.quantity;
             case 4:
