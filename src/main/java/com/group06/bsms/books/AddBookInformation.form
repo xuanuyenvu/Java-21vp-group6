@@ -120,7 +120,7 @@
                                           </Group>
                                           <Component id="authorAutoComp" alignment="0" max="32767" attributes="0"/>
                                       </Group>
-                                      <Component id="categorySelectionPanel1" alignment="1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="categorySelectionPanel" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="hideCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -145,10 +145,10 @@
                                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="translatorLabel" min="-2" max="-2" attributes="0"/>
-                                              <Component id="pagesField1" min="-2" max="-2" attributes="0"/>
+                                              <Component id="translatorField" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <Component id="overviewArea" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -188,7 +188,7 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="CategoryLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="categorySelectionPanel1" min="-2" pref="88" max="-2" attributes="0"/>
+                      <Component id="categorySelectionPanel" min="-2" pref="88" max="-2" attributes="0"/>
                       <EmptySpace pref="15" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="pagesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -197,14 +197,14 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="pagesField1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="translatorField" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="pagesSpinner" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="dimensionField" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Component id="overviewLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="overviewArea" min="-2" pref="101" max="-2" attributes="0"/>
+                      <Component id="scrollPane" min="-2" pref="101" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="hideCheckBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -288,7 +288,7 @@
                 <Property name="text" type="java.lang.String" value="Category *"/>
               </Properties>
             </Component>
-            <Component class="com.group06.bsms.books.CategorySelectionPanel" name="categorySelectionPanel1">
+            <Component class="com.group06.bsms.books.CategorySelectionPanel" name="categorySelectionPanel">
               <Properties>
                 <Property name="autoscrolls" type="boolean" value="true"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -331,7 +331,7 @@
                 <Property name="text" type="java.lang.String" value="Pages *"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="pagesField1">
+            <Component class="javax.swing.JTextField" name="translatorField">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="16" style="0"/>
@@ -360,7 +360,7 @@
                 <Property name="text" type="java.lang.String" value="Overview *"/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JScrollPane" name="overviewArea">
+            <Container class="javax.swing.JScrollPane" name="scrollPane">
               <Properties>
                 <Property name="autoscrolls" type="boolean" value="true"/>
               </Properties>
@@ -370,7 +370,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="jTextArea1">
+                <Component class="javax.swing.JTextArea" name="overviewTextArea">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -421,6 +421,9 @@
                     <LineBorder roundedCorners="true"/>
                   </Border>
                 </Property>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Hand Cursor"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
@@ -436,6 +439,9 @@
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                     <LineBorder roundedCorners="true"/>
                   </Border>
+                </Property>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Hand Cursor"/>
                 </Property>
               </Properties>
               <Events>

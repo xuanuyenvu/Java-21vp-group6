@@ -21,12 +21,22 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
         Icon icon = SVGHelper.createSVGIconWithFilter("icons/search.svg", Color.black, Color.black, 14, 14);
         autoCompleteButton.setUI(new CustomComboBoxUI(icon));
-
+        
     }
 
     public void updateListButton(ArrayList<String> list) {
         for (String element : list) {
             autoCompleteButton.addItem(element);
+        }
+        autoCompleteButton.setSelectedItem(null);
+    }
+
+    public String getText() {
+        Object selectedItem = autoCompleteButton.getSelectedItem();
+        if (selectedItem != null) {
+            return selectedItem.toString();
+        } else {
+            return null;
         }
     }
 

@@ -38,9 +38,9 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
         addButton.setToolTipText("Add category");
 
-        Icon icon = SVGHelper.createSVGIconWithFilter("icons/add.svg", Color.black, Color.black, 16, 16);
-        addButton.setUI(new CustomComboBoxUI(icon));
-        
+//        Icon icon = SVGHelper.createSVGIconWithFilter("icons/add.svg", Color.black, Color.black, 16, 16);
+//        addButton.setUI(new CustomComboBoxUI(icon));
+
         addButton.putClientProperty(FlatClientProperties.STYLE, "arc: 9;");
         updateAddButton();
 
@@ -73,8 +73,8 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         revalidate();
         repaint();
     }
-    
-       public class CustomComboBoxUI extends BasicComboBoxUI {
+
+    public class CustomComboBoxUI extends BasicComboBoxUI {
 
         private final Icon icon;
 
@@ -89,6 +89,18 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
             button.setBorder(null);
             return button;
         }
+    }
+
+    public String getText() {
+        StringBuilder sb = new StringBuilder();
+        for (String category : listSelected) {
+            sb.append(category).append(", ");
+        }
+
+        if (sb.length() > 2) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+        return sb.toString();
     }
 
     @SuppressWarnings("unchecked")
@@ -107,8 +119,23 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         addButton.setMinimumSize(new java.awt.Dimension(28, 32));
         addButton.setName(""); // NOI18N
         addButton.setPreferredSize(new java.awt.Dimension(28, 32));
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
         add(addButton);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        String newCategory = String.valueOf(addButton.getSelectedItem());
+        if (!listSelected.contains(newCategory)) {
+            listSelected.add(newCategory);
+            createToggleButton(newCategory);
+            revalidate();
+            repaint();
+        }
+    }//GEN-LAST:event_addButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
