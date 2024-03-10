@@ -97,7 +97,7 @@ public class BookCRUD extends javax.swing.JPanel {
         ));
 
         setUpTable();
-        addBookData();
+        loadBooksIntoTable();
     }
 
     public ActionBtn getActionPanelFromCell(int row, int column) {
@@ -108,18 +108,10 @@ public class BookCRUD extends javax.swing.JPanel {
         }
     }
 
-    private void addBookData() {
+    private void loadBooksIntoTable() {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Date d1 = new Date(sdf.parse("01/01/2003").getTime());
-            Date d2 = new Date(sdf.parse("02/01/2010").getTime());
-            List<Book> bookData = new ArrayList<>();
-            bookData.add(new Book(1,1,"Book Title 1",100,d1,"Size 1","Translator Who","Book sucks", 100,145.500, 0));
-            bookData.add(new Book(1,1,"Book Title 2",120,d2,"Size 2","Translator What","Book sucks very much", 103,90.500,1));
-            bookData.add(new Book(1,1,"Book Title 3",200,d2,"Size 3","Translator Which","Modern 21th Century Masterpiece TM", 103,90.500,1));
-            for (var book : bookData) {
-                model.addRow(book);
-            }
+            var books = bookService.getAllBooks();
+            model.loadNewBooks(books);
             // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
             table.getRowSorter().allRowsChanged();
         } catch (Exception e) {
@@ -132,9 +124,6 @@ public class BookCRUD extends javax.swing.JPanel {
 
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
-
-        var books = bookService.getAllBooks();
-        model.loadNewBooks(books);
 
         // DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);

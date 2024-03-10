@@ -40,9 +40,9 @@ public class BookTableModel extends AbstractTableModel {
             case 0:
                 return book.title;
             case 1:
-                return book.author.name;
+                return "";
             case 2:
-                return book.publisher.name;
+                return "";
             case 3:
                 return book.quantity;
             case 4:
@@ -129,8 +129,7 @@ public class BookTableModel extends AbstractTableModel {
 
             for (var book : newBooks) {
                 if (!contains(book.id)) {
-                    books.add(book);
-                    SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
+                    addRow(book);
                 }
             }
         }
@@ -139,8 +138,7 @@ public class BookTableModel extends AbstractTableModel {
         if (newBooks != null) {
             for (var book : newBooks) {
                 if (!contains(book.id)) {
-                    books.add(book);
-                    SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
+                    addRow(book);
                 }
             }
         }
