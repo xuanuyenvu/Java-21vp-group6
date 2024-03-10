@@ -40,9 +40,9 @@ public class BookTableModel extends AbstractTableModel {
             case 0:
                 return book.title;
             case 1:
-                return "";
+                return book.author.name;
             case 2:
-                return "";
+                return book.publisher.name;
             case 3:
                 return book.quantity;
             case 4:
@@ -63,10 +63,6 @@ public class BookTableModel extends AbstractTableModel {
      */
     @Override
     public void setValueAt(Object val, int row, int col) {
-        for (int i = 0; i < getRowCount(); i++) {
-            System.out.println(books.get(i));
-            System.out.println(action.get(i));
-        }
         Book book = books.get(row);
         switch (col) {
             case 0:
@@ -126,7 +122,20 @@ public class BookTableModel extends AbstractTableModel {
         return (columnIndex == 5);
     }
 
-    public void loadAllBooks(List<Book> newBooks) {
+    public void reloadAllBooks(List<Book> newBooks) {
+        if (newBooks != null) {
+            books.clear();
+            fireTableDataChanged();
+
+            for (var book : newBooks) {
+                if (!contains(book.id)) {
+                    books.add(book);
+                    SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
+                }
+            }
+        }
+    }
+    public void loadNewBooks(List<Book> newBooks) {
         if (newBooks != null) {
             for (var book : newBooks) {
                 if (!contains(book.id)) {
@@ -136,7 +145,6 @@ public class BookTableModel extends AbstractTableModel {
             }
         }
     }
-
     void addRow(Book book) {
         books.add(book);
         action.add(!book.isHidden);

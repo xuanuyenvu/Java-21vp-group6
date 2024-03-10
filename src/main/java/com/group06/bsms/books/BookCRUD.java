@@ -1,6 +1,7 @@
 package com.group06.bsms.books;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.DB;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Component;
@@ -75,12 +76,17 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 }
 
 public class BookCRUD extends javax.swing.JPanel {
+    private final BookService bookService;
+    private BookTableModel model;
     
-    private final BookTableModel model;
-
     public BookCRUD() {
+        this(new BookService(new BookRepository(DB.db())));
+    }
+
+    public BookCRUD(BookService bookService) {
+        this.bookService = bookService;
         this.model = new BookTableModel();
-        
+
         initComponents();
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
@@ -89,7 +95,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 Color.black, Color.black,
                 14, 14
         ));
-        
+
         setUpTable();
         addBookData();
     }
@@ -127,6 +133,10 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
 
+        var books = bookService.getAllBooks();
+        model.loadNewBooks(books);
+
+        // DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
         table.setRowSorter(sorter);
         sorter.setSortable(5, false);
@@ -328,6 +338,10 @@ public class BookCRUD extends javax.swing.JPanel {
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
         // TODO add your handling code here:
+        var text = searchBar.getText();
+        System.out.println(text);
+        List<Book> books = bookService.searchBooks(text);
+        model.reloadAllBooks(books);
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
