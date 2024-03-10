@@ -4,6 +4,8 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
+import java.util.List;
+
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
@@ -47,7 +49,7 @@ public class BookCRUD extends javax.swing.JPanel {
         table.setShowVerticalLines(true);
 
         var books = bookService.getAllBooks();
-        model.loadAllBooks(books);
+        model.loadNewBooks(books);
 
         // DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
@@ -167,7 +169,7 @@ public class BookCRUD extends javax.swing.JPanel {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(48, 48, 48)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 254, Short.MAX_VALUE)
                             .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(filterBtn)))
@@ -191,6 +193,10 @@ public class BookCRUD extends javax.swing.JPanel {
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
         // TODO add your handling code here:
+        var text = searchBar.getText();
+        System.out.println(text);
+        List<Book> books = bookService.searchBooks(text);
+        model.reloadBooks(books);
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed

@@ -52,7 +52,7 @@ public class BookTableModel extends AbstractTableModel {
         return foundBook.isPresent();
     }
 
-    public void loadAllBooks(List<Book> newBooks) {
+    public void loadNewBooks(List<Book> newBooks) {
         if (newBooks != null) {
             for (var book : newBooks) {
                 if (!contains(book.id)) {
@@ -63,8 +63,20 @@ public class BookTableModel extends AbstractTableModel {
         }
     }
 
+    public void reloadBooks(List<Book> newBooks) {
+        if (newBooks != null) {
+            books.clear();
+            fireTableDataChanged();
 
+            for (var book : newBooks) {
+                if (!contains(book.id)) {
+                    books.add(book);
+                    // SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
+                }
+            }
 
-
+            fireTableDataChanged();
+        }
+    }
 
 }

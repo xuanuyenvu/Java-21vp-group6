@@ -12,6 +12,22 @@ public class BookService {
     public List<Book> getAllBooks() {
         try {
             List<Book> books = bookDAO.selectAllBooks();
+            // if (books != null) {
+            //     for (var book : books) {
+            //         System.out.println(book);
+            //     }
+            // }
+            return books;
+        }
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
+    }
+
+    public List<Book> searchBooks(String title){
+        try {
+            List<Book> books = bookDAO.selectBook(title);
             if (books != null) {
                 for (var book : books) {
                     System.out.println(book);
