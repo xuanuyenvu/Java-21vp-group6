@@ -1,8 +1,15 @@
 package com.group06.bsms.books;
 
-//import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.utils.SVGHelper;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 
 public class CategorySelectionPanel extends javax.swing.JPanel {
 
@@ -30,6 +37,19 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         listSelected.add(categories[6]);
 
         addButton.setToolTipText("Add category");
+
+        Icon icon = SVGHelper.createSVGIconWithFilter("icons/add.svg", Color.black, Color.black, 16, 16);
+        addButton.setUI(new BasicComboBoxUI() {
+            @Override
+            protected JButton createArrowButton() {
+                JButton button = new JButton(icon);
+                button.setBackground(UIManager.getColor("ComboBox.background"));
+                button.setBorder(null);
+                return button;
+            }
+        });
+        
+        addButton.putClientProperty(FlatClientProperties.STYLE, "arc: 9;");
         updateAddButton();
 
         if (!listSelected.isEmpty()) {
@@ -43,7 +63,7 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         CategoryButton categoryButton = new CategoryButton(this, name);
 //        listUnselected.remove(name);
 //        updateAddButton();
-
+        categoryButton.putClientProperty(FlatClientProperties.STYLE, "arc: 90;");
         add(categoryButton);
     }
 
@@ -77,23 +97,8 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         addButton.setMinimumSize(new java.awt.Dimension(28, 32));
         addButton.setName(""); // NOI18N
         addButton.setPreferredSize(new java.awt.Dimension(28, 32));
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
         add(addButton);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        String newCategory = String.valueOf(addButton.getSelectedItem());
-        if (!listSelected.contains(newCategory)) {
-            listSelected.add(newCategory);
-            createToggleButton(newCategory);
-            revalidate();
-            repaint();
-        }
-    }//GEN-LAST:event_addButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

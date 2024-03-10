@@ -1,27 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.group06.bsms.books;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.util.ArrayList;
 
-/**
- *
- * @author Xuan Uyen Vu
- */
 public class AddBookInformation extends javax.swing.JPanel {
 
-    private ArrayList<String> authors = new ArrayList<>();
-    private ArrayList<String> publishers = new ArrayList<>();
-    
+    private final ArrayList<String> authors = new ArrayList<>();
+    private final ArrayList<String> publishers = new ArrayList<>();
+
     public AddBookInformation() {
         initComponents();
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
         backButton.setToolTipText("Back to previous page");
-        
+
         authors.add("J.K. Rowling");
         authors.add("Stephen King");
         authors.add("Ernest Hemingway");
@@ -31,6 +24,12 @@ public class AddBookInformation extends javax.swing.JPanel {
         publishers.add("Maya Angelou");
         authorAutoComp.updateListButton(authors);
         publisherAutoComp.updateListButton(publishers);
+
+        titleLabel.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Book Title");
+        overviewArea.putClientProperty(FlatClientProperties.STYLE,
+                "arc: 9;"
+                + "thumbArc: 3;"
+                + "thumbInsets: 2,2,2,2;");
     }
 
     /**
@@ -58,7 +57,6 @@ public class AddBookInformation extends javax.swing.JPanel {
         dimensionLabel = new javax.swing.JLabel();
         dimensionField = new javax.swing.JTextField();
         pagesLabel = new javax.swing.JLabel();
-        pagesField = new javax.swing.JTextField();
         pagesField1 = new javax.swing.JTextField();
         translatorLabel = new javax.swing.JLabel();
         overviewLabel = new javax.swing.JLabel();
@@ -71,6 +69,7 @@ public class AddBookInformation extends javax.swing.JPanel {
         addButton = new javax.swing.JButton();
         publisherAutoComp = new com.group06.bsms.books.AutocompletePanel();
         authorAutoComp = new com.group06.bsms.books.AutocompletePanel();
+        pagesSpinner = new javax.swing.JSpinner();
 
         backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         backButton.setBorderPainted(false);
@@ -89,13 +88,9 @@ public class AddBookInformation extends javax.swing.JPanel {
         titleLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         titleLabel.setText("Title *");
 
+        titleField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         titleField.setMinimumSize(new java.awt.Dimension(440, 31));
         titleField.setPreferredSize(new java.awt.Dimension(440, 31));
-        titleField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                titleFieldActionPerformed(evt);
-            }
-        });
 
         authorLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         authorLabel.setText("Author *");
@@ -103,6 +98,7 @@ public class AddBookInformation extends javax.swing.JPanel {
         PublisherLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         PublisherLabel.setText("Publisher *");
 
+        publishDateField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         publishDateField.setMinimumSize(new java.awt.Dimension(215, 31));
         publishDateField.setPreferredSize(new java.awt.Dimension(215, 31));
 
@@ -120,17 +116,16 @@ public class AddBookInformation extends javax.swing.JPanel {
         dimensionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         dimensionLabel.setText("Dimension *");
 
+        dimensionField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         dimensionField.setMinimumSize(new java.awt.Dimension(140, 31));
         dimensionField.setPreferredSize(new java.awt.Dimension(140, 31));
 
         pagesLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         pagesLabel.setText("Pages *");
 
-        pagesField.setMinimumSize(new java.awt.Dimension(140, 31));
-        pagesField.setPreferredSize(new java.awt.Dimension(140, 31));
-
-        pagesField1.setMinimumSize(new java.awt.Dimension(140, 31));
-        pagesField1.setPreferredSize(new java.awt.Dimension(140, 31));
+        pagesField1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        pagesField1.setMinimumSize(new java.awt.Dimension(180, 31));
+        pagesField1.setPreferredSize(new java.awt.Dimension(180, 31));
 
         translatorLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         translatorLabel.setText("Translator *");
@@ -141,11 +136,11 @@ public class AddBookInformation extends javax.swing.JPanel {
         overviewArea.setAutoscrolls(true);
 
         jTextArea1.setColumns(20);
+        jTextArea1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jTextArea1.setDragEnabled(true);
         jTextArea1.setMinimumSize(new java.awt.Dimension(440, 20));
-        jTextArea1.setPreferredSize(new java.awt.Dimension(440, 84));
         overviewArea.setViewportView(jTextArea1);
 
         hideCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -179,17 +174,16 @@ public class AddBookInformation extends javax.swing.JPanel {
         authorAutoComp.setMinimumSize(new java.awt.Dimension(440, 31));
         authorAutoComp.setPreferredSize(new java.awt.Dimension(440, 31));
 
+        pagesSpinner.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        pagesSpinner.setMinimumSize(new java.awt.Dimension(140, 31));
+        pagesSpinner.setName(""); // NOI18N
+        pagesSpinner.setPreferredSize(new java.awt.Dimension(140, 31));
+
         javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
         groupFieldPanel.setLayout(groupFieldPanelLayout);
         groupFieldPanelLayout.setHorizontalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator2)
-            .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,7 +191,6 @@ public class AddBookInformation extends javax.swing.JPanel {
                         .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(dimensionLabel)
                                     .addComponent(CategoryLabel)
                                     .addComponent(authorLabel)
                                     .addComponent(titleLabel)
@@ -213,7 +206,7 @@ public class AddBookInformation extends javax.swing.JPanel {
                                     .addComponent(authorAutoComp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addComponent(categorySelectionPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(hideCheckBox))
-                        .addContainerGap(107, Short.MAX_VALUE))
+                        .addContainerGap(128, Short.MAX_VALUE))
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
                         .addGap(4, 4, 4)
                         .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -221,17 +214,25 @@ public class AddBookInformation extends javax.swing.JPanel {
                             .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(overviewLabel)
                                 .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                    .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(dimensionLabel))
                                     .addGap(10, 10, 10)
                                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(pagesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(pagesLabel))
+                                        .addComponent(pagesLabel)
+                                        .addComponent(pagesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGap(10, 10, 10)
                                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(translatorLabel)
                                         .addComponent(pagesField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addComponent(overviewArea)))
                         .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         groupFieldPanelLayout.setVerticalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,15 +259,15 @@ public class AddBookInformation extends javax.swing.JPanel {
                 .addComponent(categorySelectionPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dimensionLabel)
                     .addComponent(pagesLabel)
-                    .addComponent(translatorLabel))
+                    .addComponent(translatorLabel)
+                    .addComponent(dimensionLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pagesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pagesField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(pagesField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pagesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
                 .addComponent(overviewLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(overviewArea, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -316,10 +317,6 @@ public class AddBookInformation extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void titleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_titleFieldActionPerformed
-
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cancelButtonActionPerformed
@@ -351,9 +348,9 @@ public class AddBookInformation extends javax.swing.JPanel {
     private javax.swing.JScrollPane overviewArea;
     private javax.swing.JLabel overviewLabel;
     private javax.swing.JLabel pageName;
-    private javax.swing.JTextField pagesField;
     private javax.swing.JTextField pagesField1;
     private javax.swing.JLabel pagesLabel;
+    private javax.swing.JSpinner pagesSpinner;
     private javax.swing.JTextField publishDateField;
     private com.group06.bsms.books.AutocompletePanel publisherAutoComp;
     private javax.swing.JTextField titleField;

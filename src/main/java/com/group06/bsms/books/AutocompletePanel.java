@@ -3,12 +3,11 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
-import java.awt.Component;
 import java.util.ArrayList;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JButton;
+import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class AutocompletePanel extends javax.swing.JPanel {
@@ -16,29 +15,25 @@ public class AutocompletePanel extends javax.swing.JPanel {
     public AutocompletePanel() {
         initComponents();
 
-        AutoCompleteDecorator.decorate(autoCompleteButton);
+        autoCompleteButton.setEditable(true);
+        AutoCompleteDecorator.decorate(autoCompleteButton); 
+        autoCompleteButton.putClientProperty(FlatClientProperties.STYLE, "arc: 9;");
 
-        autoCompleteButton.setRenderer(new IconComboBoxRenderer());
+        Icon icon = SVGHelper.createSVGIconWithFilter("icons/search.svg", Color.black, Color.black, 14, 14);
+        autoCompleteButton.setUI(new BasicComboBoxUI() {
+            @Override
+            protected JButton createArrowButton() {
+                JButton button = new JButton(icon);
+                button.setBackground(UIManager.getColor("ComboBox.background"));
+                button.setBorder(null);
+                return button;
+            }
+        });
     }
 
     public void updateListButton(ArrayList<String> list) {
         for (String element : list) {
             autoCompleteButton.addItem(element);
-        }
-    }
-
-    static class IconComboBoxRenderer extends DefaultListCellRenderer {
-
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-            Icon icon = SVGHelper.createSVGIconWithFilter("icons/search.svg", Color.black, Color.black, 14, 14);
-            label.setIcon(icon);
-
-            return label;
         }
     }
 
@@ -48,6 +43,7 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
         autoCompleteButton = new javax.swing.JComboBox<>();
 
+        autoCompleteButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         autoCompleteButton.setPreferredSize(new java.awt.Dimension(72, 31));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
