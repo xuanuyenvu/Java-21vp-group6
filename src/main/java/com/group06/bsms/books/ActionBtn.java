@@ -3,41 +3,47 @@ package com.group06.bsms.books;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class ActionPanel extends javax.swing.JPanel {
+public class ActionBtn extends javax.swing.JPanel {
 
-    private boolean isHideBtnHidden = false;
-    
+    private Boolean hiddenBtn;
+
+    public void setIsHideBtnHidden(boolean isHidden) {
+        this.hiddenBtn = isHidden;
+    }
+
     public boolean isIsHideBtnHidden() {
-        return isHideBtnHidden;
+        return hiddenBtn;
     }
-    
-    public ActionPanel() {
+
+    public ActionBtn(boolean isHidden) {
         initComponents();
+        this.hiddenBtn = isHidden;
+        updateHideButtonAppearance();
     }
-    
-    public void initEvent(TableActionEvent event, int row) {
-        editBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                event.onEdit(row);
-            }
+
+    public void initEvent(TableActionEvent event, int row, boolean isHidden) {
+
+        this.hiddenBtn = isHidden;
+
+        updateHideButtonAppearance();
+        System.out.println("Action panel init, isHidden value: " + isHidden);
+
+        editBtn.addActionListener((ActionEvent e) -> {
+            System.out.println("Edit button clicked!!!");
+            event.onEdit(row);
         });
-        
-        hideBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                isHideBtnHidden = !isHideBtnHidden;
-                updateHideButtonAppearance();
-                event.onHide(row);
-                event.setIsHiddenBtn(isHideBtnHidden);
-            }
+
+        hideBtn.addActionListener((ActionEvent e) -> {
+            System.out.println("Hide button clicked!!!");
+            hiddenBtn = (event.onHide(row));
+
+            updateHideButtonAppearance();
         });
     }
-    
+
     private void updateHideButtonAppearance() {
-        if (isHideBtnHidden) {
+        if (hiddenBtn) {
             hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
             hideBtn.setToolTipText("Unhide");
         } else {
@@ -45,7 +51,7 @@ public class ActionPanel extends javax.swing.JPanel {
             hideBtn.setToolTipText("Hide");
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -110,6 +116,7 @@ public class ActionPanel extends javax.swing.JPanel {
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
         // TODO add your handling code here:
+        System.out.println("Edit button clicked");
 
     }//GEN-LAST:event_editBtnActionPerformed
 

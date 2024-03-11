@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import static java.sql.Types.NULL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import com.google.gson.JsonObject;
 
 public class Repository<Entity extends Object> {
 
@@ -95,6 +98,109 @@ public class Repository<Entity extends Object> {
 
     /**
      *
+     * @param jsonSearchString optional (null if none)
+     * example: "{attribute1: value1, attribute2: value2}" temporarily only string
+     * @param start 
+     * @param count
+     * @param sortAttr optional (null if none)
+     * @param sortTerm Sort.ASC or Sort.DESC
+     * @param attributes
+     * @return [count] entity from the [start]'th entity of "select [attributes]
+     * from entity where [searchAttr] like '%[searchTerm]%' order by [sortAttr]
+     * [sortTerm]"
+     */
+    public List<Entity> selectAll(
+            JsonObject searchJson,
+            int start, Integer count,
+            String sortAttr, Sort sortTerm,
+            String... attributes
+    ) throws Exception {
+
+        try {
+            db.setAutoCommit(false);
+
+            var attributesQuery = new StringBuilder();
+
+            for (var attribute : attributes) {
+                if (!isValidIdentifier(attribute)) {
+                    throw new Exception("Invalid select attribute: '" + attribute + "'");
+                }
+
+                attributesQuery.append(entityClass.getSimpleName() + "." + attribute).append(", ");
+            }
+
+            attributesQuery.setLength(attributesQuery.length() - 2);
+
+            //search query (different from filter, because of partially identical mapping)
+            
+            var conditionQuery = new StringBuilder();
+            Map<String, String> allowedSearches = new HashMap<>();
+
+            allowedSearches.put("title", "title ilike ?");
+            allowedSearches.put("author", "author.name ilike ?");
+            allowedSearches.put("publisher", "publisher.name ilike ?");
+
+            if (searchJson != null) {
+                conditionQuery.append("where ");
+
+                for (String key : searchJson.keySet()) {
+                    if (!isValidIdentifier(key) || !allowedSearches.containsKey(key)) {
+                        throw new Exception("Invalid search attribute");
+                    }
+                    if (conditionQuery.length() > 6) {
+                        conditionQuery.append(" and ");
+                    }
+                    conditionQuery.append(allowedSearches.get(key));
+                }
+            }
+
+
+            var sortQuery = "";
+
+            if (sortAttr != null) {
+                if (!isValidIdentifier(sortAttr)) {
+                    throw new Exception("Invalid sort attribute");
+                }
+                sortQuery = "order by " + sortAttr + " " + sortTerm.toString();
+            }
+
+            var query = db.prepareStatement(
+                "select " + attributesQuery + " "
+                + "from " + entityClass.getSimpleName() + " "
+                + conditionQuery + " "
+                + sortQuery 
+                + ((count == null) ? "" : " limit ?")
+                + " offset ?"
+            );
+
+            int nParameter = 1;
+
+            if (searchJson != null) {
+                for (var key : searchJson.keySet()) {
+                    query.setString(nParameter++, ("%" + searchJson.get(key).getAsString() + "%"));
+                }
+            }
+
+            if (count != null) query.setInt(nParameter++, count);
+            query.setInt(nParameter++, start);
+
+            var resultSet = query.executeQuery();
+            var result = new ArrayList<Entity>();
+
+            db.commit();
+
+            while (resultSet.next()) {
+                result.add(populate(resultSet));
+            }
+
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+    /**
+     *
      * @param searchAttr
      * @param searchTerm
      * @param start
@@ -163,6 +269,7 @@ public class Repository<Entity extends Object> {
             throw e;
         }
     }
+    
 
     public Entity selectById(int id) throws Exception {
 

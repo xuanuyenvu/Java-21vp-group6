@@ -39,7 +39,8 @@ create table if not exists Book (
     quantity int check (quantity >= 0) not null,
     salePrice decimal(12, 2) check (salePrice >= 0) not null,
     isHidden boolean default false not null,
-    hiddenParentCount int check (hiddenParentCount >= 0) not null
+    hiddenParentCount int check (hiddenParentCount >= 0) not null,
+    maxImportPrice decimal(12, 2) 
 );
 
 create table if not exists Category (
@@ -108,12 +109,13 @@ insert into Publisher (name, email, address, isHidden) values
     ('Publisher A', 'publisherA@example.com', '123 Main St', false),
     ('Publisher B', 'publisherB@example.com', '456 Oak Ave', true);
 
+
 insert into Book (
     title, authorId, publisherId, pageCount, dimension, translatorName,
-    overview, quantity, salePrice, hiddenParentCount, publishdate
+    overview, quantity, salePrice, hiddenParentCount, publishdate, maxImportPrice
 ) values
-    ('Sample Book 1', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25'),
-    ('Sample Book 2', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15'),
+    ('Sample Book 1', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 2', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15,', 18.50),
     ('Sample Book 3', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15');
 
 insert into Category (name, isHidden) values
