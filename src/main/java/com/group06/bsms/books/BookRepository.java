@@ -99,7 +99,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 "id","authorid","publisherid","title","pagecount",
                 "publishdate","dimension","translatorname",
                 "overview","quantity","saleprice",
-                "hiddenparentcount"
+                "ishidden", "hiddenparentcount"
             );
 
             for (var book : list) {
@@ -134,7 +134,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 "id","authorid","publisherid","title","pagecount",
                 "publishdate","dimension","translatorname",
                 "overview","quantity","saleprice",
-                "hiddenparentcount"
+                "ishidden", "hiddenparentcount"
             );
 
             for (var book : list) {
@@ -171,9 +171,29 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            updateById(id, "ishidden", "false");
+            System.out.println("Book ID: "+id);
+
+            var book = selectById(id);
+
+            if (book != null && book.hiddenParentCount > 0) {
+                throw new Exception("Publisher and/or Author Hidden");
+            }
+
+            var query2 = db.prepareStatement("""
+                        update book set ishidden = ?
+                        where id = ?
+                    """);
+            
+            query2.setBoolean(1, false);
+            query2.setInt(2, id);
+
+            var result = query2.executeUpdate();
 
             db.commit();
+
+            if (result == 0) {
+                throw new Exception("Entity not found");
+            }
 
         } catch (Exception e) {
             db.rollback();
@@ -186,16 +206,30 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
+            System.out.println("Book ID: "+id);
+
             var book = selectById(id);
 
-            if (book.hiddenParentCount > 0) {
+            if (book != null && book.hiddenParentCount > 0) {
                 throw new Exception("Publisher and/or Author Hidden");
             }
 
-            updateById(id, "ishidden", "true");
+            var query2 = db.prepareStatement("""
+                        update book set ishidden = ?
+                        where id = ?
+                    """);
             
+            query2.setBoolean(1, true);
+            query2.setInt(2, id);
+
+            var result = query2.executeUpdate();
+
             db.commit();
 
+            if (result == 0) {
+                throw new Exception("Entity not found");
+            }
+    
         } catch (Exception e) {
             db.rollback();
             throw e;

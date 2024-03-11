@@ -87,6 +87,10 @@ public class BookTableModel extends AbstractTableModel {
         fireTableCellUpdated(row, col);
     }
 
+    public Book getBook(int row) {
+        return books.get(row);
+    }
+
     @Override
     public String getColumnName(int col) {
         return columns[col];
@@ -154,7 +158,9 @@ public class BookTableModel extends AbstractTableModel {
     }
 
     boolean getHiddenState(int row) {
-        return books.get(row).isHidden;
+        // System.out.println(books.get(row).title);
+        Book book = books.get(row);
+        return (book.hiddenParentCount > 0) || (book.isHidden);
     }
 
 }

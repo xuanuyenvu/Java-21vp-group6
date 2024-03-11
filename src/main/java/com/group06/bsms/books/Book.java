@@ -36,7 +36,7 @@ public class Book {
             int authorId, int publisherId, String title, int pageCount,
             Date publishDate, String dimension, String translatorName,
             String overview, int quantity, double salePrice,
-            int hiddenParentCount
+            boolean isHidden, int hiddenParentCount
     ) {
         this.authorId = authorId;
         this.publisherId = publisherId;
@@ -49,11 +49,11 @@ public class Book {
         this.quantity = quantity;
         this.salePrice = salePrice;
         this.hiddenParentCount = hiddenParentCount;
-        this.isHidden = true;
+        this.isHidden = isHidden;
     }
 
     @Override
     public String toString() {
-        return "Book{" + "id=" + id + ", authorId=" + authorId + ", publisherId=" + publisherId + ", title=" + title + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount + ", author=" + author + ", publisher=" + publisher + '}';
+        return "Book{" + "id=" + id + ", authorId=" + authorId + ", publisherId=" + publisherId + ", title=" + title + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount + '}';
     }
 }

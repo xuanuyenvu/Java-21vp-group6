@@ -65,6 +65,7 @@ class TableActionCellRender extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         int modelRow = table.convertRowIndexToModel(row);
+        
         boolean isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
         System.out.println("Row: " + row + " Render: " + isHidden);
         
@@ -197,8 +198,18 @@ public class BookCRUD extends javax.swing.JPanel {
 
             @Override
             public boolean onHide(int row) {   
-                System.out.println("Hide book with title "+model.getValueAt(row, 0));       
-                model.setHiddenState(row);
+                System.out.println("Hide book with title "+model.getValueAt(row, 0));  
+
+                boolean isSuccessful;
+
+                if (model.getHiddenState(row)) {
+                    isSuccessful = bookService.showBook(model.getBook(row).id);
+                }
+                else {
+                    isSuccessful = bookService.hideBook(model.getBook(row).id);
+                }
+                if (isSuccessful) model.setHiddenState(row);
+
                 System.out.println("True value of book with title " + model.getValueAt(row, 0) + ": " + model.getHiddenState(row));
                 return model.getHiddenState(row);
             }

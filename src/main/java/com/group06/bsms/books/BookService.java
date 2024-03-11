@@ -12,11 +12,11 @@ public class BookService {
     public List<Book> getAllBooks() {
         try {
             List<Book> books = bookDAO.selectAllBooks();
-            // if (books != null) {
-            //     for (var book : books) {
-            //         System.out.println(book);
-            //     }
-            // }
+            if (books != null) {
+                for (var book : books) {
+                    System.out.println(book);
+                }
+            }
             return books;
         }
         catch (Exception e) {
@@ -38,6 +38,28 @@ public class BookService {
         catch (Exception e) {
             System.err.println(e);
             return null;
+        }
+    }
+
+    public boolean hideBook(int id) {
+        try {
+            bookDAO.disableBook(id);
+            return true;
+        }
+        catch (Exception e) {
+            System.err.println(e);
+            return false;
+        }
+    }
+
+    public boolean showBook(int id) {
+        try {
+            bookDAO.enableBook(id);
+            return true;
+        }
+        catch (Exception e) {
+            System.err.println(e);
+            return false;
         }
     }
 }
