@@ -8,14 +8,6 @@ public class ActionBtn extends javax.swing.JPanel {
 
     private Boolean hidden;
 
-    public void setIsHideBtnHidden(boolean isHidden) {
-        this.hidden = isHidden;
-    }
-
-    public boolean isIsHideBtnHidden() {
-        return hidden;
-    }
-
     public ActionBtn(boolean isHidden) {
         initComponents();
         this.hidden = isHidden;
@@ -27,7 +19,6 @@ public class ActionBtn extends javax.swing.JPanel {
         this.hidden = isHidden;
 
         updateHideButtonAppearance();
-        System.out.println("Action panel init, isHidden value: " + isHidden);
 
         editBtn.addActionListener((ActionEvent e) -> {
             System.out.println("Edit button clicked!!!");
@@ -115,13 +106,11 @@ public class ActionBtn extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        // TODO add your handling code here:
-        System.out.println("Edit button clicked");
 
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void hideBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideBtnActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_hideBtnActionPerformed
 
 
