@@ -1,40 +1,34 @@
-package com.group06.bsms.books;
+package com.group06.bsms.books.components;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import com.group06.bsms.utils.SVGHelper;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 
 public class CategorySelectionPanel extends javax.swing.JPanel {
 
     ArrayList<String> listUnselected = null;
     ArrayList<String> listSelected = null;
+    private int heightPanel = 0;
 
     public CategorySelectionPanel() {
         initComponents();
 
-        String[] categories = new String[]{
-            "Comic",
-            "Fiction",
-            "Mystery",
-            "Romance",
-            "Thriller",
-            "Travel",
-            "History",
-            "Poetry",
-            "Business"
-        };
-        listUnselected = new ArrayList<>(Arrays.asList(categories));
-        listSelected = new ArrayList<>();
+        listUnselected = new ArrayList<>(Arrays.asList(
+                "Comic",
+                "Fiction",
+                "Mystery",
+                "Romance",
+                "Thriller",
+                "Travel",
+                "History",
+                "Poetry",
+                "Business"
+        ));
 
-        listSelected.add(categories[0]);
-        listSelected.add(categories[6]);
+        listSelected = new ArrayList<>(Arrays.asList(
+                "Comic",
+                "History"
+        ));
 
         addButton.setToolTipText("Add category");
         updateAddButton();
@@ -48,10 +42,7 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
     private void createToggleButton(String name) {
         CategoryButton categoryButton = new CategoryButton(this, name);
-//        listUnselected.remove(name);
-//        updateAddButton();
-
-        categoryButton.putClientProperty(FlatClientProperties.STYLE, "arc: 90;");
+        categoryButton.putClientProperty(FlatClientProperties.STYLE, "arc: 36;");
         add(categoryButton);
     }
 
@@ -63,23 +54,34 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
     public void deleteCategory(String name) {
         listSelected.remove(name);
-//        listUnselected.add(name);
-//        updateAddButton();
-
+        heightPanel = 45 * ((int) (listSelected.size() / 3) + 1);
         revalidate();
         repaint();
     }
 
     public String getText() {
-        StringBuilder sb = new StringBuilder();
-        for (String category : listSelected) {
-            sb.append(category).append(", ");
-        }
 
-        if (sb.length() > 2) {
-            sb.delete(sb.length() - 2, sb.length());
+        if (listSelected.isEmpty()) {
+            return null;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (String category : listSelected) {
+                sb.append(category).append(", ");
+            }
+
+            if (sb.length() > 2) {
+                sb.delete(sb.length() - 2, sb.length());
+            }
+            return sb.toString();
         }
-        return sb.toString();
+    }
+
+    public int getHeightPanel() {
+        return heightPanel;
+    }
+
+    public void setEmptyList() {
+        listSelected.clear();
     }
 
     @SuppressWarnings("unchecked")
@@ -110,11 +112,12 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         if (!listSelected.contains(newCategory)) {
             listSelected.add(newCategory);
             createToggleButton(newCategory);
+
+            heightPanel = 45 * ((int) (listSelected.size() / 3) + 1);
             revalidate();
             repaint();
         }
     }//GEN-LAST:event_addButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> addButton;

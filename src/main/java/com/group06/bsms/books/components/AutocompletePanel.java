@@ -1,11 +1,6 @@
-package com.group06.bsms.books;
+package com.group06.bsms.books.components;
 
-import com.formdev.flatlaf.FlatClientProperties;
 import java.util.ArrayList;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.UIManager;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class AutocompletePanel extends javax.swing.JPanel {
@@ -31,6 +26,10 @@ public class AutocompletePanel extends javax.swing.JPanel {
         } else {
             return null;
         }
+    }
+    
+    public void setEmptyText() {
+        autoCompleteButton.setSelectedItem(null);
     }
 
     @SuppressWarnings("unchecked")

@@ -1,4 +1,4 @@
-package com.group06.bsms.books;
+package com.group06.bsms.books.components;
 
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
@@ -17,7 +17,7 @@ public class CategoryButton extends javax.swing.JPanel {
 
         categoryName.setText(name);
 
-        Dimension newSize = new Dimension(categoryName.getPreferredSize().width + 70, 28);
+        Dimension newSize = new Dimension(categoryName.getPreferredSize().width + 67, 28);
         this.setPreferredSize(newSize);
     }
 
@@ -84,7 +84,7 @@ public class CategoryButton extends javax.swing.JPanel {
                         .addContainerGap()
                         .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(3, 3, 3))
-            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
