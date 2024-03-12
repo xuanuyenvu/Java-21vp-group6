@@ -24,7 +24,7 @@
               <EmptySpace max="32767" attributes="0"/>
           </Group>
           <Component id="jSeparator1" alignment="1" max="32767" attributes="0"/>
-          <Component id="jScrollPane1" alignment="0" pref="623" max="32767" attributes="0"/>
+          <Component id="jScrollPane1" alignment="0" pref="533" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -43,7 +43,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="920" max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="920" max="32767" attributes="0"/>
               <EmptySpace pref="171" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -87,6 +87,9 @@
       <SubComponents>
         <Container class="javax.swing.JPanel" name="groupFieldPanel">
           <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                <PropertyBean type="org.jdesktop.swingx.border.IconBorder"/>
+            </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[440, 31]"/>
             </Property>
@@ -96,71 +99,78 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jSeparator2" alignment="0" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace pref="45" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" attributes="0">
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="CategoryLabel" min="-2" max="-2" attributes="0"/>
+                                          <Component id="titleField" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="authorAutoComp" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="categoryLabel" min="-2" max="-2" attributes="0"/>
                                           <Component id="authorLabel" min="-2" max="-2" attributes="0"/>
                                           <Component id="titleLabel" min="-2" max="-2" attributes="0"/>
-                                          <Component id="titleField" alignment="0" max="32767" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="PublisherLabel" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="publisherLabel" min="-2" max="-2" attributes="0"/>
                                                   <Component id="publisherAutoComp" min="-2" max="-2" attributes="0"/>
                                               </Group>
-                                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="PublishDateLabel" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="publishDateField" min="-2" max="-2" attributes="0"/>
+                                                  <Group type="102" attributes="0">
+                                                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                                                      <Component id="publishDateLabel" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                                      <Component id="jXDatePicker1" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
                                               </Group>
                                           </Group>
-                                          <Component id="authorAutoComp" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                       <Component id="categorySelectionPanel" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="hideCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="128" max="32767" attributes="0"/>
+                              <EmptySpace pref="45" max="32767" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="hiddenPropLabel" alignment="1" min="-2" pref="423" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="overviewLabel" min="-2" max="-2" attributes="0"/>
-                                      <Group type="102" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="dimensionField" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="dimensionLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="pagesLabel" min="-2" max="-2" attributes="0"/>
-                                              <Component id="pagesSpinner" min="-2" pref="100" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="translatorLabel" min="-2" max="-2" attributes="0"/>
-                                              <Component id="translatorField" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Component id="hiddenPropLabel" alignment="1" min="-2" pref="423" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="overviewLabel" min="-2" max="-2" attributes="0"/>
+                                              <Group type="102" attributes="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="dimensionField" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="dimensionLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="pagesLabel" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="pagesSpinner" min="-2" pref="100" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Component id="translatorLabel" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="translatorField" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                              </Group>
+                                              <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="cancelButton" min="-2" pref="94" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="addButton" min="-2" pref="94" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
-                  </Group>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
-                      <Component id="cancelButton" min="-2" pref="94" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="addButton" min="-2" pref="94" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -177,16 +187,16 @@
                       <Component id="authorAutoComp" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="PublisherLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="PublishDateLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="publisherLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="publishDateLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="publishDateField" min="-2" max="-2" attributes="0"/>
                           <Component id="publisherAutoComp" min="-2" max="-2" attributes="0"/>
+                          <Component id="jXDatePicker1" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="CategoryLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="categoryLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="categorySelectionPanel" min="-2" pref="88" max="-2" attributes="0"/>
                       <EmptySpace pref="15" max="32767" attributes="0"/>
@@ -196,10 +206,10 @@
                           <Component id="dimensionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="translatorField" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="pagesSpinner" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="dimensionField" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                          <Component id="dimensionField" min="-2" pref="31" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Component id="overviewLabel" min="-2" max="-2" attributes="0"/>
@@ -211,12 +221,12 @@
                       <Component id="hiddenPropLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                       <Component id="jSeparator2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="cancelButton" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                           <Component id="addButton" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="415" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="427" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -251,7 +261,7 @@
                 <Property name="text" type="java.lang.String" value="Author *"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="PublisherLabel">
+            <Component class="javax.swing.JLabel" name="publisherLabel">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="13" style="1"/>
@@ -259,20 +269,7 @@
                 <Property name="text" type="java.lang.String" value="Publisher *"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="publishDateField">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="16" style="0"/>
-                </Property>
-                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[215, 31]"/>
-                </Property>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[215, 31]"/>
-                </Property>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="PublishDateLabel">
+            <Component class="javax.swing.JLabel" name="publishDateLabel">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="13" style="1"/>
@@ -280,7 +277,7 @@
                 <Property name="text" type="java.lang.String" value="Publish Date *"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="CategoryLabel">
+            <Component class="javax.swing.JLabel" name="categoryLabel">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="13" style="1"/>
@@ -476,6 +473,19 @@
                 <Property name="name" type="java.lang.String" value="" noResource="true"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[140, 31]"/>
+                </Property>
+              </Properties>
+            </Component>
+            <Component class="org.jdesktop.swingx.JXDatePicker" name="jXDatePicker1">
+              <Properties>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[215, 31]"/>
+                </Property>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[215, 31]"/>
+                </Property>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[215, 31]"/>
                 </Property>
               </Properties>
             </Component>

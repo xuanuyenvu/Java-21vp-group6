@@ -1,8 +1,6 @@
 package com.group06.bsms.books;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import com.group06.bsms.utils.SVGHelper;
-import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -17,11 +15,6 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
         autoCompleteButton.setEditable(true);
         AutoCompleteDecorator.decorate(autoCompleteButton);
-        autoCompleteButton.putClientProperty(FlatClientProperties.STYLE, "arc: 9;");
-
-        Icon icon = SVGHelper.createSVGIconWithFilter("icons/search.svg", Color.black, Color.black, 14, 14);
-        autoCompleteButton.setUI(new CustomComboBoxUI(icon));
-        
     }
 
     public void updateListButton(ArrayList<String> list) {
@@ -40,23 +33,6 @@ public class AutocompletePanel extends javax.swing.JPanel {
         }
     }
 
-    public class CustomComboBoxUI extends BasicComboBoxUI {
-
-        private final Icon icon;
-
-        public CustomComboBoxUI(Icon icon) {
-            this.icon = icon;
-        }
-
-        @Override
-        protected JButton createArrowButton() {
-            JButton button = new JButton(icon);
-            button.setBackground(UIManager.getColor("ComboBox.background"));
-            button.setBorder(null);
-            return button;
-        }
-    }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -64,7 +40,6 @@ public class AutocompletePanel extends javax.swing.JPanel {
         autoCompleteButton = new javax.swing.JComboBox<>();
 
         autoCompleteButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        autoCompleteButton.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
         autoCompleteButton.setPreferredSize(new java.awt.Dimension(72, 31));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

@@ -37,11 +37,6 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         listSelected.add(categories[6]);
 
         addButton.setToolTipText("Add category");
-
-//        Icon icon = SVGHelper.createSVGIconWithFilter("icons/add.svg", Color.black, Color.black, 16, 16);
-//        addButton.setUI(new CustomComboBoxUI(icon));
-
-        addButton.putClientProperty(FlatClientProperties.STYLE, "arc: 9;");
         updateAddButton();
 
         if (!listSelected.isEmpty()) {
@@ -55,6 +50,7 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         CategoryButton categoryButton = new CategoryButton(this, name);
 //        listUnselected.remove(name);
 //        updateAddButton();
+
         categoryButton.putClientProperty(FlatClientProperties.STYLE, "arc: 90;");
         add(categoryButton);
     }
@@ -72,23 +68,6 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
         revalidate();
         repaint();
-    }
-
-    public class CustomComboBoxUI extends BasicComboBoxUI {
-
-        private final Icon icon;
-
-        public CustomComboBoxUI(Icon icon) {
-            this.icon = icon;
-        }
-
-        @Override
-        protected JButton createArrowButton() {
-            JButton button = new JButton(icon);
-            button.setBackground(UIManager.getColor("ComboBox.background"));
-            button.setBorder(null);
-            return button;
-        }
     }
 
     public String getText() {
@@ -114,11 +93,10 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
         addButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         addButton.setToolTipText("");
-        addButton.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
         addButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        addButton.setMinimumSize(new java.awt.Dimension(28, 32));
+        addButton.setMinimumSize(new java.awt.Dimension(29, 32));
         addButton.setName(""); // NOI18N
-        addButton.setPreferredSize(new java.awt.Dimension(28, 32));
+        addButton.setPreferredSize(new java.awt.Dimension(29, 32));
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
