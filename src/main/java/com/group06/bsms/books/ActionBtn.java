@@ -6,25 +6,25 @@ import java.awt.event.ActionEvent;
 
 public class ActionBtn extends javax.swing.JPanel {
 
-    private Boolean hiddenBtn;
+    private Boolean hidden;
 
     public void setIsHideBtnHidden(boolean isHidden) {
-        this.hiddenBtn = isHidden;
+        this.hidden = isHidden;
     }
 
     public boolean isIsHideBtnHidden() {
-        return hiddenBtn;
+        return hidden;
     }
 
     public ActionBtn(boolean isHidden) {
         initComponents();
-        this.hiddenBtn = isHidden;
+        this.hidden = isHidden;
         updateHideButtonAppearance();
     }
 
     public void initEvent(TableActionEvent event, int row, boolean isHidden) {
 
-        this.hiddenBtn = isHidden;
+        this.hidden = isHidden;
 
         updateHideButtonAppearance();
         System.out.println("Action panel init, isHidden value: " + isHidden);
@@ -36,14 +36,14 @@ public class ActionBtn extends javax.swing.JPanel {
 
         hideBtn.addActionListener((ActionEvent e) -> {
             System.out.println("Hide button clicked!!!");
-            hiddenBtn = (event.onHide(row));
+            hidden = (event.onHide(row));
 
             updateHideButtonAppearance();
         });
     }
 
     private void updateHideButtonAppearance() {
-        if (hiddenBtn) {
+        if (hidden) {
             hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
             hideBtn.setToolTipText("Unhide");
         } else {

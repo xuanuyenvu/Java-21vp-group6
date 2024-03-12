@@ -1,6 +1,5 @@
 package com.group06.bsms.books;
 
-import java.sql.Date;
 import java.util.List;
 
 public interface BookDAO {

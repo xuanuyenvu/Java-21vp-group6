@@ -6,8 +6,6 @@ import com.group06.bsms.authors.Author;
 import com.group06.bsms.publishers.Publisher;
 
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSetMetaData;
 import java.util.List;
 
 public class BookRepository extends Repository<Book> implements BookDAO {
