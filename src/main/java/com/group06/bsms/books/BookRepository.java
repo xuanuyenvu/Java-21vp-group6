@@ -3,6 +3,7 @@ package com.group06.bsms.books;
 import com.google.gson.JsonObject;
 import com.group06.bsms.Repository;
 import com.group06.bsms.authors.Author;
+import com.group06.bsms.categories.Category;
 import com.group06.bsms.publishers.Publisher;
 
 import java.sql.Connection;
@@ -20,39 +21,49 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            var query = db.prepareStatement(
+            var updateBookInforQuery = db.prepareStatement(
                     "UPDATE books SET authorId=?, publisherId=?, title=?, pageCount=?, publishDate=?, dimension=?, translatorName=?, overview=?, quantity=?, salePrice=?, hiddenParentCount=?, WHERE id=?");
 
-            query.setInt(1, book.authorId);
-            query.setInt(2, book.publisherId);
-            query.setString(3, book.title);
-            query.setInt(4, book.pageCount);
-            query.setDate(5, book.publishDate);
-            query.setString(6, book.dimension);
-            query.setString(7, book.translatorName);
-            query.setString(8, book.overview);
-            query.setInt(9, book.quantity);
-            query.setDouble(10, book.salePrice);
-            query.setInt(11, book.hiddenParentCount);
-            // query.setDouble(12, book.maxImportPrice);
-            query.setInt(13, book.id);
+            updateBookInforQuery.setInt(1, book.authorId);
+            updateBookInforQuery.setInt(2, book.publisherId);
+            updateBookInforQuery.setString(3, book.title);
+            updateBookInforQuery.setInt(4, book.pageCount);
+            updateBookInforQuery.setDate(5, book.publishDate);
+            updateBookInforQuery.setString(6, book.dimension);
+            updateBookInforQuery.setString(7, book.translatorName);
+            updateBookInforQuery.setString(8, book.overview);
+            updateBookInforQuery.setInt(9, book.quantity);
+            updateBookInforQuery.setDouble(10, book.salePrice);
+            updateBookInforQuery.setInt(11, book.hiddenParentCount);
+            updateBookInforQuery.setInt(13, book.id);
 
-            var result = query.executeUpdate();
-            
+            var updateBookInforResult = updateBookInforQuery.executeUpdate();
+
+            StringBuilder queryStringBuilder = new StringBuilder();
+            int bookId = book.id;
+
+            for (Category category : book.categories) {
+                String categoryId = category.id;
+                
+                queryStringBuilder.append("INSERT INTO bookCategory (bookId, categoryId) VALUES (")
+                        .append(bookId)
+                        .append(", ")
+                        .append(categoryId)
+                        .append(");")
+                        .append(System.lineSeparator()); 
+            }
+            var addBookCategoryQuery = db.prepareStatement(queryStringBuilder.toString());
+            var addBookCategoryResult = addBookCategoryQuery.executeUpdate();
+
             db.commit();
 
-            if (result == 0) {
+            if (updateBookInforResult == 0) {
                 throw new Exception("Entity not found");
             }
 
-            // query = db.prepareStatement("DELETE * FROM BookCategory WHERE bookId = ?");
-            // query.setInt(1, book.id);
-
-            // result = query.executeUpdate();
-
-            // if (result == 0) {
-            // throw new Exception("Can't remove old book's category");
-            // }
+            if(addBookCategoryResult == 0){
+                throw new Exception("Cannot update book's categories");
+            }
         } catch (Exception e) {
             db.rollback();
             throw e;
