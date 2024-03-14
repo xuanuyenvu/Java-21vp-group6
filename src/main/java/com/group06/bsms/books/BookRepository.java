@@ -121,10 +121,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            var jsonSearch  = new JsonObject();
-            jsonSearch.addProperty("title", title);
-
-            System.out.println(jsonSearch.toString());
+            Map<String,Object> map  = new HashMap<>();
+            map.put("title", title);
     
             var list = selectAll(
                 null,
