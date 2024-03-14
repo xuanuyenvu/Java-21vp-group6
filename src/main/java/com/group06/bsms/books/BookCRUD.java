@@ -10,10 +10,7 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-
-import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.RowSorter.SortKey;
@@ -23,53 +20,6 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-
-
-class TableActionCellEditor extends DefaultCellEditor {
-
-    private final TableActionEvent event;
-
-    public TableActionCellEditor(TableActionEvent event) {
-        super(new JCheckBox());
-        this.event = event;
-    }
-
-    @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        Component com = super.getTableCellEditorComponent(table, value, isSelected, row, column);
-        BookTableModel model = (BookTableModel) table.getModel();
-        Boolean isHidden = (Boolean) model.getHiddenState(row);
-        System.out.println("Hover row with title " + model.getValueAt(row, 0) + ", Editor hide: " + isHidden);
-        // System.out.println("Row: " + row + " Editor hide: " + isHidden);
-        int modelRow = table.convertRowIndexToModel(row);
-        ActionBtn action = new ActionBtn(isHidden);
-        action.initEvent(event, modelRow, isHidden);
-        
-        action.setBackground(Color.WHITE);
-
-        return action;
-    }
-
-}
-
-class TableActionCellRender extends DefaultTableCellRenderer {
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value,
-            boolean isSelected, boolean hasFocus, int row, int column) {
-
-        int modelRow = table.convertRowIndexToModel(row);
-
-        boolean isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
-        System.out.println("Row: " + row + " Render: " + isHidden);
-
-        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        ActionBtn action = new ActionBtn(isHidden);
-        action.setBackground(Color.WHITE);
-        
-        return action;
-    }
-}
 
 public class BookCRUD extends javax.swing.JPanel {
 
@@ -178,27 +128,29 @@ public class BookCRUD extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
-//                table.setRowSelectionInterval(table.convertColumnIndexToModel(row), table.convertColumnIndexToModel(row));
+              table.setRowSelectionInterval(row, row);
             }
 
             @Override
-            public boolean onHide(int row) {
-                System.out.println("Hide book with title " + model.getValueAt(row, 0));
+            public int onHide(int row) {
                 System.out.println("ROWWWWWW:  " + row);
                 table.setRowSelectionInterval(row, row);
-                boolean isSuccessful;
-
-                if (model.getHiddenState(row)) {
-                    isSuccessful = bookService.showBook(model.getBook(row).id);
-                } else {
-                    isSuccessful = bookService.hideBook(model.getBook(row).id);
+                
+                int index = table.convertRowIndexToModel(row);
+                boolean isSuccessful = false;
+                System.out.println("ROWWWWWW:  " + row);
+                if (model.getHiddenState(index) == 1) {
+                    isSuccessful = bookService.showBook(model.getBook(index).id);
+                } else if(model.getHiddenState(index) == 0) {
+                    isSuccessful = bookService.hideBook(model.getBook(index).id);
                 }
+                
                 if (isSuccessful) {
-                    model.setHiddenState(row);
+                    model.setHiddenState(index);
                 }
 
-                System.out.println("True value of book with title " + model.getValueAt(row, 0) + ": " + model.getHiddenState(row));
-                return model.getHiddenState(row);
+                System.out.println("True value of book with title " + model.getValueAt(index, 0) + ": " + model.getHiddenState(index));
+                return model.getHiddenState(index);
             }
         };
 
@@ -211,8 +163,8 @@ public class BookCRUD extends javax.swing.JPanel {
                 int column = table.columnAtPoint(e.getPoint());
 
                 if (column == 5) {
-                    table.editCellAt(table.convertColumnIndexToModel(row), column);
-//                    table.setRowSelectionInterval(table.convertColumnIndexToModel(row), table.convertColumnIndexToModel(row));
+                    table.editCellAt(row, column);
+                    table.setRowSelectionInterval(table.convertColumnIndexToModel(row), table.convertColumnIndexToModel(row));
                 }
             }
         });

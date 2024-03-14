@@ -1,21 +1,73 @@
 package com.group06.bsms.books;
 
+import com.group06.bsms.components.ActionBtn;
+import com.group06.bsms.components.TableActionEvent;
+import java.awt.Color;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
 
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
+class TableActionCellEditor extends DefaultCellEditor {
+
+    private final TableActionEvent event;
+
+    public TableActionCellEditor(TableActionEvent event) {
+        super(new JCheckBox());
+        this.event = event;
+    }
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        Component com = super.getTableCellEditorComponent(table, value, isSelected, row, column);
+        BookTableModel model = (BookTableModel) table.getModel();
+        int isHidden = model.getHiddenState(table.convertRowIndexToModel(row));
+//        int modelRow = table.convertRowIndexToModel(row);
+
+        ActionBtn action = new ActionBtn(isHidden);
+        action.initEvent(event, row, isHidden);
+
+        action.setBackground(Color.WHITE);
+
+        return action;
+    }
+
+}
+
+class TableActionCellRender extends DefaultTableCellRenderer {
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value,
+            boolean isSelected, boolean hasFocus, int row, int column) {
+
+        int modelRow = table.convertRowIndexToModel(row);
+
+        int isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
+
+//        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        ActionBtn action = new ActionBtn(isHidden);
+        action.setBackground(Color.WHITE);
+
+        return action;
+    }
+}
 
 /**
  * A custom structure used to display a table
  */
 public class BookTableModel extends AbstractTableModel {
+
     private List<Book> books = new ArrayList<>();
     private List<Object> action = new ArrayList<>();
     private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Actions"};
-    
+
     @Override
     public int getRowCount() {
         return books.size();
@@ -33,7 +85,9 @@ public class BookTableModel extends AbstractTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        if (row >= books.size()) return null;
+        if (row >= books.size()) {
+            return null;
+        }
         Book book = books.get(row);
         switch (col) {
             case 0:
@@ -52,7 +106,7 @@ public class BookTableModel extends AbstractTableModel {
                 return null;
         }
     }
-    
+
     /**
      * @param val
      * @param row
@@ -96,8 +150,8 @@ public class BookTableModel extends AbstractTableModel {
 
     public boolean contains(int id) {
         Optional<Book> foundBook = books.stream()
-                                        .filter(book -> book.id == id)
-                                        .findFirst();
+                .filter(book -> book.id == id)
+                .findFirst();
         return foundBook.isPresent();
     }
 
@@ -138,7 +192,7 @@ public class BookTableModel extends AbstractTableModel {
             }
         }
     }
-    
+
     public void loadNewBooks(List<Book> newBooks) {
         if (newBooks != null) {
             for (var book : newBooks) {
@@ -148,20 +202,25 @@ public class BookTableModel extends AbstractTableModel {
             }
         }
     }
+
     void addRow(Book book) {
         books.add(book);
         action.add(!book.isHidden);
-        SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));  
+        SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
     }
-    
+
     void setHiddenState(int row) {
         books.get(row).isHidden = !books.get(row).isHidden;
     }
 
-    boolean getHiddenState(int row) {
-        // System.out.println(books.get(row).title);
+    int getHiddenState(int row) {
         Book book = books.get(row);
-        return (book.hiddenParentCount > 0) || (book.isHidden);
+        if (book.hiddenParentCount > 0) {
+            return -1;
+        }
+        if (book.isHidden) {
+            return 1;
+        }
+        return 0;
     }
-
 }

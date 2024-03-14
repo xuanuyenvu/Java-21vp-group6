@@ -112,7 +112,7 @@ insert into Book (
     title, authorId, publisherId, pageCount, dimension, translatorName,
     overview, quantity, salePrice, hiddenParentCount, publishdate
 ) values
-    ('Sample Book 1', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25'),
+    ('Sample Book 1', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 0, '1990-05-25'),
     ('Sample Book 2', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15'),
     ('Sample Book 3', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15');
 

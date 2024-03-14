@@ -4,5 +4,5 @@ public interface TableActionEvent {
 
     public void onEdit(int row);
 
-    public boolean onHide(int row);
+    public int onHide(int row);
 }
