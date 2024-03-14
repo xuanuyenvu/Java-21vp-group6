@@ -4,9 +4,8 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import java.util.*;
+import javax.swing.*;
 
 class CustomLabel {
 
@@ -18,34 +17,33 @@ class CustomLabel {
 
 public class AddBookInformation extends javax.swing.JPanel {
 
-    private final ArrayList<String> authors = new ArrayList<>();
-    private final ArrayList<String> publishers = new ArrayList<>();
+    private final ArrayList<String> authors = new ArrayList<>(Arrays.asList(
+            "J.K. Rowling",
+            "Stephen King",
+            "Ernest Hemingway",
+            "Harper Lee"
+    ));
+    private final ArrayList<String> publishers = new ArrayList<>(Arrays.asList(
+            "Toni Morrison",
+            "F. Scott Fitzgerald",
+            "Maya Angelou"
+    ));
 
     public AddBookInformation() {
         initComponents();
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
         backButton.setToolTipText("Back to previous page");
 
-        authors.add("J.K. Rowling");
-        authors.add("Stephen King");
-        authors.add("Ernest Hemingway");
-        authors.add("Harper Lee");
-        publishers.add("Toni Morrison");
-        publishers.add("F. Scott Fitzgerald");
-        publishers.add("Maya Angelou");
-        authorAutoComp.updateListButton(authors);
-        publisherAutoComp.updateListButton(publishers);
+        authorAutoComp.updateList(authors);
+        publisherAutoComp.updateList(publishers);
+        categorySelectionPanel.updateList(publishers, null);
 
         titleLabel.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Book Title");
-        scrollPane.putClientProperty(FlatClientProperties.STYLE,
-                "arc: 9;"
-                + "thumbArc: 3;"
-                + "thumbInsets: 2,2,2,2;");
 
         CustomLabel.setColoredText(titleLabel, "Title", "#666666", "red");
         CustomLabel.setColoredText(authorLabel, "Author", "#666666", "red");
         CustomLabel.setColoredText(publisherLabel, "Publisher", "#666666", "red");
-        CustomLabel.setColoredText(publishDateLabel, "Publisher Date", "#666666", "red");
+        CustomLabel.setColoredText(publishDateLabel, "Publish Date", "#666666", "red");
         CustomLabel.setColoredText(categoryLabel, "Category", "#666666", "red");
         CustomLabel.setColoredText(dimensionLabel, "Dimension", "#666666", "red");
         CustomLabel.setColoredText(pagesLabel, "Pages", "#666666", "red");
@@ -67,7 +65,7 @@ public class AddBookInformation extends javax.swing.JPanel {
         publisherLabel = new javax.swing.JLabel();
         publishDateLabel = new javax.swing.JLabel();
         categoryLabel = new javax.swing.JLabel();
-        categorySelectionPanel = new com.group06.bsms.books.components.CategorySelectionPanel();
+        categorySelectionPanel = new com.group06.bsms.components.CategorySelectionPanel();
         dimensionLabel = new javax.swing.JLabel();
         dimensionField = new javax.swing.JTextField();
         pagesLabel = new javax.swing.JLabel();
@@ -80,8 +78,8 @@ public class AddBookInformation extends javax.swing.JPanel {
         hiddenPropLabel = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
-        publisherAutoComp = new com.group06.bsms.books.components.AutocompletePanel();
-        authorAutoComp = new com.group06.bsms.books.components.AutocompletePanel();
+        publisherAutoComp = new com.group06.bsms.components.AutocompletePanel();
+        authorAutoComp = new com.group06.bsms.components.AutocompletePanel();
         pagesSpinner = new javax.swing.JSpinner();
         publishDatePicker = new org.jdesktop.swingx.JXDatePicker();
 
@@ -184,14 +182,6 @@ public class AddBookInformation extends javax.swing.JPanel {
         cancelButton.setForeground(new java.awt.Color(177, 177, 177));
         cancelButton.setText("Cancel");
         cancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        cancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                cancelButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                cancelButtonMouseExited(evt);
-            }
-        });
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -203,14 +193,6 @@ public class AddBookInformation extends javax.swing.JPanel {
         addButton.setForeground(new java.awt.Color(255, 255, 255));
         addButton.setText("Add");
         addButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                addButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                addButtonMouseExited(evt);
-            }
-        });
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
@@ -390,11 +372,14 @@ public class AddBookInformation extends javax.swing.JPanel {
         String overview = overviewTextArea.getText();
         boolean hideChecked = hideCheckBox.isSelected();
 
-        if (!title.isEmpty() && !author.isEmpty()
-                && !publisher.isEmpty() && publishDatePicker.getDate() != null
-                && !category.isEmpty() && !dimension.isEmpty()
-                && !pages.equals(0) && !overview.isEmpty()) {
-            
+        if (title.isEmpty() || author.isEmpty()
+                || publisher.isEmpty() || publishDatePicker.getDate() == null
+                || category.isEmpty() || dimension.isEmpty()
+                || pages.equals(0) || overview.isEmpty()) {
+
+            JOptionPane.showMessageDialog(null, "Please fill in all required information.", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+
+        } else {
             java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             String formattedDate = dateFormat.format(publishDate);
@@ -410,26 +395,9 @@ public class AddBookInformation extends javax.swing.JPanel {
                     + overview + "; "
                     + hideChecked;
             System.out.print(newBookInfo);
-        } else {
-            JOptionPane.showMessageDialog(null, "Please fill in all required information!", "Error", JOptionPane.ERROR_MESSAGE);
+
         }
     }//GEN-LAST:event_addButtonActionPerformed
-
-    private void addButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseEntered
-        addButton.setBackground(new Color(59, 98, 214));
-    }//GEN-LAST:event_addButtonMouseEntered
-
-    private void addButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseExited
-        addButton.setBackground(new Color(65, 105, 225));
-    }//GEN-LAST:event_addButtonMouseExited
-
-    private void cancelButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelButtonMouseExited
-        cancelButton.setBackground(Color.white);
-    }//GEN-LAST:event_cancelButtonMouseExited
-
-    private void cancelButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelButtonMouseEntered
-        cancelButton.setBackground(new Color(250, 250, 250));
-    }//GEN-LAST:event_cancelButtonMouseEntered
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.gray, 24, 17));
@@ -442,12 +410,12 @@ public class AddBookInformation extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
-    private com.group06.bsms.books.components.AutocompletePanel authorAutoComp;
+    private com.group06.bsms.components.AutocompletePanel authorAutoComp;
     private javax.swing.JLabel authorLabel;
     private javax.swing.JButton backButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel categoryLabel;
-    private com.group06.bsms.books.components.CategorySelectionPanel categorySelectionPanel;
+    private com.group06.bsms.components.CategorySelectionPanel categorySelectionPanel;
     private javax.swing.JTextField dimensionField;
     private javax.swing.JLabel dimensionLabel;
     private javax.swing.JPanel groupFieldPanel;
@@ -462,7 +430,7 @@ public class AddBookInformation extends javax.swing.JPanel {
     private javax.swing.JSpinner pagesSpinner;
     private javax.swing.JLabel publishDateLabel;
     private org.jdesktop.swingx.JXDatePicker publishDatePicker;
-    private com.group06.bsms.books.components.AutocompletePanel publisherAutoComp;
+    private com.group06.bsms.components.AutocompletePanel publisherAutoComp;
     private javax.swing.JLabel publisherLabel;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTextField titleField;

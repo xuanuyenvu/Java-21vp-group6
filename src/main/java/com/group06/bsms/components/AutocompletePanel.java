@@ -1,4 +1,4 @@
-package com.group06.bsms.books.components;
+package com.group06.bsms.components;
 
 import java.util.ArrayList;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -12,7 +12,7 @@ public class AutocompletePanel extends javax.swing.JPanel {
         AutoCompleteDecorator.decorate(autoCompleteButton);
     }
 
-    public void updateListButton(ArrayList<String> list) {
+    public void updateList(ArrayList<String> list) {
         for (String element : list) {
             autoCompleteButton.addItem(element);
         }

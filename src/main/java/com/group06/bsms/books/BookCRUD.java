@@ -3,12 +3,12 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
-import java.awt.Component;
+//import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
-import javax.swing.JTable;
+//import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -27,39 +27,39 @@ interface TableActionEvent {
 
 class TableActionCellEditor extends DefaultCellEditor {
 
-    private TableActionEvent event;
+//    private TableActionEvent event;
 
     public TableActionCellEditor(TableActionEvent event) {
         super(new JCheckBox());
-        this.event = event;
+//        this.event = event;
     }
 
-    @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        ActionPanel action = new ActionPanel();
-        action.initEvent(event, row);
-//        action.setBackground(table.getSelectionBackground());
-        action.setBackground(Color.WHITE);
-        return action;
-    }
+//    @Override
+//    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+//        ActionPanel action = new ActionPanel();
+//        action.initEvent(event, row);
+////        action.setBackground(table.getSelectionBackground());
+//        action.setBackground(Color.WHITE);
+//        return action;
+//    }
 
 }
 
-class TableActionCellRender extends DefaultTableCellRenderer {
+//class TableActionCellRender extends DefaultTableCellRenderer {
 
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+//    @Override
+//    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+//        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        ActionPanel action = new ActionPanel();
+//        ActionPanel action = new ActionPanel();
 
-        action.setBackground(com.getBackground());
-        if (isSelected) {
-            System.err.println("done");
-        }
-        return action;
-    }
-}
+//        action.setBackground(com.getBackground());
+//        if (isSelected) {
+//            System.err.println("done");
+//        }
+//        return action;
+//    }
+//}
 
 public class BookCRUD extends javax.swing.JPanel {
 
@@ -75,16 +75,16 @@ public class BookCRUD extends javax.swing.JPanel {
         setUpTable();
     }
 
-    public ActionPanel getActionPanelFromCell(int row, int column) {
-        if (table.isEditing() && table.getEditingRow() == row && table.getEditingColumn() == column) {
-            return (ActionPanel) table.getCellEditor(row, column).getTableCellEditorComponent(table, null, false, row, column);
-        } else {
-            return (ActionPanel) table.getCellRenderer(row, column).getTableCellRendererComponent(table, null, false, false, row, column);
-        }
-    }
+//    public ActionPanel getActionPanelFromCell(int row, int column) {
+//        if (table.isEditing() && table.getEditingRow() == row && table.getEditingColumn() == column) {
+//            return (ActionPanel) table.getCellEditor(row, column).getTableCellEditorComponent(table, null, false, row, column);
+//        } else {
+//            return (ActionPanel) table.getCellRenderer(row, column).getTableCellRendererComponent(table, null, false, false, row, column);
+//        }
+//    }
 
     private void setUpTable() {
-        table.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
+//        table.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
 
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);

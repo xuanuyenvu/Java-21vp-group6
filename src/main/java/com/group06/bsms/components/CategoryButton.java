@@ -1,4 +1,4 @@
-package com.group06.bsms.books.components;
+package com.group06.bsms.components;
 
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;

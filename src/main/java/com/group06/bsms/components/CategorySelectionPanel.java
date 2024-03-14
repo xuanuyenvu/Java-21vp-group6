@@ -1,43 +1,17 @@
-package com.group06.bsms.books.components;
+package com.group06.bsms.components;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CategorySelectionPanel extends javax.swing.JPanel {
 
-    ArrayList<String> listUnselected = null;
     ArrayList<String> listSelected = null;
     private int heightPanel = 0;
 
     public CategorySelectionPanel() {
         initComponents();
-
-        listUnselected = new ArrayList<>(Arrays.asList(
-                "Comic",
-                "Fiction",
-                "Mystery",
-                "Romance",
-                "Thriller",
-                "Travel",
-                "History",
-                "Poetry",
-                "Business"
-        ));
-
-        listSelected = new ArrayList<>(Arrays.asList(
-                "Comic",
-                "History"
-        ));
-
+        listSelected = new ArrayList<>();
         addButton.setToolTipText("Add category");
-        updateAddButton();
-
-        if (!listSelected.isEmpty()) {
-            for (String categorySelected : listSelected) {
-                createToggleButton(categorySelected);
-            }
-        }
     }
 
     private void createToggleButton(String name) {
@@ -46,9 +20,17 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         add(categoryButton);
     }
 
-    private void updateAddButton() {
+    public void updateList(ArrayList<String> listUnselected, ArrayList<String> currentCategories) {
         for (String category : listUnselected) {
             addButton.addItem(category);
+        }
+
+        if (currentCategories != null) {
+            listSelected.clear();
+            listSelected = new ArrayList<>(currentCategories);
+            for (String categorySelected : listSelected) {
+                createToggleButton(categorySelected);
+            }
         }
     }
 
@@ -109,6 +91,7 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         String newCategory = String.valueOf(addButton.getSelectedItem());
+        System.out.println("do ko");
         if (!listSelected.contains(newCategory)) {
             listSelected.add(newCategory);
             createToggleButton(newCategory);
