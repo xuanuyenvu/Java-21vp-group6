@@ -1,13 +1,12 @@
 package com.group06.bsms.books;
 
-import com.formdev.flatlaf.FlatClientProperties;
-import com.group06.bsms.DB;
-import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.List;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -19,6 +18,10 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
+
+import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.DB;
+import com.group06.bsms.utils.SVGHelper;
 
 interface TableActionEvent {
 
@@ -112,7 +115,8 @@ public class BookCRUD extends javax.swing.JPanel {
             model.loadNewBooks(books);
             // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
             table.getRowSorter().allRowsChanged();
-        } catch (Exception e) {
+        } 
+        catch (Throwable e) {
             System.err.println(e);
         }
     }

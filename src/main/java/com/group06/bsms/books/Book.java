@@ -1,7 +1,7 @@
 package com.group06.bsms.books;
 
-import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.group06.bsms.authors.Author;
+import com.group06.bsms.category.Category;
 import com.group06.bsms.publishers.Publisher;
 import java.sql.Date;
 import java.util.List;
@@ -26,8 +26,6 @@ public class Book {
     public Publisher publisher;
 
     public List<Category> categories;
-
-    // definition
 
     public Book() {
     }
@@ -54,6 +52,6 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" + "id=" + id + ", authorId=" + authorId + ", publisherId=" + publisherId + ", title=" + title + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount + '}';
+        return "Book{" + "id=" + id + ", authorId=" + authorId + ", publisherId=" + publisherId + ", title=" + title + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount + ", author=" + author + ", publisher=" + publisher + '}';
     }
 }
