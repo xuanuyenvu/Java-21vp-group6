@@ -6,6 +6,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -130,6 +132,69 @@ public class RepositoryTest {
                         .map((book) -> ((Book) book).id)
                         .collect(Collectors.toList()),
                 Arrays.asList(2, 1)
+        );
+    }
+
+    @Test
+    public void testSelectAllWithMultipleSearchParams() throws Exception {
+        Repository instance = new Repository<Book>(db, Book.class);
+
+        Map<String, Object> searchParams1 = new HashMap<>();
+        searchParams1.put("title", "");
+
+        Map<String, Object> searchParams2 = new HashMap<>();
+        searchParams2.put("title", "Sample%3");
+        
+        // assertEquals(
+        //         instance.selectAll(
+        //                 searchParams1,
+        //                 0, 3,
+        //                 "title", Repository.Sort.ASC,
+        //                 "id", "title"
+        //         )
+        //                 .stream()
+        //                 .map((book) -> ((Book) book).title)
+        //                 .collect(Collectors.toList()),
+        //         Arrays.asList("Sample Book 1", "Sample Book 2", "Sample Book 3")
+        // );
+
+        assertEquals(
+                instance.selectAll(
+                        null,
+                        1, 10,
+                        "id", Repository.Sort.DESC,
+                        "id"
+                )
+                        .stream()
+                        .map((book) -> ((Book) book).id)
+                        .collect(Collectors.toList()),
+                Arrays.asList(2, 1)
+        );
+
+        assertEquals(
+                instance.selectAll(
+                        searchParams2,
+                        0, 10,
+                        "title", Repository.Sort.ASC,
+                        "id", "title"
+                )
+                        .stream()
+                        .map((book) -> ((Book) book).id)
+                        .collect(Collectors.toList()),
+                Arrays.asList(3)
+        );
+
+        assertEquals(
+                instance.selectAll(
+                        null,
+                        0, null,
+                        "id", Repository.Sort.ASC,
+                        "id", "title"
+                )
+                        .stream()
+                        .map((book) -> ((Book) book).id)
+                        .collect(Collectors.toList()),
+                Arrays.asList(1, 2, 3)
         );
     }
 

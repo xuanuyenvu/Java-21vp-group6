@@ -6,7 +6,9 @@ import com.group06.bsms.authors.Author;
 import com.group06.bsms.publishers.Publisher;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BookRepository extends Repository<Book> implements BookDAO {
     public BookRepository(Connection db) {
@@ -94,9 +96,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 null,
                 0, 10,
                 "title", Sort.ASC,
-                "id","authorid","publisherid","title","pagecount",
-                "publishdate","dimension","translatorname",
-                "overview","quantity","saleprice",
+                "id","authorid","publisherid","title",
+                "quantity","saleprice",
                 "ishidden", "hiddenparentcount"
             );
 
@@ -115,7 +116,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         }
     }
     @Override
-    public List<Book> selectBook(String title)
+    public List<Book> selectBooks(String title)
             throws Exception {
         try {
             db.setAutoCommit(false);
@@ -126,12 +127,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             System.out.println(jsonSearch.toString());
     
             var list = selectAll(
-                jsonSearch,
+                null,
                 0, 10,
                 "title", Sort.ASC,
-                "id","authorid","publisherid","title","pagecount",
-                "publishdate","dimension","translatorname",
-                "overview","quantity","saleprice",
+                "id","authorid","publisherid","title",
+                "quantity","saleprice",
                 "ishidden", "hiddenparentcount"
             );
 
@@ -149,9 +149,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             throw e;
         }
     }
-    //post methods
     @Override
-    public void createBook(Book book)
+    public void insertBook(Book book)
             throws Exception {
         try {
             db.setAutoCommit(false);
@@ -164,12 +163,10 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         }
     }
     @Override
-    public void enableBook(int id)
+    public void showBook(int id)
             throws Exception {
         try {
             db.setAutoCommit(false);
-
-            System.out.println("Book ID: "+id);
 
             var book = selectById(id);
 
@@ -177,34 +174,17 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 throw new Exception("Publisher and/or Author Hidden");
             }
 
-            var query2 = db.prepareStatement("""
-                        update book set ishidden = ?
-                        where id = ?
-                    """);
-            
-            query2.setBoolean(1, false);
-            query2.setInt(2, id);
-
-            var result = query2.executeUpdate();
-
-            db.commit();
-
-            if (result == 0) {
-                throw new Exception("Entity not found");
-            }
-
+            updateById(id, "ishidden","false");
         } catch (Exception e) {
             db.rollback();
             throw e;
         }
     }
     @Override
-    public void disableBook(int id)
+    public void hideBook(int id)
             throws Exception {
         try {
             db.setAutoCommit(false);
-
-            System.out.println("Book ID: "+id);
 
             var book = selectById(id);
 
@@ -212,33 +192,17 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 throw new Exception("Publisher and/or Author Hidden");
             }
 
-            var query2 = db.prepareStatement("""
-                        update book set ishidden = ?
-                        where id = ?
-                    """);
-            
-            query2.setBoolean(1, true);
-            query2.setInt(2, id);
-
-            var result = query2.executeUpdate();
+            updateById(id, "ishidden","true");
 
             db.commit();
-
-            if (result == 0) {
-                throw new Exception("Entity not found");
-            }
     
         } catch (Exception e) {
             db.rollback();
             throw e;
         }
     }
-    /**
-     * Given a book's ID and 
-     * @param id Book's ID
-     */
     @Override
-    public void updateHiddenParentCount(int id)
+    public void updateBookHiddenParentCount(int id)
             throws Exception {
         try {
             db.setAutoCommit(false);
@@ -261,18 +225,18 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         }
     }
     @Override
-    public void updateHiddenParentCountByAuthorId(int authorId)
+    public void updateBookHiddenParentCountByAuthorId(int authorId)
             throws Exception {
         try {
             db.setAutoCommit(false);
 
-            JsonObject json = new JsonObject();
-            json.addProperty("authorid", authorId);
+            Map<String,Object>map = new HashMap<>();
+            map.put("authorid", authorId);
 
-            List<Book> books = selectAll(json, 0, null, null, null, "id");
+            List<Book> books = selectAll(map, 0, null, null, null, "id");
             
             for (Book book : books) {
-                updateHiddenParentCount(book.id);
+                updateBookHiddenParentCount(book.id);
             }
 
             db.commit();
@@ -283,18 +247,18 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         }
     }
     @Override
-    public void updateHiddenParentCountByPublisherId(int publisherId)
+    public void updateBookHiddenParentCountByPublisherId(int publisherId)
             throws Exception {
         try {
             db.setAutoCommit(false);
 
-            JsonObject json = new JsonObject();
-            json.addProperty("authorid", publisherId);
+            Map<String,Object>map = new HashMap<>();
+            map.put("publisherid", publisherId);
 
-            List<Book> books = selectAll(json, 0, null, null, null, "id");
+            List<Book> books = selectAll(map, 0, null, null, null, "id");
             
             for (Book book : books) {
-                updateHiddenParentCount(book.id);
+                updateBookHiddenParentCount(book.id);
             }
 
             db.commit();

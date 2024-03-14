@@ -1,5 +1,6 @@
 package com.group06.bsms.books;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookService {
@@ -12,27 +13,17 @@ public class BookService {
     public List<Book> getAllBooks() {
         try {
             List<Book> books = bookDAO.selectAllBooks();
-            if (books != null) {
-                for (var book : books) {
-                    System.out.println(book);
-                }
-            }
             return books;
         }
         catch (Exception e) {
-            System.err.println(e);
-            return null;
+            System.out.println(e);
+            return new ArrayList<Book>();
         }
     }
 
     public List<Book> searchBooks(String title){
         try {
-            List<Book> books = bookDAO.selectBook(title);
-            if (books != null) {
-                for (var book : books) {
-                    System.out.println(book);
-                }
-            }
+            List<Book> books = bookDAO.selectBooks(title);
             return books;
         }
         catch (Exception e) {
@@ -43,7 +34,7 @@ public class BookService {
 
     public boolean hideBook(int id) {
         try {
-            bookDAO.disableBook(id);
+            bookDAO.hideBook(id);
             return true;
         }
         catch (Exception e) {
@@ -54,7 +45,7 @@ public class BookService {
 
     public boolean showBook(int id) {
         try {
-            bookDAO.enableBook(id);
+            bookDAO.showBook(id);
             return true;
         }
         catch (Exception e) {

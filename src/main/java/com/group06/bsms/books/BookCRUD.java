@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -111,7 +112,8 @@ public class BookCRUD extends javax.swing.JPanel {
             model.loadNewBooks(books);
             // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
             table.getRowSorter().allRowsChanged();
-        } catch (Exception e) {
+        } 
+        catch (Throwable e) {
             System.err.println(e);
         }
     }

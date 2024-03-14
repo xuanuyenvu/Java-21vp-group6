@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.google.gson.JsonObject;
 
 public class Repository<Entity extends Object> {
 
@@ -97,20 +96,22 @@ public class Repository<Entity extends Object> {
     }
 
     /**
-     *
-     * @param jsonSearchString optional (null if none)
-     * example: "{attribute1: value1, attribute2: value2}" temporarily only string
+     * Currently only support string attributes as search params and does not support table joins yet
+     * 
+     * @param searchParams optional (null if none), containing the search params
      * @param start 
-     * @param count
+     * @param count optional (null if none)
      * @param sortAttr optional (null if none)
      * @param sortTerm Sort.ASC or Sort.DESC
-     * @param attributes
-     * @return [count] entity from the [start]'th entity of "select [attributes]
-     * from entity where [searchAttr] like '%[searchTerm]%' order by [sortAttr]
-     * [sortTerm]"
+     * @param attributes 
+     * @return [count]/all entity from the [start]'th entity of "
+     *  select [attributes]
+     * from entity 
+     * where [searchAttr_1] like '%[searchTerm_1]%' and [searchAttr_2] like '%[searchTerm_2]%' and ... (currently only accept string attributes in the same class, no join yet) 
+     * order by [sortAttr] [sortTerm]"
      */
     public List<Entity> selectAll(
-            JsonObject searchJson,
+            Map<String,Object> searchParams,
             int start, Integer count,
             String sortAttr, Sort sortTerm,
             String... attributes
@@ -140,10 +141,10 @@ public class Repository<Entity extends Object> {
             allowedSearches.put("author", "author.name ilike ?");
             allowedSearches.put("publisher", "publisher.name ilike ?");
 
-            if (searchJson != null) {
+            if (searchParams != null) {
                 conditionQuery.append("where ");
 
-                for (String key : searchJson.keySet()) {
+                for (String key : searchParams.keySet()) {
                     if (!isValidIdentifier(key) || !allowedSearches.containsKey(key)) {
                         throw new Exception("Invalid search attribute");
                     }
@@ -175,9 +176,9 @@ public class Repository<Entity extends Object> {
 
             int nParameter = 1;
 
-            if (searchJson != null) {
-                for (var key : searchJson.keySet()) {
-                    query.setString(nParameter++, ("%" + searchJson.get(key).getAsString() + "%"));
+            if (searchParams != null) {
+                for (var key : searchParams.keySet()) {
+                    query.setString(nParameter++, ("%" + searchParams.get(key).toString() + "%"));
                 }
             }
 

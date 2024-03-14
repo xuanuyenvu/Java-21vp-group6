@@ -30,7 +30,6 @@ public class BookTableModel extends AbstractTableModel {
      * @param row
      * @param col
      * @return value at [row, col] in the table
-     * @return if want to get isHidden state, use getHiddenState instead
      */
     @Override
     public Object getValueAt(int row, int col) {
@@ -59,7 +58,6 @@ public class BookTableModel extends AbstractTableModel {
      * @param row
      * @param col
      * @return value at [row, col] in the table
-     * @return if want to set isHidden state, use setHiddenState instead
      */
     @Override
     public void setValueAt(Object val, int row, int col) {
@@ -107,7 +105,9 @@ public class BookTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int col) {
         switch (col) {
             case 0:
+                return String.class;
             case 1:
+                return String.class;
             case 2:
                 return String.class;
             case 3:
@@ -138,6 +138,7 @@ public class BookTableModel extends AbstractTableModel {
             }
         }
     }
+    
     public void loadNewBooks(List<Book> newBooks) {
         if (newBooks != null) {
             for (var book : newBooks) {
