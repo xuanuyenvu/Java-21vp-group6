@@ -1,8 +1,10 @@
-package com.group06.bsms.books;
+package com.group06.bsms.components;
 
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import com.group06.bsms.books.BookCRUD;
+import javax.swing.JPanel;
 
 public class ActionBtn extends javax.swing.JPanel {
 
