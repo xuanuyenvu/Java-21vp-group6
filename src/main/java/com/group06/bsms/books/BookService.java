@@ -1,5 +1,6 @@
 package com.group06.bsms.books;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookService {
@@ -15,8 +16,8 @@ public class BookService {
             return books;
         }
         catch (Exception e) {
-            System.err.println(e);
-            return List<Book>();
+            System.out.println(e);
+            return new ArrayList<Book>();
         }
     }
 
