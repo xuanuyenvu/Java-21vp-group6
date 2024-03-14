@@ -3,7 +3,6 @@ package com.group06.bsms.components;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import com.group06.bsms.books.BookCRUD;
 import javax.swing.JPanel;
 
 public class ActionBtn extends javax.swing.JPanel {
@@ -17,7 +16,6 @@ public class ActionBtn extends javax.swing.JPanel {
     }
 
     public void initEvent(TableActionEvent event, int row, boolean isHidden) {
-
         this.hidden = isHidden;
 
         updateHideButtonAppearance();

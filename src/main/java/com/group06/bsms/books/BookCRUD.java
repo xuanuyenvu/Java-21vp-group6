@@ -38,16 +38,15 @@ class TableActionCellEditor extends DefaultCellEditor {
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         Component com = super.getTableCellEditorComponent(table, value, isSelected, row, column);
         BookTableModel model = (BookTableModel) table.getModel();
-        row = table.convertRowIndexToModel(row);
         Boolean isHidden = (Boolean) model.getHiddenState(row);
         System.out.println("Hover row with title " + model.getValueAt(row, 0) + ", Editor hide: " + isHidden);
         // System.out.println("Row: " + row + " Editor hide: " + isHidden);
-
+        int modelRow = table.convertRowIndexToModel(row);
         ActionBtn action = new ActionBtn(isHidden);
-        action.initEvent(event, row, isHidden);
-        action.setBackground(com.getBackground());
+        action.initEvent(event, modelRow, isHidden);
         
-       
+        action.setBackground(Color.WHITE);
+
         return action;
     }
 
@@ -66,8 +65,8 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
         Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         ActionBtn action = new ActionBtn(isHidden);
-        action.setBackground(com.getBackground());
-
+        action.setBackground(Color.WHITE);
+        
         return action;
     }
 }
@@ -179,14 +178,14 @@ public class BookCRUD extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
-                table.setRowSelectionInterval(table.convertColumnIndexToModel(row), table.convertColumnIndexToModel(row));
+//                table.setRowSelectionInterval(table.convertColumnIndexToModel(row), table.convertColumnIndexToModel(row));
             }
 
             @Override
             public boolean onHide(int row) {
-                table.setRowSelectionInterval(table.convertColumnIndexToModel(row), table.convertColumnIndexToModel(row));
                 System.out.println("Hide book with title " + model.getValueAt(row, 0));
-
+                System.out.println("ROWWWWWW:  " + row);
+                table.setRowSelectionInterval(row, row);
                 boolean isSuccessful;
 
                 if (model.getHiddenState(row)) {
