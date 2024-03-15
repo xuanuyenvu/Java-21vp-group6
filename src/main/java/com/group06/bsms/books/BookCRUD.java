@@ -287,10 +287,16 @@ public class BookCRUD extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
+        
         var text = searchBar.getText();
-        System.out.println(text);
+        System.out.println("Value in searchBox: "+text);
+        
         List<Book> books = bookService.searchBooks(text);
+
         model.reloadAllBooks(books);
+        // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
+        table.getRowSorter().allRowsChanged();
+    
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
