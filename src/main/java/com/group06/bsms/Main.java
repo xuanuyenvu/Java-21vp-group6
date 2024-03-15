@@ -27,7 +27,7 @@ public class Main extends JFrame {
 
         layout = new CardLayout();
         panel.setLayout(layout);
-        panel.add(new BookCRUD(), "login");
+        panel.add(new Login(), "login");
         panel.add(new Dashboard(), "dashboard");
 
         if (INDEV) {
