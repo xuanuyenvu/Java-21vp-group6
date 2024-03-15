@@ -137,16 +137,19 @@ public class BookCRUD extends javax.swing.JPanel {
                 table.setRowSelectionInterval(row, row);
                 
                 int index = table.convertRowIndexToModel(row);
-                boolean isSuccessful = false;
+
                 System.out.println("ROWWWWWW:  " + row);
-                if (model.getHiddenState(index) == 1) {
-                    isSuccessful = bookService.showBook(model.getBook(index).id);
-                } else if(model.getHiddenState(index) == 0) {
-                    isSuccessful = bookService.hideBook(model.getBook(index).id);
-                }
                 
-                if (isSuccessful) {
+                try {
+                    if (model.getHiddenState(index) == 1) {
+                        bookService.showBook(model.getBook(index).id);
+                    } else if(model.getHiddenState(index) == 0) {
+                        bookService.hideBook(model.getBook(index).id);
+                    }    
                     model.setHiddenState(index);
+                }
+                catch (Exception e) {
+                    System.out.println("Some error occurred while trying to hide a book: " + e.getMessage());
                 }
 
                 System.out.println("True value of book with title " + model.getValueAt(index, 0) + ": " + model.getHiddenState(index));
