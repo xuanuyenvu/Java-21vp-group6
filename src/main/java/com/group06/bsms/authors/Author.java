@@ -6,6 +6,9 @@ public class Author {
     public String overview;
     public boolean isHidden;
 
+    public Author() {
+    }
+
     public Author(int id, String name, String overview, boolean isHidden) {
         this.id = id;
         this.name = name;

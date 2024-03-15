@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -59,10 +60,16 @@ public class BookCRUD extends javax.swing.JPanel {
     private void loadBooksIntoTable() {
         try {
             var books = bookService.getAllBooks();
+            if (books == null) throw new NullPointerException();
+
             model.loadNewBooks(books);
             // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
             table.getRowSorter().allRowsChanged();
-        } catch (Throwable e) {
+        } 
+        catch (NullPointerException e) {
+            System.out.println("An error occurred while gettings book information: "+e.getMessage());
+        }
+        catch (Throwable e) {
             System.err.println(e);
         }
     }
@@ -169,16 +176,19 @@ public class BookCRUD extends javax.swing.JPanel {
                 table.setRowSelectionInterval(row, row);
 
                 int index = table.convertRowIndexToModel(row);
-                boolean isSuccessful = false;
-                System.out.println("ROWWWWWW:  " + row);
-                if (model.getHiddenState(index) == 1) {
-                    isSuccessful = bookService.showBook(model.getBook(index).id);
-                } else if (model.getHiddenState(index) == 0) {
-                    isSuccessful = bookService.hideBook(model.getBook(index).id);
-                }
 
-                if (isSuccessful) {
+                System.out.println("ROWWWWWW:  " + row);
+                
+                try {
+                    if (model.getHiddenState(index) == 1) {
+                        bookService.showBook(model.getBook(index).id);
+                    } else if(model.getHiddenState(index) == 0) {
+                        bookService.hideBook(model.getBook(index).id);
+                    }    
                     model.setHiddenState(index);
+                }
+                catch (Exception e) {
+                    System.out.println("Some error occurred while trying to hide a book: " + e.getMessage());
                 }
 
                 System.out.println("True value of book with title " + model.getValueAt(index, 0) + ": " + model.getHiddenState(index));
@@ -310,10 +320,16 @@ public class BookCRUD extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
+        
         var text = searchBar.getText();
-        System.out.println(text);
+        System.out.println("Value in searchBox: "+text);
+        
         List<Book> books = bookService.searchBooks(text);
+
         model.reloadAllBooks(books);
+        // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
+        table.getRowSorter().allRowsChanged();
+    
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed

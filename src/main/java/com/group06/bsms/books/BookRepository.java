@@ -1,9 +1,10 @@
 package com.group06.bsms.books;
 
-import com.google.gson.JsonObject;
 import com.group06.bsms.Repository;
 import com.group06.bsms.authors.Author;
+import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.publishers.Publisher;
+import com.group06.bsms.publishers.PublisherRepository;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -11,75 +12,27 @@ import java.util.List;
 import java.util.Map;
 
 public class BookRepository extends Repository<Book> implements BookDAO {
+    private final AuthorRepository authorRepository;
+    private final PublisherRepository publisherRepository;
+    
     public BookRepository(Connection db) {
         super(db, Book.class);
+        this.authorRepository = new AuthorRepository(db);
+        this.publisherRepository = new PublisherRepository(db);
     }
-    private Author getAuthor(int authorId) 
-            throws Exception {
-        try {
-            db.setAutoCommit(false);
 
-            Author author;
-
-            var query1 = db.prepareStatement("""
-                        select * from author
-                        where id = ?
-                    """);
-            query1.setInt(1, authorId);
-
-            var result = query1.executeQuery();
-
-            if (result.next()) {
-                author = new Author(authorId, result.getString("name"), result.getString("overview"), result.getBoolean("ishidden"));
-            }
-            else throw new Exception("Entity not found");
-
-            db.commit();
-
-            return author;
-
-        } catch (Exception e) {
-            db.rollback();
-            throw e;
-        }
-    }
-    private Publisher getPublisher(int publisherId) 
-            throws Exception {
-        try {
-            db.setAutoCommit(false);
-
-            Publisher publisher;
-
-            var query2 = db.prepareStatement("""
-                        select * from publisher
-                        where id = ?
-                    """);
-            
-            query2.setInt(1, publisherId);
-
-            var result2 = query2.executeQuery();                
-
-            if (result2.next()) {
-                publisher = new Publisher(publisherId, result2.getString("name"), result2.getString("email"), result2.getString("address"), result2.getBoolean("ishidden"));
-            }
-            else throw new Exception("Entity not found");
-
-            return publisher;
-
-        } catch (Exception e) {
-            db.rollback();
-            throw e;
-        }
-    }
     @Override
     public boolean existsBookById(int id) 
             throws Exception {
         try {
             db.setAutoCommit(false);
 
+            Book book = selectById(id);
+
             db.commit();
 
-            return true;
+            if (book == null) return false;
+            else return true;
 
         } catch (Exception e) {
             db.rollback();
@@ -102,8 +55,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             );
 
             for (var book : list) {
-                book.author = getAuthor(book.authorId);
-                book.publisher = getPublisher(book.publisherId);
+                book.author = authorRepository.selectById(book.authorId);
+                book.publisher = publisherRepository.selectById(book.publisherId);
             }
             
             db.commit();
@@ -121,11 +74,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            Map<String,Object> map  = new HashMap<>();
-            map.put("title", title);
+            Map<String,Object> searchParams  = new HashMap<>();
+            searchParams.put("title", title);
     
             var list = selectAll(
-                null,
+                searchParams,
                 0, 10,
                 "title", Sort.ASC,
                 "id","authorid","publisherid","title",
@@ -134,8 +87,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             );
 
             for (var book : list) {
-                book.author = getAuthor(book.authorId);
-                book.publisher = getPublisher(book.publisherId);
+                book.author = authorRepository.selectById(book.authorId);
+                book.publisher = publisherRepository.selectById(book.publisherId);
             }
 
             db.commit();
@@ -172,7 +125,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 throw new Exception("Publisher and/or Author Hidden");
             }
 
-            updateById(id, "ishidden","false");
+            updateById(id, "ishidden", false);
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -190,7 +143,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 throw new Exception("Publisher and/or Author Hidden");
             }
 
-            updateById(id, "isHidden","true");
+            updateById(id, "isHidden",true);
 
             db.commit();
     
@@ -206,8 +159,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
 
             Book book = selectById(id);
-            Author author = getAuthor(book.authorId);
-            Publisher publisher = getPublisher(book.publisherId);
+            Author author = authorRepository.selectById(book.authorId);
+            Publisher publisher = publisherRepository.selectById(book.publisherId);
 
             Integer hiddenParentCount = 0;
             if (author.isHidden) hiddenParentCount += 1;
