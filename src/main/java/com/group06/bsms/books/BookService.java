@@ -1,5 +1,6 @@
 package com.group06.bsms.books;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,31 +27,36 @@ public class BookService {
             List<Book> books = bookDAO.selectBooks(title);
             return books;
         }
-        catch (Exception e) {
-            System.err.println(e);
-            return null;
+        catch (SQLException e) {
+            System.out.println("An error occurred while searching for books: " + e.getMessage());
         }
+        catch (Throwable e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
+        return new ArrayList<Book>();
     }
 
-    public boolean hideBook(int id) {
+    public void hideBook(int id) {
         try {
             bookDAO.hideBook(id);
-            return true;
         }
-        catch (Exception e) {
-            System.err.println(e);
-            return false;
+        catch (SQLException e) {
+            System.out.println("An error occurred while hiding a book: " + e.getMessage());
+        }
+        catch (Throwable e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
         }
     }
 
-    public boolean showBook(int id) {
+    public void showBook(int id) {
         try {
             bookDAO.showBook(id);
-            return true;
         }
-        catch (Exception e) {
-            System.err.println(e);
-            return false;
+        catch (SQLException e) {
+            System.out.println("An error occurred while showing a book: " + e.getMessage());
+        }
+        catch (Throwable e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
         }
     }
 }
