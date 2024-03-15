@@ -353,7 +353,7 @@ public class Repository<Entity extends Object> {
         }
     }
 
-    public void updateById(int id, String attr, String value)
+    public void updateById(int id, String attr, Object value)
             throws Exception {
 
         try {
@@ -368,7 +368,7 @@ public class Repository<Entity extends Object> {
                     + "set " + attr + " = ? where id = ?"
             );
 
-            query.setString(1, value);
+            query.setObject(1, value);
             query.setInt(2, id);
 
             var result = query.executeUpdate();
