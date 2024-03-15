@@ -140,13 +140,16 @@ public class Repository<Entity extends Object> {
             allowedSearches.put("title", "title ilike ?");
             allowedSearches.put("author", "author.name ilike ?");
             allowedSearches.put("publisher", "publisher.name ilike ?");
+            allowedSearches.put("dimension", "dimension ilike ?");
+            allowedSearches.put("translatorname", "translatorname ilike ?");
+            allowedSearches.put("overview", "overview ilike ?");
 
             if (searchParams != null) {
                 conditionQuery.append("where ");
 
                 for (String key : searchParams.keySet()) {
                     if (!isValidIdentifier(key) || !allowedSearches.containsKey(key)) {
-                        throw new Exception("Invalid search attribute");
+                        throw new Exception("Invalid search attribute: "+key);
                     }
                     if (conditionQuery.length() > 6) {
                         conditionQuery.append(" and ");
@@ -185,6 +188,8 @@ public class Repository<Entity extends Object> {
             if (count != null) query.setInt(nParameter++, count);
             query.setInt(nParameter++, start);
 
+            System.out.println(query);
+            
             var resultSet = query.executeQuery();
             var result = new ArrayList<Entity>();
 

@@ -7,6 +7,9 @@ public class Publisher {
     public String address;
     public boolean isHidden;
 
+    public Publisher() {
+    }
+
     public Publisher(int id, String name, String email, String address, boolean isHidden) {
         this.id = id;
         this.name = name;
