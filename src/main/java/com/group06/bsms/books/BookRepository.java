@@ -55,7 +55,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             );
 
             for (var book : list) {
-                book.author = authorRepository.selectById(book.authorId)
+                book.author = authorRepository.selectById(book.authorId);
                 book.publisher = publisherRepository.selectById(book.publisherId);
             }
             
@@ -87,7 +87,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             );
 
             for (var book : list) {
-                book.author = authorRepository.selectById(book.authorId)
+                book.author = authorRepository.selectById(book.authorId);
                 book.publisher = publisherRepository.selectById(book.publisherId);
             }
 
@@ -159,7 +159,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
 
             Book book = selectById(id);
-            Author author = authorRepository.selectById(book.authorId)
+            Author author = authorRepository.selectById(book.authorId);
             Publisher publisher = publisherRepository.selectById(book.publisherId);
 
             Integer hiddenParentCount = 0;
