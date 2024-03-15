@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -167,32 +166,29 @@ public class BookCRUD extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
-                table.setRowSelectionInterval(row, row);
+//                table.setRowSelectionInterval(row, row);
             }
 
             @Override
             public int onHide(int row) {
-                System.out.println("ROWWWWWW:  " + row);
-                table.setRowSelectionInterval(row, row);
+//                table.setRowSelectionInterval(row, row);
 
-                int index = table.convertRowIndexToModel(row);
-
-                System.out.println("ROWWWWWW:  " + row);
+//                int index = table.convertRowIndexToModel(row);
                 
                 try {
-                    if (model.getHiddenState(index) == 1) {
-                        bookService.showBook(model.getBook(index).id);
-                    } else if(model.getHiddenState(index) == 0) {
-                        bookService.hideBook(model.getBook(index).id);
+                    if (model.getHiddenState(row) == 1) {
+                        bookService.showBook(model.getBook(row).id);
+                    } else if(model.getHiddenState(row) == 0) {
+                        bookService.hideBook(model.getBook(row).id);
                     }    
-                    model.setHiddenState(index);
+                    model.setHiddenState(row);
                 }
                 catch (Exception e) {
                     System.out.println("Some error occurred while trying to hide a book: " + e.getMessage());
                 }
 
-                System.out.println("True value of book with title " + model.getValueAt(index, 0) + ": " + model.getHiddenState(index));
-                return model.getHiddenState(index);
+                System.out.println("True value of book with title " + model.getValueAt(row, 0) + ": " + model.getHiddenState(row));
+                return model.getHiddenState(row);
             }
         };
 
@@ -206,7 +202,7 @@ public class BookCRUD extends javax.swing.JPanel {
 
                 if (column == 5) {
                     table.editCellAt(row, column);
-                    table.setRowSelectionInterval(table.convertColumnIndexToModel(row), table.convertColumnIndexToModel(row));
+                    table.setRowSelectionInterval(row, row);
                 }
             }
         });

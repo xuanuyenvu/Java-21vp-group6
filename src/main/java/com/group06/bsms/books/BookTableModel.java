@@ -29,10 +29,10 @@ class TableActionCellEditor extends DefaultCellEditor {
         Component com = super.getTableCellEditorComponent(table, value, isSelected, row, column);
         BookTableModel model = (BookTableModel) table.getModel();
         int isHidden = model.getHiddenState(table.convertRowIndexToModel(row));
-//        int modelRow = table.convertRowIndexToModel(row);
+        int modelRow = table.convertRowIndexToModel(row);
 
         ActionBtn action = new ActionBtn(isHidden);
-        action.initEvent(event, row, isHidden);
+        action.initEvent(event, modelRow, isHidden);
 
         action.setBackground(Color.WHITE);
 
@@ -177,7 +177,7 @@ public class BookTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return (columnIndex == 5);
+        return (columnIndex == 0 || columnIndex == 1 || columnIndex == 2 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5);
     }
 
     public void reloadAllBooks(List<Book> newBooks) {
