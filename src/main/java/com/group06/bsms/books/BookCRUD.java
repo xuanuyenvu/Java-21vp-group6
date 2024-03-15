@@ -15,11 +15,12 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
+import static javax.swing.SortOrder.ASCENDING;
+import static javax.swing.SortOrder.DESCENDING;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
-
 
 public class BookCRUD extends javax.swing.JPanel {
 
@@ -61,8 +62,7 @@ public class BookCRUD extends javax.swing.JPanel {
             model.loadNewBooks(books);
             // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
             table.getRowSorter().allRowsChanged();
-        } 
-        catch (Throwable e) {
+        } catch (Throwable e) {
             System.err.println(e);
         }
     }
@@ -73,7 +73,6 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
 
-        // DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
         table.setRowSorter(sorter);
         sorter.setSortable(5, false);
@@ -83,19 +82,17 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
+        
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component cellRenderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (column == 0) {
-                    setHorizontalAlignment(SwingConstants.LEFT);
-                }
 
                 setBorder(UIManager.getBorder("TableHeader.cellBorder"));
                 setBackground(table.getTableHeader().getBackground());
 
                 if (table.getRowSorter() != null) {
-                    Icon sortIcon = null;
+                    Icon sortIcon = UIManager.getIcon("Table.descendingSortIcon");
                     SortOrder sortOrder = SortOrder.UNSORTED;
                     if (!table.getRowSorter().getSortKeys().isEmpty()) {
                         SortKey sortKey = table.getRowSorter().getSortKeys().get(0);
@@ -121,6 +118,41 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getColumnModel().getColumn(0).setHeaderRenderer(leftRenderer);
         table.getColumnModel().getColumn(1).setHeaderRenderer(leftRenderer);
         table.getColumnModel().getColumn(2).setHeaderRenderer(leftRenderer);
+        
+        DefaultTableCellRenderer centerHeaderRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component cellRenderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+                setBackground(table.getTableHeader().getBackground());
+
+                if (table.getRowSorter() != null) {
+                    Icon sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                    SortOrder sortOrder = SortOrder.UNSORTED;
+                    if (!table.getRowSorter().getSortKeys().isEmpty()) {
+                        SortKey sortKey = table.getRowSorter().getSortKeys().get(0);
+                        if (sortKey.getColumn() == table.convertColumnIndexToModel(column)) {
+                            sortOrder = sortKey.getSortOrder();
+                            switch (sortOrder) {
+                                case ASCENDING ->
+                                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
+                                case DESCENDING ->
+                                    sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                            }
+                        }
+                    }
+                    setIcon(sortIcon);
+                    setHorizontalTextPosition(JLabel.LEFT);
+                    setHorizontalAlignment(JLabel.CENTER);
+                }
+
+                return cellRenderer;
+            }
+        };
+        
+        table.getColumnModel().getColumn(3).setHeaderRenderer(centerHeaderRenderer);
+        table.getColumnModel().getColumn(4).setHeaderRenderer(centerHeaderRenderer);
 
         TableActionEvent event = new TableActionEvent() {
             private boolean isHiddenBtn;
@@ -128,23 +160,23 @@ public class BookCRUD extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
-              table.setRowSelectionInterval(row, row);
+                table.setRowSelectionInterval(row, row);
             }
 
             @Override
             public int onHide(int row) {
                 System.out.println("ROWWWWWW:  " + row);
                 table.setRowSelectionInterval(row, row);
-                
+
                 int index = table.convertRowIndexToModel(row);
                 boolean isSuccessful = false;
                 System.out.println("ROWWWWWW:  " + row);
                 if (model.getHiddenState(index) == 1) {
                     isSuccessful = bookService.showBook(model.getBook(index).id);
-                } else if(model.getHiddenState(index) == 0) {
+                } else if (model.getHiddenState(index) == 0) {
                     isSuccessful = bookService.hideBook(model.getBook(index).id);
                 }
-                
+
                 if (isSuccessful) {
                     model.setHiddenState(index);
                 }
@@ -203,7 +235,7 @@ public class BookCRUD extends javax.swing.JPanel {
         ));
         createBtn.setText("Create");
         createBtn.setToolTipText("");
-        createBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        createBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         createBtn.setIconTextGap(2);
         createBtn.setMargin(new java.awt.Insets(10, 10, 10, 10));
         createBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -218,7 +250,7 @@ public class BookCRUD extends javax.swing.JPanel {
             Color.black, Color.black,
             14, 14));
     filterBtn.setText("Filter");
-    filterBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    filterBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     filterBtn.setIconTextGap(2);
     filterBtn.setMargin(new java.awt.Insets(10, 10, 10, 10));
     filterBtn.addActionListener(new java.awt.event.ActionListener() {
