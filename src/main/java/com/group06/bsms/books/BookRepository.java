@@ -74,11 +74,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            Map<String,Object> map  = new HashMap<>();
-            map.put("title", title);
+            Map<String,Object> searchParams  = new HashMap<>();
+            searchParams.put("title", title);
     
             var list = selectAll(
-                null,
+                searchParams,
                 0, 10,
                 "title", Sort.ASC,
                 "id","authorid","publisherid","title",
