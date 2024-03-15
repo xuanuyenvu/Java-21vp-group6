@@ -1,8 +1,10 @@
 package com.group06.bsms.books;
 
 import com.group06.bsms.authors.Author;
+import com.group06.bsms.category.Category;
 import com.group06.bsms.publishers.Publisher;
 import java.sql.Date;
+import java.util.List;
 
 public class Book {
 
@@ -23,6 +25,8 @@ public class Book {
     public Author author;
     public Publisher publisher;
 
+    public List<Category> categories;
+
     public Book() {
     }
 
@@ -30,7 +34,7 @@ public class Book {
             int authorId, int publisherId, String title, int pageCount,
             Date publishDate, String dimension, String translatorName,
             String overview, int quantity, double salePrice,
-            int hiddenParentCount
+            boolean isHidden, int hiddenParentCount
     ) {
         this.authorId = authorId;
         this.publisherId = publisherId;
@@ -43,6 +47,7 @@ public class Book {
         this.quantity = quantity;
         this.salePrice = salePrice;
         this.hiddenParentCount = hiddenParentCount;
+        this.isHidden = isHidden;
     }
 
     @Override

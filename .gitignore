@@ -1,2 +1,4 @@
 /target/
 /nbproject/
+.vscode/
+.DS_Store
