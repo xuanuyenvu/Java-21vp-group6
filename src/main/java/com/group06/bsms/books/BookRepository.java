@@ -172,7 +172,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 throw new Exception("Publisher and/or Author Hidden");
             }
 
-            updateById(id, "ishidden","false");
+            updateById(id, "ishidden", false);
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -190,7 +190,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 throw new Exception("Publisher and/or Author Hidden");
             }
 
-            updateById(id, "isHidden","true");
+            updateById(id, "isHidden",true);
 
             db.commit();
     
