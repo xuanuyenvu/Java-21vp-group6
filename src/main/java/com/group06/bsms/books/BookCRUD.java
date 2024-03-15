@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -58,10 +59,15 @@ public class BookCRUD extends javax.swing.JPanel {
     private void loadBooksIntoTable() {
         try {
             var books = bookService.getAllBooks();
+            if (books == null) throw new NullPointerException();
+
             model.loadNewBooks(books);
             // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
             table.getRowSorter().allRowsChanged();
         } 
+        catch (NullPointerException e) {
+            System.out.println("An error occurred while gettings book information: "+e.getMessage());
+        }
         catch (Throwable e) {
             System.err.println(e);
         }
