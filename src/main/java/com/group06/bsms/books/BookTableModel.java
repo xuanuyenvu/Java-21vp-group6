@@ -65,7 +65,7 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 public class BookTableModel extends AbstractTableModel {
 
     private List<Book> books = new ArrayList<>();
-    private List<Object> action = new ArrayList<>();
+    private List<Object> actionState = new ArrayList<>();
     private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Actions"};
 
     @Override
@@ -101,7 +101,7 @@ public class BookTableModel extends AbstractTableModel {
             case 4:
                 return book.salePrice;
             case 5:
-                return action.get(row);
+                return actionState.get(row);
             default:
                 return null;
         }
@@ -131,7 +131,7 @@ public class BookTableModel extends AbstractTableModel {
                 book.salePrice = (Double) val;
                 break;
             case 5:
-                action.set(row, (Boolean) val);
+                actionState.set(row, (Boolean) val);
                 break;
             default:
                 break;
@@ -205,7 +205,7 @@ public class BookTableModel extends AbstractTableModel {
 
     void addRow(Book book) {
         books.add(book);
-        action.add(!book.isHidden);
+        actionState.add(!book.isHidden);
         SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
     }
 
