@@ -140,40 +140,28 @@ public class RepositoryTest {
         Repository instance = new Repository<Book>(db, Book.class);
 
         Map<String, Object> searchParams1 = new HashMap<>();
-        searchParams1.put("title", "");
+        searchParams1.put("title", "sample%3");
 
         Map<String, Object> searchParams2 = new HashMap<>();
-        searchParams2.put("title", "Sample%3");
-        
-        // assertEquals(
-        //         instance.selectAll(
-        //                 searchParams1,
-        //                 0, 3,
-        //                 "title", Repository.Sort.ASC,
-        //                 "id", "title"
-        //         )
-        //                 .stream()
-        //                 .map((book) -> ((Book) book).title)
-        //                 .collect(Collectors.toList()),
-        //         Arrays.asList("Sample Book 1", "Sample Book 2", "Sample Book 3")
-        // );
+        searchParams2.put("translatorname", "translator b");
+        searchParams2.put("overview", "captivating");
 
         assertEquals(
                 instance.selectAll(
                         null,
-                        1, 10,
-                        "id", Repository.Sort.DESC,
-                        "id"
+                        0, 3,
+                        "title", Repository.Sort.DESC,
+                        "id", "title"
                 )
                         .stream()
-                        .map((book) -> ((Book) book).id)
+                        .map((book) -> ((Book) book).title)
                         .collect(Collectors.toList()),
-                Arrays.asList(2, 1)
+                Arrays.asList("Sample Book 3", "Sample Book 2", "Sample Book 1")
         );
 
         assertEquals(
                 instance.selectAll(
-                        searchParams2,
+                        searchParams1,
                         0, 10,
                         "title", Repository.Sort.ASC,
                         "id", "title"
@@ -182,6 +170,19 @@ public class RepositoryTest {
                         .map((book) -> ((Book) book).id)
                         .collect(Collectors.toList()),
                 Arrays.asList(3)
+        );
+
+        assertEquals(
+                instance.selectAll(
+                        searchParams2,
+                        0, null,
+                        "title", Repository.Sort.ASC,
+                        "id", "title"
+                )
+                        .stream()
+                        .map((book) -> ((Book) book).id)
+                        .collect(Collectors.toList()),
+                Arrays.asList(2, 3)
         );
 
         assertEquals(
