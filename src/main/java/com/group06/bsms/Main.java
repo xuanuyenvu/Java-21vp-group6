@@ -5,7 +5,7 @@ import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
 import com.group06.bsms.dashboard.Dashboard;
-//import com.group06.bsms.books.BookCRUD;
+import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.books.AddBookInformation;
 import com.group06.bsms.books.UpdateBook;
 import com.group06.bsms.utils.SVGHelper;
@@ -29,12 +29,7 @@ public class Main extends JFrame {
 
         layout = new CardLayout();
         panel.setLayout(layout);
-//        panel.add(new Login(), "login");
-//        panel.add(new BookCRUD(), "Book");
-//        panel.add(new AddBookInformation(), "Category");
-//        panel.add(new Dashboard(), "dashboard");
-        panel.add(new UpdateBook(), "Update Book");
-
+       panel.add(new Login(), "login");
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
         }

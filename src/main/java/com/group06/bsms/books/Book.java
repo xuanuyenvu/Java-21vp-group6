@@ -1,10 +1,10 @@
 package com.group06.bsms.books;
 
-//import com.github.weisj.jsvg.nodes.prototype.spec.Category;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.categories.Category;
-import java.util.*;
+import java.util.Set;
+import java.util.HashSet;
 import java.sql.Date;
 
 public class Book {
@@ -25,12 +25,10 @@ public class Book {
 
     public Author author;
     public Publisher publisher;
-    public List<Category> categories;
+    public Set<Category> categories;
 
-    // for update
     public double maxImportPrice;
 
-    // definition
 
     public Book() {
     }
@@ -51,9 +49,9 @@ public class Book {
         this.quantity = quantity;
         this.salePrice = salePrice;
         this.hiddenParentCount = hiddenParentCount;
-        this.isHidden = true;
+        this.isHidden = false;
         this.maxImportPrice = maxImportPrice;
-        categories = null;
+        categories = new HashSet();
     }
 
     @Override

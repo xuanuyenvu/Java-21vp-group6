@@ -109,7 +109,6 @@ insert into Publisher (name, email, address, isHidden) values
     ('Publisher A', 'publisherA@example.com', '123 Main St', false),
     ('Publisher B', 'publisherB@example.com', '456 Oak Ave', true);
 
-
 insert into Book (
     title, authorId, publisherId, pageCount, dimension, translatorName,
     overview, quantity, salePrice, hiddenParentCount, publishdate, maxImportPrice

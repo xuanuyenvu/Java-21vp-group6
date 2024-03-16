@@ -1,6 +1,5 @@
 package com.group06.bsms.books;
 
-import java.sql.Date;
 import java.util.List;
 
 public interface BookDAO {
@@ -11,7 +10,7 @@ public interface BookDAO {
     //post 
     void createBook(Book book) throws Exception;
     //put 
-    void update(Book book) throws Exception;
+    void updateBook(Book book) throws Exception;
     void enableBook(int id) throws Exception;
     void disableBook(int id) throws Exception;
     void updateHiddenParentCount(int id) throws Exception;

@@ -8,6 +8,7 @@ import com.group06.bsms.publishers.Publisher;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.util.List;
 
@@ -17,53 +18,51 @@ public class BookRepository extends Repository<Book> implements BookDAO {
     }
 
     @Override
-    public void update(Book book) throws Exception {
+    public void updateBook(Book book) throws Exception {
         try {
             db.setAutoCommit(false);
 
-            var updateBookInforQuery = db.prepareStatement(
+            var updateBookQuery = db.prepareStatement(
                     "UPDATE books SET authorId=?, publisherId=?, title=?, pageCount=?, publishDate=?, dimension=?, translatorName=?, overview=?, quantity=?, salePrice=?, hiddenParentCount=?, WHERE id=?");
 
-            updateBookInforQuery.setInt(1, book.authorId);
-            updateBookInforQuery.setInt(2, book.publisherId);
-            updateBookInforQuery.setString(3, book.title);
-            updateBookInforQuery.setInt(4, book.pageCount);
-            updateBookInforQuery.setDate(5, book.publishDate);
-            updateBookInforQuery.setString(6, book.dimension);
-            updateBookInforQuery.setString(7, book.translatorName);
-            updateBookInforQuery.setString(8, book.overview);
-            updateBookInforQuery.setInt(9, book.quantity);
-            updateBookInforQuery.setDouble(10, book.salePrice);
-            updateBookInforQuery.setInt(11, book.hiddenParentCount);
-            updateBookInforQuery.setInt(13, book.id);
+            updateBookQuery.setInt(1, book.authorId);
+            updateBookQuery.setInt(2, book.publisherId);
+            updateBookQuery.setString(3, book.title);
+            updateBookQuery.setInt(4, book.pageCount);
+            updateBookQuery.setDate(5, book.publishDate);
+            updateBookQuery.setString(6, book.dimension);
+            updateBookQuery.setString(7, book.translatorName);
+            updateBookQuery.setString(8, book.overview);
+            updateBookQuery.setInt(9, book.quantity);
+            updateBookQuery.setDouble(10, book.salePrice);
+            updateBookQuery.setInt(11, book.hiddenParentCount);
+            updateBookQuery.setInt(13, book.id);
 
-            var updateBookInforResult = updateBookInforQuery.executeUpdate();
+            var updateBookResult = updateBookQuery.executeUpdate();
 
-            StringBuilder queryStringBuilder = new StringBuilder();
-            int bookId = book.id;
-
-            for (Category category : book.categories) {
-                String categoryId = category.id;
-                
-                queryStringBuilder.append("INSERT INTO bookCategory (bookId, categoryId) VALUES (")
-                        .append(bookId)
-                        .append(", ")
-                        .append(categoryId)
-                        .append(");")
-                        .append(System.lineSeparator()); 
+            int addBookCategoryResults[] = null;
+            if (!book.categories.isEmpty()) {
+                String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES VALUES (?, ?)";
+                var addBookCategoryStatement = db.prepareStatement(insertQuery);
+                for (Category category : book.categories) {
+                    addBookCategoryStatement.setInt(1, book.id);
+                    addBookCategoryStatement.setInt(1, category.id);
+                }
+                addBookCategoryResults = addBookCategoryStatement.executeBatch();
             }
-            var addBookCategoryQuery = db.prepareStatement(queryStringBuilder.toString());
-            var addBookCategoryResult = addBookCategoryQuery.executeUpdate();
 
             db.commit();
 
-            if (updateBookInforResult == 0) {
+            if (updateBookResult == 0) {
                 throw new Exception("Entity not found");
             }
 
-            if(addBookCategoryResult == 0){
-                throw new Exception("Cannot update book's categories");
+            for (int addBookCategoryResult : addBookCategoryResults) {
+                if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED)
+                    throw new Exception("Cannot update book's categories");
             }
+
+            
         } catch (Exception e) {
             db.rollback();
             throw e;
