@@ -420,6 +420,8 @@ public class UpdateBook extends javax.swing.JPanel {
         Object pages = pagesSpinner.getValue();
         String translator = translatorField.getText();
         String overview = overviewTextArea.getText();
+        String importPrice = importPriceField.getText();
+        String salePrice = salePriceField.getText();
         
 
         if (!title.isEmpty() && !author.isEmpty()
@@ -440,6 +442,8 @@ public class UpdateBook extends javax.swing.JPanel {
                     + pages + "; "
                     + translator + "; "
                     + overview + "; "
+                    + importPrice + "; "
+                    + salePrice + "; "
                     ;
             System.out.print(newBookInfo);
         } else {
@@ -470,10 +474,6 @@ public class UpdateBook extends javax.swing.JPanel {
     private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
     }//GEN-LAST:event_backButtonMouseExited
-
-    private void titleFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_titleFieldActionPerformed
 
     private void salePriceFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_salePriceFieldKeyTyped
         // TODO add your handling code here:
