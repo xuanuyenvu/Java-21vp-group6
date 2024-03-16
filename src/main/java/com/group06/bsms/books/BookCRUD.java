@@ -2,83 +2,31 @@ package com.group06.bsms.books;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
+import com.group06.bsms.components.ActionBtn;
+import com.group06.bsms.components.TableActionEvent;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
+import static javax.swing.SortOrder.ASCENDING;
+import static javax.swing.SortOrder.DESCENDING;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-interface TableActionEvent {
-
-    public void setIsHiddenBtn(boolean isHiddenBtn);
-
-    public boolean isIsHiddenBtn();
-
-    public void onEdit(int row);
-
-    public boolean onHide(int row);
-}
-
-class TableActionCellEditor extends DefaultCellEditor {
-
-    private final TableActionEvent event;
-
-    public TableActionCellEditor(TableActionEvent event) {
-        super(new JCheckBox());
-        this.event = event;
-    }
-
-    @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        BookTableModel model = (BookTableModel) table.getModel();
-        row = table.convertRowIndexToModel(row);
-        Boolean isHidden = (Boolean) model.getHiddenState(row);
-        System.out.println("Hover row with title "+model.getValueAt(row, 0)+", Editor hide: "+isHidden);
-        // System.out.println("Row: " + row + " Editor hide: " + isHidden);
-
-        ActionBtn action = new ActionBtn(isHidden);
-        action.initEvent(event, row, isHidden);
-        action.setBackground(Color.WHITE);
-
-        return action;
-    }
-
-}
-
-class TableActionCellRender extends DefaultTableCellRenderer {
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        int modelRow = table.convertRowIndexToModel(row);
-        boolean isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
-        System.out.println("Row: " + row + " Render: " + isHidden);
-        
-        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        ActionBtn action = new ActionBtn(isHidden);
-        action.setBackground(com.getBackground());
-        return action;
-    }
-}
-
 public class BookCRUD extends javax.swing.JPanel {
+
     private final BookService bookService;
     private BookTableModel model;
-    
+
     public BookCRUD() {
         this(new BookService(new BookRepository(DB.db())));
     }
@@ -111,10 +59,16 @@ public class BookCRUD extends javax.swing.JPanel {
     private void loadBooksIntoTable() {
         try {
             var books = bookService.getAllBooks();
+            if (books == null) throw new NullPointerException();
+
             model.loadNewBooks(books);
             // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
             table.getRowSorter().allRowsChanged();
-        } catch (Exception e) {
+        } 
+        catch (NullPointerException e) {
+            System.out.println("An error occurred while gettings book information: "+e.getMessage());
+        }
+        catch (Throwable e) {
             System.err.println(e);
         }
     }
@@ -125,42 +79,36 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
 
-        // DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
         table.setRowSorter(sorter);
         sorter.setSortable(5, false);
-            
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
+        
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (column == 0) {
-                    setHorizontalAlignment(SwingConstants.LEFT);
-                }
+                Component cellRenderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
                 setBorder(UIManager.getBorder("TableHeader.cellBorder"));
                 setBackground(table.getTableHeader().getBackground());
 
                 if (table.getRowSorter() != null) {
-                    Icon sortIcon = null;
+                    Icon sortIcon = UIManager.getIcon("Table.descendingSortIcon");
                     SortOrder sortOrder = SortOrder.UNSORTED;
-                    if (table.getRowSorter().getSortKeys().size() > 0) {
+                    if (!table.getRowSorter().getSortKeys().isEmpty()) {
                         SortKey sortKey = table.getRowSorter().getSortKeys().get(0);
                         if (sortKey.getColumn() == table.convertColumnIndexToModel(column)) {
                             sortOrder = sortKey.getSortOrder();
                             switch (sortOrder) {
-                                case ASCENDING:
+                                case ASCENDING ->
                                     sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
-                                    break;
-                                case DESCENDING:
+                                case DESCENDING ->
                                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
-                                    break;
                             }
                         }
                     }
@@ -169,53 +117,96 @@ public class BookCRUD extends javax.swing.JPanel {
                     setHorizontalAlignment(JLabel.LEFT);
                 }
 
-                return c;
+                return cellRenderer;
             }
         };
 
         table.getColumnModel().getColumn(0).setHeaderRenderer(leftRenderer);
         table.getColumnModel().getColumn(1).setHeaderRenderer(leftRenderer);
         table.getColumnModel().getColumn(2).setHeaderRenderer(leftRenderer);
+        
+        DefaultTableCellRenderer centerHeaderRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component cellRenderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+                setBackground(table.getTableHeader().getBackground());
+
+                if (table.getRowSorter() != null) {
+                    Icon sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                    SortOrder sortOrder = SortOrder.UNSORTED;
+                    if (!table.getRowSorter().getSortKeys().isEmpty()) {
+                        SortKey sortKey = table.getRowSorter().getSortKeys().get(0);
+                        if (sortKey.getColumn() == table.convertColumnIndexToModel(column)) {
+                            sortOrder = sortKey.getSortOrder();
+                            switch (sortOrder) {
+                                case ASCENDING ->
+                                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
+                                case DESCENDING ->
+                                    sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                            }
+                        }
+                    }
+                    setIcon(sortIcon);
+                    setHorizontalTextPosition(JLabel.LEFT);
+                    setHorizontalAlignment(JLabel.CENTER);
+                }
+
+                return cellRenderer;
+            }
+        };
+        
+        table.getColumnModel().getColumn(3).setHeaderRenderer(centerHeaderRenderer);
+        table.getColumnModel().getColumn(4).setHeaderRenderer(centerHeaderRenderer);
 
         TableActionEvent event = new TableActionEvent() {
             private boolean isHiddenBtn;
 
             @Override
-            public void setIsHiddenBtn(boolean isHiddenBtn) {
-                this.isHiddenBtn = isHiddenBtn;
-            }
-
-            @Override
-            public boolean isIsHiddenBtn() {
-                return isHiddenBtn;
-            }
-
-            @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
+//                table.setRowSelectionInterval(row, row);
             }
 
             @Override
-            public boolean onHide(int row) {   
-                System.out.println("Hide book with title "+model.getValueAt(row, 0));       
-                model.setHiddenState(row);
+            public int onHide(int row) {
+//                table.setRowSelectionInterval(row, row);
+
+//                int index = table.convertRowIndexToModel(row);
+                
+                try {
+                    if (model.getHiddenState(row) == 1) {
+                        bookService.showBook(model.getBook(row).id);
+                    } else if(model.getHiddenState(row) == 0) {
+                        bookService.hideBook(model.getBook(row).id);
+                    }    
+                    model.setHiddenState(row);
+                }
+                catch (Exception e) {
+                    System.out.println("Some error occurred while trying to hide a book: " + e.getMessage());
+                }
+
                 System.out.println("True value of book with title " + model.getValueAt(row, 0) + ": " + model.getHiddenState(row));
                 return model.getHiddenState(row);
             }
         };
 
         table.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
-        table.addMouseMotionListener(new MouseAdapter() {
-           @Override
-           public void mouseMoved(MouseEvent e) {
-               int row = table.rowAtPoint(e.getPoint());
-               int column = table.columnAtPoint(e.getPoint());
 
-               if (column == 5) {
-                   table.editCellAt(table.convertColumnIndexToModel(row), column);
-               }
-           }
-       });
+        table.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int column = table.columnAtPoint(e.getPoint());
+
+                if (column == 5) {
+                    table.editCellAt(row, column);
+                    table.setRowSelectionInterval(row, row);
+                }
+            }
+        });
+
     }
 
     @SuppressWarnings("unchecked")
@@ -277,7 +268,6 @@ public class BookCRUD extends javax.swing.JPanel {
     table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
     table.setModel(this.model);
     table.setToolTipText("");
-    table.setFocusable(false);
     table.setRowHeight(40);
     table.getTableHeader().setReorderingAllowed(false);
     scrollBar.setViewportView(table);
@@ -326,19 +316,24 @@ public class BookCRUD extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
-        // TODO add your handling code here:
+        
         var text = searchBar.getText();
-        System.out.println(text);
+        System.out.println("Value in searchBox: "+text);
+        
         List<Book> books = bookService.searchBooks(text);
+
         model.reloadAllBooks(books);
+        // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
+        table.getRowSorter().allRowsChanged();
+    
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_createBtnActionPerformed
 
     private void filterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBtnActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_filterBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

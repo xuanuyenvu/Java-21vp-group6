@@ -1,6 +1,7 @@
 package com.group06.bsms.books;
 
 import com.group06.bsms.authors.Author;
+import com.group06.bsms.category.Category;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.categories.Category;
 import java.util.Set;
@@ -29,7 +30,6 @@ public class Book {
 
     public double maxImportPrice;
 
-
     public Book() {
     }
 
@@ -37,7 +37,8 @@ public class Book {
             int authorId, int publisherId, String title, int pageCount,
             Date publishDate, String dimension, String translatorName,
             String overview, int quantity, double salePrice,
-            int hiddenParentCount, int maxImportPrice) {
+            boolean isHidden, int hiddenParentCount, int maxImportPrice
+    ) {
         this.authorId = authorId;
         this.publisherId = publisherId;
         this.title = title;
@@ -49,9 +50,9 @@ public class Book {
         this.quantity = quantity;
         this.salePrice = salePrice;
         this.hiddenParentCount = hiddenParentCount;
-        this.isHidden = false;
+        this.isHidden = isHidden;
         this.maxImportPrice = maxImportPrice;
-        categories = new HashSet();
+        categories = new HashSet<Category>();
     }
 
     @Override

@@ -6,6 +6,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -58,7 +60,7 @@ public class RepositoryTest {
         var book = new Book(
                 1, 1, "Sample Book 4", 5,
                 Date.valueOf(LocalDate.of(2020, 5, 3)),
-                "6x9", "Dank", "Boring", 1, 10, 3,0
+                "6x9", "Dank", "Boring", 1, 10, false, 3,0
         );
         book.id = 4;
 
@@ -67,7 +69,7 @@ public class RepositoryTest {
                 "id",
                 "authorId", "publisherId", "title", "pageCount", "publishDate",
                 "dimension", "translatorName", "overview", "quantity",
-                "salePrice", "hiddenParentCount", "maxImportPrice"
+                "salePrice", "isHidden", "hiddenParentCount", "maxImportPrice"
         );
 
         assertTrue(instance.existsById(4));
@@ -134,6 +136,70 @@ public class RepositoryTest {
     }
 
     @Test
+    public void testSelectAllWithMultipleSearchParams() throws Exception {
+        Repository instance = new Repository<Book>(db, Book.class);
+
+        Map<String, Object> searchParams1 = new HashMap<>();
+        searchParams1.put("title", "sample%3");
+
+        Map<String, Object> searchParams2 = new HashMap<>();
+        searchParams2.put("translatorname", "translator b");
+        searchParams2.put("overview", "captivating");
+
+        assertEquals(
+                instance.selectAll(
+                        null,
+                        0, 3,
+                        "title", Repository.Sort.DESC,
+                        "id", "title"
+                )
+                        .stream()
+                        .map((book) -> ((Book) book).title)
+                        .collect(Collectors.toList()),
+                Arrays.asList("Sample Book 3", "Sample Book 2", "Sample Book 1")
+        );
+
+        assertEquals(
+                instance.selectAll(
+                        searchParams1,
+                        0, 10,
+                        "title", Repository.Sort.ASC,
+                        "id", "title"
+                )
+                        .stream()
+                        .map((book) -> ((Book) book).id)
+                        .collect(Collectors.toList()),
+                Arrays.asList(3)
+        );
+
+        assertEquals(
+                instance.selectAll(
+                        searchParams2,
+                        0, null,
+                        "title", Repository.Sort.ASC,
+                        "id", "title"
+                )
+                        .stream()
+                        .map((book) -> ((Book) book).id)
+                        .collect(Collectors.toList()),
+                Arrays.asList(2, 3)
+        );
+
+        assertEquals(
+                instance.selectAll(
+                        null,
+                        0, null,
+                        "id", Repository.Sort.ASC,
+                        "id", "title"
+                )
+                        .stream()
+                        .map((book) -> ((Book) book).id)
+                        .collect(Collectors.toList()),
+                Arrays.asList(1, 2, 3)
+        );
+    }
+
+    @Test
     public void testSelectById() throws Exception {
         Repository instance = new Repository<Book>(db, Book.class);
 
@@ -152,7 +218,7 @@ public class RepositoryTest {
         var book = new Book(
                 1, 1, "Sample Book 4", 5,
                 Date.valueOf(LocalDate.of(2020, 5, 3)),
-                "6x9", "Dank", "Boring", 1, 10, 3, 0
+                "6x9", "Dank", "Boring", 1, 10,false, 3, 0
         );
         book.id = 4;
 

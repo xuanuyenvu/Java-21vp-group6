@@ -3,18 +3,17 @@ package com.group06.bsms.books;
 import java.util.List;
 
 public interface BookDAO {
-    //get 
+
     boolean existsBookById(int id) throws Exception;
+    
     List<Book> selectAllBooks() throws Exception;
-    List<Book> selectBook(String title) throws Exception;
-    //post 
-    void createBook(Book book) throws Exception;
-    //put 
+    List<Book> selectBooks(String title) throws Exception;
+    void insertBook(Book book) throws Exception;
+    void showBook(int id) throws Exception;
+    void hideBook(int id) throws Exception;  
     void updateBook(Book book) throws Exception;
-    void enableBook(int id) throws Exception;
-    void disableBook(int id) throws Exception;
-    void updateHiddenParentCount(int id) throws Exception;
-    void updateHiddenParentCountByAuthorId(int authorId) throws Exception;
-    void updateHiddenParentCountByPublisherId(int publisherId) throws Exception;
+    void updateBookHiddenParentCount(int id) throws Exception;
+    void updateBookHiddenParentCountByAuthorId(int authorId) throws Exception;
+    void updateBookHiddenParentCountByPublisherId(int publisherId) throws Exception;
     
 }
