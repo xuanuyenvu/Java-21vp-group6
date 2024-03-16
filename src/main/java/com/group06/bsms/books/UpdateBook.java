@@ -406,6 +406,8 @@ public class UpdateBook extends javax.swing.JPanel {
         pagesSpinner.setValue(0);
         translatorField.setText("");
         overviewTextArea.setText("");
+        importPriceField.setText("");
+        salePriceField.setText("");
         
     }//GEN-LAST:event_cancelButtonActionPerformed
 
