@@ -5,6 +5,7 @@ import com.group06.bsms.authors.Author;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.publishers.PublisherRepository;
+import com.group06.bsms.categories.Category;
 
 import java.sql.Connection;
 import java.sql.Date;

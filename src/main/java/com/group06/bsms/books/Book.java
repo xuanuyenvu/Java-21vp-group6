@@ -1,7 +1,6 @@
 package com.group06.bsms.books;
 
 import com.group06.bsms.authors.Author;
-import com.group06.bsms.category.Category;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.categories.Category;
 import java.util.Set;

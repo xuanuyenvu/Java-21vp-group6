@@ -11,12 +11,14 @@ public class BookService {
         this.bookDAO = bookDAO;
     }
 
-    public void update(Book book) throws Exception, IllegalArgumentException {
+    public void updateBook(Book book) throws Exception, IllegalArgumentException {
         try {
             if (book == null)
                 throw new IllegalArgumentException("Book object cannot be null");
+            if (Double.valueOf(book.maxImportPrice) == null && Double.valueOf(book.salePrice) != null)
+                throw new Exception("Cannot update sale price because the maximum import price is null");
             if (book.salePrice >= 1.1 * book.maxImportPrice)
-                throw new Exception("Sale price must bigger than 1.1 * max import price");
+                throw new Exception("Sale price must be bigger than 1.1 * maximum import price");
 
             bookDAO.updateBook(book);
         } catch (Exception e) {
