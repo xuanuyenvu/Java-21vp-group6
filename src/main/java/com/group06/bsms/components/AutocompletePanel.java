@@ -47,6 +47,7 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
         autoCompleteButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         autoCompleteButton.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        autoCompleteButton.setOpaque(true);
         autoCompleteButton.setPreferredSize(new java.awt.Dimension(72, 31));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

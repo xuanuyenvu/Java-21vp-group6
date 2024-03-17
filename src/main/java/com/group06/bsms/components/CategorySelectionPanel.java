@@ -8,6 +8,7 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
     private CategorySelectionListener listener;
     ArrayList<String> listSelected = null;
+    private int count = 0;
 
     public CategorySelectionPanel() {
         initComponents();
@@ -32,6 +33,7 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
                 createToggleButton(categorySelected);
             }
         }
+
     }
 
     public void deleteCategory(String name) {
@@ -71,7 +73,6 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     private void notifyListener() {
         if (listener != null) {
             listener.onCategoriesChanged(listSelected.size());
-            System.out.println("duoc goi ne");
         }
     }
 
@@ -88,14 +89,18 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         addButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         addButton.setToolTipText("Add category");
         addButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        addButton.setDoubleBuffered(true);
-        addButton.setLightWeightPopupEnabled(false);
-        addButton.setMinimumSize(new java.awt.Dimension(29, 32));
+        addButton.setMinimumSize(new java.awt.Dimension(30, 32));
         addButton.setName(""); // NOI18N
-        addButton.setPreferredSize(new java.awt.Dimension(29, 32));
+        addButton.setOpaque(true);
+        addButton.setPreferredSize(new java.awt.Dimension(30, 32));
         addButton.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 addButtonItemStateChanged(evt);
+            }
+        });
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
             }
         });
 
@@ -124,20 +129,27 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_addButtonItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String newCategory = String.valueOf(addButton.getSelectedItem());
-            System.out.println("do ko");
-            if (!listSelected.contains(newCategory)) {
-                listSelected.add(newCategory);
-                createToggleButton(newCategory);
+        if (count == 0) {
+            count++;
+        } else {
+            if (evt.getStateChange() == ItemEvent.SELECTED) {
+                String newCategory = String.valueOf(addButton.getSelectedItem());
+                if (!listSelected.contains(newCategory)) {
+                    listSelected.add(newCategory);
+                    createToggleButton(newCategory);
 
-                categoriesPanel.revalidate();
-                categoriesPanel.repaint();
+                    categoriesPanel.revalidate();
+                    categoriesPanel.repaint();
 
-                notifyListener();
+                    notifyListener();
+                }
             }
         }
     }//GEN-LAST:event_addButtonItemStateChanged
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+
+    }//GEN-LAST:event_addButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> addButton;

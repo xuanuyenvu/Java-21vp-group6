@@ -13,11 +13,7 @@ public class CategoryButton extends javax.swing.JPanel {
         initComponents();
         this.categorySelectionPanel = categorySelectionPanel;
 
-        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.gray, 14, 14));
-        deleteButton.setToolTipText("Delete");
-
         categoryName.setText(name);
-
         Dimension newSize = new Dimension(categoryName.getPreferredSize().width + 67, 28);
         this.setPreferredSize(newSize);
     }
@@ -30,7 +26,7 @@ public class CategoryButton extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         deleteButton = new javax.swing.JButton();
 
-        setBackground(UIManager.getColor("subBackground"));
+        setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(32767, 33));
         setMinimumSize(new java.awt.Dimension(50, 33));
         setPreferredSize(new java.awt.Dimension(60, 33));
@@ -44,10 +40,10 @@ public class CategoryButton extends javax.swing.JPanel {
         deleteButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         deleteButton.setIcon(SVGHelper.createSVGIconWithFilter(
             "icons/close.svg", 
-            Color.white, Color.black, 
+            Color.black, Color.black, 
             14, 14
         ));
-        deleteButton.setToolTipText("delete");
+        deleteButton.setToolTipText("Delete");
         deleteButton.setBorderPainted(false);
         deleteButton.setContentAreaFilled(false);
         deleteButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -100,11 +96,11 @@ public class CategoryButton extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void deleteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseEntered
-//        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.gray, Color.gray, 14, 14));
+        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.gray, 14, 14));
     }//GEN-LAST:event_deleteButtonMouseEntered
 
     private void deleteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseExited
-//        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.white, Color.black, 14, 14));
+        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.black, 14, 14));
     }//GEN-LAST:event_deleteButtonMouseExited
 
 
