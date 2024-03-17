@@ -1,33 +1,24 @@
-package com.group06.bsms.books;
+package com.group06.bsms.components;
 
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import javax.swing.JPanel;
 
 public class ActionBtn extends javax.swing.JPanel {
 
-    private Boolean hiddenBtn;
+    private int hidden;
 
-    public void setIsHideBtnHidden(boolean isHidden) {
-        this.hiddenBtn = isHidden;
-    }
-
-    public boolean isIsHideBtnHidden() {
-        return hiddenBtn;
-    }
-
-    public ActionBtn(boolean isHidden) {
+    public ActionBtn(int isHidden) {
         initComponents();
-        this.hiddenBtn = isHidden;
+        this.hidden = isHidden;
         updateHideButtonAppearance();
     }
 
-    public void initEvent(TableActionEvent event, int row, boolean isHidden) {
-
-        this.hiddenBtn = isHidden;
+    public void initEvent(TableActionEvent event, int row, int isHidden) {
+        this.hidden = isHidden;
 
         updateHideButtonAppearance();
-        System.out.println("Action panel init, isHidden value: " + isHidden);
 
         editBtn.addActionListener((ActionEvent e) -> {
             System.out.println("Edit button clicked!!!");
@@ -36,19 +27,27 @@ public class ActionBtn extends javax.swing.JPanel {
 
         hideBtn.addActionListener((ActionEvent e) -> {
             System.out.println("Hide button clicked!!!");
-            hiddenBtn = (event.onHide(row));
+            hidden = (event.onHide(row));
 
             updateHideButtonAppearance();
         });
     }
 
     private void updateHideButtonAppearance() {
-        if (hiddenBtn) {
-            hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
-            hideBtn.setToolTipText("Unhide");
-        } else {
-            hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/hide.svg", Color.black, Color.black, 14, 14));
-            hideBtn.setToolTipText("Hide");
+        switch (hidden) {
+            case 1:
+                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
+                hideBtn.setToolTipText("Unhide");
+                break;
+            case 0:
+                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/hide.svg", Color.black, Color.black, 14, 14));
+                hideBtn.setToolTipText("Hide");
+                break;
+            default:
+                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
+                hideBtn.setEnabled(false);
+                hideBtn.setToolTipText("Hidden due to Book \nAuthor/Publisher/Category\nbeing hidden");
+                break;
         }
     }
 
@@ -115,13 +114,11 @@ public class ActionBtn extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void editBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editBtnActionPerformed
-        // TODO add your handling code here:
-        System.out.println("Edit button clicked");
 
     }//GEN-LAST:event_editBtnActionPerformed
 
     private void hideBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideBtnActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_hideBtnActionPerformed
 
 
