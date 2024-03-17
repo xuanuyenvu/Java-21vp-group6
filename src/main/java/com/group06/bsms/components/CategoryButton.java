@@ -3,6 +3,7 @@ package com.group06.bsms.components;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Dimension;
+import javax.swing.UIManager;
 
 public class CategoryButton extends javax.swing.JPanel {
 
@@ -29,7 +30,7 @@ public class CategoryButton extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         deleteButton = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(UIManager.getColor("subBackground"));
         setMaximumSize(new java.awt.Dimension(32767, 33));
         setMinimumSize(new java.awt.Dimension(50, 33));
         setPreferredSize(new java.awt.Dimension(60, 33));
@@ -41,6 +42,11 @@ public class CategoryButton extends javax.swing.JPanel {
         jSeparator1.setPreferredSize(new java.awt.Dimension(7, 40));
 
         deleteButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/close.svg", 
+            Color.white, Color.black, 
+            14, 14
+        ));
         deleteButton.setToolTipText("delete");
         deleteButton.setBorderPainted(false);
         deleteButton.setContentAreaFilled(false);
@@ -84,7 +90,7 @@ public class CategoryButton extends javax.swing.JPanel {
                         .addContainerGap()
                         .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(3, 3, 3))
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -94,11 +100,11 @@ public class CategoryButton extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void deleteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseEntered
-        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.black, 14, 14));
+//        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.gray, Color.gray, 14, 14));
     }//GEN-LAST:event_deleteButtonMouseEntered
 
     private void deleteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseExited
-        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.gray, 14, 14));
+//        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.white, Color.black, 14, 14));
     }//GEN-LAST:event_deleteButtonMouseExited
 
 

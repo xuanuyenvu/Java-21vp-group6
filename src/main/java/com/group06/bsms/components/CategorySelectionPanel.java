@@ -1,23 +1,23 @@
 package com.group06.bsms.components;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 
 public class CategorySelectionPanel extends javax.swing.JPanel {
 
+    private CategorySelectionListener listener;
     ArrayList<String> listSelected = null;
-    private int heightPanel = 0;
 
     public CategorySelectionPanel() {
         initComponents();
         listSelected = new ArrayList<>();
-        addButton.setToolTipText("Add category");
     }
 
     private void createToggleButton(String name) {
         CategoryButton categoryButton = new CategoryButton(this, name);
         categoryButton.putClientProperty(FlatClientProperties.STYLE, "arc: 36;");
-        add(categoryButton);
+        categoriesPanel.add(categoryButton);
     }
 
     public void updateList(ArrayList<String> listUnselected, ArrayList<String> currentCategories) {
@@ -36,9 +36,11 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
     public void deleteCategory(String name) {
         listSelected.remove(name);
-        heightPanel = 45 * ((int) (listSelected.size() / 3) + 1);
-        revalidate();
-        repaint();
+
+        categoriesPanel.revalidate();
+        categoriesPanel.repaint();
+
+        notifyListener();
     }
 
     public String getText() {
@@ -58,12 +60,19 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         }
     }
 
-    public int getHeightPanel() {
-        return heightPanel;
-    }
-
     public void setEmptyList() {
         listSelected.clear();
+    }
+
+    public <T extends CategorySelectionListener> void setCategorySelectionListener(T listener) {
+        this.listener = listener;
+    }
+
+    private void notifyListener() {
+        if (listener != null) {
+            listener.onCategoriesChanged(listSelected.size());
+            System.out.println("duoc goi ne");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -71,38 +80,67 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         addButton = new javax.swing.JComboBox<>();
+        categoriesPanel = new javax.swing.JPanel();
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 7, 6));
+        setPreferredSize(new java.awt.Dimension(0, 0));
 
         addButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        addButton.setToolTipText("");
-        addButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        addButton.setToolTipText("Add category");
+        addButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        addButton.setDoubleBuffered(true);
+        addButton.setLightWeightPopupEnabled(false);
         addButton.setMinimumSize(new java.awt.Dimension(29, 32));
         addButton.setName(""); // NOI18N
         addButton.setPreferredSize(new java.awt.Dimension(29, 32));
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
+        addButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                addButtonItemStateChanged(evt);
             }
         });
-        add(addButton);
+
+        categoriesPanel.setMinimumSize(new java.awt.Dimension(0, 0));
+        categoriesPanel.setPreferredSize(new java.awt.Dimension(0, 0));
+        categoriesPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 6, 6));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addComponent(categoriesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(4, 4, 4)
+                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(categoriesPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        String newCategory = String.valueOf(addButton.getSelectedItem());
-        System.out.println("do ko");
-        if (!listSelected.contains(newCategory)) {
-            listSelected.add(newCategory);
-            createToggleButton(newCategory);
+    private void addButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_addButtonItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            String newCategory = String.valueOf(addButton.getSelectedItem());
+            System.out.println("do ko");
+            if (!listSelected.contains(newCategory)) {
+                listSelected.add(newCategory);
+                createToggleButton(newCategory);
 
-            heightPanel = 45 * ((int) (listSelected.size() / 3) + 1);
-            revalidate();
-            repaint();
+                categoriesPanel.revalidate();
+                categoriesPanel.repaint();
+
+                notifyListener();
+            }
         }
-    }//GEN-LAST:event_addButtonActionPerformed
+    }//GEN-LAST:event_addButtonItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> addButton;
+    private javax.swing.JPanel categoriesPanel;
     // End of variables declaration//GEN-END:variables
 }
