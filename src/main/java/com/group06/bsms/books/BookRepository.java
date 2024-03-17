@@ -18,13 +18,13 @@ import java.util.Map;
 public class BookRepository extends Repository<Book> implements BookDAO {
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
-    
+
     public BookRepository(Connection db) {
         super(db, Book.class);
         this.authorRepository = new AuthorRepository(db);
         this.publisherRepository = new PublisherRepository(db);
     }
-    
+
     @Override
     public void updateBook(Book book) throws Exception {
         try {
@@ -70,7 +70,6 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     throw new Exception("Cannot update book's categories");
             }
 
-            
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -87,8 +86,10 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
             db.commit();
 
-            if (book == null) return false;
-            else return true;
+            if (book == null)
+                return false;
+            else
+                return true;
 
         } catch (Exception e) {
             db.rollback();
@@ -103,13 +104,12 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
 
             var list = selectAll(
-                null,
-                0, 10,
-                "title", Sort.ASC,
-                "id","authorid","publisherid","title",
-                "quantity","saleprice",
-                "ishidden", "hiddenparentcount"
-            );
+                    null,
+                    0, 10,
+                    "title", Sort.ASC,
+                    "id", "authorid", "publisherid", "title",
+                    "quantity", "saleprice",
+                    "ishidden", "hiddenparentcount");
 
             for (var book : list) {
                 book.author = authorRepository.selectById(book.authorId);
@@ -132,17 +132,16 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            Map<String,Object> searchParams  = new HashMap<>();
+            Map<String, Object> searchParams = new HashMap<>();
             searchParams.put("title", title);
-    
+
             var list = selectAll(
-                searchParams,
-                0, 10,
-                "title", Sort.ASC,
-                "id","authorid","publisherid","title",
-                "quantity","saleprice",
-                "ishidden", "hiddenparentcount"
-            );
+                    searchParams,
+                    0, 10,
+                    "title", Sort.ASC,
+                    "id", "authorid", "publisherid", "title",
+                    "quantity", "saleprice",
+                    "ishidden", "hiddenparentcount");
 
             for (var book : list) {
                 book.author = authorRepository.selectById(book.authorId);
@@ -158,6 +157,38 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             throw e;
         }
     }
+
+    @Override
+    public Book selectBook(int id) throws Exception {
+        try {
+            Book book = selectById(id);
+            if (book == null)
+                throw new Exception("Entity not found");
+            book.author = authorRepository.selectById(book.authorId);
+            book.publisher = publisherRepository.selectById(book.publisherId);
+            db.setAutoCommit(false);
+
+            var selectBookCategoriesQuery = db.prepareStatement(
+                    "SELECT c.id, c.name, c.isHidden FROM Category c JOIN BookCategory bc ON c.id = bc.categoryId WHERE bc.bookId = ?");
+            selectBookCategoriesQuery.setInt(1, id);
+            var result = selectBookCategoriesQuery.executeQuery();
+            while (result.next()) {
+                book.categories.add(new Category(
+                        result.getInt("id"),
+                        result.getString("name"),
+                        result.getBoolean("isHidden")));
+            }
+
+            db.commit();
+
+            return book;
+
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
     @Override
     public void insertBook(Book book)
             throws Exception {
@@ -190,6 +221,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             throw e;
         }
     }
+
     @Override
     public void hideBook(int id)
             throws Exception {
@@ -202,15 +234,16 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 throw new Exception("Publisher and/or Author Hidden");
             }
 
-            updateById(id, "isHidden",true);
+            updateById(id, "isHidden", true);
 
             db.commit();
-    
+
         } catch (Exception e) {
             db.rollback();
             throw e;
         }
     }
+
     @Override
     public void updateBookHiddenParentCount(int id)
             throws Exception {
@@ -243,11 +276,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            Map<String,Object>map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("authorid", authorId);
 
             List<Book> books = selectAll(map, 0, null, null, null, "id");
-            
+
             for (Book book : books) {
                 updateBookHiddenParentCount(book.id);
             }
@@ -266,11 +299,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            Map<String,Object>map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("publisherid", publisherId);
 
             List<Book> books = selectAll(map, 0, null, null, null, "id");
-            
+
             for (Book book : books) {
                 updateBookHiddenParentCount(book.id);
             }

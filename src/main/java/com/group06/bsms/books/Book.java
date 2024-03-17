@@ -3,8 +3,8 @@ package com.group06.bsms.books;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.categories.Category;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 import java.sql.Date;
 
 public class Book {
@@ -25,7 +25,7 @@ public class Book {
 
     public Author author;
     public Publisher publisher;
-    public Set<Category> categories;
+    public List<Category> categories;
 
     public double maxImportPrice;
 
@@ -36,8 +36,7 @@ public class Book {
             int authorId, int publisherId, String title, int pageCount,
             Date publishDate, String dimension, String translatorName,
             String overview, int quantity, double salePrice,
-            boolean isHidden, int hiddenParentCount, int maxImportPrice
-    ) {
+            boolean isHidden, int hiddenParentCount, int maxImportPrice) {
         this.authorId = authorId;
         this.publisherId = publisherId;
         this.title = title;
@@ -51,7 +50,7 @@ public class Book {
         this.hiddenParentCount = hiddenParentCount;
         this.isHidden = isHidden;
         this.maxImportPrice = maxImportPrice;
-        categories = new HashSet<Category>();
+        categories = new ArrayList<Category>();
     }
 
     @Override
@@ -60,6 +59,6 @@ public class Book {
                 + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension
                 + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity
                 + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount
-                + ", author=" + author + ", publisher=" + publisher +", maxImportPrice=" + maxImportPrice + '}';
+                + ", author=" + author + ", publisher=" + publisher + ", maxImportPrice=" + maxImportPrice + '}';
     }
 }
