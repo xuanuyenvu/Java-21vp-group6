@@ -60,7 +60,7 @@ public class RepositoryTest {
         var book = new Book(
                 1, 1, "Sample Book 4", 5,
                 Date.valueOf(LocalDate.of(2020, 5, 3)),
-                "6x9", "Dank", "Boring", 1, 10, false, 3
+                "6x9", "Dank", "Boring", 1, 10, false, 3,0
         );
         book.id = 4;
 
@@ -69,7 +69,7 @@ public class RepositoryTest {
                 "id",
                 "authorId", "publisherId", "title", "pageCount", "publishDate",
                 "dimension", "translatorName", "overview", "quantity",
-                "salePrice", "isHidden", "hiddenParentCount"
+                "salePrice", "isHidden", "hiddenParentCount", "maxImportPrice"
         );
 
         assertTrue(instance.existsById(4));
@@ -218,7 +218,7 @@ public class RepositoryTest {
         var book = new Book(
                 1, 1, "Sample Book 4", 5,
                 Date.valueOf(LocalDate.of(2020, 5, 3)),
-                "6x9", "Dank", "Boring", 1, 10, false, 3
+                "6x9", "Dank", "Boring", 1, 10,false, 3, 0
         );
         book.id = 4;
 
@@ -227,7 +227,7 @@ public class RepositoryTest {
                 "id",
                 "authorId", "publisherId", "title", "pageCount", "publishDate",
                 "dimension", "translatorName", "overview", "quantity",
-                "salePrice", "hiddenParentCount"
+                "salePrice", "hiddenParentCount", "maxImportPrice"
         );
 
         assertTrue(instance.existsById(4));
