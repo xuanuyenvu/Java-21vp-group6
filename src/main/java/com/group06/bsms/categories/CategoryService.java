@@ -20,4 +20,13 @@ public class CategoryService {
             return new ArrayList<Category>();
         }
     }
+
+    public List<Category> selectByName(List<String> categoriesName) throws Exception {
+        try {
+            return categoryDAO.selectByName(categoriesName);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ArrayList<Category>();
+        }
+    }
 }

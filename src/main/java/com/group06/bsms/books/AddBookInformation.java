@@ -1,8 +1,11 @@
 package com.group06.bsms.books;
 
+import com.group06.bsms.DB;
 import com.group06.bsms.components.*;
+import com.group06.bsms.authors.*;
+import com.group06.bsms.categories.*;
+import com.group06.bsms.publishers.*;
 import com.group06.bsms.utils.SVGHelper;
-import java.text.SimpleDateFormat;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -10,32 +13,30 @@ import javax.swing.*;
 
 public class AddBookInformation extends javax.swing.JPanel implements CategorySelectionListener {
 
-    private final ArrayList<String> authors = new ArrayList<>(Arrays.asList(
-            "J.K. Rowling",
-            "Stephen King",
-            "Ernest Hemingway",
-            "Harper Lee"
-    ));
-    private final ArrayList<String> publishers = new ArrayList<>(Arrays.asList(
-            "Toni Morrison",
-            "F. Scott Fitzgerald",
-            "Maya Angelou"
-    ));
-    private final ArrayList<String> categories = new ArrayList<>(Arrays.asList(
-            "Comic",
-            "History",
-            "Mystery",
-            "Romance",
-            "Poetry"
-    ));
+    private final BookService bookService;
+    private final AuthorService authorService;
+    private final PublisherService publisherService;
+    private final CategoryService categoryService;
 
     public AddBookInformation() {
+        this(new BookService(new BookRepository(DB.db())),
+                new AuthorService(new AuthorRepository(DB.db())),
+                new PublisherService(new PublisherRepository(DB.db())),
+                new CategoryService(new CategoryRepository(DB.db())));
+    }
+
+    public AddBookInformation(BookService bookService, AuthorService authorService, PublisherService publisherService, CategoryService categoryService) {
+        this.bookService = bookService;
+        this.authorService = authorService;
+        this.publisherService = publisherService;
+        this.categoryService = categoryService;
+
         initComponents();
         hiddenPropLabel.setVisible(false);
 
-        authorAutoComp.updateList(authors);
-        publisherAutoComp.updateList(publishers);
-        categorySelectionPanel.updateList(categories, null);
+        loadAuthorInto();
+        loadPublisherInto();
+        loadCategoryInto();
         categorySelectionPanel.setCategorySelectionListener(this);
 
         titleField.putClientProperty("JTextField.placeholderText", "Enter book title");
@@ -51,7 +52,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         CustomLabelInForm.setColoredText(dimensionLabel);
         CustomLabelInForm.setColoredText(pagesLabel);
         CustomLabelInForm.setColoredText(overviewLabel);
-        
+
         titleField.requestFocus();
     }
 
@@ -80,10 +81,73 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     @Override
     public void onCategoriesChanged(int numOfCategories) {
-        int newHeight = (40 + ((int)(numOfCategories / 3.1) * 35));
+        int newHeight = (40 + ((int) (numOfCategories / 3.1) * 35));
         categorySelectionPanel.setPreferredSize(new Dimension(categorySelectionPanel.getWidth(), newHeight));
         jScrollForm.revalidate();
         jScrollForm.repaint();
+    }
+
+    private void loadAuthorInto() {
+        try {
+            var authors = authorService.getAllAuthors();
+            if (authors == null) {
+                throw new NullPointerException();
+            }
+
+            ArrayList<String> authorNames = new ArrayList<>();
+            for (Author author : authors) {
+                authorNames.add(author.name);
+            }
+
+            authorAutoComp.updateList(authorNames);
+
+        } catch (NullPointerException e) {
+            System.out.println("An error occurred while gettings book information: " + e.getMessage());
+        } catch (Throwable e) {
+            System.err.println(e);
+        }
+    }
+
+    private void loadPublisherInto() {
+        try {
+            var publishers = publisherService.getAllPublishers();
+            if (publishers == null) {
+                throw new NullPointerException();
+            }
+
+            ArrayList<String> publisherNames = new ArrayList<>();
+            for (Publisher publisher : publishers) {
+                publisherNames.add(publisher.name);
+            }
+
+            publisherAutoComp.updateList(publisherNames);
+
+        } catch (NullPointerException e) {
+            System.out.println("An error occurred while gettings book information: " + e.getMessage());
+        } catch (Throwable e) {
+            System.err.println(e);
+        }
+    }
+
+    private void loadCategoryInto() {
+        try {
+            var categories = categoryService.getAllCategories();
+            if (categories == null) {
+                throw new NullPointerException();
+            }
+
+            ArrayList<String> categoryNames = new ArrayList<>();
+            for (Category category : categories) {
+                categoryNames.add(category.name);
+            }
+
+            categorySelectionPanel.updateList(categoryNames, null);
+
+        } catch (NullPointerException e) {
+            System.out.println("An error occurred while gettings book information: " + e.getMessage());
+        } catch (Throwable e) {
+            System.err.println(e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -419,29 +483,54 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         boolean hideChecked = hideCheckBox.isSelected();
 
         if (title.isEmpty() || author.isEmpty()
-                || publisher.isEmpty() || publishDatePicker.getDate() == null
-                || category.isEmpty() || dimension.isEmpty()
-                || pages.equals(0) || overview.isEmpty()) {
+                || publisher.isEmpty()
+                || publishDatePicker.getDate() == null
+                || (category == null || category.isEmpty())
+                || dimension.isEmpty()
+                || pages.equals(0)
+                || overview.isEmpty()) {
 
             JOptionPane.showMessageDialog(null, "Please fill in all required information.", "BSMS Error", JOptionPane.ERROR_MESSAGE);
 
         } else {
-            java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            String formattedDate = dateFormat.format(publishDate);
+            try {
+                java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
 
-            String newBookInfo = title + "; "
-                    + author + "; "
-                    + publisher + "; "
-                    + formattedDate + "; "
-                    + category + "; "
-                    + dimension + "; "
-                    + pages + "; "
-                    + translator + "; "
-                    + overview + "; "
-                    + hideChecked;
-            System.out.print(newBookInfo);
+                Book newBook = new Book();
+                newBook.title = title;
+                newBook.authorId = authorService.selectIdByName(author);
+                newBook.publisherId = publisherService.selectIdByName(publisher);
+                newBook.publishDate = publishDate;
+                newBook.categories = new ArrayList<>(categoryService.selectByName(categorySelectionPanel.getListSelected()));
+                newBook.dimension = dimension;
+                newBook.pageCount = (Integer) pages;
+                newBook.translatorName = translator;
+                newBook.overview = overview;
+                newBook.isHidden = hideChecked;
 
+                int count = 0;
+                Author a = authorService.selectAuthor(newBook.authorId);
+                Publisher p = publisherService.selectPublisher(newBook.publisherId);
+
+                if (a != null && a.isHidden) {
+                    count++;
+                }
+                if (p != null && p.isHidden) {
+                    count++;
+                }
+                for (Category c : newBook.categories) {
+                    if (c.isHidden) {
+                        count++;
+                    }
+                }
+                newBook.hiddenParentCount = count;
+
+                bookService.insertBook(newBook);
+                JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information", JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "An error occurred while adding the book: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_addBookButtonActionPerformed
 

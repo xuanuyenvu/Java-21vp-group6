@@ -3,12 +3,14 @@ package com.group06.bsms.books;
 import com.group06.bsms.Repository;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.authors.AuthorRepository;
-import com.group06.bsms.categories.Category;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.publishers.PublisherRepository;
+import com.group06.bsms.categories.Category;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSetMetaData;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,58 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         super(db, Book.class);
         this.authorRepository = new AuthorRepository(db);
         this.publisherRepository = new PublisherRepository(db);
+    }
+
+    @Override
+    public void updateBook(Book book) throws Exception {
+        try {
+            db.setAutoCommit(false);
+
+            var updateBookQuery = db.prepareStatement(
+                    "UPDATE books SET authorId=?, publisherId=?, title=?, pageCount=?, publishDate=?, dimension=?, translatorName=?, overview=?, quantity=?, salePrice=?, hiddenParentCount=?, WHERE id=?");
+
+            updateBookQuery.setInt(1, book.authorId);
+            updateBookQuery.setInt(2, book.publisherId);
+            updateBookQuery.setString(3, book.title);
+            updateBookQuery.setInt(4, book.pageCount);
+            updateBookQuery.setDate(5, book.publishDate);
+            updateBookQuery.setString(6, book.dimension);
+            updateBookQuery.setString(7, book.translatorName);
+            updateBookQuery.setString(8, book.overview);
+            updateBookQuery.setInt(9, book.quantity);
+            updateBookQuery.setDouble(10, book.salePrice);
+            updateBookQuery.setInt(11, book.hiddenParentCount);
+            updateBookQuery.setInt(13, book.id);
+
+            var updateBookResult = updateBookQuery.executeUpdate();
+
+            int addBookCategoryResults[] = null;
+            if (!book.categories.isEmpty()) {
+                String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES VALUES (?, ?)";
+                var addBookCategoryStatement = db.prepareStatement(insertQuery);
+                for (Category category : book.categories) {
+                    addBookCategoryStatement.setInt(1, book.id);
+                    addBookCategoryStatement.setInt(1, category.id);
+                }
+                addBookCategoryResults = addBookCategoryStatement.executeBatch();
+            }
+
+            db.commit();
+
+            if (updateBookResult == 0) {
+                throw new Exception("Entity not found");
+            }
+
+            for (int addBookCategoryResult : addBookCategoryResults) {
+                if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
+                    throw new Exception("Cannot update book's categories");
+                }
+            }
+
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
     }
 
     @Override
@@ -58,8 +112,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     "title", Sort.ASC,
                     "id", "authorid", "publisherid", "title",
                     "quantity", "saleprice",
-                    "ishidden", "hiddenparentcount"
-            );
+                    "ishidden", "hiddenparentcount");
 
             for (var book : list) {
                 book.author = authorRepository.selectById(book.authorId);
@@ -91,8 +144,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     "title", Sort.ASC,
                     "id", "authorid", "publisherid", "title",
                     "quantity", "saleprice",
-                    "ishidden", "hiddenparentcount"
-            );
+                    "ishidden", "hiddenparentcount");
 
             for (var book : list) {
                 book.author = authorRepository.selectById(book.authorId);
@@ -110,12 +162,45 @@ public class BookRepository extends Repository<Book> implements BookDAO {
     }
 
     @Override
+    public Book selectBook(int id) throws Exception {
+        try {
+            Book book = selectById(id);
+            if (book == null) {
+                throw new Exception("Entity not found");
+            }
+            book.author = authorRepository.selectById(book.authorId);
+            book.publisher = publisherRepository.selectById(book.publisherId);
+            db.setAutoCommit(false);
+
+            var selectBookCategoriesQuery = db.prepareStatement(
+                    "SELECT c.id, c.name, c.isHidden FROM Category c JOIN BookCategory bc ON c.id = bc.categoryId WHERE bc.bookId = ?");
+            selectBookCategoriesQuery.setInt(1, id);
+            var result = selectBookCategoriesQuery.executeQuery();
+            while (result.next()) {
+                book.categories.add(new Category(
+                        result.getInt("id"),
+                        result.getString("name"),
+                        result.getBoolean("isHidden")));
+            }
+
+            db.commit();
+
+            return book;
+
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
     public void insertBook(Book book) throws Exception {
         try {
             db.setAutoCommit(false);
+
             var insertBookQuery = db.prepareStatement(
-                    "INSERT INTO books (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, hiddenParentCount) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    "INSERT INTO books (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, quantity, salePrice, hiddenParentCount) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             insertBookQuery.setInt(1, book.authorId);
             insertBookQuery.setInt(2, book.publisherId);
@@ -125,33 +210,17 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             insertBookQuery.setString(6, book.dimension);
             insertBookQuery.setString(7, book.translatorName);
             insertBookQuery.setString(8, book.overview);
-            insertBookQuery.setInt(9, book.hiddenParentCount);
+            insertBookQuery.setInt(9, book.quantity);
+            insertBookQuery.setDouble(10, book.salePrice);
+            insertBookQuery.setInt(11, book.hiddenParentCount);
 
-            int insertBookResult = insertBookQuery.executeUpdate();
+            int rowsAffected = insertBookQuery.executeUpdate();
 
-            int[] insertBookCategoryResults = null;
-            if (!book.categories.isEmpty()) {
-                String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES (?, ?)";
-                var addBookCategoryStatement = db.prepareStatement(insertQuery);
-                for (Category category : book.categories) {
-                    addBookCategoryStatement.setInt(1, book.id);
-                    addBookCategoryStatement.setInt(2, category.id);
-                    addBookCategoryStatement.addBatch();
-                }
-                insertBookCategoryResults = addBookCategoryStatement.executeBatch();
+            if (rowsAffected == 0) {
+                throw new Exception("Insertion failed, no rows affected.");
             }
 
             db.commit();
-
-            if (insertBookResult == 0) {
-                throw new Exception("Entity not found");
-            }
-
-            for (int addBookCategoryResult : insertBookCategoryResults) {
-                if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
-                    throw new Exception("Cannot update book's categories");
-                }
-            }
 
         } catch (Exception e) {
             db.rollback();

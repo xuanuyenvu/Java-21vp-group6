@@ -20,4 +20,20 @@ public class PublisherService {
             return new ArrayList<Publisher>();
         }
     }
+
+    public int selectIdByName(String publisherName) throws Exception {
+        try {
+            return publisherDAO.selectIdByName(publisherName);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public Publisher selectPublisher(int id) throws Exception {
+        try {
+            return publisherDAO.selectPublisher(id);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 }
