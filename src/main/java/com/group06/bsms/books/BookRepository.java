@@ -16,8 +16,10 @@ import com.group06.bsms.publishers.PublisherRepository;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.SortOrder;
 
 public class BookRepository extends Repository<Book> implements BookDAO {
+
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
 
@@ -37,10 +39,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
             db.commit();
 
-            if (book == null)
+            if (book == null) {
                 return false;
-            else
+            } else {
                 return true;
+            }
 
         } catch (Exception e) {
             db.rollback();
@@ -175,10 +178,12 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             Publisher publisher = publisherRepository.selectById(book.publisherId);
 
             Integer hiddenParentCount = 0;
-            if (author.isHidden)
+            if (author.isHidden) {
                 hiddenParentCount += 1;
-            if (publisher.isHidden)
+            }
+            if (publisher.isHidden) {
                 hiddenParentCount += 1;
+            }
 
             updateById(id, "hiddenparentcount", hiddenParentCount.toString());
 
@@ -308,6 +313,120 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.commit();
             return result;
 
+        } catch (SQLException e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Book> selectSearchSortFilterBooks(int offset, int limit, Map<Integer, SortOrder> sortValue,
+            String searchString, String searchChoice,
+            int authorId, int publisherId, Double minPrice, Double maxPrice,
+            List<Integer> listBookCategoryId) throws Exception {
+        List<Book> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+
+            String stringQuery = "SELECT DISTINCT * "
+                    + " FROM Book "
+                    + " LEFT JOIN BookCategory ON Book.id = BookCategory.bookId "
+                    + " JOIN Author ON Author.id = book.AuthorId "
+                    + " JOIN Publisher ON Publisher.id = Book.publisherId ";
+
+            stringQuery += " WHERE " + searchChoice + " LIKE ? ";
+            
+            if (authorId > 0) {
+                stringQuery += " AND Book.authorId = ? ";
+            }
+
+            if (publisherId > 0) {
+                stringQuery += " AND Book.publisherId = ? ";
+            }
+
+            if (minPrice != null) {
+                stringQuery += " AND Book.salePrice >= ? ";
+            }
+
+            if (maxPrice != null) {
+                stringQuery += " AND Book.salePrice <= ? ";
+            }
+
+            if (listBookCategoryId != null && !listBookCategoryId.isEmpty()) {
+                for (int i = 0; i < listBookCategoryId.size(); i++) {
+                    stringQuery += " AND EXISTS ("
+                            + "     SELECT 1"
+                            + "     FROM BookCategory bc" + i
+                            + "     WHERE bc" + i + ".bookId = Book.id AND bc" + i + ".categoryId = ?"
+                            + " )";
+                }
+            }
+
+            for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
+                Integer key = entry.getKey();
+                SortOrder value = entry.getValue();
+
+                var sortKeys = new ArrayList<String>(List.of(
+                        " ORDER BY Book.title ",
+                        " ORDER BY Author.name ",
+                        " ORDER BY Publisher.name ",
+                        " ORDER BY Book.quantity ",
+                        " ORDER BY Book.salePrice "
+                ));
+
+                var sortValues = new HashMap<SortOrder, String>();
+                sortValues.put(SortOrder.ASCENDING, " ASC ");
+                sortValues.put(SortOrder.DESCENDING, " DESC ");
+
+                stringQuery += sortKeys.get(key);
+                stringQuery += sortValues.get(value);
+            }
+            
+            stringQuery += " OFFSET ? LIMIT ? "; 
+                    
+            try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
+                int parameterIndex = 1;
+                preparedStatement.setString(parameterIndex++, "%" + searchString + "%");
+
+                if (authorId > 0) {
+                    preparedStatement.setInt(parameterIndex++, authorId);
+                }
+
+                if (publisherId > 0) {
+                    preparedStatement.setInt(parameterIndex++, publisherId);
+                }
+
+                if (minPrice != null) {
+                    preparedStatement.setDouble(parameterIndex++, minPrice);
+                }
+
+                if (maxPrice != null) {
+                    preparedStatement.setDouble(parameterIndex++, maxPrice);
+                }
+
+                if (listBookCategoryId != null && !listBookCategoryId.isEmpty()) {
+                    for (Integer categoryId : listBookCategoryId) {
+                        preparedStatement.setInt(parameterIndex++, categoryId);
+                    }
+                }
+                
+                preparedStatement.setInt(parameterIndex++, offset);
+                preparedStatement.setInt(parameterIndex++, limit);
+                
+    
+                
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(populate(resultSet));
+                    }
+                }
+            }
+            db.commit();
+            for (var book : result) {
+                book.author = authorRepository.selectById(book.authorId);
+                book.publisher = publisherRepository.selectById(book.publisherId);
+            }
+            return result;
         } catch (SQLException e) {
             db.rollback();
             throw e;

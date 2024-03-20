@@ -17,6 +17,7 @@ public class Main extends JFrame {
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
     public static final boolean DARK_MODE = false;
+    public static final int ROW_LIMIT = 20;
 
     private Main() {
         if (!INDEV) {

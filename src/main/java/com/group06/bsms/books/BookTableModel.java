@@ -26,7 +26,6 @@ class TableActionCellEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        Component com = super.getTableCellEditorComponent(table, value, isSelected, row, column);
         BookTableModel model = (BookTableModel) table.getModel();
         int isHidden = model.getHiddenState(table.convertRowIndexToModel(row));
         int modelRow = table.convertRowIndexToModel(row);
@@ -51,7 +50,6 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
         int isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
 
-//        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         ActionBtn action = new ActionBtn(isHidden);
         action.setBackground(Color.WHITE);
 
@@ -65,8 +63,9 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 public class BookTableModel extends AbstractTableModel {
 
     private List<Book> books = new ArrayList<>();
-    private List<Object> actionState = new ArrayList<>();
+//    private List<Object> actionState = new ArrayList<>();
     private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Actions"};
+    public boolean editable = false;
 
     @Override
     public int getRowCount() {
@@ -101,7 +100,7 @@ public class BookTableModel extends AbstractTableModel {
             case 4:
                 return book.salePrice;
             case 5:
-                return actionState.get(row);
+//                return actionState.get(row);
             default:
                 return null;
         }
@@ -115,6 +114,17 @@ public class BookTableModel extends AbstractTableModel {
      */
     @Override
     public void setValueAt(Object val, int row, int col) {
+        if (col == 5) {
+            return;
+        }
+        if (!editable) {
+            editable = true;
+            return;
+        }
+        System.out.println("Set Value at was called");
+        if (row >= books.size()) {
+            return;
+        }
         Book book = books.get(row);
         switch (col) {
             case 0:
@@ -131,7 +141,7 @@ public class BookTableModel extends AbstractTableModel {
                 book.salePrice = (Double) val;
                 break;
             case 5:
-                actionState.set(row, (Boolean) val);
+//                actionState.set(row, (Boolean) val);
                 break;
             default:
                 break;
@@ -184,28 +194,19 @@ public class BookTableModel extends AbstractTableModel {
         if (newBooks != null) {
             books.clear();
             fireTableDataChanged();
-
             for (var book : newBooks) {
                 if (!contains(book.id)) {
                     addRow(book);
                 }
             }
         }
-    }
-
-    public void loadNewBooks(List<Book> newBooks) {
-        if (newBooks != null) {
-            for (var book : newBooks) {
-                if (!contains(book.id)) {
-                    addRow(book);
-                }
-            }
-        }
+        System.out.println("sorted");
+        editable = false;
     }
 
     void addRow(Book book) {
         books.add(book);
-        actionState.add(!book.isHidden);
+//        actionState.add(!book.isHidden);
         SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
     }
 
