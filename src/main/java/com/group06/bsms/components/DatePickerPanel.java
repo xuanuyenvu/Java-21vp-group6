@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 public class DatePickerPanel extends javax.swing.JPanel {
 
@@ -43,7 +44,7 @@ public class DatePickerPanel extends javax.swing.JPanel {
                         Date date = dateFormat.parse(text);
                         jXDatePicker.setDate(date);
                     } catch (ParseException ex) {
-                        System.err.println("Invalid date format: " + text);
+                        JOptionPane.showMessageDialog(null, "Invalid date format: " + text, "BSMS Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -78,6 +79,10 @@ public class DatePickerPanel extends javax.swing.JPanel {
                 jXDatePicker.setDate(today);
             }
         });
+    }
+    
+    public void setEmptyText() {
+        jTextField.setText("");
     }
 
     @SuppressWarnings("unchecked")

@@ -11,19 +11,23 @@ public class PublisherService {
         this.publisherDAO = publisherDAO;
     }
 
-    public List<Publisher> getAllPublishers() {
+    public List<Publisher> selectAllPublisherNames() {
         try {
-            List<Publisher> publishers = publisherDAO.selectAllPublishers();
+            List<Publisher> publishers = publisherDAO.selectAllPublisherNames();
             return publishers;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<Publisher>();
+            return new ArrayList<>();
         }
     }
 
-    public int selectIdByName(String publisherName) throws Exception {
+    public int insertPublisherIfNotExists(String publisherName) throws Exception {
         try {
-            return publisherDAO.selectIdByName(publisherName);
+            if (publisherName == null) {
+                return -1;
+            } else {
+                return publisherDAO.insertPublisherIfNotExists(publisherName);
+            }
         } catch (Exception e) {
             throw e;
         }

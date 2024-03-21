@@ -13,7 +13,7 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
     }
 
     @Override
-    public List<Publisher> selectAllPublishers() throws Exception {
+    public List<Publisher> selectAllPublisherNames() throws Exception {
         try {
             db.setAutoCommit(false);
 
@@ -33,7 +33,7 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
         }
     }
 
-    public int selectIdByName(String publisherName) throws Exception {
+    public int insertPublisherIfNotExists(String publisherName) throws Exception {
         try {
             db.setAutoCommit(false);
 

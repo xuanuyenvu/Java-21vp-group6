@@ -13,7 +13,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
     }
 
     @Override
-    public List<Author> selectAllAuthors() throws Exception {
+    public List<Author> selectAllAuthorNames() throws Exception {
         try {
             db.setAutoCommit(false);
 
@@ -33,7 +33,8 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
         }
     }
 
-    public int selectIdByName(String authorName) throws Exception {
+    @Override
+    public int insertAuthorIfNotExists(String authorName) throws Exception {
         try {
             db.setAutoCommit(false);
 

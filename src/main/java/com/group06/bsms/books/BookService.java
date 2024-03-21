@@ -87,6 +87,17 @@ public class BookService {
                 throw new IllegalArgumentException("Book object cannot be null");
             }
 
+            if (book.title == null || book.authorId == -1
+                    || book.publisherId == -1
+                    || book.publishDate == null
+                    || book.categories.isEmpty()
+                    || book.dimension == null
+                    || book.pageCount == 0
+                    || book.overview == null) {
+
+                throw new IllegalArgumentException("Please fill in all required information.");
+            }
+
             bookDAO.insertBook(book);
         } catch (Exception e) {
             throw e;

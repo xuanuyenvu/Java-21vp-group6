@@ -10,7 +10,10 @@ import com.group06.bsms.categories.Category;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,9 +201,10 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            var insertBookQuery = db.prepareStatement(
-                    "INSERT INTO books (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, quantity, salePrice, hiddenParentCount) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            // Insert into Book table
+            PreparedStatement insertBookQuery = db.prepareStatement(
+                    "INSERT INTO Book (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, isHidden, hiddenParentCount) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
             insertBookQuery.setInt(1, book.authorId);
             insertBookQuery.setInt(2, book.publisherId);
@@ -210,14 +214,38 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             insertBookQuery.setString(6, book.dimension);
             insertBookQuery.setString(7, book.translatorName);
             insertBookQuery.setString(8, book.overview);
-            insertBookQuery.setInt(9, book.quantity);
-            insertBookQuery.setDouble(10, book.salePrice);
-            insertBookQuery.setInt(11, book.hiddenParentCount);
+            insertBookQuery.setBoolean(9, book.isHidden);
+            insertBookQuery.setInt(10, book.hiddenParentCount);
 
             int rowsAffected = insertBookQuery.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new Exception("Insertion failed, no rows affected.");
+                throw new SQLException("Insertion failed, no rows affected.");
+            }
+
+            ResultSet generatedKeys = insertBookQuery.getGeneratedKeys();
+            int bookId;
+            if (generatedKeys.next()) {
+                bookId = generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Insertion failed, no ID obtained.");
+            }
+
+            PreparedStatement insertCategoryBookQuery = db.prepareStatement(
+                    "INSERT INTO CategoryBook (bookId, categoryId) "
+                    + "VALUES (?, ?)");
+
+            for (Category category : book.categories) {
+                insertCategoryBookQuery.setInt(1, bookId);
+                insertCategoryBookQuery.setInt(2, category.id);
+                insertCategoryBookQuery.addBatch();
+            }
+
+            int[] categoryRowsAffected = insertCategoryBookQuery.executeBatch();
+            for (int affectedRows : categoryRowsAffected) {
+                if (affectedRows == 0) {
+                    throw new SQLException("Insertion into CategoryBook table failed, no rows affected.");
+                }
             }
 
             db.commit();

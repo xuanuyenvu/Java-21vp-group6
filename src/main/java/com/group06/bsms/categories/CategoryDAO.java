@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface CategoryDAO {
     
-    List<Category> selectAllCategories() throws Exception;
+    List<Category> selectAllCategoryNames() throws Exception;
     public List<Category> selectByName(List<String> categoriesName) throws Exception;
 }

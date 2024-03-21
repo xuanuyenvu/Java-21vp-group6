@@ -13,7 +13,7 @@ public class CategoryRepository extends Repository<Category> implements Category
     }
 
     @Override
-    public List<Category> selectAllCategories() throws Exception {
+    public List<Category> selectAllCategoryNames() throws Exception {
         try {
             db.setAutoCommit(false);
 
@@ -32,34 +32,34 @@ public class CategoryRepository extends Repository<Category> implements Category
             throw e;
         }
     }
-    
-public List<Category> selectByName(List<String> categoriesName) throws Exception {
-    try {
-        db.setAutoCommit(false);
 
-        List<Category> categories = new ArrayList<>();
+    public List<Category> selectByName(List<String> categoriesName) throws Exception {
+        try {
+            db.setAutoCommit(false);
 
-        for (String categoryName : categoriesName) {
-            var selectCategoriesQuery = db.prepareStatement(
-                    "SELECT id, name, isHidden FROM Category WHERE name = ?");
-            selectCategoriesQuery.setString(1, categoryName);
-            var result = selectCategoriesQuery.executeQuery();
+            List<Category> categories = new ArrayList<>();
 
-            while (result.next()) {
-                categories.add(new Category(
-                        result.getInt("id"),
-                        result.getString("name"),
-                        result.getBoolean("isHidden")));
+            for (String categoryName : categoriesName) {
+                var selectCategoriesQuery = db.prepareStatement(
+                        "SELECT id, name, isHidden FROM Category WHERE name = ?");
+                selectCategoriesQuery.setString(1, categoryName);
+                var result = selectCategoriesQuery.executeQuery();
+
+                while (result.next()) {
+                    categories.add(new Category(
+                            result.getInt("id"),
+                            result.getString("name"),
+                            result.getBoolean("isHidden")));
+                }
             }
+
+            db.commit();
+
+            return categories;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
         }
-
-        db.commit();
-
-        return categories;
-    } catch (Exception e) {
-        db.rollback();
-        throw e;
     }
-}
 
 }

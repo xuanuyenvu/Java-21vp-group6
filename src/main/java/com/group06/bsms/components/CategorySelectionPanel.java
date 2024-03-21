@@ -45,23 +45,6 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         notifyListener();
     }
 
-    public String getText() {
-
-        if (listSelected.isEmpty()) {
-            return null;
-        } else {
-            StringBuilder sb = new StringBuilder();
-            for (String category : listSelected) {
-                sb.append(category).append(", ");
-            }
-
-            if (sb.length() > 2) {
-                sb.delete(sb.length() - 2, sb.length());
-            }
-            return sb.toString();
-        }
-    }
-
     public void setEmptyList() {
         listSelected.clear();
     }

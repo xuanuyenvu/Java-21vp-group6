@@ -89,7 +89,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void loadAuthorInto() {
         try {
-            var authors = authorService.getAllAuthors();
+            var authors = authorService.selectAllAuthorNames();
             if (authors == null) {
                 throw new NullPointerException();
             }
@@ -102,15 +102,15 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             authorAutoComp.updateList(authorNames);
 
         } catch (NullPointerException e) {
-            System.out.println("An error occurred while gettings book information: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            System.err.println(e);
+            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void loadPublisherInto() {
         try {
-            var publishers = publisherService.getAllPublishers();
+            var publishers = publisherService.selectAllPublisherNames();
             if (publishers == null) {
                 throw new NullPointerException();
             }
@@ -123,15 +123,15 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             publisherAutoComp.updateList(publisherNames);
 
         } catch (NullPointerException e) {
-            System.out.println("An error occurred while gettings book information: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            System.err.println(e);
+            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void loadCategoryInto() {
         try {
-            var categories = categoryService.getAllCategories();
+            var categories = categoryService.selectAllCategoryNames();
             if (categories == null) {
                 throw new NullPointerException();
             }
@@ -144,9 +144,9 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             categorySelectionPanel.updateList(categoryNames, null);
 
         } catch (NullPointerException e) {
-            System.out.println("An error occurred while gettings book information: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "An error occurred while getting category information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            System.err.println(e);
+            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -463,6 +463,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         titleField.setText("");
         authorAutoComp.setEmptyText();
         publisherAutoComp.setEmptyText();
+        publishDatePicker.setEmptyText();
         categorySelectionPanel.setEmptyList();
         dimensionField.setText("");
         pagesSpinner.setValue(0);
@@ -475,63 +476,51 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         String title = titleField.getText();
         String author = authorAutoComp.getText();
         String publisher = publisherAutoComp.getText();
-        String category = categorySelectionPanel.getText();
+        ArrayList<String> categoriesList = categorySelectionPanel.getListSelected();
         String dimension = dimensionField.getText();
         Object pages = pagesSpinner.getValue();
         String translator = translatorField.getText();
         String overview = overviewTextArea.getText();
         boolean hideChecked = hideCheckBox.isSelected();
 
-        if (title.isEmpty() || author.isEmpty()
-                || publisher.isEmpty()
-                || publishDatePicker.getDate() == null
-                || (category == null || category.isEmpty())
-                || dimension.isEmpty()
-                || pages.equals(0)
-                || overview.isEmpty()) {
+        try {
 
-            JOptionPane.showMessageDialog(null, "Please fill in all required information.", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            Book newBook = new Book();
+            newBook.title = title;
+            newBook.authorId = authorService.insertAuthorIfNotExists(author);
+            newBook.publisherId = publisherService.insertPublisherIfNotExists(publisher);
+            newBook.publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
+            newBook.categories = new ArrayList<>(categoryService.selectByName(categoriesList));
+            newBook.dimension = dimension;
+            newBook.pageCount = (Integer) pages;
+            newBook.translatorName = translator;
+            newBook.overview = overview;
+            newBook.isHidden = hideChecked;
 
-        } else {
-            try {
-                java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
+            int count = 0;
+            Author a = authorService.selectAuthor(newBook.authorId);
+            Publisher p = publisherService.selectPublisher(newBook.publisherId);
 
-                Book newBook = new Book();
-                newBook.title = title;
-                newBook.authorId = authorService.selectIdByName(author);
-                newBook.publisherId = publisherService.selectIdByName(publisher);
-                newBook.publishDate = publishDate;
-                newBook.categories = new ArrayList<>(categoryService.selectByName(categorySelectionPanel.getListSelected()));
-                newBook.dimension = dimension;
-                newBook.pageCount = (Integer) pages;
-                newBook.translatorName = translator;
-                newBook.overview = overview;
-                newBook.isHidden = hideChecked;
-
-                int count = 0;
-                Author a = authorService.selectAuthor(newBook.authorId);
-                Publisher p = publisherService.selectPublisher(newBook.publisherId);
-
-                if (a != null && a.isHidden) {
-                    count++;
-                }
-                if (p != null && p.isHidden) {
-                    count++;
-                }
-                for (Category c : newBook.categories) {
-                    if (c.isHidden) {
-                        count++;
-                    }
-                }
-                newBook.hiddenParentCount = count;
-
-                bookService.insertBook(newBook);
-                JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information", JOptionPane.INFORMATION_MESSAGE);
-
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "An error occurred while adding the book: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            if (a != null && a.isHidden) {
+                count++;
             }
+            if (p != null && p.isHidden) {
+                count++;
+            }
+            for (Category c : newBook.categories) {
+                if (c.isHidden) {
+                    count++;
+                }
+            }
+            newBook.hiddenParentCount = count;
+
+            bookService.insertBook(newBook);
+            JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
+
     }//GEN-LAST:event_addBookButtonActionPerformed
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered

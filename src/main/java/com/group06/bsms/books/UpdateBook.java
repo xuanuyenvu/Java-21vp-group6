@@ -401,7 +401,7 @@ public class UpdateBook extends javax.swing.JPanel {
         String title = titleField.getText();
         String author = authorAutoComp.getText();
         String publisher = publisherAutoComp.getText();
-        String category = categorySelectionPanel.getText();
+        ArrayList<String> categoriesList = categorySelectionPanel.getListSelected();
         String dimension = dimensionField.getText();
         Object pages = pagesSpinner.getValue();
         String translator = translatorField.getText();
@@ -412,7 +412,7 @@ public class UpdateBook extends javax.swing.JPanel {
 
         if (!title.isEmpty() && !author.isEmpty()
                 && !publisher.isEmpty() && publishDatePicker.getDate() != null
-                && !category.isEmpty() && !dimension.isEmpty()
+                && !categoriesList.isEmpty() && !dimension.isEmpty()
                 && !pages.equals(0) && !overview.isEmpty()) {
             
             java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
@@ -423,7 +423,7 @@ public class UpdateBook extends javax.swing.JPanel {
                     + author + "; "
                     + publisher + "; "
                     + formattedDate + "; "
-                    + category + "; "
+                    + categoriesList + "; "
                     + dimension + "; "
                     + pages + "; "
                     + translator + "; "

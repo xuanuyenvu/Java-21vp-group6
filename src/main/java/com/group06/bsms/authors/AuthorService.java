@@ -11,19 +11,23 @@ public class AuthorService {
         this.authorDAO = authorDAO;
     }
 
-    public List<Author> getAllAuthors() {
+    public List<Author> selectAllAuthorNames() {
         try {
-            List<Author> authors = authorDAO.selectAllAuthors();
+            List<Author> authors = authorDAO.selectAllAuthorNames();
             return authors;
         } catch (Exception e) {
             System.out.println(e);
-            return new ArrayList<Author>();
+            return new ArrayList<>();
         }
     }
 
-    public int selectIdByName(String authorName) throws Exception {
+    public int insertAuthorIfNotExists(String authorName) throws Exception {
         try {
-            return authorDAO.selectIdByName(authorName);
+            if (authorName == null) {
+                return -1;
+            } else {
+                return authorDAO.insertAuthorIfNotExists(authorName);
+            }
         } catch (Exception e) {
             throw e;
         }
