@@ -63,9 +63,13 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 public class BookTableModel extends AbstractTableModel {
 
     private List<Book> books = new ArrayList<>();
-//    private List<Object> actionState = new ArrayList<>();
     private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Actions"};
     public boolean editable = false;
+    private final BookService bookService;
+
+    public BookTableModel(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @Override
     public int getRowCount() {
@@ -99,8 +103,6 @@ public class BookTableModel extends AbstractTableModel {
                 return book.quantity;
             case 4:
                 return book.salePrice;
-            case 5:
-//                return actionState.get(row);
             default:
                 return null;
         }
@@ -121,27 +123,39 @@ public class BookTableModel extends AbstractTableModel {
             editable = true;
             return;
         }
-        System.out.println("Set Value at was called");
-        if (row >= books.size()) {
-            return;
-        }
         Book book = books.get(row);
         switch (col) {
             case 0:
-                book.title = (String) val;
-                break;
-            case 1:
-                break;
-            case 2:
+                if (!book.title.equals((String) val)) {
+                    try {
+                        bookService.updateBookAttributeById(book.id, "title", (String) val);
+                        book.title = (String) val;
+                    } catch (Exception e) {
+                        throw e;
+                    }
+                }
                 break;
             case 3:
-                book.quantity = (Integer) val;
+                if ((Integer) val != book.quantity) {
+                    try {
+                        bookService.updateBookAttributeById(book.id, "quantity", (Integer) val);
+                        book.quantity = (Integer) val;
+                    } catch (Exception e) {
+                        throw e;
+                    }
+                }
                 break;
             case 4:
-                book.salePrice = (Double) val;
-                break;
-            case 5:
-//                actionState.set(row, (Boolean) val);
+                if ((Double) val != book.salePrice) {
+                    System.out.println("called");
+                    try {
+                        bookService.updateBookAttributeById(book.id, "salePrice", (Double) val);
+                        book.salePrice = (Double) val;
+                    } catch (Exception e) {
+                        System.out.println("Error");
+                        throw e;
+                    }
+                }
                 break;
             default:
                 break;
@@ -187,7 +201,7 @@ public class BookTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return (columnIndex == 0 || columnIndex == 1 || columnIndex == 2 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5);
+        return (columnIndex == 0 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5);
     }
 
     public void reloadAllBooks(List<Book> newBooks) {
@@ -200,13 +214,21 @@ public class BookTableModel extends AbstractTableModel {
                 }
             }
         }
-        System.out.println("sorted");
         editable = false;
+    }
+
+    public void loadNewBooks(List<Book> newBooks) {
+        if (newBooks != null) {
+            for (var book : newBooks) {
+                if (!contains(book.id)) {
+                    addRow(book);
+                }
+            }
+        }
     }
 
     void addRow(Book book) {
         books.add(book);
-//        actionState.add(!book.isHidden);
         SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
     }
 

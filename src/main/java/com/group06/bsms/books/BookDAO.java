@@ -6,15 +6,7 @@ import javax.swing.SortOrder;
 
 public interface BookDAO {
 
-    List<Book> selectBooksByFilter(int authorId, int publisherId, Double minPrice, Double maxPrice,
-            List<Integer> listBookCategoryId)
-            throws Exception;
-
     boolean existsBookById(int id) throws Exception;
-
-    List<Book> selectAllBooks() throws Exception;
-
-    List<Book> selectBooks(String title) throws Exception;
 
     void insertBook(Book book) throws Exception;
 
@@ -28,8 +20,10 @@ public interface BookDAO {
 
     void updateBookHiddenParentCountByPublisherId(int publisherId) throws Exception;
 
-    List<Book> selectSearchSortFilterBooks(int offset, int limit, Map<Integer, SortOrder> sortValue, 
+    List<Book> selectSearchSortFilterBooks(int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice,
             int authorId, int publisherId, Double minPrice, Double maxPrice,
             List<Integer> listBookCategoryId) throws Exception;
+
+    void updateBookAttributeById(int bookId, String attr, Object value) throws Exception;
 }

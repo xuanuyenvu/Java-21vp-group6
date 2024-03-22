@@ -3,14 +3,12 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
-import com.group06.bsms.components.ActionBtn;
 import com.group06.bsms.components.TableActionEvent;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.time.Clock;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +18,7 @@ import javax.swing.JTable;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellEditor;
 
 public class BookCRUD extends javax.swing.JPanel {
 
@@ -32,6 +27,7 @@ public class BookCRUD extends javax.swing.JPanel {
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
     private int limit = Main.ROW_LIMIT;
+    private boolean isScrollAtBottom = false;
 
     public BookCRUD() {
         this(new BookService(new BookRepository(DB.db())));
@@ -39,8 +35,7 @@ public class BookCRUD extends javax.swing.JPanel {
 
     public BookCRUD(BookService bookService) {
         this.bookService = bookService;
-        this.model = new BookTableModel();
-
+        this.model = new BookTableModel(bookService);
         initComponents();
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
@@ -54,13 +49,6 @@ public class BookCRUD extends javax.swing.JPanel {
         loadBooksIntoTable();
     }
 
-//    public ActionBtn getActionPanelFromCell(int row, int column) {
-//        if (table.isEditing() && table.getEditingRow() == row && table.getEditingColumn() == column) {
-//            return (ActionBtn) table.getCellEditor(row, column).getTableCellEditorComponent(table, null, false, row, column);
-//        } else {
-//            return (ActionBtn) table.getCellRenderer(row, column).getTableCellRendererComponent(table, null, false, false, row, column);
-//        }
-//    }
     private void loadBooksIntoTable() {
         var searchString = searchBar.getText();
 
@@ -74,14 +62,14 @@ public class BookCRUD extends javax.swing.JPanel {
         List<Integer> listBookCategoryId = null;
         try {
             var books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders, searchString, searchChoiceValue, -1, -1, null, null, listBookCategoryId);
-            model.reloadAllBooks(books);
-            for (int i = 0; i < table.getRowCount(); i++) {
-                table.editCellAt(i, 5);
+            if (currentOffset > 0) {
+                model.loadNewBooks(books);
+            } else {
+                model.reloadAllBooks(books);
             }
-        } catch (NullPointerException e) {
-            System.out.println("An error occurred while gettings book information: " + e.getMessage());
-        } catch (Throwable e) {
-            System.err.println(e);
+            currentOffset += limit;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -105,15 +93,15 @@ public class BookCRUD extends javax.swing.JPanel {
             if (column == 3 || column == 4) {
                 setHorizontalAlignment(JLabel.CENTER);
                 if (sortOrder == SortOrder.ASCENDING) {
-                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
-                } else if (sortOrder == SortOrder.DESCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                } else if (sortOrder == SortOrder.DESCENDING) {
+                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
                 }
             } else if (column != 5) {
                 if (sortOrder == SortOrder.ASCENDING) {
-                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
-                } else if (sortOrder == SortOrder.DESCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                } else if (sortOrder == SortOrder.DESCENDING) {
+                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
                 }
                 setHorizontalAlignment(JLabel.LEFT);
             } else {
@@ -147,6 +135,7 @@ public class BookCRUD extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int columnIndex = table.columnAtPoint(e.getPoint());
                 toggleSortOrder(columnIndex);
+                currentOffset = 0;
                 loadBooksIntoTable();
                 table.getTableHeader().repaint();
             }
@@ -155,6 +144,12 @@ public class BookCRUD extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
+//                JOptionPane.showMessageDialog(
+//                        app,
+//                        "Could not disconnect from database. Please restart your computer.",
+//                        "BSMS error",
+//                        JOptionPane.ERROR_MESSAGE
+//                );
             }
 
             @Override
@@ -190,34 +185,15 @@ public class BookCRUD extends javax.swing.JPanel {
             }
         });
 
-//        TableCellEditor editor = table.getDefaultEditor(String.class);
-//        if (editor != null) {
-//            editor.addCellEditorListener(new CellEditorListener() {
-//                public void editingStopped(ChangeEvent e) {
-//                    int row = table.getEditingRow();
-//                    int column = table.getEditingColumn();
-//                    System.out.println("Set valuuee at " + row + " "+column);
-//
-//                    if (row != -1 && column != -1) {
-//
-////                        Object value = editor.getCellEditorValue();
-////                        table.getModel().setValueAt(value, row, column);
-//                    }
-//                }
-//
-//                public void editingCanceled(ChangeEvent e) {
-//                    // Xử lý khi chỉnh sửa bị hủy
-//                }
-//            });
-//        }
-
-//        scrollBar.getVerticalScrollBar().addAdjustmentListener(e -> {
-//            if (!e.getAdjustable().getValueIsAdjusting()) {
-//                if (e.getAdjustable().getMaximum() == e.getAdjustable().getValue() + e.getAdjustable().getVisibleAmount()) {
-//                    loadMoreBooks(); // Tải thêm sách khi cuộn đến cuối
-//                }
-//            }
-//        });
+        scrollBar.getVerticalScrollBar().addAdjustmentListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                //Check if scrolled to the bottom
+                isScrollAtBottom = e.getAdjustable().getMaximum() == e.getAdjustable().getValue() + e.getAdjustable().getVisibleAmount();
+                if (isScrollAtBottom) {
+                    loadBooksIntoTable();
+                }
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -333,13 +309,8 @@ public class BookCRUD extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
-
-        var text = searchBar.getText();
-        System.out.println("Value in searchBox: " + text);
-
-        List<Book> books = bookService.searchBooks(text);
-
-        model.reloadAllBooks(books);
+        currentOffset = 0;
+        loadBooksIntoTable();
 
     }//GEN-LAST:event_searchBarActionPerformed
 

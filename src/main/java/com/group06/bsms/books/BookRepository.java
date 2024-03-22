@@ -52,67 +52,6 @@ public class BookRepository extends Repository<Book> implements BookDAO {
     }
 
     @Override
-    public List<Book> selectAllBooks()
-            throws Exception {
-        try {
-            db.setAutoCommit(false);
-
-            var list = selectAll(
-                    null,
-                    0, 10,
-                    "title", Sort.ASC,
-                    "id", "authorid", "publisherid", "title",
-                    "quantity", "saleprice",
-                    "ishidden", "hiddenparentcount");
-
-            for (var book : list) {
-                book.author = authorRepository.selectById(book.authorId);
-                book.publisher = publisherRepository.selectById(book.publisherId);
-            }
-
-            db.commit();
-
-            return list;
-
-        } catch (Exception e) {
-            db.rollback();
-            throw e;
-        }
-    }
-
-    @Override
-    public List<Book> selectBooks(String title)
-            throws Exception {
-        try {
-            db.setAutoCommit(false);
-
-            Map<String, Object> searchParams = new HashMap<>();
-            searchParams.put("title", title);
-
-            var list = selectAll(
-                    searchParams,
-                    0, 10,
-                    "title", Sort.ASC,
-                    "id", "authorid", "publisherid", "title",
-                    "quantity", "saleprice",
-                    "ishidden", "hiddenparentcount");
-
-            for (var book : list) {
-                book.author = authorRepository.selectById(book.authorId);
-                book.publisher = publisherRepository.selectById(book.publisherId);
-            }
-
-            db.commit();
-
-            return list;
-
-        } catch (Exception e) {
-            db.rollback();
-            throw e;
-        }
-    }
-
-    @Override
     public void insertBook(Book book)
             throws Exception {
         try {
@@ -242,84 +181,6 @@ public class BookRepository extends Repository<Book> implements BookDAO {
     }
 
     @Override
-    public List<Book> selectBooksByFilter(int authorId, int publisherId, Double minPrice, Double maxPrice,
-            List<Integer> listBookCategoryId) throws Exception {
-        List<Book> result = new ArrayList<>();
-        try {
-            db.setAutoCommit(false);
-
-            String stringQuery = "SELECT DISTINCT Book.* "
-                    + "FROM Book "
-                    + "JOIN BookCategory ON Book.id = BookCategory.bookId WHERE 1 = 1 ";
-
-            if (authorId > 0) {
-                stringQuery += " AND Book.authorId = ?";
-            }
-
-            if (publisherId > 0) {
-                stringQuery += " AND Book.publisherId = ?";
-            }
-
-            if (minPrice != null) {
-                stringQuery += " AND Book.salePrice >= ?";
-            }
-
-            if (maxPrice != null) {
-                stringQuery += " AND Book.salePrice <= ?";
-            }
-
-            if (listBookCategoryId != null && !listBookCategoryId.isEmpty()) {
-                for (int i = 0; i < listBookCategoryId.size(); i++) {
-                    stringQuery += " AND EXISTS ("
-                            + "     SELECT 1"
-                            + "     FROM BookCategory bc" + i
-                            + "     WHERE bc" + i + ".bookId = Book.id AND bc" + i + ".categoryId = ?"
-                            + " )";
-                }
-            }
-
-            try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
-                int parameterIndex = 1;
-
-                if (authorId > 0) {
-                    preparedStatement.setInt(parameterIndex++, authorId);
-                }
-
-                if (publisherId > 0) {
-                    preparedStatement.setInt(parameterIndex++, publisherId);
-                }
-
-                if (minPrice != null) {
-                    preparedStatement.setDouble(parameterIndex++, minPrice);
-                }
-
-                if (maxPrice != null) {
-                    preparedStatement.setDouble(parameterIndex++, maxPrice);
-                }
-
-                if (listBookCategoryId != null && !listBookCategoryId.isEmpty()) {
-                    for (Integer categoryId : listBookCategoryId) {
-                        preparedStatement.setInt(parameterIndex++, categoryId);
-                    }
-                }
-
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    while (resultSet.next()) {
-                        result.add(populate(resultSet));
-                    }
-                }
-            }
-
-            db.commit();
-            return result;
-
-        } catch (SQLException e) {
-            db.rollback();
-            throw e;
-        }
-    }
-
-    @Override
     public List<Book> selectSearchSortFilterBooks(int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice,
             int authorId, int publisherId, Double minPrice, Double maxPrice,
@@ -335,7 +196,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     + " JOIN Publisher ON Publisher.id = Book.publisherId ";
 
             stringQuery += " WHERE " + searchChoice + " LIKE ? ";
-            
+
             if (authorId > 0) {
                 stringQuery += " AND Book.authorId = ? ";
             }
@@ -381,9 +242,9 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 stringQuery += sortKeys.get(key);
                 stringQuery += sortValues.get(value);
             }
-            
-            stringQuery += " OFFSET ? LIMIT ? "; 
-                    
+
+            stringQuery += " OFFSET ? LIMIT ? ";
+
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
                 int parameterIndex = 1;
                 preparedStatement.setString(parameterIndex++, "%" + searchString + "%");
@@ -409,12 +270,10 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                         preparedStatement.setInt(parameterIndex++, categoryId);
                     }
                 }
-                
+
                 preparedStatement.setInt(parameterIndex++, offset);
                 preparedStatement.setInt(parameterIndex++, limit);
-                
-    
-                
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         result.add(populate(resultSet));
@@ -429,6 +288,24 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             return result;
         } catch (SQLException e) {
             db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void updateBookAttributeById(int bookId, String attr, Object value) throws Exception {
+        try {
+            db.setAutoCommit(false);
+
+            updateById(bookId, attr, value);
+
+            db.commit();
+
+        } catch (Exception e) {
+            db.rollback();
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Book not found");
+            }
             throw e;
         }
     }
