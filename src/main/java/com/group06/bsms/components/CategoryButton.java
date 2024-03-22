@@ -1,8 +1,9 @@
-package com.group06.bsms.books.components;
+package com.group06.bsms.components;
 
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Dimension;
+import javax.swing.UIManager;
 
 public class CategoryButton extends javax.swing.JPanel {
 
@@ -12,11 +13,7 @@ public class CategoryButton extends javax.swing.JPanel {
         initComponents();
         this.categorySelectionPanel = categorySelectionPanel;
 
-        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.gray, 14, 14));
-        deleteButton.setToolTipText("Delete");
-
         categoryName.setText(name);
-
         Dimension newSize = new Dimension(categoryName.getPreferredSize().width + 67, 28);
         this.setPreferredSize(newSize);
     }
@@ -41,7 +38,12 @@ public class CategoryButton extends javax.swing.JPanel {
         jSeparator1.setPreferredSize(new java.awt.Dimension(7, 40));
 
         deleteButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        deleteButton.setToolTipText("delete");
+        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/close.svg", 
+            Color.black, Color.black, 
+            14, 14
+        ));
+        deleteButton.setToolTipText("Delete");
         deleteButton.setBorderPainted(false);
         deleteButton.setContentAreaFilled(false);
         deleteButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -84,7 +86,7 @@ public class CategoryButton extends javax.swing.JPanel {
                         .addContainerGap()
                         .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(3, 3, 3))
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -94,11 +96,11 @@ public class CategoryButton extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void deleteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseEntered
-        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.black, 14, 14));
+        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.gray, 14, 14));
     }//GEN-LAST:event_deleteButtonMouseEntered
 
     private void deleteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseExited
-        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.gray, 14, 14));
+        deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.black, 14, 14));
     }//GEN-LAST:event_deleteButtonMouseExited
 
 

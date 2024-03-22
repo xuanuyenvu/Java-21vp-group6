@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookService {
+
     private final BookDAO bookDAO;
 
     public BookService(BookDAO bookDAO) {
@@ -13,12 +14,15 @@ public class BookService {
 
     public void updateBook(Book book) throws Exception, IllegalArgumentException {
         try {
-            if (book == null)
+            if (book == null) {
                 throw new IllegalArgumentException("Book object cannot be null");
-            if (Double.valueOf(book.maxImportPrice) == null && Double.valueOf(book.salePrice) != null)
+            }
+            if (Double.valueOf(book.maxImportPrice) == null && Double.valueOf(book.salePrice) != null) {
                 throw new Exception("Cannot update sale price because the maximum import price is null");
-            if (book.salePrice >= 1.1 * book.maxImportPrice)
+            }
+            if (book.salePrice >= 1.1 * book.maxImportPrice) {
                 throw new Exception("Sale price must be bigger than 1.1 * maximum import price");
+            }
 
             bookDAO.updateBook(book);
         } catch (Exception e) {
@@ -76,4 +80,28 @@ public class BookService {
             System.out.println("An unexpected error occurred: " + e.getMessage());
         }
     }
+
+    public void insertBook(Book book) throws Exception {
+        try {
+            if (book == null) {
+                throw new IllegalArgumentException("Book object cannot be null");
+            }
+
+            if (book.title == null || book.authorId == -1
+                    || book.publisherId == -1
+                    || book.publishDate == null
+                    || book.categories.isEmpty()
+                    || book.dimension == null
+                    || book.pageCount == 0
+                    || book.overview == null) {
+
+                throw new IllegalArgumentException("Please fill in all required information.");
+            }
+
+            bookDAO.insertBook(book);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 }

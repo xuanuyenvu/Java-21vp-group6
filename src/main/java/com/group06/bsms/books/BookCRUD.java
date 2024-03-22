@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
@@ -59,17 +60,17 @@ public class BookCRUD extends javax.swing.JPanel {
     private void loadBooksIntoTable() {
         try {
             var books = bookService.getAllBooks();
-            if (books == null) throw new NullPointerException();
+            if (books == null) {
+                throw new NullPointerException();
+            }
 
             model.loadNewBooks(books);
             // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
             table.getRowSorter().allRowsChanged();
-        } 
-        catch (NullPointerException e) {
-            System.out.println("An error occurred while gettings book information: "+e.getMessage());
-        }
-        catch (Throwable e) {
-            System.err.println(e);
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while getting book information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Throwable e) {
+            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -88,7 +89,6 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
-        
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -124,7 +124,7 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getColumnModel().getColumn(0).setHeaderRenderer(leftRenderer);
         table.getColumnModel().getColumn(1).setHeaderRenderer(leftRenderer);
         table.getColumnModel().getColumn(2).setHeaderRenderer(leftRenderer);
-        
+
         DefaultTableCellRenderer centerHeaderRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -156,7 +156,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 return cellRenderer;
             }
         };
-        
+
         table.getColumnModel().getColumn(3).setHeaderRenderer(centerHeaderRenderer);
         table.getColumnModel().getColumn(4).setHeaderRenderer(centerHeaderRenderer);
 
@@ -174,17 +174,15 @@ public class BookCRUD extends javax.swing.JPanel {
 //                table.setRowSelectionInterval(row, row);
 
 //                int index = table.convertRowIndexToModel(row);
-                
                 try {
                     if (model.getHiddenState(row) == 1) {
                         bookService.showBook(model.getBook(row).id);
-                    } else if(model.getHiddenState(row) == 0) {
+                    } else if (model.getHiddenState(row) == 0) {
                         bookService.hideBook(model.getBook(row).id);
-                    }    
+                    }
                     model.setHiddenState(row);
-                }
-                catch (Exception e) {
-                    System.out.println("Some error occurred while trying to hide a book: " + e.getMessage());
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Some error occurred while trying to hide a book: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
                 }
 
                 System.out.println("True value of book with title " + model.getValueAt(row, 0) + ": " + model.getHiddenState(row));
@@ -316,16 +314,16 @@ public class BookCRUD extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
-        
+
         var text = searchBar.getText();
-        System.out.println("Value in searchBox: "+text);
-        
+        System.out.println("Value in searchBox: " + text);
+
         List<Book> books = bookService.searchBooks(text);
 
         model.reloadAllBooks(books);
         // Notify Sorter that rows changed! VERY IMPORTANT, DO NOT DELETE
         table.getRowSorter().allRowsChanged();
-    
+
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed

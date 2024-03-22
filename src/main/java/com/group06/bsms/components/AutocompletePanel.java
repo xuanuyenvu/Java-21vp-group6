@@ -1,4 +1,4 @@
-package com.group06.bsms.books.components;
+package com.group06.bsms.components;
 
 import java.util.ArrayList;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -10,9 +10,10 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
         autoCompleteButton.setEditable(true);
         AutoCompleteDecorator.decorate(autoCompleteButton);
+
     }
 
-    public void updateListButton(ArrayList<String> list) {
+    public void updateList(ArrayList<String> list) {
         for (String element : list) {
             autoCompleteButton.addItem(element);
         }
@@ -27,9 +28,13 @@ public class AutocompletePanel extends javax.swing.JPanel {
             return null;
         }
     }
-    
+
     public void setEmptyText() {
         autoCompleteButton.setSelectedItem(null);
+    }
+
+    public void setPlaceHolderText(String text) {
+        autoCompleteButton.putClientProperty("JTextField.placeholderText", text);
     }
 
     @SuppressWarnings("unchecked")
@@ -38,7 +43,11 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
         autoCompleteButton = new javax.swing.JComboBox<>();
 
+        setRequestFocusEnabled(false);
+
         autoCompleteButton.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        autoCompleteButton.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        autoCompleteButton.setOpaque(true);
         autoCompleteButton.setPreferredSize(new java.awt.Dimension(72, 31));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
