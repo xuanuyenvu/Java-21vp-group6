@@ -14,6 +14,8 @@ public interface BookDAO {
 
     void hideBook(int id) throws Exception;
 
+    void updateBook(Book book) throws Exception;
+
     void updateBookHiddenParentCount(int id) throws Exception;
 
     void updateBookHiddenParentCountByAuthorId(int authorId) throws Exception;
@@ -26,4 +28,5 @@ public interface BookDAO {
             List<Integer> listBookCategoryId) throws Exception;
 
     void updateBookAttributeById(int bookId, String attr, Object value) throws Exception;
+
 }

@@ -3,7 +3,13 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
+import com.group06.bsms.authors.AuthorRepository;
+import com.group06.bsms.authors.AuthorService;
+import com.group06.bsms.categories.CategoryRepository;
+import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.components.TableActionEvent;
+import com.group06.bsms.publishers.PublisherRepository;
+import com.group06.bsms.publishers.PublisherService;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Component;
@@ -14,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
@@ -30,7 +37,14 @@ public class BookCRUD extends javax.swing.JPanel {
     private boolean isScrollAtBottom = false;
 
     public BookCRUD() {
-        this(new BookService(new BookRepository(DB.db())));
+        this(
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))
+                )
+        );
     }
 
     public BookCRUD(BookService bookService) {

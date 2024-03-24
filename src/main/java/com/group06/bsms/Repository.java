@@ -30,8 +30,7 @@ public class Repository<Entity extends Object> {
             db.setAutoCommit(false);
 
             var query = db.prepareStatement(
-                    "select count(*) from " + entityClass.getSimpleName()
-            );
+                    "select count(*) from " + entityClass.getSimpleName());
 
             var result = query.executeQuery();
 
@@ -55,8 +54,7 @@ public class Repository<Entity extends Object> {
 
             var query = db.prepareStatement(
                     "delete from " + entityClass.getSimpleName() + " "
-                    + "where id = ?"
-            );
+                    + "where id = ?");
 
             query.setInt(1, id);
 
@@ -80,8 +78,7 @@ public class Repository<Entity extends Object> {
 
             var query = db.prepareStatement(
                     "select * from " + entityClass.getSimpleName() + " "
-                    + "where id = ?"
-            );
+                    + "where id = ?");
 
             query.setInt(1, id);
 
@@ -116,12 +113,10 @@ public class Repository<Entity extends Object> {
             Map<String, Object> searchParams,
             int start, Integer count,
             String sortAttr, Sort sortTerm,
-            String... attributes
-    ) throws Exception {
+            String... attributes) throws Exception {
 
         try {
             db.setAutoCommit(false);
-
             var attributesQuery = new StringBuilder();
 
             for (var attribute : attributes) {
@@ -131,10 +126,10 @@ public class Repository<Entity extends Object> {
 
                 attributesQuery.append(entityClass.getSimpleName() + "." + attribute).append(", ");
             }
-
+            System.out.println(attributesQuery);
             attributesQuery.setLength(attributesQuery.length() - 2);
 
-            //search query (different from filter, because of partially identical mapping)
+            // search query (different from filter, because of partially identical mapping)
             var conditionQuery = new StringBuilder();
             Map<String, String> allowedSearches = new HashMap<>();
 
@@ -174,8 +169,7 @@ public class Repository<Entity extends Object> {
                     + conditionQuery + " "
                     + sortQuery
                     + ((count == null) ? "" : " limit ?")
-                    + " offset ?"
-            );
+                    + " offset ?");
 
             int nParameter = 1;
 
@@ -204,6 +198,7 @@ public class Repository<Entity extends Object> {
             return result;
         } catch (Exception e) {
             db.rollback();
+            System.out.println(e);
             throw e;
         }
     }
@@ -225,8 +220,7 @@ public class Repository<Entity extends Object> {
             String searchAttr, Object searchTerm,
             int start, int count,
             String sortAttr, Sort sortTerm,
-            String... attributes
-    ) throws Exception {
+            String... attributes) throws Exception {
 
         try {
             db.setAutoCommit(false);
@@ -256,8 +250,7 @@ public class Repository<Entity extends Object> {
                     + "from " + entityClass.getSimpleName() + " "
                     + "where " + searchAttr + " ilike ? "
                     + "order by " + sortAttr + " "
-                    + sortTerm.toString() + " limit ? offset ?"
-            );
+                    + sortTerm.toString() + " limit ? offset ?");
 
             query.setObject(1, searchTerm);
             query.setInt(2, count);
@@ -286,8 +279,7 @@ public class Repository<Entity extends Object> {
 
             var query = db.prepareStatement(
                     "select * from " + entityClass.getSimpleName() + " "
-                    + "where id =  ?"
-            );
+                    + "where id =  ?");
 
             query.setInt(1, id);
 
@@ -307,8 +299,7 @@ public class Repository<Entity extends Object> {
             db.setAutoCommit(false);
 
             var attributesQuery = new StringBuilder(
-                    "insert into " + entityClass.getSimpleName() + " ("
-            );
+                    "insert into " + entityClass.getSimpleName() + " (");
             var valuesQuery = new StringBuilder(") values (");
 
             for (var attribute : attributes) {
@@ -324,8 +315,7 @@ public class Repository<Entity extends Object> {
             valuesQuery.setLength(valuesQuery.length() - 2);
 
             var query = db.prepareStatement(
-                    attributesQuery.append(valuesQuery).append(")").toString()
-            );
+                    attributesQuery.append(valuesQuery).append(")").toString());
 
             int index = 1;
 
@@ -372,8 +362,7 @@ public class Repository<Entity extends Object> {
 
             var query = db.prepareStatement(
                     "update " + entityClass.getSimpleName() + " "
-                    + "set " + attr + " = ? where id = ?"
-            );
+                    + "set " + attr + " = ? where id = ?");
 
             query.setObject(1, value);
             query.setInt(2, id);

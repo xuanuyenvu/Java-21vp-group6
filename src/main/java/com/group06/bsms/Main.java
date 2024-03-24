@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
+import com.group06.bsms.books.AddBookInformation;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
@@ -28,7 +29,7 @@ public class Main extends JFrame {
 
         layout = new CardLayout();
         panel.setLayout(layout);
-        panel.add(new BookCRUD(), "login");
+        panel.add(new AddBookInformation(), "login");
         panel.add(new Dashboard(), "dashboard");
 
         if (INDEV) {
@@ -39,7 +40,8 @@ public class Main extends JFrame {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panel = new javax.swing.JPanel();
@@ -47,11 +49,10 @@ public class Main extends JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("BSMS");
         setIconImage(SVGHelper.createSVGIconWithFilter(
-            "icons/book.svg",
-            Color.black,
-            Color.black, Color.white,
-            null, null
-        ).getImage());
+                "icons/book.svg",
+                Color.black,
+                Color.black, Color.white,
+                null, null).getImage());
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -64,7 +65,7 @@ public class Main extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {// GEN-FIRST:event_formWindowClosed
         try {
             DB.disconnectFromDB();
         } catch (Exception e) {
@@ -72,10 +73,9 @@ public class Main extends JFrame {
                     app,
                     "Could not disconnect from database. Please restart your computer.",
                     "BSMS Critical error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_formWindowClosed
+    }// GEN-LAST:event_formWindowClosed
 
     public void switchTab(String tab) {
         layout.show(panel, "dashboard");
@@ -103,8 +103,7 @@ public class Main extends JFrame {
                         app,
                         "Could not connect to database. Please try again later.",
                         "BSMS Critical error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                        JOptionPane.ERROR_MESSAGE);
             });
         }
     }

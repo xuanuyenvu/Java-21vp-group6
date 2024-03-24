@@ -40,7 +40,7 @@ create table if not exists Book (
     salePrice decimal(12, 2) check (salePrice >= 0) not null,
     isHidden boolean default false not null,
     hiddenParentCount int check (hiddenParentCount >= 0) not null,
-    maxImportPrice decimal(12, 2)
+    maxImportPrice decimal(12, 2) 
 );
 
 create table if not exists Category (
