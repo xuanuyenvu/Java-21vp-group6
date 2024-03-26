@@ -3,7 +3,6 @@ package com.group06.bsms.components;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Dimension;
-import javax.swing.UIManager;
 
 public class CategoryButton extends javax.swing.JPanel {
 
@@ -102,7 +101,6 @@ public class CategoryButton extends javax.swing.JPanel {
     private void deleteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseExited
         deleteButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/close.svg", Color.black, Color.black, 14, 14));
     }//GEN-LAST:event_deleteButtonMouseExited
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel categoryName;

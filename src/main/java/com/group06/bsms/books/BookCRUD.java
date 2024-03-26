@@ -3,11 +3,14 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
+import com.group06.bsms.authors.Author;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
+import com.group06.bsms.categories.Category;
 import com.group06.bsms.categories.CategoryRepository;
 import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.components.TableActionEvent;
+import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
 import com.group06.bsms.utils.SVGHelper;
@@ -15,12 +18,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
@@ -29,12 +31,24 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class BookCRUD extends javax.swing.JPanel {
 
+    private static BookCRUD instance;
     private final BookService bookService;
     private BookTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
+
+    public void setCurrentOffset(int currentOffset) {
+        this.currentOffset = currentOffset;
+    }
     private int limit = Main.ROW_LIMIT;
     private boolean isScrollAtBottom = false;
+
+    public static BookCRUD getInstance() {
+        if (instance == null) {
+            instance = new BookCRUD();
+        }
+        return instance;
+    }
 
     public BookCRUD() {
         this(
@@ -63,8 +77,13 @@ public class BookCRUD extends javax.swing.JPanel {
         loadBooksIntoTable();
     }
 
-    private void loadBooksIntoTable() {
+    public void loadBooksIntoTable() {
         var searchString = searchBar.getText();
+
+        String minPriceField = BookFilter.getInstance().getMinPriceField().getText();
+        Double minPrice = minPriceField.isEmpty() ? Double.MIN_VALUE : Double.valueOf(minPriceField);
+        String maxPriceField = BookFilter.getInstance().getMaxPriceField().getText();
+        Double maxPrice = maxPriceField.isEmpty() ? Double.MAX_VALUE : Double.valueOf(maxPriceField);
 
         var searchChoiceKey = searchComboBox.getSelectedItem().toString();
         var searchChoiceMap = new HashMap<String, String>();
@@ -72,10 +91,13 @@ public class BookCRUD extends javax.swing.JPanel {
         searchChoiceMap.put("by Author", "Author.name");
         searchChoiceMap.put("by Publisher", "Publisher.name");
         var searchChoiceValue = searchChoiceMap.get(searchChoiceKey);
+        Author author = (Author) BookFilter.getInstance().getAuthorAutoComp1().getSelectedObject();
+        Publisher publisher = (Publisher) BookFilter.getInstance().getPublisherAutoComp1().getSelectedObject();
+        ArrayList<Category> categoriesList = BookFilter.getInstance().getCategorySelectionPanel1().getListSelected();
 
-        List<Integer> listBookCategoryId = null;
         try {
-            var books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders, searchString, searchChoiceValue, -1, -1, null, null, listBookCategoryId);
+            var books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders,
+                    searchString, searchChoiceValue, author, publisher, minPrice, maxPrice, categoriesList);
             if (currentOffset > 0) {
                 model.loadNewBooks(books);
             } else {

@@ -69,11 +69,20 @@ public class BookService {
 
     public List<Book> searchSortFilterBook(int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice,
-            int authorId, int publisherId, Double minPrice, Double maxPrice,
-            List<Integer> listBookCategoryId) {
+            Author author, Publisher publisher, Double minPrice, Double maxPrice,
+            ArrayList<Category> categoriesList) {
         try {
+
+            List<Integer> listBookCategoryId = new ArrayList<>();
+            for (Category category : categoriesList) {
+                listBookCategoryId.add(category.id);
+            }
+
+            var authorId = author == null ? -1 : author.id;
+            var publisherId = publisher == null ? -1 : publisher.id;
+
             List<Book> books = bookDAO.selectSearchSortFilterBooks(offset, limit, sortValue, searchString, searchChoice,
-                    authorId, publisherId, Double.MIN_VALUE, Double.MAX_VALUE, listBookCategoryId);
+                    authorId, publisherId, minPrice, maxPrice, listBookCategoryId);
             return books;
         } catch (SQLException e) {
             System.out.println("An error occurred while get book: " + e.getMessage());
@@ -93,16 +102,16 @@ public class BookService {
         }
     }
 
-    public void insertBook(String title, String author, String publisher, ArrayList<String> categoriesList,
+    public void insertBook(String title, Author author, Publisher publisher, ArrayList<Category> categoriesList,
             Date publishDate, String dimension, Object pages, String translator,
             String overview, boolean hideChecked) throws Exception {
         try {
             Book book = new Book();
             book.title = title;
-            book.authorId = authorService.insertAuthorIfNotExists(author);
-            book.publisherId = publisherService.insertPublisherIfNotExists(publisher);
+            book.authorId = author.id;
+            book.publisherId = publisher.id;
             book.publishDate = publishDate;
-            book.categories = new ArrayList<>(categoryService.selectByName(categoriesList));
+            book.categories = new ArrayList<>(categoriesList);
             book.dimension = dimension;
             book.pageCount = (Integer) pages;
             book.translatorName = translator;

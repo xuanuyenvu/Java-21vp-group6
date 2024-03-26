@@ -95,17 +95,12 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void loadAuthorInto() {
         try {
-            var authors = authorService.selectAllAuthorNames();
+            var authors = new ArrayList<Author>(authorService.selectAllAuthors());
             if (authors == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> authorNames = new ArrayList<>();
-            for (Author author : authors) {
-                authorNames.add(author.name);
-            }
-
-            authorAutoComp.updateList(authorNames);
+            authorAutoComp.updateList(authors);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
@@ -116,17 +111,12 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void loadPublisherInto() {
         try {
-            var publishers = publisherService.selectAllPublisherNames();
+            var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
             if (publishers == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> publisherNames = new ArrayList<>();
-            for (Publisher publisher : publishers) {
-                publisherNames.add(publisher.name);
-            }
-
-            publisherAutoComp.updateList(publisherNames);
+            publisherAutoComp.updateList(publishers);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null, "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
@@ -137,17 +127,12 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void loadCategoryInto() {
         try {
-            var categories = categoryService.selectAllCategoryNames();
+            var categories = new ArrayList<Category>(categoryService.selectAllCategories());
             if (categories == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> categoryNames = new ArrayList<>();
-            for (Category category : categories) {
-                categoryNames.add(category.name);
-            }
-
-            categorySelectionPanel.updateList(categoryNames, null);
+            categorySelectionPanel.updateList(categories, null);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null, "An error occurred while getting category information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
@@ -480,9 +465,9 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void addBookButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBookButtonActionPerformed
         String title = titleField.getText();
-        String author = authorAutoComp.getText();
-        String publisher = publisherAutoComp.getText();
-        ArrayList<String> categoriesList = categorySelectionPanel.getListSelected();
+        Author author = (Author) authorAutoComp.getSelectedObject();
+        Publisher publisher = (Publisher) publisherAutoComp.getSelectedObject();
+        ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
         String dimension = dimensionField.getText();
         Object pages = pagesSpinner.getValue();
         String translator = translatorField.getText();

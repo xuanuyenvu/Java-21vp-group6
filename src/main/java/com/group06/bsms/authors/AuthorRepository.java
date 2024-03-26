@@ -3,9 +3,9 @@ package com.group06.bsms.authors;
 import java.sql.Connection;
 
 import com.group06.bsms.Repository;
+import com.group06.bsms.categories.Category;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class AuthorRepository extends Repository<Author> implements AuthorDAO {
@@ -15,7 +15,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
     }
 
     @Override
-    public List<Author> selectAllAuthorNames() throws Exception {
+    public List<Author> selectAllAuthors() throws Exception {
         try {
             db.setAutoCommit(false);
 
@@ -23,7 +23,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
                     null,
                     0, null,
                     "name", Sort.ASC,
-                    "name"
+                    "name", "id", "overview", "isHidden"
             );
 
             db.commit();
@@ -83,6 +83,27 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
 
             return author;
 
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public Author selectByName(String authorName) throws Exception {
+        Author author = new Author();
+        try {
+            db.setAutoCommit(false);
+
+            var selectAuthorQuery = db.prepareStatement(
+                    "SELECT * FROM Author WHERE name = ?");
+            selectAuthorQuery.setString(1, authorName);
+            var result = selectAuthorQuery.executeQuery();
+            while (result.next()) {
+                author = populate(result);
+            }
+            db.commit();
+            return author;
         } catch (Exception e) {
             db.rollback();
             throw e;

@@ -1,6 +1,7 @@
 package com.group06.bsms.authors;
 
 public class Author {
+
     public int id;
     public String name;
     public String overview;
@@ -25,6 +26,6 @@ public class Author {
 
     @Override
     public String toString() {
-        return "Author [id=" + id + ", name=" + name + ", overview=" + overview + ", isHidden=" + isHidden + "]";
+        return name;
     }
 }

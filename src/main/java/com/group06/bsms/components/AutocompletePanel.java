@@ -5,28 +5,38 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class AutocompletePanel extends javax.swing.JPanel {
 
+    ArrayList<Object> listAllObjects = null;
+
     public AutocompletePanel() {
         initComponents();
+        listAllObjects = new ArrayList<>();
 
         autoCompleteButton.setEditable(true);
         AutoCompleteDecorator.decorate(autoCompleteButton);
 
     }
 
-    public void updateList(ArrayList<String> list) {
-        for (String element : list) {
-            autoCompleteButton.addItem(element);
+    public <Object> void updateList(ArrayList<Object> list) {
+        listAllObjects.clear();
+        listAllObjects = new ArrayList<>(list);
+
+        for (Object element : list) {
+//            method toString() return attr name of Object
+            autoCompleteButton.addItem(element.toString());
         }
         autoCompleteButton.setSelectedItem(null);
     }
 
-    public String getText() {
-        Object selectedItem = autoCompleteButton.getSelectedItem();
-        if (selectedItem != null) {
-            return selectedItem.toString();
-        } else {
+    public Object getSelectedObject() {
+        int index = autoCompleteButton.getSelectedIndex();
+        if (index == -1) {
             return null;
         }
+        return listAllObjects.get(index);
+    }
+
+    public String getText() {
+        return autoCompleteButton.getSelectedItem().toString();
     }
 
     public void setEmptyText() {
@@ -61,7 +71,6 @@ public class AutocompletePanel extends javax.swing.JPanel {
             .addComponent(autoCompleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> autoCompleteButton;

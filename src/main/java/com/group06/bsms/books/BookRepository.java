@@ -112,8 +112,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
             // Insert into Book table
             PreparedStatement insertBookQuery = db.prepareStatement(
-                    "INSERT INTO Book (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, isHidden, hiddenParentCount) "
-                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO Book (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, isHidden, hiddenParentCount, quantity, salePrice) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
                     Statement.RETURN_GENERATED_KEYS);
 
             insertBookQuery.setInt(1, book.authorId);
@@ -143,7 +143,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
             PreparedStatement insertCategoryBookQuery = db.prepareStatement(
                     "INSERT INTO CategoryBook (bookId, categoryId) "
-                            + "VALUES (?, ?)");
+                    + "VALUES (?, ?)");
 
             for (Category category : book.categories) {
                 insertCategoryBookQuery.setInt(1, bookId);
@@ -160,7 +160,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
             db.commit();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             db.rollback();
             throw e;
         }
@@ -306,13 +306,9 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 stringQuery += " AND Book.publisherId = ? ";
             }
 
-            if (minPrice != null) {
-                stringQuery += " AND Book.salePrice >= ? ";
-            }
+            stringQuery += " AND Book.salePrice >= ? ";
 
-            if (maxPrice != null) {
-                stringQuery += " AND Book.salePrice <= ? ";
-            }
+            stringQuery += " AND Book.salePrice <= ? ";
 
             if (listBookCategoryId != null && !listBookCategoryId.isEmpty()) {
                 for (int i = 0; i < listBookCategoryId.size(); i++) {
