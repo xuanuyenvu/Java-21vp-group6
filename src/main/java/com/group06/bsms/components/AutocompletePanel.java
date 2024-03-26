@@ -13,6 +13,10 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
     }
 
+    public void setText(String text){
+        autoCompleteButton.setSelectedItem(text);
+    }
+
     public void updateList(ArrayList<String> list) {
         for (String element : list) {
             autoCompleteButton.addItem(element);
@@ -62,6 +66,7 @@ public class AutocompletePanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> autoCompleteButton;

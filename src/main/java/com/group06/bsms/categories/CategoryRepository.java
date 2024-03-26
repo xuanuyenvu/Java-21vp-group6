@@ -20,7 +20,8 @@ public class CategoryRepository extends Repository<Category> implements Category
             var categories = selectAll(
                     null,
                     0, null,
-                    "name", Sort.ASC
+                    "name", Sort.ASC,
+                    "id", "name","isHidden"
             );
 
             db.commit();

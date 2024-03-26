@@ -6,6 +6,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.dashboard.Dashboard;
+import com.group06.bsms.books.UpdateBook;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -27,8 +28,9 @@ public class Main extends JFrame {
 
         layout = new CardLayout();
         panel.setLayout(layout);
-        panel.add(new Login(), "login");
-        panel.add(new Dashboard(), "dashboard");
+        // panel.add(new Login(), "login");
+        // panel.add(new Dashboard(), "dashboard");
+        panel.add(new UpdateBook(), "test");
 
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);

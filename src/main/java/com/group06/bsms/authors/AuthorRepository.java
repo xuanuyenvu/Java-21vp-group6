@@ -20,8 +20,10 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
             var authors = selectAll(
                     null,
                     0, null,
-                    "name", Sort.ASC
+                    "name", Sort.ASC,
+                     "id", "name", "overview", "isHidden"
             );
+            
 
             db.commit();
 

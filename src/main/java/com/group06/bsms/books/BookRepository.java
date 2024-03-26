@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,18 +180,22 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     "SELECT c.id, c.name, c.isHidden FROM Category c JOIN BookCategory bc ON c.id = bc.categoryId WHERE bc.bookId = ?");
             selectBookCategoriesQuery.setInt(1, id);
             var result = selectBookCategoriesQuery.executeQuery();
+            if(book.categories == null){
+                book.categories = new ArrayList<>();
+            }
             while (result.next()) {
                 book.categories.add(new Category(
                         result.getInt("id"),
                         result.getString("name"),
                         result.getBoolean("isHidden")));
             }
-
+           
             db.commit();
 
             return book;
 
         } catch (Exception e) {
+            e.printStackTrace();
             db.rollback();
             throw e;
         }

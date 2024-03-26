@@ -21,6 +21,17 @@ public class DatePickerPanel extends javax.swing.JPanel {
         addTextFieldListener();
     }
 
+    public void setText(String text){
+        jTextField.setText(text);
+        
+    }
+    
+    public void setDate(Date date){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        jTextField.setText(dateFormat.format(date));
+        jXDatePicker.setDate(date);
+    }
+
     public void setPlaceholder(String text) {
         jTextField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, text);
     }

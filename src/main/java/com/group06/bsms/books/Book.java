@@ -50,7 +50,7 @@ public class Book {
         this.hiddenParentCount = hiddenParentCount;
         this.isHidden = isHidden;
         this.maxImportPrice = maxImportPrice;
-        categories = new ArrayList<Category>();
+        categories = new ArrayList<>();
     }
 
     @Override
@@ -59,6 +59,6 @@ public class Book {
                 + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension
                 + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity
                 + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount
-                + ", author=" + author + ", publisher=" + publisher + ", maxImportPrice=" + maxImportPrice + '}';
+                + ", author=" + author + ", publisher=" + publisher + ", maxImportPrice=" + maxImportPrice + ", category= " + categories.toString() + "}";
     }
 }

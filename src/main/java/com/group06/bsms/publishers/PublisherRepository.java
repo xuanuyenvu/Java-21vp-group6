@@ -20,7 +20,8 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
             var publishers = selectAll(
                     null,
                     0, null,
-                    "name", Sort.ASC
+                    "name", Sort.ASC,
+                    "id", "name", "email", "address", "isHidden"
             );
 
             db.commit();
