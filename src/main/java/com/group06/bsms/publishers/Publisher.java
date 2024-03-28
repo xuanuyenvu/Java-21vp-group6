@@ -1,6 +1,7 @@
 package com.group06.bsms.publishers;
 
 public class Publisher {
+
     public int id;
     public String name;
     public String email;
@@ -27,9 +28,7 @@ public class Publisher {
 
     @Override
     public String toString() {
-        return "Publisher [id=" + id + ", name=" + name + ", email=" + email + ", address=" + address + ", isHidden="
-                + isHidden + "]";
+        return name;
     }
 
-    
 }

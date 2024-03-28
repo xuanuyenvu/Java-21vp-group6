@@ -11,23 +11,10 @@ public class CategoryService {
         this.categoryDAO = categoryDAO;
     }
 
-    public List<Category> selectAllCategoryNames() {
+    public List<Category> selectAllCategories() {
         try {
-            List<Category> categories = categoryDAO.selectAllCategoryNames();
+            List<Category> categories = categoryDAO.selectAllCategories();
             return categories;
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ArrayList<>();
-        }
-    }
-
-    public List<Category> selectByName(List<String> categoriesName) throws Exception {
-        try {
-            if (categoriesName.isEmpty()) {
-                return new ArrayList<>();
-            } else {
-                return categoryDAO.selectByName(categoriesName);
-            }
         } catch (Exception e) {
             System.out.println(e);
             return new ArrayList<>();

@@ -3,7 +3,6 @@ package com.group06.bsms.components;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import javax.swing.JPanel;
 
 public class ActionBtn extends javax.swing.JPanel {
 
@@ -120,7 +119,6 @@ public class ActionBtn extends javax.swing.JPanel {
     private void hideBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideBtnActionPerformed
 
     }//GEN-LAST:event_hideBtnActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton editBtn;

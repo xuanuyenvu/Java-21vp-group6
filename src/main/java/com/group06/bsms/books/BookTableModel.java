@@ -1,5 +1,6 @@
 package com.group06.bsms.books;
 
+import static com.group06.bsms.Main.app;
 import com.group06.bsms.components.ActionBtn;
 import com.group06.bsms.components.TableActionEvent;
 import java.awt.Color;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import javax.swing.SwingUtilities;
@@ -26,7 +28,6 @@ class TableActionCellEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        Component com = super.getTableCellEditorComponent(table, value, isSelected, row, column);
         BookTableModel model = (BookTableModel) table.getModel();
         int isHidden = model.getHiddenState(table.convertRowIndexToModel(row));
         int modelRow = table.convertRowIndexToModel(row);
@@ -51,7 +52,6 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
         int isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
 
-//        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         ActionBtn action = new ActionBtn(isHidden);
         action.setBackground(Color.WHITE);
 
@@ -65,8 +65,13 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 public class BookTableModel extends AbstractTableModel {
 
     private List<Book> books = new ArrayList<>();
-    private List<Object> actionState = new ArrayList<>();
     private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Actions"};
+    public boolean editable = false;
+    private final BookService bookService;
+
+    public BookTableModel(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @Override
     public int getRowCount() {
@@ -100,8 +105,6 @@ public class BookTableModel extends AbstractTableModel {
                 return book.quantity;
             case 4:
                 return book.salePrice;
-            case 5:
-                return actionState.get(row);
             default:
                 return null;
         }
@@ -115,23 +118,59 @@ public class BookTableModel extends AbstractTableModel {
      */
     @Override
     public void setValueAt(Object val, int row, int col) {
+        if (col == 5) {
+            return;
+        }
+        if (!editable) {
+            editable = true;
+            return;
+        }
         Book book = books.get(row);
         switch (col) {
             case 0:
-                book.title = (String) val;
-                break;
-            case 1:
-                break;
-            case 2:
+                if (!book.title.equals((String) val)) {
+                    try {
+                        bookService.updateBookAttributeById(book.id, "title", (String) val);
+                        book.title = (String) val;
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(
+                                app,
+                                "An error has occurred: " + e.getMessage(),
+                                "BSMS Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
                 break;
             case 3:
-                book.quantity = (Integer) val;
+                if ((Integer) val != book.quantity) {
+                    try {
+                        bookService.updateBookAttributeById(book.id, "quantity", (Integer) val);
+                        book.quantity = (Integer) val;
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(
+                                app,
+                                "An error has occurred: " + e.getMessage(),
+                                "BSMS Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
                 break;
             case 4:
-                book.salePrice = (Double) val;
-                break;
-            case 5:
-                actionState.set(row, (Boolean) val);
+                if ((Double) val != book.salePrice) {
+                    try {
+                        bookService.updateBookAttributeById(book.id, "salePrice", (Double) val);
+                        book.salePrice = (Double) val;
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(
+                                app,
+                                "An error has occurred: " + e.getMessage(),
+                                "BSMS Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
                 break;
             default:
                 break;
@@ -177,20 +216,20 @@ public class BookTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return (columnIndex == 0 || columnIndex == 1 || columnIndex == 2 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5);
+        return (columnIndex == 0 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5);
     }
 
     public void reloadAllBooks(List<Book> newBooks) {
         if (newBooks != null) {
             books.clear();
             fireTableDataChanged();
-
             for (var book : newBooks) {
                 if (!contains(book.id)) {
                     addRow(book);
                 }
             }
         }
+        editable = false;
     }
 
     public void loadNewBooks(List<Book> newBooks) {
@@ -205,7 +244,6 @@ public class BookTableModel extends AbstractTableModel {
 
     void addRow(Book book) {
         books.add(book);
-        actionState.add(!book.isHidden);
         SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
     }
 

@@ -19,10 +19,17 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
     private final CategoryService categoryService;
 
     public AddBookInformation() {
-        this(new BookService(new BookRepository(DB.db())),
+        this(
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))
+                ),
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db())),
-                new CategoryService(new CategoryRepository(DB.db())));
+                new CategoryService(new CategoryRepository(DB.db()))
+        );
     }
 
     public AddBookInformation(BookService bookService, AuthorService authorService, PublisherService publisherService, CategoryService categoryService) {
@@ -30,7 +37,6 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         this.authorService = authorService;
         this.publisherService = publisherService;
         this.categoryService = categoryService;
-
         initComponents();
         hiddenPropLabel.setVisible(false);
 
@@ -89,17 +95,12 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void loadAuthorInto() {
         try {
-            var authors = authorService.selectAllAuthorNames();
+            var authors = new ArrayList<Author>(authorService.selectAllAuthors());
             if (authors == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> authorNames = new ArrayList<>();
-            for (Author author : authors) {
-                authorNames.add(author.name);
-            }
-
-            authorAutoComp.updateList(authorNames);
+            authorAutoComp.updateList(authors);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
@@ -110,17 +111,12 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void loadPublisherInto() {
         try {
-            var publishers = publisherService.selectAllPublisherNames();
+            var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
             if (publishers == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> publisherNames = new ArrayList<>();
-            for (Publisher publisher : publishers) {
-                publisherNames.add(publisher.name);
-            }
-
-            publisherAutoComp.updateList(publisherNames);
+            publisherAutoComp.updateList(publishers);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null, "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
@@ -131,17 +127,12 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void loadCategoryInto() {
         try {
-            var categories = categoryService.selectAllCategoryNames();
+            var categories = new ArrayList<Category>(categoryService.selectAllCategories());
             if (categories == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> categoryNames = new ArrayList<>();
-            for (Category category : categories) {
-                categoryNames.add(category.name);
-            }
-
-            categorySelectionPanel.updateList(categoryNames, null);
+            categorySelectionPanel.updateList(categories, null);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null, "An error occurred while getting category information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
@@ -474,49 +465,22 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
     private void addBookButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBookButtonActionPerformed
         String title = titleField.getText();
-        String author = authorAutoComp.getText();
-        String publisher = publisherAutoComp.getText();
-        ArrayList<String> categoriesList = categorySelectionPanel.getListSelected();
+        Author author = (Author) authorAutoComp.getSelectedObject();
+        Publisher publisher = (Publisher) publisherAutoComp.getSelectedObject();
+        ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
         String dimension = dimensionField.getText();
         Object pages = pagesSpinner.getValue();
         String translator = translatorField.getText();
         String overview = overviewTextArea.getText();
         boolean hideChecked = hideCheckBox.isSelected();
-
         try {
-
-            Book newBook = new Book();
-            newBook.title = title;
-            newBook.authorId = authorService.insertAuthorIfNotExists(author);
-            newBook.publisherId = publisherService.insertPublisherIfNotExists(publisher);
-            newBook.publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-            newBook.categories = new ArrayList<>(categoryService.selectByName(categoriesList));
-            newBook.dimension = dimension;
-            newBook.pageCount = (Integer) pages;
-            newBook.translatorName = translator;
-            newBook.overview = overview;
-            newBook.isHidden = hideChecked;
-
-            int count = 0;
-            Author a = authorService.selectAuthor(newBook.authorId);
-            Publisher p = publisherService.selectPublisher(newBook.publisherId);
-
-            if (a != null && a.isHidden) {
-                count++;
-            }
-            if (p != null && p.isHidden) {
-                count++;
-            }
-            for (Category c : newBook.categories) {
-                if (c.isHidden) {
-                    count++;
-                }
-            }
-            newBook.hiddenParentCount = count;
-
-            bookService.insertBook(newBook);
+            java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
+            bookService.insertBook(title, author, publisher, categoriesList, publishDate,
+                    dimension, pages, translator, overview, hideChecked);
             JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information", JOptionPane.INFORMATION_MESSAGE);
 
+        } catch (NullPointerException ex) {
+            JOptionPane.showMessageDialog(null, "Date is not null", "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -530,7 +494,6 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
     private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
     }//GEN-LAST:event_backButtonMouseExited
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBookButton;

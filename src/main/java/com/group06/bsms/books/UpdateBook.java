@@ -5,10 +5,7 @@ import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-
 
 public class UpdateBook extends javax.swing.JPanel {
 
@@ -394,7 +391,7 @@ public class UpdateBook extends javax.swing.JPanel {
         overviewTextArea.setText("");
         importPriceField.setText("");
         salePriceField.setText("");
-        
+
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
@@ -408,13 +405,12 @@ public class UpdateBook extends javax.swing.JPanel {
         String overview = overviewTextArea.getText();
         String importPrice = importPriceField.getText();
         String salePrice = salePriceField.getText();
-        
 
         if (!title.isEmpty() && !author.isEmpty()
                 && !publisher.isEmpty() && publishDatePicker.getDate() != null
                 && !categoriesList.isEmpty() && !dimension.isEmpty()
                 && !pages.equals(0) && !overview.isEmpty()) {
-            
+
             java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             String formattedDate = dateFormat.format(publishDate);
@@ -429,8 +425,7 @@ public class UpdateBook extends javax.swing.JPanel {
                     + translator + "; "
                     + overview + "; "
                     + importPrice + "; "
-                    + salePrice + "; "
-                    ;
+                    + salePrice + "; ";
             System.out.print(newBookInfo);
         } else {
             JOptionPane.showMessageDialog(null, "Please fill in all required information!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -463,11 +458,10 @@ public class UpdateBook extends javax.swing.JPanel {
 
     private void salePriceFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_salePriceFieldKeyTyped
         char enter = evt.getKeyChar();
-        if(!(Character.isDigit(enter))){
+        if (!(Character.isDigit(enter))) {
             evt.consume();
         }
     }//GEN-LAST:event_salePriceFieldKeyTyped
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;

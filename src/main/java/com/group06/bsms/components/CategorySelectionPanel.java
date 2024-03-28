@@ -1,17 +1,20 @@
 package com.group06.bsms.components;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.categories.Category;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 
 public class CategorySelectionPanel extends javax.swing.JPanel {
 
     private CategorySelectionListener listener;
-    ArrayList<String> listSelected = null;
+    ArrayList<Category> listAllCategories = null;
+    ArrayList<Category> listSelected = null;
     private int count = 0;
 
     public CategorySelectionPanel() {
         initComponents();
+        listAllCategories = new ArrayList<>();
         listSelected = new ArrayList<>();
     }
 
@@ -21,23 +24,32 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         categoriesPanel.add(categoryButton);
     }
 
-    public void updateList(ArrayList<String> listUnselected, ArrayList<String> currentCategories) {
-        for (String category : listUnselected) {
-            addButton.addItem(category);
+    public void updateList(ArrayList<Category> listAllCategories, ArrayList<Category> currentCategories) {
+        this.listAllCategories.clear();
+        this.listAllCategories = new ArrayList<>(listAllCategories);
+        for (Category category : listAllCategories) {
+            addButton.addItem(category.name);
         }
 
         if (currentCategories != null) {
             listSelected.clear();
             listSelected = new ArrayList<>(currentCategories);
-            for (String categorySelected : listSelected) {
-                createToggleButton(categorySelected);
+            for (Category categorySelected : listSelected) {
+                createToggleButton(categorySelected.name);
             }
         }
 
     }
 
     public void deleteCategory(String name) {
-        listSelected.remove(name);
+        Category categoryToRemove = null;
+        for (Category categorySelected : listSelected) {
+            if (categorySelected.name.equals(name)) {
+                categoryToRemove = categorySelected;
+            }
+        }
+
+        listSelected.remove(categoryToRemove);
 
         categoriesPanel.revalidate();
         categoriesPanel.repaint();
@@ -62,7 +74,7 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     public ArrayList getListSelected() {
         return listSelected;
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -120,10 +132,10 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
             count++;
         } else {
             if (evt.getStateChange() == ItemEvent.SELECTED) {
-                String newCategory = String.valueOf(addButton.getSelectedItem());
-                if (!listSelected.contains(newCategory)) {
-                    listSelected.add(newCategory);
-                    createToggleButton(newCategory);
+                int indexNewCategory = addButton.getSelectedIndex();
+                if (!listSelected.contains(listAllCategories.get(indexNewCategory))) {
+                    listSelected.add(listAllCategories.get(indexNewCategory));
+                    createToggleButton(listAllCategories.get(indexNewCategory).name);
 
                     categoriesPanel.revalidate();
                     categoriesPanel.repaint();
