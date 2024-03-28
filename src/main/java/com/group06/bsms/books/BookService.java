@@ -47,113 +47,86 @@ public class BookService {
 
     }
 
-    public void hideBook(int id) {
-        try {
-            bookDAO.hideBook(id);
-        } catch (SQLException e) {
-            System.out.println("An error occurred while hiding a book: " + e.getMessage());
-        } catch (Throwable e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
-        }
+    public void hideBook(int id) throws Exception {
+        bookDAO.hideBook(id);
     }
 
-    public void showBook(int id) {
-        try {
-            bookDAO.showBook(id);
-        } catch (SQLException e) {
-            System.out.println("An error occurred while showing a book: " + e.getMessage());
-        } catch (Throwable e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
-        }
+    public void showBook(int id) throws Exception {
+        bookDAO.showBook(id);
     }
 
     public List<Book> searchSortFilterBook(int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice,
             Author author, Publisher publisher, Double minPrice, Double maxPrice,
-            ArrayList<Category> categoriesList) {
-        try {
+            ArrayList<Category> categoriesList
+    ) throws Exception {
 
-            List<Integer> listBookCategoryId = new ArrayList<>();
-            for (Category category : categoriesList) {
-                listBookCategoryId.add(category.id);
-            }
-
-            var authorId = author == null ? -1 : author.id;
-            var publisherId = publisher == null ? -1 : publisher.id;
-
-            List<Book> books = bookDAO.selectSearchSortFilterBooks(offset, limit, sortValue, searchString, searchChoice,
-                    authorId, publisherId, minPrice, maxPrice, listBookCategoryId);
-            return books;
-        } catch (SQLException e) {
-            System.out.println("An error occurred while get book: " + e.getMessage());
-        } catch (Throwable e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
+        List<Integer> listBookCategoryId = new ArrayList<>();
+        for (Category category : categoriesList) {
+            listBookCategoryId.add(category.id);
         }
-        return null;
+
+        var authorId = author == null ? -1 : author.id;
+        var publisherId = publisher == null ? -1 : publisher.id;
+
+        List<Book> books = bookDAO.selectSearchSortFilterBooks(offset, limit, sortValue, searchString, searchChoice,
+                authorId, publisherId, minPrice, maxPrice, listBookCategoryId);
+
+        return books;
     }
 
-    public void updateBookAttributeById(int bookId, String attr, Object value) {
-        try {
-            bookDAO.updateBookAttributeById(bookId, attr, value);
-        } catch (SQLException e) {
-            System.out.println("An error occurred while update a book: " + e.getMessage());
-        } catch (Throwable e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
-        }
+    public void updateBookAttributeById(int bookId, String attr, Object value) throws Exception {
+        bookDAO.updateBookAttributeById(bookId, attr, value);
     }
 
     public void insertBook(String title, Author author, Publisher publisher, ArrayList<Category> categoriesList,
             Date publishDate, String dimension, Object pages, String translator,
             String overview, boolean hideChecked) throws Exception {
-        try {
-            Book book = new Book();
-            book.title = title;
-            book.authorId = author.id;
-            book.publisherId = publisher.id;
-            book.publishDate = publishDate;
-            book.categories = new ArrayList<>(categoriesList);
-            book.dimension = dimension;
-            book.pageCount = (Integer) pages;
-            book.translatorName = translator;
-            book.overview = overview;
-            book.isHidden = hideChecked;
+        Book book = new Book();
+        book.title = title;
+        book.authorId = author.id;
+        book.publisherId = publisher.id;
+        book.publishDate = publishDate;
+        book.categories = new ArrayList<>(categoriesList);
+        book.dimension = dimension;
+        book.pageCount = (Integer) pages;
+        book.translatorName = translator;
+        book.overview = overview;
+        book.isHidden = hideChecked;
 
-            int count = 0;
-            Author a = authorService.selectAuthor(book.authorId);
-            Publisher p = publisherService.selectPublisher(book.publisherId);
+        int count = 0;
+        Author a = authorService.selectAuthor(book.authorId);
+        Publisher p = publisherService.selectPublisher(book.publisherId);
 
-            if (a != null && a.isHidden) {
-                count++;
-            }
-            if (p != null && p.isHidden) {
-                count++;
-            }
-            for (Category c : book.categories) {
-                if (c.isHidden) {
-                    count++;
-                }
-            }
-            book.hiddenParentCount = count;
-
-            if (book == null) {
-                throw new IllegalArgumentException("Book object cannot be null");
-            }
-
-            if (book.title == null || book.authorId == -1
-                    || book.publisherId == -1
-                    || book.publishDate == null
-                    || book.categories.isEmpty()
-                    || book.dimension == null
-                    || book.pageCount == 0
-                    || book.overview == null) {
-
-                throw new IllegalArgumentException("Please fill in all required information.");
-            }
-
-            bookDAO.insertBook(book);
-        } catch (Exception e) {
-            throw e;
+        if (a != null && a.isHidden) {
+            count++;
         }
+        if (p != null && p.isHidden) {
+            count++;
+        }
+        for (Category c : book.categories) {
+            if (c.isHidden) {
+                count++;
+            }
+        }
+        book.hiddenParentCount = count;
+
+        if (book == null) {
+            throw new IllegalArgumentException("Book object cannot be null");
+        }
+
+        if (book.title == null || book.authorId == -1
+                || book.publisherId == -1
+                || book.publishDate == null
+                || book.categories.isEmpty()
+                || book.dimension == null
+                || book.pageCount == 0
+                || book.overview == null) {
+
+            throw new IllegalArgumentException("Please fill in all required information.");
+        }
+
+        bookDAO.insertBook(book);
     }
 
 }

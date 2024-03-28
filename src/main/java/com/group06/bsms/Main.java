@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
+import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
@@ -26,7 +27,7 @@ public class Main extends JFrame {
         initComponents();
         layout = new CardLayout();
         panel.setLayout(layout);
-        panel.add(new Login(), "test");
+        panel.add(new BookCRUD(), "login");
         panel.add(new Dashboard(), "dashboard");
 
         if (INDEV) {

@@ -1,5 +1,6 @@
 package com.group06.bsms.books;
 
+import static com.group06.bsms.Main.app;
 import com.group06.bsms.components.ActionBtn;
 import com.group06.bsms.components.TableActionEvent;
 import java.awt.Color;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import javax.swing.SwingUtilities;
@@ -131,7 +133,12 @@ public class BookTableModel extends AbstractTableModel {
                         bookService.updateBookAttributeById(book.id, "title", (String) val);
                         book.title = (String) val;
                     } catch (Exception e) {
-                        throw e;
+                        JOptionPane.showMessageDialog(
+                                app,
+                                "An error has occurred: " + e.getMessage(),
+                                "BSMS Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
                 }
                 break;
@@ -141,19 +148,27 @@ public class BookTableModel extends AbstractTableModel {
                         bookService.updateBookAttributeById(book.id, "quantity", (Integer) val);
                         book.quantity = (Integer) val;
                     } catch (Exception e) {
-                        throw e;
+                        JOptionPane.showMessageDialog(
+                                app,
+                                "An error has occurred: " + e.getMessage(),
+                                "BSMS Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
                 }
                 break;
             case 4:
                 if ((Double) val != book.salePrice) {
-                    System.out.println("called");
                     try {
                         bookService.updateBookAttributeById(book.id, "salePrice", (Double) val);
                         book.salePrice = (Double) val;
                     } catch (Exception e) {
-                        System.out.println("Error");
-                        throw e;
+                        JOptionPane.showMessageDialog(
+                                app,
+                                "An error has occurred: " + e.getMessage(),
+                                "BSMS Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
                 }
                 break;

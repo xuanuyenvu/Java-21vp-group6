@@ -3,6 +3,7 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
+import static com.group06.bsms.Main.app;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
@@ -105,7 +107,12 @@ public class BookCRUD extends javax.swing.JPanel {
             }
             currentOffset += limit;
         } catch (Exception e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "An error has occurred: " + e.getMessage(),
+                    "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -180,12 +187,6 @@ public class BookCRUD extends javax.swing.JPanel {
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
-//                JOptionPane.showMessageDialog(
-//                        app,
-//                        "Could not disconnect from database. Please restart your computer.",
-//                        "BSMS error",
-//                        JOptionPane.ERROR_MESSAGE
-//                );
             }
 
             @Override
@@ -198,10 +199,14 @@ public class BookCRUD extends javax.swing.JPanel {
                     }
                     model.setHiddenState(row);
                 } catch (Exception e) {
-                    System.out.println("Some error occurred while trying to hide a book: " + e.getMessage());
+                    JOptionPane.showMessageDialog(
+                            app,
+                            "An error has occurred while hiding book: " + e.getMessage(),
+                            "BSMS Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
 
-                System.out.println("True value of book with title " + model.getValueAt(row, 0) + ": " + model.getHiddenState(row));
                 return model.getHiddenState(row);
             }
         };
@@ -359,7 +364,6 @@ public class BookCRUD extends javax.swing.JPanel {
     }//GEN-LAST:event_filterBtnActionPerformed
 
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_searchComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

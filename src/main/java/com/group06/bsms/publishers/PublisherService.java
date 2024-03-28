@@ -43,7 +43,7 @@ public class PublisherService {
 
     public Publisher selectPublisherByName(String authorName) throws Exception {
         try {
-            return publisherDAO.selectByName(authorName);
+            return publisherDAO.selectPublisherByName(authorName);
         } catch (Exception e) {
             throw e;
         }

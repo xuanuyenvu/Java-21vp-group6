@@ -126,7 +126,7 @@ public class Repository<Entity extends Object> {
 
                 attributesQuery.append(entityClass.getSimpleName() + "." + attribute).append(", ");
             }
-            System.out.println(attributesQuery);
+
             attributesQuery.setLength(attributesQuery.length() - 2);
 
             // search query (different from filter, because of partially identical mapping)
@@ -198,7 +198,6 @@ public class Repository<Entity extends Object> {
             return result;
         } catch (Exception e) {
             db.rollback();
-            System.out.println(e);
             throw e;
         }
     }
@@ -366,8 +365,6 @@ public class Repository<Entity extends Object> {
 
             query.setObject(1, value);
             query.setInt(2, id);
-
-            System.out.println(query);
 
             var result = query.executeUpdate();
 

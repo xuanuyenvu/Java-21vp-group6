@@ -3,9 +3,7 @@ package com.group06.bsms.authors;
 import java.sql.Connection;
 
 import com.group06.bsms.Repository;
-import com.group06.bsms.categories.Category;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorRepository extends Repository<Author> implements AuthorDAO {
@@ -90,7 +88,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
     }
 
     @Override
-    public Author selectByName(String authorName) throws Exception {
+    public Author selectAuthorByName(String authorName) throws Exception {
         Author author = new Author();
         try {
             db.setAutoCommit(false);

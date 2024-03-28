@@ -10,5 +10,5 @@ public interface PublisherDAO {
 
     public Publisher selectPublisher(int id) throws Exception;
 
-    public Publisher selectByName(String publisherName) throws Exception;
+    public Publisher selectPublisherByName(String publisherName) throws Exception;
 }

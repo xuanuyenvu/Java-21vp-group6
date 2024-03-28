@@ -43,7 +43,7 @@ public class AuthorService {
 
     public Author selectAuthorByName(String authorName) throws Exception {
         try {
-            return authorDAO.selectByName(authorName);
+            return authorDAO.selectAuthorByName(authorName);
         } catch (Exception e) {
             throw e;
         }

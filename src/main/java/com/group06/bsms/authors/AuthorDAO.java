@@ -10,5 +10,5 @@ public interface AuthorDAO {
 
     public Author selectAuthor(int id) throws Exception;
 
-    public Author selectByName(String authorName) throws Exception;
+    public Author selectAuthorByName(String authorName) throws Exception;
 }

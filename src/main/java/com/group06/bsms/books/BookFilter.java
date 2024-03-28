@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
-public class BookFilter extends javax.swing.JPanel implements CategorySelectionListener {
+public class BookFilter extends javax.swing.JPanel {
 
     private static BookFilter instance;
     private final BookService bookService;
@@ -417,9 +417,4 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
     private javax.swing.JButton removeAllBtn;
     private javax.swing.JLabel salePriceLabel;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void onCategoriesChanged(int quantity) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }
