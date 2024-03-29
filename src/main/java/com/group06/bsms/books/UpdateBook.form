@@ -321,7 +321,7 @@
                 <Property name="text" type="java.lang.String" value="Category *"/>
               </Properties>
             </Component>
-            <Component class="com.group06.bsms.books.components.CategorySelectionPanel" name="categorySelectionPanel">
+            <Component class="com.group06.bsms.components.CategorySelectionPanel" name="categorySelectionPanel">
               <Properties>
                 <Property name="autoscrolls" type="boolean" value="true"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -472,14 +472,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="com.group06.bsms.books.components.AutocompletePanel" name="publisherAutoComp">
+            <Component class="com.group06.bsms.components.AutocompletePanel" name="publisherAutoComp">
               <Properties>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[215, 31]"/>
                 </Property>
               </Properties>
             </Component>
-            <Component class="com.group06.bsms.books.components.AutocompletePanel" name="authorAutoComp">
+            <Component class="com.group06.bsms.components.AutocompletePanel" name="authorAutoComp">
               <Properties>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[440, 31]"/>

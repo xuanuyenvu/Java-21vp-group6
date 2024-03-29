@@ -4,6 +4,7 @@ import com.group06.bsms.DB;
 import com.group06.bsms.components.*;
 import com.group06.bsms.authors.*;
 import com.group06.bsms.categories.*;
+import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.publishers.*;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
@@ -194,6 +195,11 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 backButtonMouseExited(evt);
+            }
+        });
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
             }
         });
 
@@ -494,6 +500,10 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
     private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
     }//GEN-LAST:event_backButtonMouseExited
+
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        Dashboard.dashboard.switchTab("bookCRUD");
+    }//GEN-LAST:event_backButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBookButton;

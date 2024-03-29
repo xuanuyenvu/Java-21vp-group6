@@ -1,6 +1,9 @@
 package com.group06.bsms.books;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.dashboard.Dashboard;
+import com.group06.bsms.components.CategorySelectionPanel;
+import com.group06.bsms.components.AutocompletePanel;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -50,7 +53,7 @@ public class UpdateBook extends javax.swing.JPanel {
         publisherLabel = new javax.swing.JLabel();
         publishDateLabel = new javax.swing.JLabel();
         categoryLabel = new javax.swing.JLabel();
-        categorySelectionPanel = new com.group06.bsms.components.CategorySelectionPanel();
+        categorySelectionPanel = new CategorySelectionPanel();
         dimensionLabel = new javax.swing.JLabel();
         dimensionField = new javax.swing.JTextField();
         pagesLabel = new javax.swing.JLabel();
@@ -61,8 +64,8 @@ public class UpdateBook extends javax.swing.JPanel {
         overviewTextArea = new javax.swing.JTextArea();
         cancelButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
-        publisherAutoComp = new com.group06.bsms.components.AutocompletePanel();
-        authorAutoComp = new com.group06.bsms.components.AutocompletePanel();
+        publisherAutoComp = new AutocompletePanel();
+        authorAutoComp = new AutocompletePanel();
         pagesSpinner = new javax.swing.JSpinner();
         publishDatePicker = new org.jdesktop.swingx.JXDatePicker();
         importPriceLabel = new javax.swing.JLabel();
@@ -83,6 +86,11 @@ public class UpdateBook extends javax.swing.JPanel {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 backButtonMouseExited(evt);
+            }
+        });
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
             }
         });
 
@@ -118,11 +126,6 @@ public class UpdateBook extends javax.swing.JPanel {
         categoryLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         categoryLabel.setForeground(new java.awt.Color(102, 102, 102));
         categoryLabel.setText("Category *");
-
-        categorySelectionPanel.setAutoscrolls(true);
-        categorySelectionPanel.setMaximumSize(new java.awt.Dimension(449, 32767));
-        categorySelectionPanel.setMinimumSize(new java.awt.Dimension(449, 45));
-        categorySelectionPanel.setPreferredSize(new java.awt.Dimension(449, 45));
 
         dimensionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         dimensionLabel.setForeground(new java.awt.Color(102, 102, 102));
@@ -194,11 +197,6 @@ public class UpdateBook extends javax.swing.JPanel {
                 addButtonActionPerformed(evt);
             }
         });
-
-        publisherAutoComp.setPreferredSize(new java.awt.Dimension(215, 31));
-
-        authorAutoComp.setMinimumSize(new java.awt.Dimension(440, 31));
-        authorAutoComp.setPreferredSize(new java.awt.Dimension(440, 31));
 
         pagesSpinner.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         pagesSpinner.setMinimumSize(new java.awt.Dimension(140, 31));
@@ -463,14 +461,18 @@ public class UpdateBook extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_salePriceFieldKeyTyped
 
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        Dashboard.dashboard.switchTab("bookCRUD");
+    }//GEN-LAST:event_backButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
-    private com.group06.bsms.components.AutocompletePanel authorAutoComp;
+    private AutocompletePanel authorAutoComp;
     private javax.swing.JLabel authorLabel;
     private javax.swing.JButton backButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel categoryLabel;
-    private com.group06.bsms.components.CategorySelectionPanel categorySelectionPanel;
+    private CategorySelectionPanel categorySelectionPanel;
     private javax.swing.JTextField dimensionField;
     private javax.swing.JLabel dimensionLabel;
     private javax.swing.JPanel groupFieldPanel;
@@ -486,7 +488,7 @@ public class UpdateBook extends javax.swing.JPanel {
     private javax.swing.JSpinner pagesSpinner;
     private javax.swing.JLabel publishDateLabel;
     private org.jdesktop.swingx.JXDatePicker publishDatePicker;
-    private com.group06.bsms.components.AutocompletePanel publisherAutoComp;
+    private AutocompletePanel publisherAutoComp;
     private javax.swing.JLabel publisherLabel;
     private javax.swing.JFormattedTextField salePriceField;
     private javax.swing.JLabel salePriceLabel;

@@ -9,7 +9,6 @@ import com.group06.bsms.categories.Category;
 import com.group06.bsms.categories.CategoryRepository;
 import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.components.AutocompletePanel;
-import com.group06.bsms.components.CategorySelectionListener;
 import com.group06.bsms.components.CategorySelectionPanel;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.publishers.PublisherRepository;
@@ -23,18 +22,11 @@ import javax.swing.UIManager;
 
 public class BookFilter extends javax.swing.JPanel {
 
-    private static BookFilter instance;
     private final BookService bookService;
+    private final BookCRUD bookCRUD;
     private final AuthorService authorService;
     private final PublisherService publisherService;
     private final CategoryService categoryService;
-
-    public static BookFilter getInstance() {
-        if (instance == null) {
-            instance = new BookFilter();
-        }
-        return instance;
-    }
 
     public CategorySelectionPanel getCategorySelectionPanel1() {
         return categorySelectionPanel1;
@@ -56,8 +48,9 @@ public class BookFilter extends javax.swing.JPanel {
         return authorAutoComp1;
     }
 
-    public BookFilter() {
+    public BookFilter(BookCRUD bookCRUD) {
         this(
+                bookCRUD,
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
@@ -70,7 +63,14 @@ public class BookFilter extends javax.swing.JPanel {
         );
     }
 
-    public BookFilter(BookService bookService, AuthorService authorService, PublisherService publisherService, CategoryService categoryService) {
+    public BookFilter(
+            BookCRUD bookCRUD,
+            BookService bookService,
+            AuthorService authorService,
+            PublisherService publisherService,
+            CategoryService categoryService
+    ) {
+        this.bookCRUD = bookCRUD;
         this.bookService = bookService;
         this.authorService = authorService;
         this.publisherService = publisherService;
@@ -147,7 +147,6 @@ public class BookFilter extends javax.swing.JPanel {
     private void initComponents() {
 
         pageName = new javax.swing.JLabel();
-        backButton = new javax.swing.JButton();
         jSeparator = new javax.swing.JSeparator();
         jScrollForm1 = new javax.swing.JScrollPane();
         groupFieldPanel1 = new javax.swing.JPanel();
@@ -164,42 +163,18 @@ public class BookFilter extends javax.swing.JPanel {
         maxPriceField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
 
+        setPreferredSize(new java.awt.Dimension(300, 562));
+
         pageName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         pageName.setText("Filter Book");
 
-        backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        backButton.setForeground(UIManager.getColor("mutedColor"));
-        backButton.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/arrow-back.svg", 
-            Color.white, Color.white,
-            22, 18
-        ));
-        backButton.setToolTipText("Back to previous page");
-        backButton.setBorderPainted(false);
-        backButton.setContentAreaFilled(false);
-        backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        backButton.setFocusable(false);
-        backButton.setMargin(new java.awt.Insets(4, 14, 3, 14));
-        backButton.setPreferredSize(new java.awt.Dimension(33, 33));
-        backButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                backButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                backButtonMouseExited(evt);
-            }
-        });
-        backButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backButtonActionPerformed(evt);
-            }
-        });
-
         jScrollForm1.setBorder(null);
+        jScrollForm1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollForm1.setVerifyInputWhenFocusTarget(false);
 
         groupFieldPanel1.setBorder(new org.jdesktop.swingx.border.IconBorder());
-        groupFieldPanel1.setMinimumSize(new java.awt.Dimension(440, 31));
+        groupFieldPanel1.setMinimumSize(new java.awt.Dimension(300, 31));
+        groupFieldPanel1.setPreferredSize(new java.awt.Dimension(300, 322));
 
         authorLabel1.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         authorLabel1.setText("Author");
@@ -219,8 +194,13 @@ public class BookFilter extends javax.swing.JPanel {
         salePriceLabel.setText("Sale price");
 
         minPriceField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        minPriceField.setMinimumSize(new java.awt.Dimension(215, 31));
+        minPriceField.setMinimumSize(new java.awt.Dimension(0, 31));
         minPriceField.setPreferredSize(new java.awt.Dimension(215, 31));
+        minPriceField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minPriceFieldActionPerformed(evt);
+            }
+        });
         minPriceField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 minPriceFieldKeyPressed(evt);
@@ -230,7 +210,7 @@ public class BookFilter extends javax.swing.JPanel {
         removeAllBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         removeAllBtn.setForeground(UIManager.getColor("mutedColor")
         );
-        removeAllBtn.setText("Remove All");
+        removeAllBtn.setText("Clear");
         removeAllBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         removeAllBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -241,7 +221,7 @@ public class BookFilter extends javax.swing.JPanel {
         filterBtn.setBackground(new java.awt.Color(65, 105, 225));
         filterBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         filterBtn.setForeground(new java.awt.Color(255, 255, 255));
-        filterBtn.setText("Done");
+        filterBtn.setText("Filter");
         filterBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         filterBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -253,13 +233,12 @@ public class BookFilter extends javax.swing.JPanel {
         publisherAutoComp1.setPreferredSize(new java.awt.Dimension(215, 31));
         publisherAutoComp1.setRequestFocusEnabled(true);
 
-        authorAutoComp1.setMinimumSize(new java.awt.Dimension(440, 31));
         authorAutoComp1.setPlaceHolderText("Search by author's name");
-        authorAutoComp1.setPreferredSize(new java.awt.Dimension(440, 31));
+        authorAutoComp1.setPreferredSize(new java.awt.Dimension(220, 31));
         authorAutoComp1.setRequestFocusEnabled(true);
 
         maxPriceField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        maxPriceField.setMinimumSize(new java.awt.Dimension(215, 31));
+        maxPriceField.setMinimumSize(new java.awt.Dimension(0, 31));
         maxPriceField.setPreferredSize(new java.awt.Dimension(215, 31));
         maxPriceField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -276,24 +255,43 @@ public class BookFilter extends javax.swing.JPanel {
         groupFieldPanel1Layout.setHorizontalGroup(
             groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanel1Layout.createSequentialGroup()
-                .addContainerGap(66, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(publisherAutoComp1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(filterBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(groupFieldPanel1Layout.createSequentialGroup()
+                        .addComponent(authorLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(545, 545, 545))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanel1Layout.createSequentialGroup()
-                        .addComponent(minPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
-                        .addGap(12, 12, 12)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(maxPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
-                    .addComponent(authorAutoComp1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(salePriceLabel)
-                    .addComponent(categoryLabel1)
-                    .addComponent(publisherLabel1)
-                    .addComponent(authorLabel1)
-                    .addComponent(categorySelectionPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(removeAllBtn))
-                .addContainerGap(61, Short.MAX_VALUE))
+                        .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(groupFieldPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(groupFieldPanel1Layout.createSequentialGroup()
+                                .addComponent(minPriceField, javax.swing.GroupLayout.DEFAULT_SIZE, 1, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(maxPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(304, 304, 304))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanel1Layout.createSequentialGroup()
+                        .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(categorySelectionPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(publisherAutoComp1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(authorAutoComp1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanel1Layout.createSequentialGroup()
+                                .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanel1Layout.createSequentialGroup()
+                                        .addComponent(salePriceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(22, 22, 22))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanel1Layout.createSequentialGroup()
+                                        .addComponent(categoryLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(28, 28, 28))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanel1Layout.createSequentialGroup()
+                                        .addComponent(publisherLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGap(26, 26, 26))
+                                    .addComponent(removeAllBtn, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addGap(193, 193, 193)))
+                        .addGap(304, 304, 304)))
+                .addGap(8, 8, 8))
         );
         groupFieldPanel1Layout.setVerticalGroup(
             groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,7 +319,7 @@ public class BookFilter extends javax.swing.JPanel {
                 .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(removeAllBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(1311, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
         );
 
         jScrollForm1.setViewportView(groupFieldPanel1);
@@ -330,42 +328,25 @@ public class BookFilter extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pageName)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jSeparator)
-            .addComponent(jScrollForm1, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
+            .addComponent(jScrollForm1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pageName, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pageName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(pageName)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jScrollForm1, javax.swing.GroupLayout.PREFERRED_SIZE, 1224, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollForm1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
-        backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.gray, 24, 17));
-    }//GEN-LAST:event_backButtonMouseEntered
-
-    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
-        backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
-    }//GEN-LAST:event_backButtonMouseExited
-
-    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-
-    }//GEN-LAST:event_backButtonActionPerformed
 
     private void removeAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllBtnActionPerformed
         authorAutoComp1.setEmptyText();
@@ -376,8 +357,8 @@ public class BookFilter extends javax.swing.JPanel {
     }//GEN-LAST:event_removeAllBtnActionPerformed
 
     private void filterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBtnActionPerformed
-        BookCRUD.getInstance().setCurrentOffset(0);
-        BookCRUD.getInstance().loadBooksIntoTable();
+        bookCRUD.setCurrentOffset(0);
+        bookCRUD.loadBooksIntoTable();
     }//GEN-LAST:event_filterBtnActionPerformed
 
     private void minPriceFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_minPriceFieldKeyPressed
@@ -398,10 +379,13 @@ public class BookFilter extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_maxPriceFieldKeyPressed
 
+    private void minPriceFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minPriceFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_minPriceFieldActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.group06.bsms.components.AutocompletePanel authorAutoComp1;
     private javax.swing.JLabel authorLabel1;
-    private javax.swing.JButton backButton;
     private javax.swing.JLabel categoryLabel1;
     private com.group06.bsms.components.CategorySelectionPanel categorySelectionPanel1;
     private javax.swing.JButton filterBtn;

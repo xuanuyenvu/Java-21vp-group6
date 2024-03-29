@@ -142,7 +142,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             }
 
             PreparedStatement insertCategoryBookQuery = db.prepareStatement(
-                    "INSERT INTO CategoryBook (bookId, categoryId) "
+                    "INSERT INTO BookCategory (bookId, categoryId) "
                     + "VALUES (?, ?)");
 
             for (Category category : book.categories) {

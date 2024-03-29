@@ -27,8 +27,10 @@ public class Main extends JFrame {
         initComponents();
         layout = new CardLayout();
         panel.setLayout(layout);
-        panel.add(new BookCRUD(), "login");
-        panel.add(new Dashboard(), "dashboard");
+        panel.add(new Login(), "login");
+        panel.add(Dashboard.dashboard, "dashboard");
+
+        switchTab("dashboard");
 
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
@@ -77,7 +79,7 @@ public class Main extends JFrame {
     }// GEN-LAST:event_formWindowClosed
 
     public void switchTab(String tab) {
-        layout.show(panel, "dashboard");
+        layout.show(panel, tab);
     }
 
     public static void main(String args[]) {
