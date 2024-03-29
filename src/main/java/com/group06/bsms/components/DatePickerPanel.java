@@ -85,13 +85,15 @@ public class DatePickerPanel extends javax.swing.JPanel {
 
         jXDatePicker.addActionListener((ActionEvent e) -> {
             Date selectedDate = jXDatePicker.getDate();
-            LocalDate selectedLocalDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            if (selectedLocalDate.compareTo(now) > 0) {
-                jXDatePicker.setDate(today);
+            if (selectedDate != null) {
+                LocalDate selectedLocalDate = selectedDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                if (selectedLocalDate.compareTo(now) > 0) {
+                    jXDatePicker.setDate(today);
+                }
             }
         });
     }
-    
+
     public void setEmptyText() {
         jTextField.setText("");
     }
@@ -144,7 +146,6 @@ public class DatePickerPanel extends javax.swing.JPanel {
             jTextField.setText(formattedDate);
         }
     }//GEN-LAST:event_jXDatePickerActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField jTextField;

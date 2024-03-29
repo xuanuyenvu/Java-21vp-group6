@@ -11,9 +11,9 @@ public class AuthorService {
         this.authorDAO = authorDAO;
     }
 
-    public List<Author> selectAllAuthorNames() {
+    public List<Author> selectAllAuthors() {
         try {
-            List<Author> authors = authorDAO.selectAllAuthorNames();
+            List<Author> authors = authorDAO.selectAllAuthors();
             return authors;
         } catch (Exception e) {
             System.out.println(e);
@@ -36,6 +36,14 @@ public class AuthorService {
     public Author selectAuthor(int id) throws Exception {
         try {
             return authorDAO.selectAuthor(id);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public Author selectAuthorByName(String authorName) throws Exception {
+        try {
+            return authorDAO.selectAuthorByName(authorName);
         } catch (Exception e) {
             throw e;
         }

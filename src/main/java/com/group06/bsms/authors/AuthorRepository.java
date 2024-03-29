@@ -13,7 +13,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
     }
 
     @Override
-    public List<Author> selectAllAuthorNames() throws Exception {
+    public List<Author> selectAllAuthors() throws Exception {
         try {
             db.setAutoCommit(false);
 
@@ -21,7 +21,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
                     null,
                     0, null,
                     "name", Sort.ASC,
-                     "id", "name", "overview", "isHidden"
+                    "name", "id", "overview", "isHidden"
             );
             
 
@@ -59,7 +59,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
 
                 var generatedKeys = insertQuery.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    authorId = generatedKeys.getInt(1); 
+                    authorId = generatedKeys.getInt(1);
                 }
             }
             db.commit();
@@ -77,11 +77,32 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
             if (author == null) {
                 throw new Exception("Author not found");
             }
-            
+
             db.commit();
 
             return author;
 
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public Author selectAuthorByName(String authorName) throws Exception {
+        Author author = new Author();
+        try {
+            db.setAutoCommit(false);
+
+            var selectAuthorQuery = db.prepareStatement(
+                    "SELECT * FROM Author WHERE name = ?");
+            selectAuthorQuery.setString(1, authorName);
+            var result = selectAuthorQuery.executeQuery();
+            while (result.next()) {
+                author = populate(result);
+            }
+            db.commit();
+            return author;
         } catch (Exception e) {
             db.rollback();
             throw e;

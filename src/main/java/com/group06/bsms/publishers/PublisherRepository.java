@@ -3,6 +3,7 @@ package com.group06.bsms.publishers;
 import java.sql.Connection;
 
 import com.group06.bsms.Repository;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
     }
 
     @Override
-    public List<Publisher> selectAllPublisherNames() throws Exception {
+    public List<Publisher> selectAllPublishers() throws Exception {
         try {
             db.setAutoCommit(false);
 
@@ -21,7 +22,7 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
                     null,
                     0, null,
                     "name", Sort.ASC,
-                    "id", "name", "email", "address", "isHidden"
+                    "name", "id", "email", "address", "isHidden"
             );
 
             db.commit();
@@ -34,6 +35,7 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
         }
     }
 
+    @Override
     public int insertPublisherIfNotExists(String publisherName) throws Exception {
         try {
             db.setAutoCommit(false);
@@ -64,12 +66,13 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
             db.commit();
 
             return publisherId;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             db.rollback();
             throw e;
         }
     }
 
+    @Override
     public Publisher selectPublisher(int id) throws Exception {
         try {
             Publisher publisher = selectById(id);
@@ -81,6 +84,32 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
 
             return publisher;
 
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public Publisher selectPublisherByName(String publisherName) throws Exception {
+        Publisher publisher = new Publisher();
+        try {
+            db.setAutoCommit(false);
+
+            var selectPublisherQuery = db.prepareStatement(
+                    "SELECT * FROM Publisher WHERE name = ?");
+
+            selectPublisherQuery.setString(1, publisherName);
+
+            var result = selectPublisherQuery.executeQuery();
+
+            while (result.next()) {
+                publisher = populate(result);
+            }
+
+            db.commit();
+
+            return publisher;
         } catch (Exception e) {
             db.rollback();
             throw e;

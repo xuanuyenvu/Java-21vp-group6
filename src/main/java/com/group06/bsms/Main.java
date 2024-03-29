@@ -18,6 +18,7 @@ public class Main extends JFrame {
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
     public static final boolean DARK_MODE = false;
+    public static final int ROW_LIMIT = 5;
 
     private Main() {
         if (!INDEV) {
@@ -25,12 +26,10 @@ public class Main extends JFrame {
         }
 
         initComponents();
-
         layout = new CardLayout();
         panel.setLayout(layout);
-        // panel.add(new Login(), "login");
-        // panel.add(new Dashboard(), "dashboard");
-        panel.add(new UpdateBook(), "test");
+        panel.add(new BookCRUD(), "login");
+        panel.add(new Dashboard(), "dashboard");
 
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
@@ -41,7 +40,7 @@ public class Main extends JFrame {
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panel = new javax.swing.JPanel();
@@ -49,10 +48,11 @@ public class Main extends JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("BSMS");
         setIconImage(SVGHelper.createSVGIconWithFilter(
-                "icons/book.svg",
-                Color.black,
-                Color.black, Color.white,
-                null, null).getImage());
+            "icons/book.svg",
+            Color.black,
+            Color.black, Color.white,
+            null, null
+        ).getImage());
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);

@@ -115,7 +115,57 @@ insert into Book (
 ) values
     ('Sample Book 1', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
     ('Sample Book 2', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 3', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50);
+    ('Sample Book 3', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 4', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 5', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 6', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 7', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 8', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 9', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 10', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 12', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 13', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 14', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 0, '1990-05-25', 20.50),
+    ('Sample Book 15', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 16', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 17', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 18', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 19', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 20', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 21', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 22', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 23', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 24', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 25', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 26', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 27', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 28', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 29', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 30', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 31', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 32', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 0, '1990-05-25', 20.50),
+    ('Sample Book 33', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 34', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 35', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 36', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 37', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 38', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 39', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 40', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 41', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 42', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 43', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 44', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 45', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 46', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 47', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 48', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 0, '1990-05-25', 20.50),
+    ('Sample Book 49', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 50', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
+    ('Sample Book 51', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
+    ('Sample Book 52', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
+    ('Sample Book 53', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50);
+
 
 insert into Category (name, isHidden) values
     ('Fiction', false),
@@ -123,7 +173,8 @@ insert into Category (name, isHidden) values
 
 insert into BookCategory (bookId, categoryId) values
     (1, 1),
-    (2, 2);
+    (2, 2),
+    (1, 2);
 
 insert into ImportSheet (employeeInChargeId, importDate, totalCost) values
     (1, current_date, 150.99),

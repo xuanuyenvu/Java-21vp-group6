@@ -19,7 +19,7 @@ public class Book {
     public String translatorName;
     public String overview;
     public int quantity;
-    public double salePrice;
+    public Double salePrice;
     public boolean isHidden;
     public int hiddenParentCount;
 

@@ -10,16 +10,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.swing.*;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
-public class UpdateBook extends javax.swing.JPanel implements CategorySelectionListener {
+public class UpdateBook extends javax.swing.JPanel {
 
-    private final BookService bookService;
-    private final AuthorService authorService;
-    private final PublisherService publisherService;
-    private final CategoryService categoryService;
-    private final int bookId;
+    private final ArrayList<String> authors = new ArrayList<>();
+    private final ArrayList<String> publishers = new ArrayList<>();
 
     public UpdateBook() {
         this(new BookService(new BookRepository(DB.db())),
@@ -566,8 +563,15 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         pagesSpinner.setValue(0);
         translatorField.setText("");
         overviewTextArea.setText("");
+<<<<<<< HEAD
         hideCheckBox.setSelected(false);
     }// GEN-LAST:event_cancelButtonActionPerformed
+=======
+        importPriceField.setText("");
+        salePriceField.setText("");
+
+    }//GEN-LAST:event_cancelButtonActionPerformed
+>>>>>>> main
 
     private void addBookButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_addBookButtonActionPerformed
         String title = titleField.getText();
@@ -578,6 +582,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         Object pages = pagesSpinner.getValue();
         String translator = translatorField.getText();
         String overview = overviewTextArea.getText();
+<<<<<<< HEAD
         boolean hideChecked = hideCheckBox.isSelected();
 
         try {
@@ -617,6 +622,34 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+=======
+        String importPrice = importPriceField.getText();
+        String salePrice = salePriceField.getText();
+
+        if (!title.isEmpty() && !author.isEmpty()
+                && !publisher.isEmpty() && publishDatePicker.getDate() != null
+                && !categoriesList.isEmpty() && !dimension.isEmpty()
+                && !pages.equals(0) && !overview.isEmpty()) {
+
+            java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = dateFormat.format(publishDate);
+
+            String newBookInfo = title + "; "
+                    + author + "; "
+                    + publisher + "; "
+                    + formattedDate + "; "
+                    + categoriesList + "; "
+                    + dimension + "; "
+                    + pages + "; "
+                    + translator + "; "
+                    + overview + "; "
+                    + importPrice + "; "
+                    + salePrice + "; ";
+            System.out.print(newBookInfo);
+        } else {
+            JOptionPane.showMessageDialog(null, "Please fill in all required information!", "Error", JOptionPane.ERROR_MESSAGE);
+>>>>>>> main
         }
 
     }// GEN-LAST:event_addBookButtonActionPerformed
@@ -627,7 +660,18 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
     private void backButtonMouseExited(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseExited
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
+<<<<<<< HEAD
     }// GEN-LAST:event_backButtonMouseExited
+=======
+    }//GEN-LAST:event_backButtonMouseExited
+
+    private void salePriceFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_salePriceFieldKeyTyped
+        char enter = evt.getKeyChar();
+        if (!(Character.isDigit(enter))) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_salePriceFieldKeyTyped
+>>>>>>> main
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSpinner SalePriceSpinner;

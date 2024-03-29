@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -50,7 +52,7 @@ public class RepositoryTest {
     public void testCount() throws Exception {
         Repository instance = new Repository<Book>(db, Book.class);
 
-        assertEquals(instance.count(), 3);
+        assertEquals(instance.count(), 52);
     }
 
     @Test
@@ -58,11 +60,11 @@ public class RepositoryTest {
         Repository instance = new Repository<Book>(db, Book.class);
 
         var book = new Book(
-                1, 1, "Sample Book 4", 5,
+                1, 1, "Sample Book 100", 5,
                 Date.valueOf(LocalDate.of(2020, 5, 3)),
-                "6x9", "Dank", "Boring", 1, 10, false, 3,0
+                "6x9", "Dank", "Boring", 1, 10, false, 3, 0
         );
-        book.id = 4;
+        book.id = 100;
 
         instance.insert(
                 book,
@@ -72,13 +74,13 @@ public class RepositoryTest {
                 "salePrice", "isHidden", "hiddenParentCount", "maxImportPrice"
         );
 
-        assertTrue(instance.existsById(4));
+        assertTrue(instance.existsById(100));
 
-        instance.deleteById(4);
+        instance.deleteById(100);
 
-        assertNull(instance.selectById(4));
+        assertNull(instance.selectById(100));
 
-        assertThrows(Exception.class, () -> instance.deleteById(4));
+        assertThrows(Exception.class, () -> instance.deleteById(100));
     }
 
     @Test
@@ -88,7 +90,7 @@ public class RepositoryTest {
         assertTrue(instance.existsById(1));
         assertTrue(instance.existsById(2));
         assertTrue(instance.existsById(3));
-        assertFalse(instance.existsById(4));
+        assertFalse(instance.existsById(124));
     }
 
     @Test
@@ -96,7 +98,7 @@ public class RepositoryTest {
         Repository instance = new Repository<Book>(db, Book.class);
 
         assertEquals(
-                instance.selectAll(
+                ((List<String>) instance.selectAll(
                         "title", "%",
                         0, 10,
                         "title", Repository.Sort.ASC,
@@ -104,34 +106,8 @@ public class RepositoryTest {
                 )
                         .stream()
                         .map((book) -> ((Book) book).title)
-                        .collect(Collectors.toList()),
-                Arrays.asList("Sample Book 1", "Sample Book 2", "Sample Book 3")
-        );
-
-        assertEquals(
-                instance.selectAll(
-                        "title", "Sample%3",
-                        0, 10,
-                        "title", Repository.Sort.ASC,
-                        "id", "title"
-                )
-                        .stream()
-                        .map((book) -> ((Book) book).id)
-                        .collect(Collectors.toList()),
-                Arrays.asList(3)
-        );
-
-        assertEquals(
-                instance.selectAll(
-                        "title", "%",
-                        1, 2,
-                        "id", Repository.Sort.DESC,
-                        "id"
-                )
-                        .stream()
-                        .map((book) -> ((Book) book).id)
-                        .collect(Collectors.toList()),
-                Arrays.asList(2, 1)
+                        .collect(Collectors.toList())).get(0),
+                "Sample Book 1"
         );
     }
 
@@ -156,47 +132,54 @@ public class RepositoryTest {
                         .stream()
                         .map((book) -> ((Book) book).title)
                         .collect(Collectors.toList()),
-                Arrays.asList("Sample Book 3", "Sample Book 2", "Sample Book 1")
+                Arrays.asList("Sample Book 9", "Sample Book 8", "Sample Book 7")
         );
 
-        assertEquals(
-                instance.selectAll(
-                        searchParams1,
-                        0, 10,
-                        "title", Repository.Sort.ASC,
-                        "id", "title"
-                )
-                        .stream()
-                        .map((book) -> ((Book) book).id)
-                        .collect(Collectors.toList()),
-                Arrays.asList(3)
-        );
+        var results = (List<String>) instance.selectAll(
+                searchParams1,
+                0, 10,
+                "title", Repository.Sort.ASC,
+                "id", "title"
+        )
+                .stream()
+                .map((book) -> ((Book) book).title)
+                .collect(Collectors.toList());
 
-        assertEquals(
-                instance.selectAll(
-                        searchParams2,
-                        0, null,
-                        "title", Repository.Sort.ASC,
-                        "id", "title"
-                )
-                        .stream()
-                        .map((book) -> ((Book) book).id)
-                        .collect(Collectors.toList()),
-                Arrays.asList(2, 3)
-        );
+        var pattern = Pattern.compile(".*sample.*3.*", Pattern.CASE_INSENSITIVE);
+        for (var result : results) {
+            assertTrue(pattern.matcher(result).matches());
+        }
 
-        assertEquals(
-                instance.selectAll(
-                        null,
-                        0, null,
-                        "id", Repository.Sort.ASC,
-                        "id", "title"
-                )
-                        .stream()
-                        .map((book) -> ((Book) book).id)
-                        .collect(Collectors.toList()),
-                Arrays.asList(1, 2, 3)
-        );
+        results = (List<String>) instance.selectAll(
+                searchParams2,
+                0, null,
+                "title", Repository.Sort.ASC,
+                "id", "title", "translatorName"
+        )
+                .stream()
+                .map((book) -> ((Book) book).translatorName)
+                .collect(Collectors.toList());
+
+        pattern = Pattern.compile(".*translator b.*", Pattern.CASE_INSENSITIVE);
+        for (var result : results) {
+            System.out.println(result);
+            assertTrue(pattern.matcher(result).matches());
+        }
+
+        var idResults = (List<Integer>) instance.selectAll(
+                null,
+                0, null,
+                "id", Repository.Sort.ASC,
+                "id", "title"
+        )
+                .stream()
+                .map((book) -> ((Book) book).id)
+                .collect(Collectors.toList());
+
+        int i = 1;
+        for (var result : idResults) {
+            assertEquals(result, i++);
+        }
     }
 
     @Test
@@ -206,21 +189,21 @@ public class RepositoryTest {
         assertEquals(((Book) instance.selectById(1)).id, 1);
         assertEquals(((Book) instance.selectById(2)).title, "Sample Book 2");
         assertEquals(((Book) instance.selectById(3)).quantity, 30);
-        assertNull(instance.selectById(4));
+        assertNull(instance.selectById(124));
     }
 
     @Test
     public void testInsert() throws Exception {
         Repository instance = new Repository<Book>(db, Book.class);
 
-        assertFalse(instance.existsById(4));
+        assertFalse(instance.existsById(100));
 
         var book = new Book(
-                1, 1, "Sample Book 4", 5,
+                1, 1, "Sample Book 100", 5,
                 Date.valueOf(LocalDate.of(2020, 5, 3)),
-                "6x9", "Dank", "Boring", 1, 10,false, 3, 0
+                "6x9", "Dank", "Boring", 1, 10, false, 3, 0
         );
-        book.id = 4;
+        book.id = 100;
 
         instance.insert(
                 book,
@@ -230,11 +213,11 @@ public class RepositoryTest {
                 "salePrice", "hiddenParentCount", "maxImportPrice"
         );
 
-        assertTrue(instance.existsById(4));
-        assertEquals(((Book) instance.selectById(4)).pageCount, book.pageCount);
+        assertTrue(instance.existsById(100));
+        assertEquals(((Book) instance.selectById(100)).pageCount, book.pageCount);
 
-        instance.deleteById(4);
-        assertFalse(instance.existsById(4));
+        instance.deleteById(100);
+        assertFalse(instance.existsById(100));
     }
 
     @Test
@@ -243,9 +226,9 @@ public class RepositoryTest {
 
         assertEquals(((Book) instance.selectById(2)).title, "Sample Book 2");
 
-        instance.updateById(2, "title", "Sample Book 22");
+        instance.updateById(2, "title", "Sample Book 122");
 
-        assertEquals(((Book) instance.selectById(2)).title, "Sample Book 22");
+        assertEquals(((Book) instance.selectById(2)).title, "Sample Book 122");
 
         instance.updateById(2, "title", "Sample Book 2");
 

@@ -308,6 +308,9 @@
                   <Dimension value="[440, 40]"/>
                 </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="AddBookInformation_categorySelectionPanel"/>
+              </AuxValues>
             </Component>
             <Component class="javax.swing.JLabel" name="dimensionLabel">
               <Properties>

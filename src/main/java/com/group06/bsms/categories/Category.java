@@ -1,6 +1,7 @@
 package com.group06.bsms.categories;
 
 public class Category {
+
     public int id;
     public String name;
     public boolean isHidden;
@@ -17,8 +18,7 @@ public class Category {
 
     @Override
     public String toString() {
-        return "Category{id=" + id + ", name=" + name + ", isHidden" + isHidden + "}";
-
+        return name;
     }
 
 }
