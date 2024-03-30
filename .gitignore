@@ -1,3 +1,5 @@
 /target/
 /nbproject/
 src/main/resources/env/bsms.properties
+.vscode/
+.DS_Store

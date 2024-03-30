@@ -4,8 +4,8 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
-import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.books.BookCRUD;
+import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -17,6 +17,7 @@ public class Main extends JFrame {
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
     public static final boolean DARK_MODE = false;
+    public static final int ROW_LIMIT = 5;
 
     private Main() {
         if (!INDEV) {
@@ -24,11 +25,9 @@ public class Main extends JFrame {
         }
 
         initComponents();
-
         layout = new CardLayout();
         panel.setLayout(layout);
-//        panel.add(new Login(), "login");
-        panel.add(new BookCRUD(), "Book");
+        panel.add(new BookCRUD(), "login");
         panel.add(new Dashboard(), "dashboard");
 
         if (INDEV) {
@@ -39,6 +38,7 @@ public class Main extends JFrame {
     }
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -64,7 +64,7 @@ public class Main extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {// GEN-FIRST:event_formWindowClosed
         try {
             DB.disconnectFromDB();
         } catch (Exception e) {
@@ -72,10 +72,9 @@ public class Main extends JFrame {
                     app,
                     "Could not disconnect from database. Please restart your computer.",
                     "BSMS Critical error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_formWindowClosed
+    }// GEN-LAST:event_formWindowClosed
 
     public void switchTab(String tab) {
         layout.show(panel, "dashboard");
@@ -103,8 +102,7 @@ public class Main extends JFrame {
                         app,
                         "Could not connect to database. Please try again later.",
                         "BSMS Critical error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                        JOptionPane.ERROR_MESSAGE);
             });
         }
     }
