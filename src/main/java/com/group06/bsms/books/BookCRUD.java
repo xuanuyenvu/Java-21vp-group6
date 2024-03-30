@@ -1,86 +1,71 @@
 package com.group06.bsms.books;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.DB;
+import com.group06.bsms.Main;
+import static com.group06.bsms.Main.app;
+import com.group06.bsms.authors.Author;
+import com.group06.bsms.authors.AuthorRepository;
+import com.group06.bsms.authors.AuthorService;
+import com.group06.bsms.categories.Category;
+import com.group06.bsms.categories.CategoryRepository;
+import com.group06.bsms.categories.CategoryService;
+import com.group06.bsms.components.TableActionEvent;
+import com.group06.bsms.publishers.Publisher;
+import com.group06.bsms.publishers.PublisherRepository;
+import com.group06.bsms.publishers.PublisherService;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
-import javax.swing.DefaultCellEditor;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableRowSorter;
-
-interface TableActionEvent {
-
-    public void setIsHiddenBtn(boolean isHiddenBtn);
-
-    public boolean isIsHiddenBtn();
-
-    public void onEdit(int row);
-
-    public boolean onHide(int row);
-}
-
-class TableActionCellEditor extends DefaultCellEditor {
-
-    private final TableActionEvent event;
-
-    public TableActionCellEditor(TableActionEvent event) {
-        super(new JCheckBox());
-        this.event = event;
-    }
-
-    @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        BookTableModel model = (BookTableModel) table.getModel();
-        row = table.convertRowIndexToModel(row);
-        Boolean isHidden = (Boolean) model.getHiddenState(row);
-        System.out.println("Hover row with title "+model.getValueAt(row, 0)+", Editor hide: "+isHidden);
-        // System.out.println("Row: " + row + " Editor hide: " + isHidden);
-
-        ActionBtn action = new ActionBtn(isHidden);
-        action.initEvent(event, row, isHidden);
-        action.setBackground(Color.WHITE);
-
-        return action;
-    }
-
-}
-
-class TableActionCellRender extends DefaultTableCellRenderer {
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        int modelRow = table.convertRowIndexToModel(row);
-        boolean isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
-        System.out.println("Row: " + row + " Render: " + isHidden);
-        
-        Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        ActionBtn action = new ActionBtn(isHidden);
-        action.setBackground(com.getBackground());
-        return action;
-    }
-}
 
 public class BookCRUD extends javax.swing.JPanel {
-    
-    private final BookTableModel model;
+
+    private static BookCRUD instance;
+    private final BookService bookService;
+    private BookTableModel model;
+    private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
+    private int currentOffset = 0;
+
+    public void setCurrentOffset(int currentOffset) {
+        this.currentOffset = currentOffset;
+    }
+    private int limit = Main.ROW_LIMIT;
+    private boolean isScrollAtBottom = false;
+
+    public static BookCRUD getInstance() {
+        if (instance == null) {
+            instance = new BookCRUD();
+        }
+        return instance;
+    }
 
     public BookCRUD() {
-        this.model = new BookTableModel();
-        
+        this(
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))
+                )
+        );
+    }
+
+    public BookCRUD(BookService bookService) {
+        this.bookService = bookService;
+        this.model = new BookTableModel(bookService);
         initComponents();
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
@@ -89,33 +74,87 @@ public class BookCRUD extends javax.swing.JPanel {
                 Color.black, Color.black,
                 14, 14
         ));
-        
+
         setUpTable();
-        addBookData();
+        loadBooksIntoTable();
     }
 
-    public ActionBtn getActionPanelFromCell(int row, int column) {
-        if (table.isEditing() && table.getEditingRow() == row && table.getEditingColumn() == column) {
-            return (ActionBtn) table.getCellEditor(row, column).getTableCellEditorComponent(table, null, false, row, column);
-        } else {
-            return (ActionBtn) table.getCellRenderer(row, column).getTableCellRendererComponent(table, null, false, false, row, column);
+    public void loadBooksIntoTable() {
+        var searchString = searchBar.getText();
+
+        String minPriceField = BookFilter.getInstance().getMinPriceField().getText();
+        Double minPrice = minPriceField.isEmpty() ? Double.MIN_VALUE : Double.valueOf(minPriceField);
+        String maxPriceField = BookFilter.getInstance().getMaxPriceField().getText();
+        Double maxPrice = maxPriceField.isEmpty() ? Double.MAX_VALUE : Double.valueOf(maxPriceField);
+
+        var searchChoiceKey = searchComboBox.getSelectedItem().toString();
+        var searchChoiceMap = new HashMap<String, String>();
+        searchChoiceMap.put("by Title", "Book.title");
+        searchChoiceMap.put("by Author", "Author.name");
+        searchChoiceMap.put("by Publisher", "Publisher.name");
+        var searchChoiceValue = searchChoiceMap.get(searchChoiceKey);
+        Author author = (Author) BookFilter.getInstance().getAuthorAutoComp1().getSelectedObject();
+        Publisher publisher = (Publisher) BookFilter.getInstance().getPublisherAutoComp1().getSelectedObject();
+        ArrayList<Category> categoriesList = BookFilter.getInstance().getCategorySelectionPanel1().getListSelected();
+
+        try {
+            var books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders,
+                    searchString, searchChoiceValue, author, publisher, minPrice, maxPrice, categoriesList);
+            if (currentOffset > 0) {
+                model.loadNewBooks(books);
+            } else {
+                model.reloadAllBooks(books);
+            }
+            currentOffset += limit;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "An error has occurred: " + e.getMessage(),
+                    "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
-    private void addBookData() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Date d1 = new Date(sdf.parse("01/01/2003").getTime());
-            Date d2 = new Date(sdf.parse("02/01/2010").getTime());
-            List<Book> bookData = new ArrayList<>();
-            bookData.add(new Book(1,1,"Book Title 1",100,d1,"Size 1","Translator Who","Book sucks", 100,145.500, 0));
-            bookData.add(new Book(1,1,"Book Title 2",120,d2,"Size 2","Translator What","Book sucks very much", 103,90.500,1));
-            bookData.add(new Book(1,1,"Book Title 3",200,d2,"Size 3","Translator Which","Modern 21th Century Masterpiece TM", 103,90.500,1));
-            for (var book : bookData) {
-                model.addRow(book);
+    private void toggleSortOrder(int columnIndex) {
+        if (columnIndex != 5) {
+            SortOrder currentOrder = columnSortOrders.getOrDefault(columnIndex, SortOrder.UNSORTED);
+            SortOrder newOrder = currentOrder == SortOrder.ASCENDING ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+            columnSortOrders.clear();
+            columnSortOrders.put(columnIndex, newOrder);
+        }
+    }
+
+    class CustomHeaderRenderer extends DefaultTableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            int modelColumn = table.convertColumnIndexToModel(column);
+            SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
+            Icon sortIcon = null;
+            if (column == 3 || column == 4) {
+                setHorizontalAlignment(JLabel.CENTER);
+                if (sortOrder == SortOrder.ASCENDING) {
+                    sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                } else if (sortOrder == SortOrder.DESCENDING) {
+                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
+                }
+            } else if (column != 5) {
+                if (sortOrder == SortOrder.ASCENDING) {
+                    sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                } else if (sortOrder == SortOrder.DESCENDING) {
+                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
+                }
+                setHorizontalAlignment(JLabel.LEFT);
+            } else {
+                //Non sorted column action
+                setHorizontalAlignment(JLabel.CENTER);
+                sortIcon = null;
             }
-        } catch (Exception e) {
-            System.err.println(e);
+            setHorizontalTextPosition(JLabel.LEFT);
+            label.setIcon(sortIcon);
+            return label;
         }
     }
 
@@ -125,96 +164,77 @@ public class BookCRUD extends javax.swing.JPanel {
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
 
-       TableRowSorter<BookTableModel> sorter = new TableRowSorter<>(this.model);
-       table.setRowSorter(sorter);
-        sorter.setSortable(5, false);
-            
-
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
-        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer() {
+        columnSortOrders.put(0, SortOrder.ASCENDING);
+
+        table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
+
+        table.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (column == 0) {
-                    setHorizontalAlignment(SwingConstants.LEFT);
-                }
-
-                setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-                setBackground(table.getTableHeader().getBackground());
-
-                if (table.getRowSorter() != null) {
-                    Icon sortIcon = null;
-                    SortOrder sortOrder = SortOrder.UNSORTED;
-                    if (table.getRowSorter().getSortKeys().size() > 0) {
-                        SortKey sortKey = table.getRowSorter().getSortKeys().get(0);
-                        if (sortKey.getColumn() == table.convertColumnIndexToModel(column)) {
-                            sortOrder = sortKey.getSortOrder();
-                            switch (sortOrder) {
-                                case ASCENDING:
-                                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
-                                    break;
-                                case DESCENDING:
-                                    sortIcon = UIManager.getIcon("Table.descendingSortIcon");
-                                    break;
-                            }
-                        }
-                    }
-                    setIcon(sortIcon);
-                    setHorizontalTextPosition(JLabel.LEFT);
-                    setHorizontalAlignment(JLabel.LEFT);
-                }
-
-                return c;
+            public void mouseClicked(MouseEvent e) {
+                int columnIndex = table.columnAtPoint(e.getPoint());
+                toggleSortOrder(columnIndex);
+                currentOffset = 0;
+                loadBooksIntoTable();
+                table.getTableHeader().repaint();
             }
-        };
-
-        table.getColumnModel().getColumn(0).setHeaderRenderer(leftRenderer);
-        table.getColumnModel().getColumn(1).setHeaderRenderer(leftRenderer);
-        table.getColumnModel().getColumn(2).setHeaderRenderer(leftRenderer);
-
+        });
         TableActionEvent event = new TableActionEvent() {
-            private boolean isHiddenBtn;
-
-            @Override
-            public void setIsHiddenBtn(boolean isHiddenBtn) {
-                this.isHiddenBtn = isHiddenBtn;
-            }
-
-            @Override
-            public boolean isIsHiddenBtn() {
-                return isHiddenBtn;
-            }
-
             @Override
             public void onEdit(int row) {
                 System.out.println("Edit row " + row);
             }
 
             @Override
-            public boolean onHide(int row) {   
-                System.out.println("Hide book with title "+model.getValueAt(row, 0));       
-                model.setHiddenState(row);
-                System.out.println("True value of book with title " + model.getValueAt(row, 0) + ": " + model.getHiddenState(row));
+            public int onHide(int row) {
+                try {
+                    if (model.getHiddenState(row) == 1) {
+                        bookService.showBook(model.getBook(row).id);
+                    } else if (model.getHiddenState(row) == 0) {
+                        bookService.hideBook(model.getBook(row).id);
+                    }
+                    model.setHiddenState(row);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(
+                            app,
+                            "An error has occurred while hiding book: " + e.getMessage(),
+                            "BSMS Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+
                 return model.getHiddenState(row);
             }
         };
 
         table.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor(event));
-        table.addMouseMotionListener(new MouseAdapter() {
-           @Override
-           public void mouseMoved(MouseEvent e) {
-               int row = table.rowAtPoint(e.getPoint());
-               int column = table.columnAtPoint(e.getPoint());
 
-               if (column == 5) {
-                   table.editCellAt(row, column);
-               }
-           }
-       });
+        table.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int column = table.columnAtPoint(e.getPoint());
+
+                if (column == 5) {
+                    table.editCellAt(row, column);
+                    table.setRowSelectionInterval(row, row);
+                }
+            }
+        });
+
+        scrollBar.getVerticalScrollBar().addAdjustmentListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                //Check if scrolled to the bottom
+                isScrollAtBottom = e.getAdjustable().getMaximum() == e.getAdjustable().getValue() + e.getAdjustable().getVisibleAmount();
+                if (isScrollAtBottom) {
+                    loadBooksIntoTable();
+                }
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -227,7 +247,7 @@ public class BookCRUD extends javax.swing.JPanel {
         filterBtn = new javax.swing.JButton();
         scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        searchComboBox = new javax.swing.JComboBox<>();
 
         setAutoscrolls(true);
 
@@ -276,13 +296,18 @@ public class BookCRUD extends javax.swing.JPanel {
     table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
     table.setModel(this.model);
     table.setToolTipText("");
-    table.setFocusable(false);
     table.setRowHeight(40);
     table.getTableHeader().setReorderingAllowed(false);
     scrollBar.setViewportView(table);
 
-    jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-    jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+    searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+    searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Title", "by Author", "by Publisher" }));
+    searchComboBox.setPreferredSize(new java.awt.Dimension(130, 28));
+    searchComboBox.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            searchComboBoxActionPerformed(evt);
+        }
+    });
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -300,7 +325,7 @@ public class BookCRUD extends javax.swing.JPanel {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(20, 20, 20)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(20, 20, 20)
                             .addComponent(createBtn)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -317,7 +342,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(18, 18, 18)
             .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
             .addGap(30, 30, 30))
@@ -325,24 +350,29 @@ public class BookCRUD extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
-        // TODO add your handling code here:
+        currentOffset = 0;
+        loadBooksIntoTable();
+
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_createBtnActionPerformed
 
     private void filterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBtnActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_filterBtnActionPerformed
+
+    private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
+    }//GEN-LAST:event_searchComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bookLabel;
     private javax.swing.JButton createBtn;
     private javax.swing.JButton filterBtn;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JScrollPane scrollBar;
     private javax.swing.JTextField searchBar;
+    private javax.swing.JComboBox<String> searchComboBox;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 }
