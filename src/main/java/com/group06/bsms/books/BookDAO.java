@@ -29,4 +29,9 @@ public interface BookDAO {
 
     void updateBookAttributeById(int bookId, String attr, Object value) throws Exception;
 
+    List<Book> getNewBooks() throws Exception;
+
+    List<Book> getHotBooks() throws Exception;
+
+    List<Book> getOutOfStockBooks() throws Exception;
 }

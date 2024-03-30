@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.categories.Category;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 
 public class CategorySelectionPanel extends javax.swing.JPanel {
@@ -85,8 +86,10 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
     public void setEmptyList() {
         listSelected.clear();
-
+        categoriesPanel.removeAll();
         addButton.setSelectedIndex(-1);
+        this.revalidate();
+        this.repaint();
     }
 
     public <T extends CategorySelectionListener> void setCategorySelectionListener(T listener) {

@@ -23,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -91,10 +92,21 @@ public class BookCRUD extends javax.swing.JPanel {
         Author author = (Author) bookFilter.getAuthorAutoComp1().getSelectedObject();
         Publisher publisher = (Publisher) bookFilter.getPublisherAutoComp1().getSelectedObject();
         ArrayList<Category> categoriesList = bookFilter.getCategorySelectionPanel1().getListSelected();
+        String filterTopBooks = (String) bookFilter.getFilterComboBox().getSelectedItem();
 
         try {
-            var books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders,
-                    searchString, searchChoiceValue, author, publisher, minPrice, maxPrice, categoriesList);
+            List<Book> books = null;
+            if (filterTopBooks.equals("None")) {
+                books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders,
+                        searchString, searchChoiceValue, author, publisher, minPrice, maxPrice, categoriesList);
+            } else if (filterTopBooks.equals("Top 10 Newest Books")) {
+                books = bookService.getNewBooks();
+            } else if (filterTopBooks.equals("Top 10 Hottest Books")) {
+                books = bookService.getHotBooks();
+            } else if (filterTopBooks.equals("Out-of-stock Books")) {
+                books = bookService.getOutOfStockBooks();
+            }
+
             if (currentOffset > 0) {
                 model.loadNewBooks(books);
             } else {
@@ -309,7 +321,7 @@ public class BookCRUD extends javax.swing.JPanel {
     scrollBar.setViewportView(table);
 
     main.add(scrollBar, java.awt.BorderLayout.CENTER);
-    main.add(bookFilter, java.awt.BorderLayout.LINE_END);
+    main.add(bookFilter, java.awt.BorderLayout.EAST);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
