@@ -252,8 +252,7 @@ sql_command="DO \$\$BEGIN
 
     COPY temp_imported_books (bookTitle, quantity, pricePerBook) 
     FROM '${directory}/src/main/resources/database/importedbook1.csv'
-    DELIMITER ';'
-    CSV HEADER;
+    DELIMITER ';';
 
     SELECT SUM(pricePerBook * quantity) INTO total
     FROM temp_imported_books;
@@ -322,8 +321,7 @@ sql_command="DO \$\$BEGIN
 
     COPY temp_imported_books (bookTitle, quantity, pricePerBook) 
     FROM '${directory}/src/main/resources/database/importedbook2.csv'
-    DELIMITER ';'
-    CSV HEADER;
+    DELIMITER ';';
 
     SELECT SUM(pricePerBook * quantity) INTO total
     FROM temp_imported_books;
@@ -393,8 +391,7 @@ sql_command="DO \$\$BEGIN
 
     COPY temp_imported_books (bookTitle, quantity, pricePerBook) 
     FROM '${directory}/src/main/resources/database/importedbook3.csv'
-    DELIMITER ';'
-    CSV HEADER;
+    DELIMITER ';';
 
     SELECT SUM(pricePerBook * quantity) INTO total
     FROM temp_imported_books;
@@ -463,8 +460,7 @@ sql_command="DO \$\$BEGIN
 
     COPY temp_imported_books (bookTitle, quantity, pricePerBook) 
     FROM '${directory}/src/main/resources/database/importedbook4.csv'
-    DELIMITER ';'
-    CSV HEADER;
+    DELIMITER ';';
 
     SELECT SUM(pricePerBook * quantity) INTO total
     FROM temp_imported_books;
@@ -509,7 +505,7 @@ else
   echo "Import of importSheet4 data failed: $result"
 fi
 
-# Order 1
+# Order 1 Anynomous
 sql_command="DO \$\$BEGIN
   DECLARE
     orderSheetId INTEGER;
@@ -526,50 +522,11 @@ sql_command="DO \$\$BEGIN
     RETURNING id INTO orderSheetId;
 
     insert into OrderedBook (orderSheetId, bookId, quantity, pricePerBook)  values
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 1 (2011)'), 1, 11.67),
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 8 (2011)'), 1, 6.27),
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&! (2012)'), 1, 9.78); 
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 1 (2022)'), 1, 9),
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 10 (2024)'), 1, 9.28),
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 9 (2024)'), 1, 7.87); 
 
-    UPDATE OrderSheet set discountedTotalCost = (11.67+6.27+9.78) * 0.95;
-
-  EXCEPTION
-    WHEN others THEN
-      RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
-  END;
-END;\$\$;"
-
-
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
-
-
-if [ $? -eq 0 ]; then
-  echo "Successfully imported order data."
-else
-  echo "Import of order data failed: $result"
-fi
-
-# Import Order 2
-sql_command="DO \$\$BEGIN
-  DECLARE
-    orderSheetId INTEGER;
-    discountedTotalCost DECIMAL(12, 2);
-  BEGIN
-
-    INSERT INTO OrderSheet (memberId, employeeInChargeId, orderDate, discountedTotalCost)
-    VALUES (
-        (SELECT id FROM Member WHERE phone = '7713151528'),
-        (SELECT id FROM Account WHERE phone = '2223868021'),  
-        '2024-01-12',
-        0
-    )
-    RETURNING id INTO orderSheetId;
-
-    insert into OrderedBook (orderSheetId, bookId, quantity, pricePerBook) values
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 1 (2011)'), 1, 11.67),
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 8 (2011)'), 1, 6.27),
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&! (2012)'), 1, 9.78); 
-
-    UPDATE OrderSheet set discountedTotalCost = (11.67+6.27+9.78) * 0.95;
+    UPDATE OrderSheet set discountedTotalCost = (9+9.28+7.87);
 
   EXCEPTION
     WHEN others THEN
@@ -584,10 +541,49 @@ result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
 if [ $? -eq 0 ]; then
   echo "Successfully imported order 1 data."
 else
-  echo "Import of order data 1 failed: $result"
+  echo "Import of order 1 data failed: $result"
 fi
 
-# Import Anonymous Order / Order 3
+# Import Order 2
+sql_command="DO \$\$BEGIN
+  DECLARE
+    orderSheetId INTEGER;
+    discountedTotalCost DECIMAL(12, 2);
+  BEGIN
+
+    INSERT INTO OrderSheet (memberId, employeeInChargeId, orderDate, discountedTotalCost)
+    VALUES (
+        (SELECT id FROM Member WHERE phone = '2996009524'),
+        (SELECT id FROM Account WHERE phone = '2223868021'),  
+        '2024-01-12',
+        0
+    )
+    RETURNING id INTO orderSheetId;
+
+    insert into OrderedBook (orderSheetId, bookId, quantity, pricePerBook) values
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 10 (2011)'), 1, 10.02),
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 11 (2012)'), 1, 7.52),
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 12 (2013)'), 1, 6.54); 
+
+    UPDATE OrderSheet set discountedTotalCost = (10.02+7.52+6.54) * 0.95;
+
+  EXCEPTION
+    WHEN others THEN
+      RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
+  END;
+END;\$\$;"
+
+
+result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+
+
+if [ $? -eq 0 ]; then
+  echo "Successfully imported order 2 data."
+else
+  echo "Import of order data 2 failed: $result"
+fi
+
+# Import Order 3 Anonymous
 
 sql_command="DO \$\$BEGIN
   DECLARE
@@ -622,9 +618,9 @@ result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
-  echo "Successfully imported order 2 data."
+  echo "Successfully imported order 3 data."
 else
-  echo "Import of order 2 data failed: $result"
+  echo "Import of order 3 data failed: $result"
 fi
 
 
@@ -637,7 +633,7 @@ sql_command="DO \$\$BEGIN
 
     INSERT INTO OrderSheet (memberId, employeeInChargeId, orderDate, discountedTotalCost)
     VALUES (
-        (SELECT id FROM Member WHERE phone = '1727498011'),
+        (SELECT id FROM Member WHERE phone = '4983848863'),
         (SELECT id FROM Account WHERE phone = '2223868021'),  
         '2024-02-20',
         0
@@ -645,11 +641,11 @@ sql_command="DO \$\$BEGIN
     RETURNING id INTO orderSheetId;
 
     insert into OrderedBook (orderSheetId, bookId, quantity, pricePerBook) values
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'Love, Theoretically (2023)'), 7.97, 11.67),
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'Love on the Brain (2022)'), 1, 6.26),
-        (orderSheetId, (SELECT id FROM Book WHERE title = 'The Murder of Roger Ackroyd & The Hollow Bundle (2022)'), 1, 11.97); 
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'Love, Theoretically (2023)'), 1, 10.17),
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'Love on the Brain (2022)'), 1, 11.35),
+        (orderSheetId, (SELECT id FROM Book WHERE title = 'The Murder of Roger Ackroyd & The Hollow Bundle (2022)'), 1, 9.63); 
 
-    UPDATE OrderSheet set discountedTotalCost = (7.97+6.26+11.97) * 0.95;
+    UPDATE OrderSheet set discountedTotalCost = (10.17+11.35+9.63) * 0.95;
 
   EXCEPTION
     WHEN others THEN
@@ -662,7 +658,7 @@ result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
-  echo "Successfully imported order 3 data."
+  echo "Successfully imported order 4 data."
 else
-  echo "Import of order data 3 failed: $result"
+  echo "Import of order data 4 failed: $result"
 fi

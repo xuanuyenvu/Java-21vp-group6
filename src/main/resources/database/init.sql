@@ -9,14 +9,14 @@
 -- You don't need to run this file at all. The shell script has already included command to run this file
 -- 4. The results displayed in the console should be all successsful. If not, please ask
 -- The results of the select count(*) for each table:
--- 418 book
--- 32 author
--- 25 publisher
--- 75 category
--- 730 book category
+-- 189 book
+-- 31 author
+-- 24 publisher
+-- 23 category
+-- 316 book category
 -- 4 importsheet
--- 76 importedbook
--- 1001 member
+-- 39 importedbook
+-- 101 member
 -- 12 account, 3 of which admin
 -- 4 ordersheet
 -- 12 orderedbook
