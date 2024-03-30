@@ -22,7 +22,6 @@ import javax.swing.UIManager;
 
 public class BookFilter extends javax.swing.JPanel {
 
-    private final BookService bookService;
     private final BookCRUD bookCRUD;
     private final AuthorService authorService;
     private final PublisherService publisherService;
@@ -51,12 +50,6 @@ public class BookFilter extends javax.swing.JPanel {
     public BookFilter(BookCRUD bookCRUD) {
         this(
                 bookCRUD,
-                new BookService(
-                        new BookRepository(DB.db()),
-                        new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))
-                ),
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db())),
                 new CategoryService(new CategoryRepository(DB.db()))
@@ -65,13 +58,11 @@ public class BookFilter extends javax.swing.JPanel {
 
     public BookFilter(
             BookCRUD bookCRUD,
-            BookService bookService,
             AuthorService authorService,
             PublisherService publisherService,
             CategoryService categoryService
     ) {
         this.bookCRUD = bookCRUD;
-        this.bookService = bookService;
         this.authorService = authorService;
         this.publisherService = publisherService;
         this.categoryService = categoryService;
@@ -146,13 +137,13 @@ public class BookFilter extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pageName = new javax.swing.JLabel();
         jSeparator = new javax.swing.JSeparator();
         jScrollForm1 = new javax.swing.JScrollPane();
         groupFieldPanel1 = new javax.swing.JPanel();
         authorLabel1 = new javax.swing.JLabel();
         publisherLabel1 = new javax.swing.JLabel();
         categoryLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
         categorySelectionPanel1 = new com.group06.bsms.components.CategorySelectionPanel();
         salePriceLabel = new javax.swing.JLabel();
         minPriceField = new javax.swing.JTextField();
@@ -164,9 +155,6 @@ public class BookFilter extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(300, 562));
-
-        pageName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        pageName.setText("Filter Book");
 
         jScrollForm1.setBorder(null);
         jScrollForm1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -185,10 +173,13 @@ public class BookFilter extends javax.swing.JPanel {
         categoryLabel1.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         categoryLabel1.setText("Category");
 
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
         categorySelectionPanel1.setAutoscrolls(true);
         categorySelectionPanel1.setMaximumSize(new java.awt.Dimension(440, 32767));
-        categorySelectionPanel1.setMinimumSize(new java.awt.Dimension(440, 40));
-        categorySelectionPanel1.setPreferredSize(new java.awt.Dimension(440, 40));
+        categorySelectionPanel1.setMinimumSize(new java.awt.Dimension(440, 0));
+        categorySelectionPanel1.setPreferredSize(new java.awt.Dimension(440, 0));
+        jScrollPane1.setViewportView(categorySelectionPanel1);
 
         salePriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         salePriceLabel.setText("Sale price");
@@ -259,7 +250,7 @@ public class BookFilter extends javax.swing.JPanel {
                 .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(groupFieldPanel1Layout.createSequentialGroup()
                         .addComponent(authorLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(545, 545, 545))
+                        .addGap(553, 553, 553))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanel1Layout.createSequentialGroup()
                         .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(groupFieldPanel1Layout.createSequentialGroup()
@@ -271,10 +262,10 @@ public class BookFilter extends javax.swing.JPanel {
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(maxPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(304, 304, 304))
+                        .addGap(312, 312, 312))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanel1Layout.createSequentialGroup()
                         .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(categorySelectionPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(publisherAutoComp1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(authorAutoComp1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanel1Layout.createSequentialGroup()
@@ -290,8 +281,7 @@ public class BookFilter extends javax.swing.JPanel {
                                         .addGap(26, 26, 26))
                                     .addComponent(removeAllBtn, javax.swing.GroupLayout.Alignment.LEADING))
                                 .addGap(193, 193, 193)))
-                        .addGap(304, 304, 304)))
-                .addGap(8, 8, 8))
+                        .addGap(312, 312, 312))))
         );
         groupFieldPanel1Layout.setVerticalGroup(
             groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,8 +297,8 @@ public class BookFilter extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(categoryLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(categorySelectionPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(salePriceLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -318,8 +308,7 @@ public class BookFilter extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(removeAllBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0))
+                    .addComponent(removeAllBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         jScrollForm1.setViewportView(groupFieldPanel1);
@@ -330,17 +319,11 @@ public class BookFilter extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator)
             .addComponent(jScrollForm1)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pageName, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pageName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollForm1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -392,10 +375,10 @@ public class BookFilter extends javax.swing.JPanel {
     private javax.swing.JPanel groupFieldPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollForm1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator;
     private javax.swing.JTextField maxPriceField;
     private javax.swing.JTextField minPriceField;
-    private javax.swing.JLabel pageName;
     private com.group06.bsms.components.AutocompletePanel publisherAutoComp1;
     private javax.swing.JLabel publisherLabel1;
     private javax.swing.JButton removeAllBtn;

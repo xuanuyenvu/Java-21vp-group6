@@ -31,10 +31,7 @@ public class UpdateBook extends javax.swing.JPanel {
         publisherAutoComp.updateList(publishers);
 
         titleLabel.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Book Title");
-        scrollPane.putClientProperty(FlatClientProperties.STYLE,
-                "arc: 9;"
-                + "thumbArc: 3;"
-                + "thumbInsets: 2,2,2,2;");
+        scrollPane.putClientProperty(FlatClientProperties.STYLE, "arc: 9;");
     }
 
     @SuppressWarnings("unchecked")

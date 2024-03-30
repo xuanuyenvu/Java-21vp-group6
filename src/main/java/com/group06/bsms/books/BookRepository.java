@@ -306,9 +306,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 stringQuery += " AND Book.publisherId = ? ";
             }
 
-            stringQuery += " AND Book.salePrice >= ? ";
-
-            stringQuery += " AND Book.salePrice <= ? ";
+            stringQuery += " AND (Book.salePrice >= ? AND Book.salePrice <= ? OR Book.salePrice is null)";
 
             if (listBookCategoryId != null && !listBookCategoryId.isEmpty()) {
                 for (int i = 0; i < listBookCategoryId.size(); i++) {
