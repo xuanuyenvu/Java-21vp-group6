@@ -47,6 +47,17 @@ public class BookService {
 
     }
 
+    public Book getBook(int id) throws Exception {
+        try {
+            Book book = bookDAO.selectBook(id);
+            if (book == null)
+                throw new Exception("Cannot find book: " + id);
+            return book;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
     public void hideBook(int id) throws Exception {
         bookDAO.hideBook(id);
     }
@@ -58,8 +69,7 @@ public class BookService {
     public List<Book> searchSortFilterBook(int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice,
             Author author, Publisher publisher, Double minPrice, Double maxPrice,
-            ArrayList<Category> categoriesList
-    ) throws Exception {
+            ArrayList<Category> categoriesList) throws Exception {
 
         List<Integer> listBookCategoryId = new ArrayList<>();
         for (Category category : categoriesList) {

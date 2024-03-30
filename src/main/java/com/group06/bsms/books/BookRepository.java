@@ -33,6 +33,42 @@ public class BookRepository extends Repository<Book> implements BookDAO {
     }
 
     @Override
+    public Book selectBook(int id) throws Exception {
+        try {
+            Book book = selectById(id);
+            if (book == null) {
+                throw new Exception("Entity not found");
+            }
+            book.author = authorRepository.selectById(book.authorId);
+            book.publisher = publisherRepository.selectById(book.publisherId);
+            db.setAutoCommit(false);
+
+            var selectBookCategoriesQuery = db.prepareStatement(
+                    "SELECT c.id, c.name, c.isHidden FROM Category c JOIN BookCategory bc ON c.id = bc.categoryId WHERE bc.bookId = ?");
+            selectBookCategoriesQuery.setInt(1, id);
+            var result = selectBookCategoriesQuery.executeQuery();
+            if (book.categories == null) {
+                book.categories = new ArrayList<>();
+            }
+            while (result.next()) {
+                book.categories.add(new Category(
+                        result.getInt("id"),
+                        result.getString("name"),
+                        result.getBoolean("isHidden")));
+            }
+
+            db.commit();
+
+            return book;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
     public void updateBook(Book book) throws Exception {
         try {
             db.setAutoCommit(false);
@@ -114,7 +150,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             // Insert into Book table
             PreparedStatement insertBookQuery = db.prepareStatement(
                     "INSERT INTO Book (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, isHidden, hiddenParentCount, quantity, salePrice) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
                     Statement.RETURN_GENERATED_KEYS);
 
             insertBookQuery.setInt(1, book.authorId);
@@ -144,7 +180,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
             PreparedStatement insertCategoryBookQuery = db.prepareStatement(
                     "INSERT INTO CategoryBook (bookId, categoryId) "
-                    + "VALUES (?, ?)");
+                            + "VALUES (?, ?)");
 
             for (Category category : book.categories) {
                 insertCategoryBookQuery.setInt(1, bookId);

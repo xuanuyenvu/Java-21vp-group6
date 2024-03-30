@@ -16,15 +16,6 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
     }
 
-<<<<<<< HEAD
-    public void setText(String text){
-        autoCompleteButton.setSelectedItem(text);
-    }
-
-    public void updateList(ArrayList<String> list) {
-        for (String element : list) {
-            autoCompleteButton.addItem(element);
-=======
     public <Object> void updateList(ArrayList<Object> list) {
         listAllObjects.clear();
         listAllObjects = new ArrayList<>(list);
@@ -32,7 +23,6 @@ public class AutocompletePanel extends javax.swing.JPanel {
         for (Object element : list) {
 //            method toString() return attr name of Object
             autoCompleteButton.addItem(element.toString());
->>>>>>> main
         }
         autoCompleteButton.setSelectedItem(null);
     }
@@ -45,6 +35,10 @@ public class AutocompletePanel extends javax.swing.JPanel {
         return listAllObjects.get(index);
     }
 
+    public void setSelectedObject(Object o){
+        autoCompleteButton.setSelectedItem(o);
+    }
+
     public String getText() {
         return autoCompleteButton.getSelectedItem().toString();
     }
@@ -52,6 +46,9 @@ public class AutocompletePanel extends javax.swing.JPanel {
     public void setEmptyText() {
         autoCompleteButton.setSelectedItem(null);
     }
+
+    
+
 
     public void setPlaceHolderText(String text) {
         autoCompleteButton.putClientProperty("JTextField.placeholderText", text);

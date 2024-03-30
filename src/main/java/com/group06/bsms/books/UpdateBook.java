@@ -1,3 +1,4 @@
+
 package com.group06.bsms.books;
 
 import com.group06.bsms.DB;
@@ -8,23 +9,27 @@ import com.group06.bsms.publishers.*;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import java.util.*;
+import javax.swing.*;
 
-public class UpdateBook extends javax.swing.JPanel {
+public class UpdateBook extends javax.swing.JPanel implements CategorySelectionListener {
 
-    private final ArrayList<String> authors = new ArrayList<>();
-    private final ArrayList<String> publishers = new ArrayList<>();
+    private final BookService bookService;
+    private final AuthorService authorService;
+    private final PublisherService publisherService;
+    private final CategoryService categoryService;
+    private final int bookId;
 
     public UpdateBook() {
-        this(new BookService(new BookRepository(DB.db())),
+        this(
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))),
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db())),
-                new CategoryService(new CategoryRepository(DB.db())),
-                1);
-
+                new CategoryService(new CategoryRepository(DB.db())), 1);
     }
 
     public UpdateBook(BookService bookService, AuthorService authorService, PublisherService publisherService,
@@ -34,7 +39,6 @@ public class UpdateBook extends javax.swing.JPanel {
         this.publisherService = publisherService;
         this.categoryService = categoryService;
         this.bookId = bookId;
-
         initComponents();
         hiddenPropLabel.setVisible(false);
 
@@ -60,44 +64,6 @@ public class UpdateBook extends javax.swing.JPanel {
         CustomLabelInForm.setColoredText(overviewLabel);
 
         titleField.requestFocus();
-
-    }
-
-    private void loadBookInto() {
-        try {
-            var book = bookService.getBook(bookId);
-            if (book == null) {
-                throw new NullPointerException();
-            }
-
-            titleField.setText(book.title);
-            authorAutoComp.setText(book.author.name);
-            publisherAutoComp.setText(book.publisher.name);
-            publishDatePicker.setDate(book.publishDate);
-
-            var bookCategoriesName = new ArrayList<String>();
-            for (var category : book.categories) {
-                bookCategoriesName.add(category.name);
-            }
-
-            var categories = categoryService.selectAllCategoryNames();
-            var categoriesName = new ArrayList<String>();
-            for (var category : categories) {
-                categoriesName.add(category.name);
-            }
-
-            categorySelectionPanel.updateList(categoriesName, bookCategoriesName);
-            dimensionField.setText(book.dimension);
-            pagesSpinner.setValue(book.pageCount);
-            translatorField.setText(book.translatorName);
-            overviewTextArea.setText(book.overview);
-            importPriceTextField.setText(Double.toString(book.maxImportPrice));
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting book information: " + e.getMessage(),
-                    "BSMS Error", JOptionPane.ERROR_MESSAGE);
-        }
-
     }
 
     private void setPlaceholder(JTextArea textArea, String placeholder) {
@@ -131,20 +97,48 @@ public class UpdateBook extends javax.swing.JPanel {
         jScrollForm.repaint();
     }
 
+    private void loadBookInto() {
+        try {
+            var book = bookService.getBook(bookId);
+            if (book == null) {
+                throw new NullPointerException();
+            }
+
+            titleField.setText(book.title);
+            authorAutoComp.setSelectedObject(book.author);
+            publisherAutoComp.setSelectedObject(book.publisher);
+            publishDatePicker.setDate(book.publishDate);
+
+            var bookCategoriesName = new ArrayList<String>();
+            for (var category : book.categories) {
+                bookCategoriesName.add(category.name);
+            }
+
+            var categories = categoryService.selectAllCategories();
+
+            categorySelectionPanel.updateList((ArrayList<Category>) categories, (ArrayList<Category>) book.categories);
+            dimensionField.setText(book.dimension);
+            pagesSpinner.setValue(book.pageCount);
+            translatorField.setText(book.translatorName);
+            overviewTextArea.setText(book.overview);
+            importPriceTextField.setText(Double.toString(book.maxImportPrice));
+            salePriceSpinner.setValue(book.salePrice);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while getting book information: " + e.getMessage(),
+                    "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
     private void loadAuthorInto() {
         try {
-            var authors = authorService.selectAllAuthorNames();
-
+            var authors = new ArrayList<Author>(authorService.selectAllAuthors());
             if (authors == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> authorNames = new ArrayList<>();
-            for (Author author : authors) {
-                authorNames.add(author.name);
-            }
-
-            authorAutoComp.updateList(authorNames);
+            authorAutoComp.updateList(authors);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(),
@@ -157,17 +151,12 @@ public class UpdateBook extends javax.swing.JPanel {
 
     private void loadPublisherInto() {
         try {
-            var publishers = publisherService.selectAllPublisherNames();
+            var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
             if (publishers == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> publisherNames = new ArrayList<>();
-            for (Publisher publisher : publishers) {
-                publisherNames.add(publisher.name);
-            }
-
-            publisherAutoComp.updateList(publisherNames);
+            publisherAutoComp.updateList(publishers);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null,
@@ -181,17 +170,12 @@ public class UpdateBook extends javax.swing.JPanel {
 
     private void loadCategoryInto() {
         try {
-            var categories = categoryService.selectAllCategoryNames();
+            var categories = new ArrayList<Category>(categoryService.selectAllCategories());
             if (categories == null) {
                 throw new NullPointerException();
             }
 
-            ArrayList<String> categoryNames = new ArrayList<>();
-            for (Category category : categories) {
-                categoryNames.add(category.name);
-            }
-
-            categorySelectionPanel.updateList(categoryNames, null);
+            categorySelectionPanel.updateList(categories, null);
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null,
@@ -204,8 +188,6 @@ public class UpdateBook extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated
-    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -231,16 +213,15 @@ public class UpdateBook extends javax.swing.JPanel {
         overviewTextArea = new javax.swing.JTextArea();
         hideCheckBox = new javax.swing.JCheckBox();
         hiddenPropLabel = new javax.swing.JLabel();
-        cancelButton = new javax.swing.JButton();
         addBookButton = new javax.swing.JButton();
         publisherAutoComp = new com.group06.bsms.components.AutocompletePanel();
         authorAutoComp = new com.group06.bsms.components.AutocompletePanel();
         pagesSpinner = new javax.swing.JSpinner();
         publishDatePicker = new com.group06.bsms.components.DatePickerPanel();
-        maxImportPriceLabel = new javax.swing.JLabel();
+        importPriceLabel = new javax.swing.JLabel();
         importPriceTextField = new javax.swing.JTextField();
         salePriceLabel = new javax.swing.JLabel();
-        SalePriceSpinner = new javax.swing.JSpinner();
+        salePriceSpinner = new javax.swing.JSpinner();
 
         backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         backButton.setForeground(UIManager.getColor("mutedColor"));
@@ -350,21 +331,10 @@ public class UpdateBook extends javax.swing.JPanel {
         hiddenPropLabel.setMinimumSize(new java.awt.Dimension(423, 18));
         hiddenPropLabel.setPreferredSize(new java.awt.Dimension(423, 18));
 
-        cancelButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        cancelButton.setForeground(UIManager.getColor("mutedColor")
-        );
-        cancelButton.setText("Cancel");
-        cancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
         addBookButton.setBackground(new java.awt.Color(65, 105, 225));
         addBookButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         addBookButton.setForeground(new java.awt.Color(255, 255, 255));
-        addBookButton.setText("Add");
+        addBookButton.setText("Update");
         addBookButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         addBookButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -391,9 +361,9 @@ public class UpdateBook extends javax.swing.JPanel {
         publishDatePicker.setPlaceholder("dd/mm/yyyy");
         publishDatePicker.setPreferredSize(new java.awt.Dimension(215, 31));
 
-        maxImportPriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        maxImportPriceLabel.setLabelFor(dimensionField);
-        maxImportPriceLabel.setText("Import Price");
+        importPriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        importPriceLabel.setLabelFor(dimensionField);
+        importPriceLabel.setText("Import price");
 
         importPriceTextField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         importPriceTextField.setEnabled(false);
@@ -402,13 +372,13 @@ public class UpdateBook extends javax.swing.JPanel {
 
         salePriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         salePriceLabel.setLabelFor(pagesSpinner);
-        salePriceLabel.setText("Sale Price");
+        salePriceLabel.setText("Sale price");
 
-        SalePriceSpinner.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        SalePriceSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
-        SalePriceSpinner.setMinimumSize(new java.awt.Dimension(215, 31));
-        SalePriceSpinner.setName(""); // NOI18N
-        SalePriceSpinner.setPreferredSize(new java.awt.Dimension(215, 31));
+        salePriceSpinner.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        salePriceSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        salePriceSpinner.setMinimumSize(new java.awt.Dimension(215, 31));
+        salePriceSpinner.setName(""); // NOI18N
+        salePriceSpinner.setPreferredSize(new java.awt.Dimension(215, 31));
 
         javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
         groupFieldPanel.setLayout(groupFieldPanelLayout);
@@ -419,11 +389,11 @@ public class UpdateBook extends javax.swing.JPanel {
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
                         .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(maxImportPriceLabel)
+                            .addComponent(importPriceLabel)
                             .addComponent(importPriceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(10, 10, 10)
                         .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(SalePriceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(salePriceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(salePriceLabel)))
                     .addComponent(translatorLabel)
                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -445,8 +415,6 @@ public class UpdateBook extends javax.swing.JPanel {
                         .addComponent(categoryLabel)
                         .addComponent(titleLabel)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanelLayout.createSequentialGroup()
-                            .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(addBookButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(4, 4, 4)))
                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -505,23 +473,21 @@ public class UpdateBook extends javax.swing.JPanel {
                 .addComponent(overviewLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(maxImportPriceLabel)
+                    .addComponent(importPriceLabel)
                     .addComponent(salePriceLabel))
                 .addGap(4, 4, 4)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(importPriceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(SalePriceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(salePriceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17)
                 .addComponent(hideCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(hiddenPropLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addBookButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(499, Short.MAX_VALUE))
+                .addComponent(addBookButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(482, Short.MAX_VALUE))
         );
 
         jScrollForm.setViewportView(groupFieldPanel);
@@ -553,133 +519,43 @@ public class UpdateBook extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cancelButtonActionPerformed
-        titleField.setText("");
-        authorAutoComp.setEmptyText();
-        publisherAutoComp.setEmptyText();
-        publishDatePicker.setEmptyText();
-        categorySelectionPanel.setEmptyList();
-        dimensionField.setText("");
-        pagesSpinner.setValue(0);
-        translatorField.setText("");
-        overviewTextArea.setText("");
-<<<<<<< HEAD
-        hideCheckBox.setSelected(false);
-    }// GEN-LAST:event_cancelButtonActionPerformed
-=======
-        importPriceField.setText("");
-        salePriceField.setText("");
-
-    }//GEN-LAST:event_cancelButtonActionPerformed
->>>>>>> main
-
-    private void addBookButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_addBookButtonActionPerformed
+    private void addBookButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBookButtonActionPerformed
         String title = titleField.getText();
-        String author = authorAutoComp.getText();
-        String publisher = publisherAutoComp.getText();
-        ArrayList<String> categoriesList = categorySelectionPanel.getListSelected();
+        Author author = (Author) authorAutoComp.getSelectedObject();
+        Publisher publisher = (Publisher) publisherAutoComp.getSelectedObject();
+        ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
         String dimension = dimensionField.getText();
         Object pages = pagesSpinner.getValue();
         String translator = translatorField.getText();
         String overview = overviewTextArea.getText();
-<<<<<<< HEAD
         boolean hideChecked = hideCheckBox.isSelected();
-
         try {
+            java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
+            bookService.insertBook(title, author, publisher, categoriesList, publishDate,
+                    dimension, pages, translator, overview, hideChecked);
+            JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information", JOptionPane.INFORMATION_MESSAGE);
 
-            Book newBook = new Book();
-            newBook.title = title;
-            newBook.authorId = authorService.insertAuthorIfNotExists(author);
-            newBook.publisherId = publisherService.insertPublisherIfNotExists(publisher);
-            newBook.publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-            newBook.categories = new ArrayList<>(categoryService.selectByName(categoriesList));
-            newBook.dimension = dimension;
-            newBook.pageCount = (Integer) pages;
-            newBook.translatorName = translator;
-            newBook.overview = overview;
-            newBook.isHidden = hideChecked;
-
-            int count = 0;
-            Author a = authorService.selectAuthor(newBook.authorId);
-            Publisher p = publisherService.selectPublisher(newBook.publisherId);
-
-            if (a != null && a.isHidden) {
-                count++;
-            }
-            if (p != null && p.isHidden) {
-                count++;
-            }
-            for (Category c : newBook.categories) {
-                if (c.isHidden) {
-                    count++;
-                }
-            }
-            newBook.hiddenParentCount = count;
-
-            bookService.insertBook(newBook);
-            JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information",
-                    JOptionPane.INFORMATION_MESSAGE);
-
+        } catch (NullPointerException ex) {
+            JOptionPane.showMessageDialog(null, "Date is not null", "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
-=======
-        String importPrice = importPriceField.getText();
-        String salePrice = salePriceField.getText();
-
-        if (!title.isEmpty() && !author.isEmpty()
-                && !publisher.isEmpty() && publishDatePicker.getDate() != null
-                && !categoriesList.isEmpty() && !dimension.isEmpty()
-                && !pages.equals(0) && !overview.isEmpty()) {
-
-            java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            String formattedDate = dateFormat.format(publishDate);
-
-            String newBookInfo = title + "; "
-                    + author + "; "
-                    + publisher + "; "
-                    + formattedDate + "; "
-                    + categoriesList + "; "
-                    + dimension + "; "
-                    + pages + "; "
-                    + translator + "; "
-                    + overview + "; "
-                    + importPrice + "; "
-                    + salePrice + "; ";
-            System.out.print(newBookInfo);
-        } else {
-            JOptionPane.showMessageDialog(null, "Please fill in all required information!", "Error", JOptionPane.ERROR_MESSAGE);
->>>>>>> main
         }
 
-    }// GEN-LAST:event_addBookButtonActionPerformed
+    }//GEN-LAST:event_addBookButtonActionPerformed
 
-    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
+    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.gray, 24, 17));
-    }// GEN-LAST:event_backButtonMouseEntered
+    }//GEN-LAST:event_backButtonMouseEntered
 
-    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseExited
+    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
-<<<<<<< HEAD
-    }// GEN-LAST:event_backButtonMouseExited
-=======
     }//GEN-LAST:event_backButtonMouseExited
 
-    private void salePriceFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_salePriceFieldKeyTyped
-        char enter = evt.getKeyChar();
-        if (!(Character.isDigit(enter))) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_salePriceFieldKeyTyped
->>>>>>> main
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JSpinner SalePriceSpinner;
     private javax.swing.JButton addBookButton;
     private com.group06.bsms.components.AutocompletePanel authorAutoComp;
     private javax.swing.JLabel authorLabel;
     private javax.swing.JButton backButton;
-    private javax.swing.JButton cancelButton;
     private javax.swing.JLabel categoryLabel;
     private com.group06.bsms.components.CategorySelectionPanel categorySelectionPanel;
     private javax.swing.JTextField dimensionField;
@@ -687,21 +563,21 @@ public class UpdateBook extends javax.swing.JPanel {
     private javax.swing.JPanel groupFieldPanel;
     private javax.swing.JLabel hiddenPropLabel;
     private javax.swing.JCheckBox hideCheckBox;
+    private javax.swing.JLabel importPriceLabel;
     private javax.swing.JTextField importPriceTextField;
     private javax.swing.JScrollPane jScrollForm;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JLabel maxImportPriceLabel;
     private javax.swing.JLabel overviewLabel;
     private javax.swing.JTextArea overviewTextArea;
     private javax.swing.JLabel pageName;
     private javax.swing.JLabel pagesLabel;
     private javax.swing.JSpinner pagesSpinner;
-    private javax.swing.JSpinner pagesSpinner1;
     private javax.swing.JLabel publishDateLabel;
     private com.group06.bsms.components.DatePickerPanel publishDatePicker;
     private com.group06.bsms.components.AutocompletePanel publisherAutoComp;
     private javax.swing.JLabel publisherLabel;
     private javax.swing.JLabel salePriceLabel;
+    private javax.swing.JSpinner salePriceSpinner;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTextField titleField;
     private javax.swing.JLabel titleLabel;
