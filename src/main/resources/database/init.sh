@@ -3,7 +3,7 @@ directory=$(grep 'repoDirectory' 'src/main/resources/env/bsms.properties' | cut 
 # Initialize tables
 
 sql_file="${directory}/src/main/resources/database/init.sql"
-result=$(psql -U bsms -d bsms -f "${sql_file}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -f "${sql_file}" 2>&1)
 
 if [ $? -eq 0 ]; then
  echo "Successfully create tables (init.sql)."
@@ -24,7 +24,7 @@ sql_command="DO \$\$BEGIN
   END;
 END;\$\$;"
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported publisher data."
@@ -46,7 +46,7 @@ sql_command="DO \$\$BEGIN
   END;
 END;\$\$;"
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported author data."
@@ -112,7 +112,7 @@ sql_command="DO \$\$BEGIN
   END;
 END;\$\$;"
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported book data."
@@ -134,7 +134,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -176,7 +176,7 @@ sql_command="DO \$\$BEGIN
   END;
 END;\$\$;"
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -199,7 +199,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported account data."
@@ -220,7 +220,7 @@ sql_command="DO \$\$BEGIN
   END;
 END;\$\$;"
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported member data."
@@ -288,7 +288,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -358,7 +358,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -427,7 +427,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -496,7 +496,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -535,7 +535,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -574,7 +574,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -614,7 +614,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -654,7 +654,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -662,3 +662,5 @@ if [ $? -eq 0 ]; then
 else
   echo "Import of order data 4 failed: $result"
 fi
+
+read
