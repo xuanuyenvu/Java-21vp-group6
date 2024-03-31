@@ -1,9 +1,10 @@
 directory=$(grep 'repoDirectory' 'src/main/resources/env/bsms.properties' | cut -d'=' -f2)
+password=$(grep 'dataSource.password' 'src/main/resources/env/bsms.properties' | cut -d'=' -f2)
 
 # Initialize tables
 
 sql_file="${directory}/src/main/resources/database/init.sql"
-result=$(psql.exe -U bsms -d bsms -f "${sql_file}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -f "${sql_file}" 2>&1)
 
 if [ $? -eq 0 ]; then
  echo "Successfully create tables (init.sql)."
@@ -17,14 +18,14 @@ sql_command="DO \$\$BEGIN
     COPY Publisher(name, email, address, ishidden)
     FROM '${directory}/src/main/resources/database/publisher.csv'
     DELIMITER ';'
-    CSV HEADER;
+    csv header encoding 'UTF8';
   EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
   END;
 END;\$\$;"
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported publisher data."
@@ -39,14 +40,14 @@ sql_command="DO \$\$BEGIN
     copy Author(name, overview, ishidden)
     FROM '${directory}/src/main/resources/database/author.csv'
     delimiter ';'
-    csv header;
+    csv header encoding 'UTF8';
   EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
   END;
 END;\$\$;"
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported author data."
@@ -79,7 +80,7 @@ sql_command="DO \$\$BEGIN
     )
     FROM '${directory}/src/main/resources/database/book.csv'
     DELIMITER ';'
-    CSV HEADER;
+    csv header encoding 'UTF8';
 
     -- Insert data from temporary table into Book table while fetching author ID from Author table
     INSERT INTO Book (
@@ -112,7 +113,7 @@ sql_command="DO \$\$BEGIN
   END;
 END;\$\$;"
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported book data."
@@ -126,7 +127,7 @@ sql_command="DO \$\$BEGIN
     COPY Category(name, ishidden)
     FROM '${directory}/src/main/resources/database/category.csv'
     DELIMITER ';'
-    CSV HEADER;
+    csv header encoding 'UTF8';
   EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
@@ -134,7 +135,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -157,7 +158,7 @@ sql_command="DO \$\$BEGIN
     )
     FROM '${directory}/src/main/resources/database/bookcategory.csv'
     DELIMITER ';'
-    CSV HEADER;
+    csv header encoding 'UTF8';
 
     INSERT INTO BookCategory (bookId, categoryId) 
     SELECT 
@@ -176,7 +177,7 @@ sql_command="DO \$\$BEGIN
   END;
 END;\$\$;"
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -191,7 +192,7 @@ sql_command="DO \$\$BEGIN
     COPY Account (phone, password, name, gender, email, address, isAdmin, isLocked)
     FROM '${directory}/src/main/resources/database/account.csv'
     DELIMITER ';'
-    CSV HEADER;
+    csv header encoding 'UTF8';
   EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
@@ -199,7 +200,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported account data."
@@ -213,14 +214,14 @@ sql_command="DO \$\$BEGIN
     COPY Member (phone, name, gender, dateOfBirth, email, address)
     FROM '${directory}/src/main/resources/database/member.csv'
     DELIMITER ';'
-    CSV HEADER;
+    csv header encoding 'UTF8';
   EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
   END;
 END;\$\$;"
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 if [ $? -eq 0 ]; then
   echo "Successfully imported member data."
@@ -288,7 +289,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -358,7 +359,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -427,7 +428,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -496,7 +497,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -535,7 +536,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -574,7 +575,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -614,7 +615,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
@@ -654,7 +655,7 @@ sql_command="DO \$\$BEGIN
 END;\$\$;"
 
 
-result=$(psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
+result=$(PGPASSWORD="${password}" psql.exe -U bsms -d bsms -c "${sql_command}" 2>&1)
 
 
 if [ $? -eq 0 ]; then
