@@ -1,3 +1,27 @@
+-- Instruction
+-- 0. If there is existing database, please delete and create a new one
+-- Please also check if psql exists in your PATH by 'psql --help'. If not, please install and put it in your path
+-- 1. Create database named bsms with user bsms
+-- 2. In the bsms.properties, add one line repoDirectory=[repoDirectory], with [repoDirectory] being the directory of the folder
+-- e.g. repoDirectory=/Users/tranchau/Project/JAVA/Bookstore Management System/Java-21vp-group6/
+-- 3. Run the shell script init.sh by doing ./[file] 
+-- e.g. ./src/main/resources/database/init.sh
+-- You don't need to run this file at all. The shell script has already included command to run this file
+-- 4. The results displayed in the console should be all successsful. If not, please ask
+-- The results of the select count(*) for each table:
+-- 189 book
+-- 31 author
+-- 24 publisher
+-- 23 category
+-- 316 book category
+-- 4 importsheet
+-- 39 importedbook
+-- 101 member
+-- 12 account, 3 of which admin
+-- 4 ordersheet
+-- 12 orderedbook
+
+
 -- Tables
 create table if not exists Account (
     id serial primary key,
@@ -31,9 +55,9 @@ create table if not exists Book (
     title varchar(255) unique check (length(title) > 0) not null,
     authorId int references Author(id) not null,
     publisherId int references Publisher(id) not null,
-    pageCount int check (pageCount > 0) not null,
+    pageCount int check (pageCount >= 0) not null,
     publishDate date check (publishDate < current_date) not null,
-    dimension varchar(10) check (dimension ~ '^[0-9]{1,4}x[0-9]{1,4}$'),
+    dimension varchar(30) check (dimension ~ '^[0-9]+(\.[0-9]+)?x[0-9]+(\.[0-9]+)?x[0-9]+(\.[0-9]+)? cm$'),
     translatorName varchar(255),
     overview text,
     quantity int check (quantity >= 0) not null,
@@ -95,107 +119,3 @@ create table if not exists OrderedBook (
     pricePerBook decimal(12, 2) check (pricePerBook >= 0) not null,
     primary key (orderSheetId, bookId)
 );
-
--- Data
-insert into Account (phone, password, name, gender, email, address, isAdmin, isLocked) values
-    ('1234567890', 'password123', 'John Doe', 'Male', 'john@example.com', '123 Main St', true, false),
-    ('9876543210', 'securepass', 'Jane Doe', 'Female', 'jane@example.com', '456 Oak Ave', false, true);
-
-insert into Author (name, overview, isHidden) values
-    ('Author X', 'Experienced writer.', false),
-    ('Author Y', 'New talent.', true);
-
-insert into Publisher (name, email, address, isHidden) values
-    ('Publisher A', 'publisherA@example.com', '123 Main St', false),
-    ('Publisher B', 'publisherB@example.com', '456 Oak Ave', true);
-
-insert into Book (
-    title, authorId, publisherId, pageCount, dimension, translatorName,
-    overview, quantity, salePrice, hiddenParentCount, publishdate, maxImportPrice
-) values
-    ('Sample Book 1', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 2', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 3', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 4', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 5', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 6', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 7', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 8', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 9', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 10', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 12', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 13', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 14', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 0, '1990-05-25', 20.50),
-    ('Sample Book 15', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 16', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 17', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 18', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 19', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 20', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 21', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 22', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 23', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 24', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 25', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 26', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 27', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 28', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 29', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 30', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 31', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 32', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 0, '1990-05-25', 20.50),
-    ('Sample Book 33', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 34', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 35', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 36', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 37', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 38', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 39', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 40', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 41', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 42', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 43', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 44', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 45', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 46', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 47', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 48', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 0, '1990-05-25', 20.50),
-    ('Sample Book 49', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 50', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 0, '1995-05-15', 18.50),
-    ('Sample Book 51', 1, 1, 300, '6x9', 'Translator A', 'An interesting book.', 50, 19.99, 5, '1990-05-25', 20.50),
-    ('Sample Book 52', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50),
-    ('Sample Book 53', 2, 2, 250, '5x8', 'Translator B', 'A captivating novel.', 30, 24.99, 8, '1995-05-15', 18.50);
-
-
-insert into Category (name, isHidden) values
-    ('Fiction', false),
-    ('Non-Fiction', false);
-
-insert into BookCategory (bookId, categoryId) values
-    (1, 1),
-    (2, 2),
-    (1, 2);
-
-insert into ImportSheet (employeeInChargeId, importDate, totalCost) values
-    (1, current_date, 150.99),
-    (2, current_date, 200.50);
-
-insert into ImportedBook (importSheetId, bookId, quantity, pricePerBook) values
-    (1, 1, 10, 15.99),
-    (1, 2, 8, 20.50),
-    (2, 1, 5, 12.99),
-    (2, 2, 3, 18.50);
-
-insert into Member (phone, name, gender, dateOfBirth, email, address) values
-    ('1112233444', 'Alice', 'Female', '1990-05-15', 'alice@example.com', '789 Elm St'),
-    ('5556677888', 'Bob', 'Male', '1985-08-22', 'bob@example.com', '456 Pine Ave');
-
-insert into OrderSheet (memberId, employeeInChargeId, orderDate, discountedTotalCost) values
-    (1, 1, current_date, 75.99),
-    (2, 2, current_date, 120.25);
-
-insert into OrderedBook (orderSheetId, bookId, quantity, pricePerBook) values
-    (1, 1, 5, 15.99),
-    (1, 2, 3, 20.50),
-    (2, 1, 7, 12.99),
-    (2, 2, 5, 18.50);
