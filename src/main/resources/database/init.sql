@@ -22,8 +22,6 @@
 -- 4 ordersheet
 -- 12 orderedbook
 
-ALTER DATABASE bsms SET ENCODING TO 'UTF8';
-
 -- Tables
 create table if not exists Account (
     id serial primary key,
@@ -128,7 +126,7 @@ DO $$BEGIN
     COPY Publisher(name, email, address, ishidden)
     FROM 'C:/Users/Public/Public Data/publisher.csv'
     DELIMITER ';'
-    csv header encoding 'UTF8';
+    csv header ;
  EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
@@ -141,7 +139,7 @@ DO $$BEGIN
     COPY Author(name, overview, ishidden)
     FROM 'C:/Users/Public/Public Data/author.csv'
     DELIMITER ';'
-    csv header encoding 'UTF8';
+    csv header ;
  EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
@@ -172,7 +170,7 @@ DO $$BEGIN
     )
     FROM 'C:/Users/Public/Public Data/book.csv'
     DELIMITER ';'
-    csv header encoding 'UTF8';
+    csv header ;
 
     -- Insert data from temporary table into Book table while fetching author ID from Author table
     INSERT INTO Book (
@@ -210,7 +208,7 @@ DO $$BEGIN
     COPY Category(name, ishidden)
     FROM 'C:/Users/Public/Public Data/category.csv'
     DELIMITER ';'
-    csv header encoding 'UTF8';
+    csv header ;
  EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
@@ -230,7 +228,7 @@ DO $$BEGIN
     )
     FROM 'C:/Users/Public/Public Data/bookcategory.csv'
     DELIMITER ';'
-    csv header encoding 'UTF8';
+    csv header ;
 
     INSERT INTO BookCategory (bookId, categoryId) 
     SELECT 
@@ -254,7 +252,7 @@ DO $$BEGIN
     COPY Account (phone, password, name, gender, email, address, isAdmin, isLocked)
     FROM 'C:/Users/Public/Public Data/account.csv'
     DELIMITER ';'
-    csv header encoding 'UTF8';
+    csv header ;
  EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
@@ -267,7 +265,7 @@ DO $$BEGIN
     COPY Member (phone, name, gender, dateOfBirth, email, address)
     FROM 'C:/Users/Public/Public Data/member.csv'
     DELIMITER ';'
-    csv header encoding 'UTF8';
+    csv header ;
  EXCEPTION
     WHEN others THEN
       RAISE EXCEPTION 'Failed to copy data: %', SQLERRM;
