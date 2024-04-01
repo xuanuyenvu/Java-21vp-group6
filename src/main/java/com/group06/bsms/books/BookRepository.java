@@ -71,8 +71,9 @@ public class BookRepository extends Repository<Book> implements BookDAO {
     @Override
     public void updateBook(Book book, Book updatedBook) throws Exception {
         try {
-           
-            update(updatedBook,"authorId", "publisherId", "title", "pageCount", "publishDate", "dimension", "translatorName","overview","salePrice");
+
+            update(updatedBook, "authorId", "publisherId", "title", "pageCount", "publishDate", "dimension",
+                    "translatorName", "overview", "salePrice");
 
             List<Category> insertedCategories = new ArrayList<>(updatedBook.categories);
             insertedCategories.removeAll(book.categories);
@@ -90,9 +91,9 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
     private void deleteBookCategories(int bookId, List<Category> categories) throws Exception {
         try {
-            int deleteBookCategoryResults[] = null;
-            db.setAutoCommit(false);
             if (!categories.isEmpty()) {
+                int deleteBookCategoryResults[] = null;
+                db.setAutoCommit(false);
                 String deleteQuery = "DELETE FROM bookCategory WHERE bookId = ? AND categoryId = ?";
                 var deleteBookCategoryStatement = db.prepareStatement(deleteQuery);
                 for (Category category : categories) {
@@ -101,12 +102,12 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     deleteBookCategoryStatement.addBatch();
                 }
                 deleteBookCategoryResults = deleteBookCategoryStatement.executeBatch();
-            }
-            db.commit();
-
-            for (int deleteBookCategoryResult : deleteBookCategoryResults) {
-                if (deleteBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
-                    throw new Exception("Cannot delete book's categories");
+                db.commit();
+                
+                for (int deleteBookCategoryResult : deleteBookCategoryResults) {
+                    if (deleteBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
+                        throw new Exception("Cannot delete book's categories");
+                    }
                 }
             }
 
@@ -118,10 +119,10 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
     private void insertBookCategories(int bookId, List<Category> categories) throws Exception {
         try {
-            
-            int addBookCategoryResults[] = null;
-            db.setAutoCommit(false);
+
             if (!categories.isEmpty()) {
+                int addBookCategoryResults[] = null;
+                db.setAutoCommit(false);
                 String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES VALUES (?, ?)";
                 var addBookCategoryStatement = db.prepareStatement(insertQuery);
                 for (Category category : categories) {
@@ -129,16 +130,16 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     addBookCategoryStatement.setInt(1, category.id);
                 }
                 addBookCategoryResults = addBookCategoryStatement.executeBatch();
-            }
 
-            db.commit();
+                db.commit();
 
-            for (int addBookCategoryResult : addBookCategoryResults) {
-                if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
-                    throw new Exception("Cannot insert book's categories");
+                for (int addBookCategoryResult : addBookCategoryResults) {
+                    if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
+                        throw new Exception("Cannot insert book's categories");
+                    }
                 }
-            }
 
+            }
         } catch (Exception e) {
             db.rollback();
             throw e;

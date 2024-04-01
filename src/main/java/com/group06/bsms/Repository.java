@@ -356,7 +356,7 @@ public class Repository<Entity extends Object> {
             db.setAutoCommit(false);
 
             var updateQuery = new StringBuilder("UPDATE " + entityClass.getSimpleName() + " SET ");
-
+           
             for (var attribute : attributes) {
                 if (!isValidIdentifier(attribute)) {
                     throw new Exception("Invalid update attribute");
@@ -385,17 +385,19 @@ public class Repository<Entity extends Object> {
             }
 
             var idField = entityClass.getDeclaredField("id");
+            idField.setAccessible(true);
             var idValue = idField.get(entity);
             query.setObject(index, idValue);
+            System.out.println(query.toString());
 
             var result = query.executeUpdate();
 
             db.commit();
 
             if (result == 0) {
-                throw new Exception("Internal database error");
+                throw new Exception("Entity not found");
             }
-
+            
         } catch (Exception e) {
             db.rollback();
             throw e;

@@ -27,7 +27,7 @@ public class Book {
     public Publisher publisher;
     public List<Category> categories;
 
-    public double maxImportPrice;
+    public Double maxImportPrice;
 
     public Book() {
     }

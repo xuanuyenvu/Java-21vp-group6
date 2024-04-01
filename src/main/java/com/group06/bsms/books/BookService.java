@@ -30,14 +30,22 @@ public class BookService {
 
     public void updateBook(Book book, Book updatedBook) throws Exception, IllegalArgumentException {
         try {
-            if (book == null || updatedBook == null) {
-                throw new IllegalArgumentException("Book object cannot be null");
+            if (updatedBook.title == null || updatedBook.authorId == -1
+                    || updatedBook.publisherId == -1
+                    || updatedBook.publishDate == null
+                    || updatedBook.categories.isEmpty()
+                    || updatedBook.dimension == null
+                    || updatedBook.pageCount == 0
+                    || updatedBook.overview == null) {
+                throw new IllegalArgumentException("Please fill in all required information.");
             }
             if (Double.valueOf(updatedBook.maxImportPrice) == null && Double.valueOf(updatedBook.salePrice) != null) {
                 throw new Exception("Cannot update sale price because the maximum import price is null");
             }
-            if (book.salePrice >= 1.1 * book.maxImportPrice) {
-                throw new Exception("Sale price must be bigger than 1.1 * maximum import price");
+            System.out.println(updatedBook.salePrice + " " + updatedBook.maxImportPrice);
+            
+            if (updatedBook.salePrice <= 1.1 * book.maxImportPrice) {
+                throw new Exception("Sale price must be bigger than 1.1 * import price");
             }
             
 
