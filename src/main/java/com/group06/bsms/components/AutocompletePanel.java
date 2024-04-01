@@ -36,7 +36,7 @@ public class AutocompletePanel extends javax.swing.JPanel {
     }
 
     public void setSelectedObject(Object o){
-        autoCompleteButton.setSelectedItem(o);
+        autoCompleteButton.setSelectedItem(o.toString());
     }
 
     public String getText() {
@@ -48,8 +48,6 @@ public class AutocompletePanel extends javax.swing.JPanel {
     }
 
     
-
-
     public void setPlaceHolderText(String text) {
         autoCompleteButton.putClientProperty("JTextField.placeholderText", text);
     }

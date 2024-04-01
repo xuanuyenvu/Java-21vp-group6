@@ -36,7 +36,7 @@ public class Book {
             int authorId, int publisherId, String title, int pageCount,
             Date publishDate, String dimension, String translatorName,
             String overview, int quantity, double salePrice,
-            boolean isHidden, int hiddenParentCount, int maxImportPrice) {
+            boolean isHidden, int hiddenParentCount, double maxImportPrice) {
         this.authorId = authorId;
         this.publisherId = publisherId;
         this.title = title;

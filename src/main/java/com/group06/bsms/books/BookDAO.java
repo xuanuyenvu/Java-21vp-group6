@@ -16,7 +16,7 @@ public interface BookDAO {
 
     void hideBook(int id) throws Exception;
 
-    void updateBook(Book book) throws Exception;
+    void updateBook(Book book, Book updatedBook) throws Exception;
 
     void updateBookHiddenParentCount(int id) throws Exception;
 

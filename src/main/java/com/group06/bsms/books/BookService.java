@@ -28,19 +28,20 @@ public class BookService {
         this.categoryService = categoryService;
     }
 
-    public void updateBook(Book book) throws Exception, IllegalArgumentException {
+    public void updateBook(Book book, Book updatedBook) throws Exception, IllegalArgumentException {
         try {
-            if (book == null) {
+            if (book == null || updatedBook == null) {
                 throw new IllegalArgumentException("Book object cannot be null");
             }
-            if (Double.valueOf(book.maxImportPrice) == null && Double.valueOf(book.salePrice) != null) {
+            if (Double.valueOf(updatedBook.maxImportPrice) == null && Double.valueOf(updatedBook.salePrice) != null) {
                 throw new Exception("Cannot update sale price because the maximum import price is null");
             }
             if (book.salePrice >= 1.1 * book.maxImportPrice) {
                 throw new Exception("Sale price must be bigger than 1.1 * maximum import price");
             }
+            
 
-            bookDAO.updateBook(book);
+            bookDAO.updateBook(book, updatedBook);
         } catch (Exception e) {
             throw e;
         }

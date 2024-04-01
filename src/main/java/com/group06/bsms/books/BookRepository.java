@@ -69,48 +69,44 @@ public class BookRepository extends Repository<Book> implements BookDAO {
     }
 
     @Override
-    public void updateBook(Book book) throws Exception {
+    public void updateBook(Book book, Book updatedBook) throws Exception {
         try {
+           
+            update(updatedBook,"authorId", "publisherId", "title", "pageCount", "publishDate", "dimension", "translatorName","overview","salePrice");
+
+            List<Category> insertedCategories = new ArrayList<>(updatedBook.categories);
+            insertedCategories.removeAll(book.categories);
+            insertBookCategories(book.id, insertedCategories);
+
+            List<Category> deletedCategories = new ArrayList<>(book.categories);
+            deletedCategories.removeAll(updatedBook.categories);
+            deleteBookCategories(book.id, deletedCategories);
+
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    private void deleteBookCategories(int bookId, List<Category> categories) throws Exception {
+        try {
+            int deleteBookCategoryResults[] = null;
             db.setAutoCommit(false);
-
-            var updateBookQuery = db.prepareStatement(
-                    "UPDATE books SET authorId=?, publisherId=?, title=?, pageCount=?, publishDate=?, dimension=?, translatorName=?, overview=?, quantity=?, salePrice=?, hiddenParentCount=?, WHERE id=?");
-
-            updateBookQuery.setInt(1, book.authorId);
-            updateBookQuery.setInt(2, book.publisherId);
-            updateBookQuery.setString(3, book.title);
-            updateBookQuery.setInt(4, book.pageCount);
-            updateBookQuery.setDate(5, book.publishDate);
-            updateBookQuery.setString(6, book.dimension);
-            updateBookQuery.setString(7, book.translatorName);
-            updateBookQuery.setString(8, book.overview);
-            updateBookQuery.setInt(9, book.quantity);
-            updateBookQuery.setDouble(10, book.salePrice);
-            updateBookQuery.setInt(11, book.hiddenParentCount);
-            updateBookQuery.setInt(13, book.id);
-
-            var updateBookResult = updateBookQuery.executeUpdate();
-
-            int addBookCategoryResults[] = null;
-            if (!book.categories.isEmpty()) {
-                String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES VALUES (?, ?)";
-                var addBookCategoryStatement = db.prepareStatement(insertQuery);
-                for (Category category : book.categories) {
-                    addBookCategoryStatement.setInt(1, book.id);
-                    addBookCategoryStatement.setInt(1, category.id);
+            if (!categories.isEmpty()) {
+                String deleteQuery = "DELETE FROM bookCategory WHERE bookId = ? AND categoryId = ?";
+                var deleteBookCategoryStatement = db.prepareStatement(deleteQuery);
+                for (Category category : categories) {
+                    deleteBookCategoryStatement.setInt(1, bookId);
+                    deleteBookCategoryStatement.setInt(2, category.id);
+                    deleteBookCategoryStatement.addBatch();
                 }
-                addBookCategoryResults = addBookCategoryStatement.executeBatch();
+                deleteBookCategoryResults = deleteBookCategoryStatement.executeBatch();
             }
-
             db.commit();
 
-            if (updateBookResult == 0) {
-                throw new Exception("Entity not found");
-            }
-
-            for (int addBookCategoryResult : addBookCategoryResults) {
-                if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
-                    throw new Exception("Cannot update book's categories");
+            for (int deleteBookCategoryResult : deleteBookCategoryResults) {
+                if (deleteBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
+                    throw new Exception("Cannot delete book's categories");
                 }
             }
 
@@ -118,6 +114,36 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.rollback();
             throw e;
         }
+    }
+
+    private void insertBookCategories(int bookId, List<Category> categories) throws Exception {
+        try {
+            
+            int addBookCategoryResults[] = null;
+            db.setAutoCommit(false);
+            if (!categories.isEmpty()) {
+                String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES VALUES (?, ?)";
+                var addBookCategoryStatement = db.prepareStatement(insertQuery);
+                for (Category category : categories) {
+                    addBookCategoryStatement.setInt(1, bookId);
+                    addBookCategoryStatement.setInt(1, category.id);
+                }
+                addBookCategoryResults = addBookCategoryStatement.executeBatch();
+            }
+
+            db.commit();
+
+            for (int addBookCategoryResult : addBookCategoryResults) {
+                if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
+                    throw new Exception("Cannot insert book's categories");
+                }
+            }
+
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+
     }
 
     @Override

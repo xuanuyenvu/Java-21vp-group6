@@ -21,4 +21,16 @@ public class Category {
         return name;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Category other = (Category) obj;
+        return (id == other.id && name.equals(other.name) && isHidden == other.isHidden);
+    }
+
 }
