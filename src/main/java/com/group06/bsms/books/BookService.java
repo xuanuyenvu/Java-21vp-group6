@@ -135,12 +135,12 @@ public class BookService {
     }
 
     List<Book> getHotBooks() throws Exception {
-        List<Book> books = bookDAO.getNewBooks();
+        List<Book> books = bookDAO.getHotBooks();
         return books;
     }
 
     List<Book> getOutOfStockBooks() throws Exception {
-        List<Book> books = bookDAO.getNewBooks();
+        List<Book> books = bookDAO.getOutOfStockBooks();
         return books;
     }
 }
