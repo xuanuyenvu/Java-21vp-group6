@@ -119,8 +119,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                         overviewTextArea.setText(book.overview);
                         importPriceTextField.setText(Double.toString(book.maxImportPrice));
                         salePriceSpinner.setValue(book.salePrice);
-
+                        
+                        
                         authorAutoComp.setSelectedObject(book.author);
+                        System.out.println(authorAutoComp.getSelectedObject().id);
                         publisherAutoComp.setSelectedObject(book.publisher);
                         publishDatePicker.setDate(book.publishDate);
                         var categories = categoryService.selectAllCategories();
@@ -138,8 +140,8 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         private void loadAuthorInto() {
                 try {
-                        var authors = new ArrayList<Author>(authorService.selectAllAuthors());
-                        authorAutoComp.updateList(authors);
+                        
+                        authorAutoComp.updateList(authorService.selectAllAuthors());
 
                 } catch (NullPointerException e) {
                         JOptionPane.showMessageDialog(null,
@@ -154,8 +156,8 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         private void loadPublisherInto() {
                 try {
-                        var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
-                        publisherAutoComp.updateList(publishers);
+                        
+                        publisherAutoComp.updateList(publisherService.selectAllPublishers());
 
                 } catch (NullPointerException e) {
                         JOptionPane.showMessageDialog(null,
@@ -198,8 +200,8 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 hideCheckBox = new javax.swing.JCheckBox();
                 hiddenPropLabel = new javax.swing.JLabel();
                 updateBookButton = new javax.swing.JButton();
-                publisherAutoComp = new com.group06.bsms.components.AutocompletePanel();
-                authorAutoComp = new com.group06.bsms.components.AutocompletePanel();
+                publisherAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
+                authorAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
                 pagesSpinner = new javax.swing.JSpinner();
                 publishDatePicker = new com.group06.bsms.components.DatePickerPanel();
                 importPriceLabel = new javax.swing.JLabel();
@@ -689,7 +691,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         }// GEN-LAST:event_backButtonMouseExited
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
-        private com.group06.bsms.components.AutocompletePanel authorAutoComp;
+        private com.group06.bsms.components.AutocompletePanel<Author> authorAutoComp;
         private javax.swing.JLabel authorLabel;
         private javax.swing.JButton backButton;
         private javax.swing.JLabel categoryLabel;
@@ -710,7 +712,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         private javax.swing.JSpinner pagesSpinner;
         private javax.swing.JLabel publishDateLabel;
         private com.group06.bsms.components.DatePickerPanel publishDatePicker;
-        private com.group06.bsms.components.AutocompletePanel publisherAutoComp;
+        private com.group06.bsms.components.AutocompletePanel<Publisher> publisherAutoComp;
         private javax.swing.JLabel publisherLabel;
         private javax.swing.JLabel salePriceLabel;
         private javax.swing.JSpinner salePriceSpinner;
