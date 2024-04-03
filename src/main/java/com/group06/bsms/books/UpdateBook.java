@@ -119,10 +119,9 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                         overviewTextArea.setText(book.overview);
                         importPriceTextField.setText(Double.toString(book.maxImportPrice));
                         salePriceSpinner.setValue(book.salePrice);
-                        
-                        
+
                         authorAutoComp.setSelectedObject(book.author);
-                        
+
                         publisherAutoComp.setSelectedObject(book.publisher);
                         publishDatePicker.setDate(book.publishDate);
                         var categories = categoryService.selectAllCategories();
@@ -140,7 +139,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         private void loadAuthorInto() {
                 try {
-                        
+
                         authorAutoComp.updateList(authorService.selectAllAuthors());
 
                 } catch (NullPointerException e) {
@@ -156,7 +155,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         private void loadPublisherInto() {
                 try {
-                        
+
                         publisherAutoComp.updateList(publisherService.selectAllPublishers());
 
                 } catch (NullPointerException e) {
@@ -649,17 +648,27 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         private void updateBookButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_addBookButtonActionPerformed
                 String title = titleField.getText();
-                Author author = (Author) authorAutoComp.getSelectedObject();
-                Publisher publisher = (Publisher) publisherAutoComp.getSelectedObject();
+                Author author = authorAutoComp.getSelectedObject();
+
+                if (author == null) {
+                        if (authorAutoComp.getText().equals("")) {
+                                author = new Author(authorAutoComp.getText());
+                        } else  throw new Exception("Author must be selected or entered.");
+                }
+                Publisher publisher = publisherAutoComp.getSelectedObject();
+                if (publisher == null && !publisherAutoComp.getText().equals("")) {
+                        publisher = new Publisher(publisherAutoComp.getText());
+                }
                 ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
                 String dimension = dimensionField.getText();
                 int pages = (Integer) pagesSpinner.getValue();
                 String translator = translatorField.getText();
                 String overview = overviewTextArea.getText();
-                
+
                 double salePrice = 26;
                 try {
                         java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
+
                         Book updatedBook = new Book(author.id, publisher.id, title, pages, publishDate,
                                         dimension, translator, overview, book.quantity, salePrice, book.isHidden,
                                         book.hiddenParentCount,
@@ -672,7 +681,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                         JOptionPane.showMessageDialog(null, "Book updated successfully.", "BSMS Information",
                                         JOptionPane.INFORMATION_MESSAGE);
 
-                
                 } catch (Exception ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
