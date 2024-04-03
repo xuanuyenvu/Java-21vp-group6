@@ -122,7 +122,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                         
                         
                         authorAutoComp.setSelectedObject(book.author);
-                        System.out.println(authorAutoComp.getSelectedObject().id);
+                        
                         publisherAutoComp.setSelectedObject(book.publisher);
                         publishDatePicker.setDate(book.publishDate);
                         var categories = categoryService.selectAllCategories();

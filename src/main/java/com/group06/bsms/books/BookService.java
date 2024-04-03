@@ -84,7 +84,7 @@ public class BookService {
         for (Category category : categoriesList) {
             listBookCategoryId.add(category.id);
         }
-
+    
         var authorId = author == null ? -1 : author.id;
         var publisherId = publisher == null ? -1 : publisher.id;
 
@@ -92,6 +92,7 @@ public class BookService {
                 authorId, publisherId, minPrice, maxPrice, listBookCategoryId);
 
         return books;
+
     }
 
     public void updateBookAttributeById(int bookId, String attr, Object value) throws Exception {

@@ -28,13 +28,12 @@ public class AutocompletePanel<T extends Object> extends javax.swing.JPanel {
 
     @SuppressWarnings("unchecked")
     public T getSelectedObject() {
-        // text field = autoCompleteButton.getSelectedItem() => String
-        // doc text field => neu no ton tai trong jcombobox, listObject
-        // kiem tra trong listObejct coi coi textField nay ko
-        // neu ko co thi return -1;
-        // neu co thi tra id
 
+        int selectedIndex = autoCompleteButton.getSelectedIndex();
+        if (selectedIndex == -1)
+            return null;
         return (T) autoCompleteButton.getSelectedItem();
+
     }
 
     public void setSelectedObject(T object) {

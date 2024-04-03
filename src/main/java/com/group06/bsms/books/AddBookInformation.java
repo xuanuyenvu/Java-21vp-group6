@@ -466,6 +466,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
     private void addBookButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBookButtonActionPerformed
         String title = titleField.getText();
         Author author = (Author) authorAutoComp.getSelectedObject();
+        System.out.println(author + "11111111111111111111111");
         Publisher publisher = (Publisher) publisherAutoComp.getSelectedObject();
         ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
         String dimension = dimensionField.getText();
@@ -473,17 +474,17 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         String translator = translatorField.getText();
         String overview = overviewTextArea.getText();
         boolean hideChecked = hideCheckBox.isSelected();
-        try {
-            java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-            bookService.insertBook(title, author, publisher, categoriesList, publishDate,
-                    dimension, pages, translator, overview, hideChecked);
-            JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information", JOptionPane.INFORMATION_MESSAGE);
+        // try {
+        //     java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
+        //     bookService.insertBook(title, author, publisher, categoriesList, publishDate,
+        //             dimension, pages, translator, overview, hideChecked);
+        //     JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information", JOptionPane.INFORMATION_MESSAGE);
 
-        } catch (NullPointerException ex) {
-            JOptionPane.showMessageDialog(null, "Date is not null", "BSMS Error", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
-        }
+        // } catch (NullPointerException ex) {
+        //     JOptionPane.showMessageDialog(null, "Date is not null", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        // } catch (Exception ex) {
+        //     JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        // }
 
     }//GEN-LAST:event_addBookButtonActionPerformed
 
