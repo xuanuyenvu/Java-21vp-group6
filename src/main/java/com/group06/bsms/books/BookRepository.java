@@ -126,7 +126,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             insertBookQuery.setString(8, book.overview);
             insertBookQuery.setBoolean(9, book.isHidden);
             insertBookQuery.setInt(10, book.hiddenParentCount);
-
+            System.out.println(insertBookQuery);
             int rowsAffected = insertBookQuery.executeUpdate();
 
             if (rowsAffected == 0) {

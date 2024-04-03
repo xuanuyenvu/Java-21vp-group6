@@ -488,9 +488,16 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         } catch (NullPointerException ex) {
             JOptionPane.showMessageDialog(null, "Date is not null", "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            if (ex.getMessage().contains("book_publishdate_check")) {
+                JOptionPane.showMessageDialog(null, "Invalid publish date", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("book_title_key")) {
+                JOptionPane.showMessageDialog(null, "Book already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("book_dimension_check")) {
+                JOptionPane.showMessageDialog(null, "Invalid dimension format. Use [length]x[width]x[height] cm.", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
-
     }//GEN-LAST:event_addBookButtonActionPerformed
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered

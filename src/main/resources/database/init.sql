@@ -54,7 +54,7 @@ create table if not exists Book (
     translatorName varchar(255),
     overview text,
     quantity int check (quantity >= 0) not null,
-    salePrice decimal(12, 2) check (salePrice >= 0),
+    salePrice decimal(12, 2) check (salePrice >= 0 OR salePrice IS NULL),
     isHidden boolean default false not null,
     hiddenParentCount int check (hiddenParentCount >= 0) not null,
     maxImportPrice decimal(12, 2)
@@ -1003,3 +1003,12 @@ INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (3
 UPDATE OrderSheet set discountedTotalCost = 25.4 where id = 3;
 INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (4, 25, 3, '2024-02-20', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (4, (SELECT id FROM Book WHERE title = 'Love, Theoretically (2023)'), 1, 10.17),(4, (SELECT id FROM Book WHERE title = 'Love on the Brain (2022)'), 1, 11.35),(4, (SELECT id FROM Book WHERE title = 'The Murder of Roger Ackroyd & The Hollow Bundle (2022)'), 1, 9.63);UPDATE OrderSheet set discountedTotalCost = 29.5925 where id = 4;
+
+SELECT setval('account_id_seq', (SELECT MAX(id) FROM Account) + 1);
+SELECT setval('publisher_id_seq', (SELECT MAX(id) FROM Publisher) + 1);
+SELECT setval('author_id_seq', (SELECT MAX(id) FROM Author) + 1);
+SELECT setval('book_id_seq', (SELECT MAX(id) FROM Book) + 1);
+SELECT setval('category_id_seq', (SELECT MAX(id) FROM Category) + 1);
+SELECT setval('importsheet_id_seq', (SELECT MAX(id) FROM ImportSheet) + 1);
+SELECT setval('member_id_seq', (SELECT MAX(id) FROM Member) + 1);
+SELECT setval('ordersheet_id_seq', (SELECT MAX(id) FROM OrderSheet) + 1);

@@ -90,12 +90,12 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         categorySelectionPanel1.setCategorySelectionListener(this);
         minPriceField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "From");
         maxPriceField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "To");
-        minPriceField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, SVGHelper.createSVGIconWithFilter(
+        minPriceField.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
                 "icons/dollar.svg",
                 Color.black, Color.black,
                 14, 14
         ));
-        maxPriceField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON, SVGHelper.createSVGIconWithFilter(
+        maxPriceField.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
                 "icons/dollar.svg",
                 Color.black, Color.black,
                 14, 14
