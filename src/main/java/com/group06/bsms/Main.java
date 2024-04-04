@@ -31,7 +31,7 @@ public class Main extends JFrame {
         panel.setLayout(layout);
         // panel.add(new BookCRUD(), "login");
         // panel.add(new Dashboard(), "dashboard");
-        panel.add(new AddBookInformation(), "test");
+        panel.add(new UpdateBook(), "test");
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
         }

@@ -44,17 +44,13 @@ public class BookService {
             if (updatedBook.publisherId == 0)
                 updatedBook.publisherId = publisherService.insertPublisherIfNotExists(updatedBook.publisher.name);
 
-            if (Double.valueOf(updatedBook.maxImportPrice) == null && Double.valueOf(updatedBook.salePrice) != null) {
-                throw new Exception("Cannot update sale price because the maximum import price is null");
-            }
-
-            if (updatedBook.salePrice <= 1.1 * book.maxImportPrice) {
+            if (book.maxImportPrice != null &&updatedBook.salePrice <= 1.1 * book.maxImportPrice) {
                 throw new Exception("Sale price must be bigger than 1.1 * import price");
             }
 
             bookDAO.updateBook(book, updatedBook);
         } catch (Exception e) {
-
+            
             throw e;
         }
 

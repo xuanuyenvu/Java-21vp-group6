@@ -117,7 +117,9 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                         pagesSpinner.setValue(book.pageCount);
                         translatorField.setText(book.translatorName);
                         overviewTextArea.setText(book.overview);
-                        importPriceTextField.setText(Double.toString(book.maxImportPrice));
+                        if(book.maxImportPrice != null){
+                                importPriceTextField.setText(Double.toString(book.maxImportPrice));
+                        }
                         salePriceSpinner.setValue(book.salePrice);
 
                         authorAutoComp.setSelectedObject(book.author);
@@ -654,7 +656,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 String translator = translatorField.getText();
                 String overview = overviewTextArea.getText();
 
-                double salePrice = 26;
+                Double salePrice = (Double)salePriceSpinner.getValue();
                 try {
                         java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
                         Author author = authorAutoComp.getSelectedObject();
@@ -688,7 +690,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                         JOptionPane.INFORMATION_MESSAGE);
 
                 } catch (Exception ex) {
-                        
+                        ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
                 }
 
