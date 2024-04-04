@@ -379,7 +379,6 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 book.author = authorRepository.selectById(book.authorId);
                 book.publisher = publisherRepository.selectById(book.publisherId);
             }
-
             return result;
         } catch (SQLException e) {
             db.rollback();
