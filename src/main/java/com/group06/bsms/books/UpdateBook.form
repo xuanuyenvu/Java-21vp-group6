@@ -132,10 +132,8 @@
                           <Component id="categoryLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="titleLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="translatorLabel" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
-                              <Component id="translatorField" alignment="0" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
+                          <Component id="translatorField" alignment="0" max="32767" attributes="0"/>
                           <Group type="103" alignment="0" groupAlignment="1" attributes="0">
                               <Component id="updateBookButton" min="-2" pref="94" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
@@ -155,24 +153,22 @@
                                   </Group>
                               </Group>
                           </Group>
-                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="titleField" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="publisherLabel" min="-2" max="-2" attributes="0"/>
-                                      <Component id="publisherAutoComp" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <Component id="publishDateLabel" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="136" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="publishDatePicker" max="32767" attributes="0"/>
-                                  </Group>
+                          <Component id="titleField" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="publisherLabel" min="-2" max="-2" attributes="0"/>
+                                  <Component id="publisherAutoComp" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="authorAutoComp" alignment="0" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="publishDateLabel" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="136" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="publishDatePicker" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
+                          <Component id="authorAutoComp" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace pref="61" max="32767" attributes="0"/>
                   </Group>
@@ -521,6 +517,9 @@
                   <Dimension value="[215, 31]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="salePriceTextFieldKeyPressed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="salePriceLabel">
               <Properties>

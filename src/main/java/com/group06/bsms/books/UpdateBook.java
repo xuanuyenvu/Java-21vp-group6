@@ -344,6 +344,11 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         salePriceTextField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         salePriceTextField.setMinimumSize(new java.awt.Dimension(215, 31));
         salePriceTextField.setPreferredSize(new java.awt.Dimension(215, 31));
+        salePriceTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                salePriceTextFieldKeyPressed(evt);
+            }
+        });
 
         salePriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         salePriceLabel.setLabelFor(pagesSpinner);
@@ -378,9 +383,8 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                     .addComponent(categoryLabel)
                     .addComponent(titleLabel)
                     .addComponent(translatorLabel)
-                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(translatorField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(scrollPane)
+                    .addComponent(translatorField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(updateBookButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(groupFieldPanelLayout.createSequentialGroup()
@@ -394,19 +398,18 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                             .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(salePriceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(salePriceLabel))))
-                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(titleField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanelLayout.createSequentialGroup()
-                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(publisherLabel)
-                                .addComponent(publisherAutoComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(10, 10, 10)
-                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                    .addComponent(publishDateLabel)
-                                    .addGap(136, 136, 136))
-                                .addComponent(publishDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addComponent(authorAutoComp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(titleField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(publisherLabel)
+                            .addComponent(publisherAutoComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10)
+                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                .addComponent(publishDateLabel)
+                                .addGap(136, 136, 136))
+                            .addComponent(publishDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(authorAutoComp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(61, Short.MAX_VALUE))
         );
         groupFieldPanelLayout.setVerticalGroup(
@@ -489,6 +492,19 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 .addComponent(jScrollForm))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void salePriceTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_salePriceTextFieldKeyPressed
+        // TODO add your handling code here:
+                                                
+        char inputChar = evt.getKeyChar();
+        if (Character.isLetter(inputChar)) {
+            salePriceTextField.setEditable(false);
+        } else {
+            salePriceTextField.setEditable(true);
+        }
+                                          
+
+    }//GEN-LAST:event_salePriceTextFieldKeyPressed
 
         private void updateBookButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_addBookButtonActionPerformed
                 String title = titleField.getText();
