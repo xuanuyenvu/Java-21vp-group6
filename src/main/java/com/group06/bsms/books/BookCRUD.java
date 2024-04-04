@@ -72,7 +72,9 @@ public class BookCRUD extends javax.swing.JPanel {
         ));
 
         setUpTable();
-        loadBooksIntoTable();
+
+        int currentRow = 0;
+        this.loadBooksIntoTable();
     }
 
     public void loadBooksIntoTable() {
@@ -95,24 +97,36 @@ public class BookCRUD extends javax.swing.JPanel {
         String filterTopBooks = (String) bookFilter.getFilterComboBox().getSelectedItem();
 
         try {
-            List<Book> books = null;
-            if (filterTopBooks.equals("None")) {
-                books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders,
-                        searchString, searchChoiceValue, author, publisher, minPrice, maxPrice, categoriesList);
-            } else if (filterTopBooks.equals("Top 10 Newest Books")) {
-                books = bookService.getNewBooks();
-            } else if (filterTopBooks.equals("Top 10 Hottest Books")) {
-                books = bookService.getHotBooks();
-            } else if (filterTopBooks.equals("Out-of-stock Books")) {
-                books = bookService.getOutOfStockBooks();
-            }
+            int currentRowCount = 0;
 
-            if (currentOffset > 0) {
-                model.loadNewBooks(books);
-            } else {
-                model.reloadAllBooks(books);
-            }
-            currentOffset += limit;
+            do {
+                List<Book> books = null;
+                if (filterTopBooks.equals("None")) {
+                    books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders,
+                            searchString, searchChoiceValue, author, publisher, minPrice, maxPrice, categoriesList);
+                } else if (filterTopBooks.equals("Top 20 Newest Books")) {
+                    books = bookService.getNewBooks();
+                } else if (filterTopBooks.equals("Top 20 Hottest Books")) {
+                    books = bookService.getHotBooks();
+                } else if (filterTopBooks.equals("Out-of-stock Books")) {
+                    books = bookService.getOutOfStockBooks();
+                }
+
+                if (currentOffset > 0) {
+                    model.loadNewBooks(books);
+                } else {
+                    model.reloadAllBooks(books);
+                }
+
+                currentOffset += limit;
+
+                if (currentRowCount == model.getRowCount()) {
+                    break;
+                }
+
+                currentRowCount = model.getRowCount();
+            } while (currentRowCount < 2 * limit);
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     this,
@@ -254,9 +268,9 @@ public class BookCRUD extends javax.swing.JPanel {
         filterBtn = new javax.swing.JButton();
         searchComboBox = new javax.swing.JComboBox<>();
         main = new javax.swing.JPanel();
+        bookFilter = new BookFilter(this);
         scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        bookFilter = new BookFilter(this);
 
         setAutoscrolls(true);
 
@@ -270,10 +284,12 @@ public class BookCRUD extends javax.swing.JPanel {
             }
         });
 
+        createBtn.setBackground(UIManager.getColor("accentColor"));
         createBtn.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        createBtn.setForeground(new java.awt.Color(255, 255, 255));
         createBtn.setIcon(SVGHelper.createSVGIconWithFilter(
             "icons/add.svg",
-            Color.black, Color.black,
+            Color.black, Color.white, Color.white,
             14, 14
         ));
         createBtn.setText("Create");
@@ -304,7 +320,7 @@ public class BookCRUD extends javax.swing.JPanel {
 
     searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
     searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Title", "by Author", "by Publisher" }));
-    searchComboBox.setPreferredSize(new java.awt.Dimension(130, 28));
+    searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
     searchComboBox.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             searchComboBoxActionPerformed(evt);
@@ -312,6 +328,7 @@ public class BookCRUD extends javax.swing.JPanel {
     });
 
     main.setLayout(new java.awt.BorderLayout());
+    main.add(bookFilter, java.awt.BorderLayout.EAST);
 
     table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
     table.setModel(this.model);
@@ -321,7 +338,6 @@ public class BookCRUD extends javax.swing.JPanel {
     scrollBar.setViewportView(table);
 
     main.add(scrollBar, java.awt.BorderLayout.CENTER);
-    main.add(bookFilter, java.awt.BorderLayout.EAST);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -342,7 +358,7 @@ public class BookCRUD extends javax.swing.JPanel {
                             .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(20, 20, 20)
                             .addComponent(createBtn)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 302, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
                             .addComponent(filterBtn)))
                     .addGap(50, 50, 50))))
     );
@@ -366,7 +382,6 @@ public class BookCRUD extends javax.swing.JPanel {
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
         currentOffset = 0;
         loadBooksIntoTable();
-
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed

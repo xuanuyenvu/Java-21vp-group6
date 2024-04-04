@@ -5,11 +5,23 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class AutocompletePanel extends javax.swing.JPanel {
 
+    public interface StateChanged {
+
+        void run(java.awt.event.ItemEvent evt);
+    }
+
     ArrayList<Object> listAllObjects = null;
+    StateChanged stateChanged;
 
     public AutocompletePanel() {
+        this((evt) -> {
+        });
+    }
+
+    public AutocompletePanel(StateChanged stateChanged) {
         initComponents();
         listAllObjects = new ArrayList<>();
+        this.stateChanged = stateChanged;
 
         autoCompleteButton.setEditable(true);
         AutoCompleteDecorator.decorate(autoCompleteButton);
@@ -59,6 +71,11 @@ public class AutocompletePanel extends javax.swing.JPanel {
         autoCompleteButton.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         autoCompleteButton.setOpaque(true);
         autoCompleteButton.setPreferredSize(new java.awt.Dimension(72, 31));
+        autoCompleteButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                autoCompleteButtonItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -71,6 +88,13 @@ public class AutocompletePanel extends javax.swing.JPanel {
             .addComponent(autoCompleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void autoCompleteButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_autoCompleteButtonItemStateChanged
+        try {
+            stateChanged.run(evt);
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_autoCompleteButtonItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> autoCompleteButton;

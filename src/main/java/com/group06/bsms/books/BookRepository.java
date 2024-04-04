@@ -290,7 +290,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            String stringQuery = "SELECT DISTINCT * "
+            String stringQuery = "SELECT * "
                     + " FROM Book "
                     + " LEFT JOIN BookCategory ON Book.id = BookCategory.bookId "
                     + " JOIN Author ON Author.id = book.AuthorId "
@@ -379,6 +379,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 book.author = authorRepository.selectById(book.authorId);
                 book.publisher = publisherRepository.selectById(book.publisherId);
             }
+
             return result;
         } catch (SQLException e) {
             db.rollback();
@@ -411,12 +412,10 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
 
             var query = db.prepareStatement(
-                    "SELECT DISTINCT B.*, Sheet.importDate\n"
+                    "SELECT *\n"
                     + "FROM Book B\n"
-                    + "JOIN ImportedBook IB ON IB.bookId = B.id\n"
-                    + "JOIN ImportSheet Sheet ON Sheet.id = IB.importSheetId\n"
-                    + "ORDER BY Sheet.importDate DESC\n"
-                    + "LIMIT 10;");
+                    + "ORDER BY B.publishDate DESC\n"
+                    + "LIMIT 20;");
 
             try (ResultSet resultSet = query.executeQuery()) {
                 while (resultSet.next()) {
@@ -447,10 +446,10 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             var query = db.prepareStatement(
                     "SELECT B.*, SUM(OB.quantity) AS total_quantity_ordered\n"
                     + "FROM Book B\n"
-                    + "JOIN OrderedBook OB ON OB.bookId = B.id\n"
+                    + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
                     + "GROUP BY B.id\n"
                     + "ORDER BY total_quantity_ordered DESC\n"
-                    + "LIMIT 10;");
+                    + "LIMIT 20;");
 
             try (ResultSet resultSet = query.executeQuery()) {
                 while (resultSet.next()) {

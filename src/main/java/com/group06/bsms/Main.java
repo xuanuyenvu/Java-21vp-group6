@@ -4,7 +4,6 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
-import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
@@ -17,7 +16,7 @@ public class Main extends JFrame {
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
     public static final boolean DARK_MODE = false;
-    public static final int ROW_LIMIT = 5;
+    public static final int ROW_LIMIT = 10;
 
     private Main() {
         if (!INDEV) {
