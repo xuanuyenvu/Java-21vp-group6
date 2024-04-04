@@ -53,7 +53,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 }
                 book = tempBook;
                 initComponents();
-                hiddenPropLabel.setVisible(false);
+               
 
                 loadAuthorInto();
                 loadPublisherInto();
@@ -198,8 +198,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 overviewLabel = new javax.swing.JLabel();
                 scrollPane = new javax.swing.JScrollPane();
                 overviewTextArea = new javax.swing.JTextArea();
-                hideCheckBox = new javax.swing.JCheckBox();
-                hiddenPropLabel = new javax.swing.JLabel();
                 updateBookButton = new javax.swing.JButton();
                 publisherAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
                 authorAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
@@ -308,16 +306,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 overviewTextArea.setPreferredSize(new java.awt.Dimension(440, 114));
                 scrollPane.setViewportView(overviewTextArea);
 
-                hideCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-                hideCheckBox.setText("Hidden Book");
-                hideCheckBox.setIconTextGap(5);
-                hideCheckBox.setMargin(new java.awt.Insets(2, 0, 2, 2));
-
-                hiddenPropLabel.setFont(new java.awt.Font("Segoe UI", 2, 13)); // NOI18N
-                hiddenPropLabel.setText("note sth");
-                hiddenPropLabel.setMinimumSize(new java.awt.Dimension(423, 18));
-                hiddenPropLabel.setPreferredSize(new java.awt.Dimension(423, 18));
-
                 updateBookButton.setBackground(new java.awt.Color(65, 105, 225));
                 updateBookButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
                 updateBookButton.setForeground(new java.awt.Color(255, 255, 255));
@@ -424,14 +412,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                                                 440,
                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                                .createSequentialGroup()
-                                                                                                                                .addGap(21, 21, 21)
-                                                                                                                                .addComponent(hiddenPropLabel,
-                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                                423,
-                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                                                .addComponent(hideCheckBox)
                                                                                                                 .addComponent(overviewLabel)
                                                                                                                 .addComponent(authorLabel)
                                                                                                                 .addComponent(categoryLabel)
@@ -590,13 +570,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                 .addGap(17, 17, 17)
-                                                                .addComponent(hideCheckBox)
-                                                                .addPreferredGap(
-                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(hiddenPropLabel,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                 .addGap(18, 18, 18)
                                                                 .addComponent(updateBookButton,
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
@@ -715,8 +688,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         private javax.swing.JTextField dimensionField;
         private javax.swing.JLabel dimensionLabel;
         private javax.swing.JPanel groupFieldPanel;
-        private javax.swing.JLabel hiddenPropLabel;
-        private javax.swing.JCheckBox hideCheckBox;
         private javax.swing.JLabel importPriceLabel;
         private javax.swing.JTextField importPriceTextField;
         private javax.swing.JScrollPane jScrollForm;
