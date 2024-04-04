@@ -65,7 +65,7 @@ public class AutocompletePanel<T extends Object> extends javax.swing.JPanel {
         autoCompleteButton.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         autoCompleteButton.setOpaque(true);
         autoCompleteButton.setPreferredSize(new java.awt.Dimension(72, 31));
-
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(

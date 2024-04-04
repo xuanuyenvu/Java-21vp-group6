@@ -35,6 +35,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
         }
     }
 
+
     @Override
     public int insertAuthorIfNotExists(String authorName) throws Exception {
         try {

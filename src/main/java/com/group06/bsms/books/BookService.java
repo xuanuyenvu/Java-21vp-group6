@@ -30,8 +30,7 @@ public class BookService {
 
     public void updateBook(Book book, Book updatedBook) throws Exception, IllegalArgumentException {
         try {
-            if (updatedBook.title == null || updatedBook.authorId == 0
-                    || updatedBook.publisherId == 0
+            if (updatedBook.title == null
                     || updatedBook.publishDate == null
                     || updatedBook.categories.isEmpty()
                     || updatedBook.dimension == null
@@ -39,18 +38,23 @@ public class BookService {
                     || updatedBook.overview == null) {
                 throw new IllegalArgumentException("Please fill in all required information.");
             }
+            if (updatedBook.authorId == 0)
+                updatedBook.authorId = authorService.insertAuthorIfNotExists(updatedBook.author.name);
+
+            if (updatedBook.publisherId == 0)
+                updatedBook.publisherId = publisherService.insertPublisherIfNotExists(updatedBook.publisher.name);
+
             if (Double.valueOf(updatedBook.maxImportPrice) == null && Double.valueOf(updatedBook.salePrice) != null) {
                 throw new Exception("Cannot update sale price because the maximum import price is null");
             }
-            
+
             if (updatedBook.salePrice <= 1.1 * book.maxImportPrice) {
                 throw new Exception("Sale price must be bigger than 1.1 * import price");
             }
-            
 
             bookDAO.updateBook(book, updatedBook);
         } catch (Exception e) {
-            
+
             throw e;
         }
 
@@ -84,7 +88,7 @@ public class BookService {
         for (Category category : categoriesList) {
             listBookCategoryId.add(category.id);
         }
-    
+
         var authorId = author == null ? -1 : author.id;
         var publisherId = publisher == null ? -1 : publisher.id;
 
@@ -103,9 +107,16 @@ public class BookService {
             Date publishDate, String dimension, Object pages, String translator,
             String overview, boolean hideChecked) throws Exception {
         Book book = new Book();
+        if (title == null
+                || publishDate == null
+                || categoriesList.isEmpty()
+                || dimension == null
+                || (Integer)pages == 0
+                || overview == null) {
+           
+            throw new IllegalArgumentException("Please fill in all required information.");
+        }
         book.title = title;
-        book.authorId = author.id;
-        book.publisherId = publisher.id;
         book.publishDate = publishDate;
         book.categories = new ArrayList<>(categoriesList);
         book.dimension = dimension;
@@ -113,15 +124,26 @@ public class BookService {
         book.translatorName = translator;
         book.overview = overview;
         book.isHidden = hideChecked;
-
+        book.author = author;
+        book.publisher = publisher;
         int count = 0;
-        Author a = authorService.selectAuthor(book.authorId);
-        Publisher p = publisherService.selectPublisher(book.publisherId);
+        if (author.id == 0) {
+            book.authorId = authorService.insertAuthorIfNotExists(author.name);
+            book.author.id =book.authorId;
+        } else {
+            book.authorId = author.id;
+        }
+        if (publisher.id == 0) {
+            book.publisherId = publisherService.insertPublisherIfNotExists(publisher.name);
+            book.publisher.id = book.publisherId;
+        } else {
+            book.publisherId = publisher.id;
+        }
 
-        if (a != null && a.isHidden) {
+        if (book.author.isHidden) {
             count++;
         }
-        if (p != null && p.isHidden) {
+        if (book.publisher.isHidden) {
             count++;
         }
         for (Category c : book.categories) {
@@ -130,22 +152,6 @@ public class BookService {
             }
         }
         book.hiddenParentCount = count;
-
-        if (book == null) {
-            throw new IllegalArgumentException("Book object cannot be null");
-        }
-
-        if (book.title == null || book.authorId == -1
-                || book.publisherId == -1
-                || book.publishDate == null
-                || book.categories.isEmpty()
-                || book.dimension == null
-                || book.pageCount == 0
-                || book.overview == null) {
-
-            throw new IllegalArgumentException("Please fill in all required information.");
-        }
-
         bookDAO.insertBook(book);
     }
 
