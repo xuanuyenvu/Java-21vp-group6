@@ -177,8 +177,8 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         hiddenPropLabel = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         addBookButton = new javax.swing.JButton();
-        publisherAutoComp = new com.group06.bsms.components.AutocompletePanel();
-        authorAutoComp = new com.group06.bsms.components.AutocompletePanel();
+        publisherAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
+        authorAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
         pagesSpinner = new javax.swing.JSpinner();
         publishDatePicker = new com.group06.bsms.components.DatePickerPanel();
 

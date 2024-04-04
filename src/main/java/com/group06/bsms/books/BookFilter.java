@@ -48,11 +48,11 @@ public class BookFilter extends javax.swing.JPanel {
         return minPriceField;
     }
 
-    public AutocompletePanel getPublisherAutoComp1() {
+    public AutocompletePanel<Publisher> getPublisherAutoComp1() {
         return publisherAutoComp1;
     }
 
-    public AutocompletePanel getAuthorAutoComp1() {
+    public AutocompletePanel<Author> getAuthorAutoComp1() {
         return authorAutoComp1;
     }
 
@@ -159,8 +159,8 @@ public class BookFilter extends javax.swing.JPanel {
         minPriceField = new javax.swing.JTextField();
         removeAllBtn = new javax.swing.JButton();
         filterBtn = new javax.swing.JButton();
-        publisherAutoComp1 = new com.group06.bsms.components.AutocompletePanel();
-        authorAutoComp1 = new com.group06.bsms.components.AutocompletePanel();
+        publisherAutoComp1 = new com.group06.bsms.components.AutocompletePanel<>();
+        authorAutoComp1 = new com.group06.bsms.components.AutocompletePanel<>();
         maxPriceField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
 
@@ -399,7 +399,7 @@ public class BookFilter extends javax.swing.JPanel {
     }//GEN-LAST:event_maxPriceFieldKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.group06.bsms.components.AutocompletePanel authorAutoComp1;
+    private com.group06.bsms.components.AutocompletePanel<Author> authorAutoComp1;
     private javax.swing.JLabel authorLabel1;
     private javax.swing.JButton backButton;
     private javax.swing.JLabel categoryLabel1;
@@ -412,7 +412,7 @@ public class BookFilter extends javax.swing.JPanel {
     private javax.swing.JTextField maxPriceField;
     private javax.swing.JTextField minPriceField;
     private javax.swing.JLabel pageName;
-    private com.group06.bsms.components.AutocompletePanel publisherAutoComp1;
+    private com.group06.bsms.components.AutocompletePanel<Publisher> publisherAutoComp1;
     private javax.swing.JLabel publisherLabel1;
     private javax.swing.JButton removeAllBtn;
     private javax.swing.JLabel salePriceLabel;
