@@ -222,7 +222,7 @@
             <Property name="requestFocusEnabled" type="boolean" value="true"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutocompletePanel((evt) -&gt; {     bookCRUD.setCurrentOffset(0);     bookCRUD.loadBooksIntoTable(); });"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutocompletePanel((evt) -&gt; filter(evt));"/>
           </AuxValues>
         </Component>
         <Component class="com.group06.bsms.components.AutocompletePanel" name="authorAutoComp1">
@@ -234,7 +234,7 @@
             <Property name="requestFocusEnabled" type="boolean" value="true"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutocompletePanel((evt) -&gt; {     bookCRUD.setCurrentOffset(0);     bookCRUD.loadBooksIntoTable(); });"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutocompletePanel((evt) -&gt; filter(evt));"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="maxPriceField">

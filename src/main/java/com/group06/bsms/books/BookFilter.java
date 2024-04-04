@@ -174,8 +174,8 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         salePriceLabel = new javax.swing.JLabel();
         minPriceField = new javax.swing.JTextField();
         removeAllBtn = new javax.swing.JButton();
-        publisherAutoComp1 = new AutocompletePanel((evt) -> {     bookCRUD.setCurrentOffset(0);     bookCRUD.loadBooksIntoTable(); });
-        authorAutoComp1 = new AutocompletePanel((evt) -> {     bookCRUD.setCurrentOffset(0);     bookCRUD.loadBooksIntoTable(); });
+        publisherAutoComp1 = new AutocompletePanel((evt) -> filter(evt));
+        authorAutoComp1 = new AutocompletePanel((evt) -> filter(evt));
         maxPriceField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         authorLabel2 = new javax.swing.JLabel();
@@ -342,6 +342,12 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
 
         add(groupFieldPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void filter(java.awt.event.ItemEvent evt) {
+        bookCRUD.setCurrentOffset(0);
+        bookCRUD.loadBooksIntoTable();
+//        bookCRUD.setUpTable();
+    }
 
     private void removeAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllBtnActionPerformed
         authorAutoComp1.setEmptyText();

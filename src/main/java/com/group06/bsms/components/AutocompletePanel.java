@@ -33,7 +33,6 @@ public class AutocompletePanel extends javax.swing.JPanel {
         listAllObjects = new ArrayList<>(list);
 
         for (Object element : list) {
-//            method toString() return attr name of Object
             autoCompleteButton.addItem(element.toString());
         }
         autoCompleteButton.setSelectedItem(null);
@@ -91,7 +90,9 @@ public class AutocompletePanel extends javax.swing.JPanel {
 
     private void autoCompleteButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_autoCompleteButtonItemStateChanged
         try {
-            stateChanged.run(evt);
+            if (autoCompleteButton.getSelectedItem() != null) {
+                stateChanged.run(evt);
+            }
         } catch (Exception e) {
         }
     }//GEN-LAST:event_autoCompleteButtonItemStateChanged

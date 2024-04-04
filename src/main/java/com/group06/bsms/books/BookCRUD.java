@@ -78,7 +78,14 @@ public class BookCRUD extends javax.swing.JPanel {
     }
 
     public void loadBooksIntoTable() {
-        var searchString = searchBar.getText();
+        if (bookFilter == null) {
+            return;
+        }
+
+        var searchString
+                = searchBar == null || searchBar.getText() == null
+                ? ""
+                : searchBar.getText();
 
         String minPriceField = bookFilter.getMinPriceField().getText();
         Double minPrice = minPriceField.isEmpty() ? Double.MIN_VALUE : Double.valueOf(minPriceField);
@@ -179,7 +186,7 @@ public class BookCRUD extends javax.swing.JPanel {
         }
     }
 
-    private void setUpTable() {
+    public void setUpTable() {
         table.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
 
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));

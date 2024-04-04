@@ -244,7 +244,7 @@ public class BookTableModel extends AbstractTableModel {
 
     void addRow(Book book) {
         books.add(book);
-        SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
+//        SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
     }
 
     void setHiddenState(int row) {
