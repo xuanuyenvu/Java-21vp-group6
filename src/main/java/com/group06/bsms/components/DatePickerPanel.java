@@ -4,8 +4,6 @@ import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -45,11 +43,14 @@ public class DatePickerPanel extends javax.swing.JPanel {
     }
 
     private void addTextFieldListener() {
-        jTextField.addKeyListener(new KeyAdapter() {
+        jTextField.addFocusListener(new FocusAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    String text = jTextField.getText().trim();
+            public void focusLost(FocusEvent e) {
+                String text = jTextField.getText().trim();
+
+                if (!isValidDateFormat(text)) {
+                    jTextField.setText("");
+                } else {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                     try {
                         Date date = dateFormat.parse(text);
@@ -60,21 +61,17 @@ public class DatePickerPanel extends javax.swing.JPanel {
                 }
             }
         });
-
-        jTextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                String text = jTextField.getText().trim();
-
-                if (!isValidDateFormat(text)) {
-                    jTextField.setText("");
-                }
-            }
-        });
     }
 
-    private boolean isValidDateFormat(String text) {
-        return text.matches("\\d{1,2}/\\d{1,2}/\\d{4}") || text.matches("\\d{1,2}/\\d{1,2}/\\d{2}");
+    private boolean isValidDateFormat(String dateString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(dateString);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
     }
 
     private void setDefault() {

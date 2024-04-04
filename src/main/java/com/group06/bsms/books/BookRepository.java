@@ -190,7 +190,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             insertBookQuery.setString(8, book.overview);
             insertBookQuery.setBoolean(9, book.isHidden);
             insertBookQuery.setInt(10, book.hiddenParentCount);
-            
+            //System.out.println(insertBookQuery);
             int rowsAffected = insertBookQuery.executeUpdate();
 
             if (rowsAffected == 0) {
@@ -206,8 +206,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             }
 
             PreparedStatement insertCategoryBookQuery = db.prepareStatement(
-                    "INSERT INTO CategoryBook (bookId, categoryId) "
-                            + "VALUES (?, ?)");
+                    "INSERT INTO BookCategory (bookId, categoryId) "
+                    + "VALUES (?, ?)");
 
             for (Category category : book.categories) {
                 insertCategoryBookQuery.setInt(1, bookId);
@@ -354,7 +354,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            String stringQuery = "SELECT DISTINCT * "
+            String stringQuery = "SELECT * "
                     + " FROM Book "
                     + " LEFT JOIN BookCategory ON Book.id = BookCategory.bookId "
                     + " JOIN Author ON Author.id = book.AuthorId "
@@ -370,9 +370,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 stringQuery += " AND Book.publisherId = ? ";
             }
 
-            stringQuery += " AND Book.salePrice >= ? ";
-
-            stringQuery += " AND Book.salePrice <= ? ";
+            stringQuery += " AND (Book.salePrice >= ? AND Book.salePrice <= ? OR Book.salePrice is null)";
 
             if (listBookCategoryId != null && !listBookCategoryId.isEmpty()) {
                 for (int i = 0; i < listBookCategoryId.size(); i++) {
@@ -461,6 +459,101 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
             db.commit();
 
+        } catch (Exception e) {
+            db.rollback();
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Book not found");
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Book> getNewBooks() throws Exception {
+        List<Book> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+
+            var query = db.prepareStatement(
+                    "SELECT *\n"
+                    + "FROM Book B\n"
+                    + "ORDER BY B.publishDate DESC\n"
+                    + "LIMIT 20;");
+
+            try (ResultSet resultSet = query.executeQuery()) {
+                while (resultSet.next()) {
+                    result.add(populate(resultSet));
+                }
+            }
+            db.commit();
+            for (var book : result) {
+                book.author = authorRepository.selectById(book.authorId);
+                book.publisher = publisherRepository.selectById(book.publisherId);
+            }
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Book not found");
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Book> getHotBooks() throws Exception {
+        List<Book> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+
+            var query = db.prepareStatement(
+                    "SELECT B.*, SUM(OB.quantity) AS total_quantity_ordered\n"
+                    + "FROM Book B\n"
+                    + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
+                    + "GROUP BY B.id\n"
+                    + "ORDER BY total_quantity_ordered DESC\n"
+                    + "LIMIT 20;");
+
+            try (ResultSet resultSet = query.executeQuery()) {
+                while (resultSet.next()) {
+                    result.add(populate(resultSet));
+                }
+            }
+            db.commit();
+            for (var book : result) {
+                book.author = authorRepository.selectById(book.authorId);
+                book.publisher = publisherRepository.selectById(book.publisherId);
+            }
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Book not found");
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Book> getOutOfStockBooks() throws Exception {
+        List<Book> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+
+            var query = db.prepareStatement(
+                    "SELECT * FROM BOOK WHERE QUANTITY = 0");
+
+            try (ResultSet resultSet = query.executeQuery()) {
+                while (resultSet.next()) {
+                    result.add(populate(resultSet));
+                }
+            }
+            db.commit();
+            for (var book : result) {
+                book.author = authorRepository.selectById(book.authorId);
+                book.publisher = publisherRepository.selectById(book.publisherId);
+            }
+            return result;
         } catch (Exception e) {
             db.rollback();
             if (e.getMessage().equals("Entity not found")) {

@@ -4,10 +4,9 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
-import com.group06.bsms.books.BookCRUD;
-import com.group06.bsms.books.UpdateBook;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.books.AddBookInformation;
+import com.group06.bsms.books.UpdateBook;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -19,7 +18,7 @@ public class Main extends JFrame {
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
     public static final boolean DARK_MODE = false;
-    public static final int ROW_LIMIT = 5;
+    public static final int ROW_LIMIT = 10;
 
     private Main() {
         if (!INDEV) {
@@ -29,9 +28,12 @@ public class Main extends JFrame {
         initComponents();
         layout = new CardLayout();
         panel.setLayout(layout);
-        // panel.add(new BookCRUD(), "login");
-        // panel.add(new Dashboard(), "dashboard");
+        // panel.add(new Login(), "login");
+        // panel.add(Dashboard.dashboard, "dashboard");
+
+        // switchTab("dashboard");
         panel.add(new UpdateBook(), "test");
+
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
         }
@@ -79,7 +81,7 @@ public class Main extends JFrame {
     }// GEN-LAST:event_formWindowClosed
 
     public void switchTab(String tab) {
-        layout.show(panel, "dashboard");
+        layout.show(panel, tab);
     }
 
     public static void main(String args[]) {

@@ -54,10 +54,10 @@ create table if not exists Book (
     translatorName varchar(255),
     overview text,
     quantity int check (quantity >= 0) not null,
-    salePrice decimal(12, 2) check (salePrice >= 0) not null,
+    salePrice decimal(12, 2) check (salePrice >= 0 OR salePrice IS NULL),
     isHidden boolean default false not null,
     hiddenParentCount int check (hiddenParentCount >= 0) not null,
-    maxImportPrice decimal(12, 2) 
+    maxImportPrice decimal(12, 2)
 );
 
 create table if not exists Category (
@@ -524,9 +524,9 @@ INSERT INTO Book ( id, title, authorid, publisherid, pageCount, dimension, trans
 ', 0);
 INSERT INTO Book ( id, title, authorid, publisherid, pageCount, dimension, translatorName, overview, quantity, salePrice, publishdate, isHidden, hiddenParentCount ) VALUES (178, 'Cherry Magic! Thirty Years of Virginity Can Make You a Wizard?! 01 (2020)', 31, 14, 0, '24.75x14.44x1.85 cm', NULL, 'It''s complicated: A thirty-year-old virgin gets more than he bargained for when his newfound magical power reveals he''s the object of his male coworker''s affections! Adachi, a thirty-year-old virgin, discovers he has the magical power to read the minds of people he touches. Unfortunately, the ability just makes him miserable since he doesn''t know how to use it well! And to make matters worse, when he accidentally reads the mind of his very competent, handsome colleague, Adachi discovers the guy has a raging crush on none other than Adachi himself! Things are about to get VERY awkward!', 49, 9.99, '2020-03-10', 'false
 ', 0);
-INSERT INTO Book ( id, title, authorid, publisherid, pageCount, dimension, translatorName, overview, quantity, salePrice, publishdate, isHidden, hiddenParentCount ) VALUES (179, 'Cherry Magic! Thirty Years of Virginity Can Make You a Wizard?! 03 (2021)', 31, 14, 0, '24.89x16.01x2.22 cm', NULL, 'It''s complicated: A thirty-year-old virgin gets more than he bargained for when his newfound magical power reveals he''s the object of his male coworker''s affections! Ever since he was blessed (cursed?) on his thirtieth birthday with the magical ability to read the minds of those he touches, virginal office drone Adachi has been put through the ringer, especially after discovering his colleague Kurosawa''s feelings for him! And just when it seems like Adachi might be able to take his friendship with Kurosawa to the next level, Adachi''s complex about not having any romantic experience gets in the way. Unfortunately for Adachi, taking things nice and slow is out the window when it turns out the two of them are going to be sharing an apartment!!', 14, 9.09, '2021-05-25', 'false
+INSERT INTO Book ( id, title, authorid, publisherid, pageCount, dimension, translatorName, overview, quantity, salePrice, publishdate, isHidden, hiddenParentCount ) VALUES (179, 'Cherry Magic! Thirty Years of Virginity Can Make You a Wizard?! 03 (2021)', 31, 14, 0, '24.89x16.01x2.22 cm', NULL, 'It''s complicated: A thirty-year-old virgin gets more than he bargained for when his newfound magical power reveals he''s the object of his male coworker''s affections! Ever since he was blessed (cursed?) on his thirtieth birthday with the magical ability to read the minds of those he touches, virginal office drone Adachi has been put through the ringer, especially after discovering his colleague Kurosawa''s feelings for him! And just when it seems like Adachi might be able to take his friendship with Kurosawa to the next level, Adachi''s complex about not having any romantic experience gets in the way. Unfortunately for Adachi, taking things nice and slow is out the window when it turns out the two of them are going to be sharing an apartment!!', 0, 9.09, '2021-05-25', 'false
 ', 0);
-INSERT INTO Book ( id, title, authorid, publisherid, pageCount, dimension, translatorName, overview, quantity, salePrice, publishdate, isHidden, hiddenParentCount ) VALUES (180, 'Cherry Magic! Thirty Years of Virginity Can Make You a Wizard?! 04 (2022)', 31, 14, 0, '24.53x16.61x1.10 cm', NULL, 'It''s complicated: A thirty-year-old virgin gets more than he bargained for when his newfound magical power reveals he''s the object of his male coworker''s affections! Gifted (cursed?) at the age of 30 with the ability to read the mind of whomever he touches (even the coworker with the hots for him!), virginal businessman-turned-wizard Adachi is taking his first tentative steps into love! After being wooed within an inch of his life by the tenacious Kurosawa, Adachi is at last on board with his feelings for his handsome, kind colleague and has come around to the idea of Kurosawa as his very first significant other. But now that the pair are officially an item, Kurosawa is chomping at the bit to do all the couple stuff he''s been dreaming about, including dating! There''s just one little problem: Adachi, the 30-year-old virgin, has never even been on a date!', 25, 10.12, '2022-04-26', 'false', 0);
+INSERT INTO Book ( id, title, authorid, publisherid, pageCount, dimension, translatorName, overview, quantity, salePrice, publishdate, isHidden, hiddenParentCount ) VALUES (180, 'Cherry Magic! Thirty Years of Virginity Can Make You a Wizard?! 04 (2022)', 31, 14, 0, '24.53x16.61x1.10 cm', NULL, 'It''s complicated: A thirty-year-old virgin gets more than he bargained for when his newfound magical power reveals he''s the object of his male coworker''s affections! Gifted (cursed?) at the age of 30 with the ability to read the mind of whomever he touches (even the coworker with the hots for him!), virginal businessman-turned-wizard Adachi is taking his first tentative steps into love! After being wooed within an inch of his life by the tenacious Kurosawa, Adachi is at last on board with his feelings for his handsome, kind colleague and has come around to the idea of Kurosawa as his very first significant other. But now that the pair are officially an item, Kurosawa is chomping at the bit to do all the couple stuff he''s been dreaming about, including dating! There''s just one little problem: Adachi, the 30-year-old virgin, has never even been on a date!', 0, 10.12, '2022-04-26', 'false', 0);
 
 INSERT INTO Category (id, name, ishidden) VALUES (1, 'Art', 'false');
 INSERT INTO Category (id, name, ishidden) VALUES (2, 'Award Winning', 'false');
@@ -986,7 +986,7 @@ INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES 
 INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (4, 15, 14, 7.25);
 UPDATE ImportSheet set totalCost = 536.7 where id = 4;
 INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (1, 101, 3, '2024-02-20', 0);
-INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES 
+INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES
 (1, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 1 (2022)'), 1, 9),
 (1, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 10 (2024)'), 1, 9.28),
 (1, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 9 (2024)'), 1, 7.87);
@@ -1003,3 +1003,12 @@ INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (3
 UPDATE OrderSheet set discountedTotalCost = 25.4 where id = 3;
 INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (4, 25, 3, '2024-02-20', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (4, (SELECT id FROM Book WHERE title = 'Love, Theoretically (2023)'), 1, 10.17),(4, (SELECT id FROM Book WHERE title = 'Love on the Brain (2022)'), 1, 11.35),(4, (SELECT id FROM Book WHERE title = 'The Murder of Roger Ackroyd & The Hollow Bundle (2022)'), 1, 9.63);UPDATE OrderSheet set discountedTotalCost = 29.5925 where id = 4;
+
+SELECT setval('account_id_seq', (SELECT MAX(id) FROM Account) + 1);
+SELECT setval('publisher_id_seq', (SELECT MAX(id) FROM Publisher) + 1);
+SELECT setval('author_id_seq', (SELECT MAX(id) FROM Author) + 1);
+SELECT setval('book_id_seq', (SELECT MAX(id) FROM Book) + 1);
+SELECT setval('category_id_seq', (SELECT MAX(id) FROM Category) + 1);
+SELECT setval('importsheet_id_seq', (SELECT MAX(id) FROM ImportSheet) + 1);
+SELECT setval('member_id_seq', (SELECT MAX(id) FROM Member) + 1);
+SELECT setval('ordersheet_id_seq', (SELECT MAX(id) FROM OrderSheet) + 1);

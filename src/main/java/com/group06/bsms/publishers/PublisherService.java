@@ -40,12 +40,4 @@ public class PublisherService {
             throw e;
         }
     }
-
-    public Publisher selectPublisherByName(String authorName) throws Exception {
-        try {
-            return publisherDAO.selectPublisherByName(authorName);
-        } catch (Exception e) {
-            throw e;
-        }
-    }
 }

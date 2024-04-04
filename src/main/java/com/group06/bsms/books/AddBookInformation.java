@@ -4,6 +4,7 @@ import com.group06.bsms.DB;
 import com.group06.bsms.components.*;
 import com.group06.bsms.authors.*;
 import com.group06.bsms.categories.*;
+import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.publishers.*;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
@@ -177,8 +178,8 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         hiddenPropLabel = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         addBookButton = new javax.swing.JButton();
-        publisherAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
-        authorAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
+        publisherAutoComp = new com.group06.bsms.components.AutocompletePanel();
+        authorAutoComp = new com.group06.bsms.components.AutocompletePanel();
         pagesSpinner = new javax.swing.JSpinner();
         publishDatePicker = new com.group06.bsms.components.DatePickerPanel();
 
@@ -202,6 +203,11 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 backButtonMouseExited(evt);
+            }
+        });
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
             }
         });
 
@@ -561,7 +567,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         boolean hideChecked = hideCheckBox.isSelected();
         try {
             java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-            Author author = authorAutoComp.getSelectedObject();
+            Author author = (Author)authorAutoComp.getSelectedObject();
             if (author == null) {
                 if (!authorAutoComp.getText().equals("")) {
                     
@@ -569,7 +575,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                 } else
                     throw new Exception("Author cannot be empty");
             }
-            Publisher publisher = publisherAutoComp.getSelectedObject();
+            Publisher publisher = (Publisher)publisherAutoComp.getSelectedObject();
             if (publisher == null) {
                 if (!publisherAutoComp.getText().equals("")) {
                     publisher = new Publisher(publisherAutoComp.getText());
@@ -586,10 +592,17 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Date is not null", "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            if (ex.getMessage().contains("book_publishdate_check")) {
+                JOptionPane.showMessageDialog(null, "Invalid publish date", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("book_title_key")) {
+                JOptionPane.showMessageDialog(null, "Book already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("book_dimension_check")) {
+                JOptionPane.showMessageDialog(null, "Invalid dimension format. Use [length]x[width]x[height] cm.", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
-
-    }// GEN-LAST:event_addBookButtonActionPerformed
+    }//GEN-LAST:event_addBookButtonActionPerformed
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.gray, 24, 17));
@@ -599,9 +612,13 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
     }// GEN-LAST:event_backButtonMouseExited
 
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        Dashboard.dashboard.switchTab("bookCRUD");
+    }//GEN-LAST:event_backButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBookButton;
-    private com.group06.bsms.components.AutocompletePanel<Author> authorAutoComp;
+    private com.group06.bsms.components.AutocompletePanel authorAutoComp;
     private javax.swing.JLabel authorLabel;
     private javax.swing.JButton backButton;
     private javax.swing.JButton cancelButton;
@@ -621,7 +638,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
     private javax.swing.JSpinner pagesSpinner;
     private javax.swing.JLabel publishDateLabel;
     private com.group06.bsms.components.DatePickerPanel publishDatePicker;
-    private com.group06.bsms.components.AutocompletePanel<Publisher> publisherAutoComp;
+    private com.group06.bsms.components.AutocompletePanel publisherAutoComp;
     private javax.swing.JLabel publisherLabel;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTextField titleField;

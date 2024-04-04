@@ -150,4 +150,18 @@ public class BookService {
         bookDAO.insertBook(book);
     }
 
+    List<Book> getNewBooks() throws Exception {
+        List<Book> books = bookDAO.getNewBooks();
+        return books;
+    }
+
+    List<Book> getHotBooks() throws Exception {
+        List<Book> books = bookDAO.getHotBooks();
+        return books;
+    }
+
+    List<Book> getOutOfStockBooks() throws Exception {
+        List<Book> books = bookDAO.getOutOfStockBooks();
+        return books;
+    }
 }

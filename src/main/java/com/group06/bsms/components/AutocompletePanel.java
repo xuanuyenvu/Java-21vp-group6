@@ -1,42 +1,58 @@
 package com.group06.bsms.components;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-public class AutocompletePanel<T extends Object> extends javax.swing.JPanel {
+public class AutocompletePanel extends javax.swing.JPanel {
 
-    // ArrayList<Object> listAllObjects = null;
+    public interface StateChanged {
+
+        void run(java.awt.event.ItemEvent evt);
+    }
+
+    ArrayList<Object> listAllObjects = null;
+    StateChanged stateChanged;
 
     public AutocompletePanel() {
+        this((evt) -> {
+        });
+    }
+
+    public AutocompletePanel(StateChanged stateChanged) {
         initComponents();
-        // listAllObjects = new ArrayList<>();
+        listAllObjects = new ArrayList<>();
+        this.stateChanged = stateChanged;
 
         autoCompleteButton.setEditable(true);
         AutoCompleteDecorator.decorate(autoCompleteButton);
 
     }
 
-    public void updateList(List<T> list) {
+    public <Object> void updateList(ArrayList<Object> list) {
+        listAllObjects.clear();
+        listAllObjects = new ArrayList<>(list);
 
-        for (T element : list) {
-            // method toString() return attr name of Object
-            autoCompleteButton.addItem(element);
+        for (Object element : list) {
+//            method toString() return attr name of Object
+            autoCompleteButton.addItem(element.toString());
         }
         autoCompleteButton.setSelectedItem(null);
     }
 
-    @SuppressWarnings("unchecked")
-    public T getSelectedObject() {
+
+    public Object getSelectedObject() {
 
         int selectedIndex = autoCompleteButton.getSelectedIndex();
-        if (selectedIndex == -1)
+        if (selectedIndex == -1){
             return null;
-        return (T) autoCompleteButton.getSelectedItem();
+        }
+        return listAllObjects.get(selectedIndex);
 
     }
 
-    public void setSelectedObject(T object) {
+    public void setSelectedObject(Object object) {
         autoCompleteButton.setSelectedItem(object);
     }
 
@@ -65,7 +81,12 @@ public class AutocompletePanel<T extends Object> extends javax.swing.JPanel {
         autoCompleteButton.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         autoCompleteButton.setOpaque(true);
         autoCompleteButton.setPreferredSize(new java.awt.Dimension(72, 31));
-        
+        autoCompleteButton.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                autoCompleteButtonItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -77,8 +98,17 @@ public class AutocompletePanel<T extends Object> extends javax.swing.JPanel {
                                 javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE));
     }// </editor-fold>//GEN-END:initComponents
 
+    private void autoCompleteButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_autoCompleteButtonItemStateChanged
+        try {
+            if (autoCompleteButton.getSelectedItem() != null) {
+                stateChanged.run(evt);
+            }
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_autoCompleteButtonItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<T> autoCompleteButton;
+    private javax.swing.JComboBox<String> autoCompleteButton;
     // End of variables declaration//GEN-END:variables
 
 }

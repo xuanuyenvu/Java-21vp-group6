@@ -185,8 +185,6 @@ public class Repository<Entity extends Object> {
             }
             query.setInt(nParameter++, start);
 
-            System.out.println(query);
-
             var resultSet = query.executeQuery();
             var result = new ArrayList<Entity>();
 

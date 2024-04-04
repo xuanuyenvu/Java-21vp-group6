@@ -6,13 +6,12 @@ import com.group06.bsms.components.*;
 import com.group06.bsms.authors.*;
 import com.group06.bsms.categories.*;
 import com.group06.bsms.publishers.*;
-import com.group06.bsms.books.*;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import org.postgresql.xml.NullErrorHandler;
+
 
 public class UpdateBook extends javax.swing.JPanel implements CategorySelectionListener {
 
@@ -45,6 +44,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                         tempBook = bookService.getBook(bookId);
                 } catch (Exception e) {
                         tempBook = null;
+                        e.printStackTrace();
                         JOptionPane.showMessageDialog(null,
                                         "An error occurred while getting book information: " + e.getMessage(),
                                         "BSMS Error",
@@ -132,6 +132,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                         (ArrayList<Category>) book.categories);
 
                 } catch (Exception e) {
+                        e.printStackTrace();
                         JOptionPane.showMessageDialog(null,
                                         "An error occurred while getting book information: " + e.getMessage(),
                                         "BSMS Error", JOptionPane.ERROR_MESSAGE);
@@ -142,7 +143,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         private void loadAuthorInto() {
                 try {
 
-                        authorAutoComp.updateList(authorService.selectAllAuthors());
+                        authorAutoComp.updateList((ArrayList<Author>)authorService.selectAllAuthors());
 
                 } catch (NullPointerException e) {
                         JOptionPane.showMessageDialog(null,
@@ -158,7 +159,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         private void loadPublisherInto() {
                 try {
 
-                        publisherAutoComp.updateList(publisherService.selectAllPublishers());
+                        publisherAutoComp.updateList((ArrayList<Publisher>)publisherService.selectAllPublishers());
 
                 } catch (NullPointerException e) {
                         JOptionPane.showMessageDialog(null,
@@ -199,8 +200,8 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 scrollPane = new javax.swing.JScrollPane();
                 overviewTextArea = new javax.swing.JTextArea();
                 updateBookButton = new javax.swing.JButton();
-                publisherAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
-                authorAutoComp = new com.group06.bsms.components.AutocompletePanel<>();
+                publisherAutoComp = new com.group06.bsms.components.AutocompletePanel();
+                authorAutoComp = new com.group06.bsms.components.AutocompletePanel();
                 pagesSpinner = new javax.swing.JSpinner();
                 publishDatePicker = new com.group06.bsms.components.DatePickerPanel();
                 importPriceLabel = new javax.swing.JLabel();
@@ -632,7 +633,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 Double salePrice = (Double)salePriceSpinner.getValue();
                 try {
                         java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-                        Author author = authorAutoComp.getSelectedObject();
+                        Author author = (Author)authorAutoComp.getSelectedObject();
                         if (author == null) {
                                 if (!authorAutoComp.getText().equals("")) {
                                         author = new Author(authorAutoComp.getText());
@@ -640,7 +641,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                         throw new Exception("Author cannot be empty");
                         }
 
-                        Publisher publisher = publisherAutoComp.getSelectedObject();
+                        Publisher publisher = (Publisher)publisherAutoComp.getSelectedObject();
                         if (publisher == null) {
                                 if (!publisherAutoComp.getText().equals("")) {
                                         publisher = new Publisher(publisherAutoComp.getText());
@@ -680,7 +681,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         }// GEN-LAST:event_backButtonMouseExited
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
-        private com.group06.bsms.components.AutocompletePanel<Author> authorAutoComp;
+        private com.group06.bsms.components.AutocompletePanel authorAutoComp;
         private javax.swing.JLabel authorLabel;
         private javax.swing.JButton backButton;
         private javax.swing.JLabel categoryLabel;
@@ -699,7 +700,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         private javax.swing.JSpinner pagesSpinner;
         private javax.swing.JLabel publishDateLabel;
         private com.group06.bsms.components.DatePickerPanel publishDatePicker;
-        private com.group06.bsms.components.AutocompletePanel<Publisher> publisherAutoComp;
+        private com.group06.bsms.components.AutocompletePanel publisherAutoComp;
         private javax.swing.JLabel publisherLabel;
         private javax.swing.JLabel salePriceLabel;
         private javax.swing.JSpinner salePriceSpinner;
