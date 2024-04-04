@@ -233,11 +233,11 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
             }
         });
 
-        publisherAutoComp1.setPlaceHolderText("Search by publisher's name");
+        publisherAutoComp1.setPlaceHolderText("Publisher name");
         publisherAutoComp1.setPreferredSize(new java.awt.Dimension(215, 31));
         publisherAutoComp1.setRequestFocusEnabled(true);
 
-        authorAutoComp1.setPlaceHolderText("Search by author's name");
+        authorAutoComp1.setPlaceHolderText("Author name");
         authorAutoComp1.setPreferredSize(new java.awt.Dimension(220, 31));
         authorAutoComp1.setRequestFocusEnabled(true);
 

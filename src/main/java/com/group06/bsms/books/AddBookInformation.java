@@ -46,10 +46,10 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         loadCategoryInto();
         categorySelectionPanel.setCategorySelectionListener(this);
 
-        titleField.putClientProperty("JTextField.placeholderText", "Enter book title");
-        dimensionField.putClientProperty("JTextField.placeholderText", "Length x width x height");
-        translatorField.putClientProperty("JTextField.placeholderText", "Enter translator's name");
-        setPlaceholder(overviewTextArea, "Enter overview description");
+        titleField.putClientProperty("JTextField.placeholderText", "Book title");
+        dimensionField.putClientProperty("JTextField.placeholderText", "Length x Width x Height");
+        translatorField.putClientProperty("JTextField.placeholderText", "Translator name");
+        setPlaceholder(overviewTextArea, "Overview");
 
         CustomLabelInForm.setColoredText(titleLabel);
         CustomLabelInForm.setColoredText(authorLabel);
@@ -207,6 +207,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         pageName.setText("Add book information");
 
         jScrollForm.setBorder(null);
+        jScrollForm.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollForm.setVerifyInputWhenFocusTarget(false);
 
         groupFieldPanel.setBorder(new org.jdesktop.swingx.border.IconBorder());
@@ -238,7 +239,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         categoryLabel.setText("Category");
 
         categorySelectionPanel.setAutoscrolls(true);
-        categorySelectionPanel.setMaximumSize(new java.awt.Dimension(440, 32767));
+        categorySelectionPanel.setMaximumSize(new java.awt.Dimension(440, 40));
         categorySelectionPanel.setMinimumSize(new java.awt.Dimension(440, 40));
         categorySelectionPanel.setPreferredSize(new java.awt.Dimension(440, 40));
 
@@ -310,12 +311,12 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             }
         });
 
-        publisherAutoComp.setPlaceHolderText("Search by publisher's name");
+        publisherAutoComp.setPlaceHolderText("Publisher name");
         publisherAutoComp.setPreferredSize(new java.awt.Dimension(215, 31));
         publisherAutoComp.setRequestFocusEnabled(true);
 
         authorAutoComp.setMinimumSize(new java.awt.Dimension(440, 31));
-        authorAutoComp.setPlaceHolderText("Search by author's name");
+        authorAutoComp.setPlaceHolderText("Author name");
         authorAutoComp.setPreferredSize(new java.awt.Dimension(440, 31));
         authorAutoComp.setRequestFocusEnabled(true);
 
@@ -358,8 +359,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanelLayout.createSequentialGroup()
                             .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(addBookButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(4, 4, 4)))
+                            .addComponent(addBookButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(titleField, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -382,7 +382,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(titleLabel)
-                .addGap(4, 4, 4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(titleField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14)
                 .addComponent(authorLabel)
@@ -392,25 +392,25 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(publisherLabel)
                     .addComponent(publishDateLabel))
-                .addGap(4, 4, 4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(publishDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(publisherAutoComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14)
                 .addComponent(categoryLabel)
                 .addGap(0, 0, 0)
-                .addComponent(categorySelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(12, 12, 12)
+                .addComponent(categorySelectionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+                .addGap(14, 14, 14)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dimensionLabel)
                     .addComponent(pagesLabel))
-                .addGap(4, 4, 4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pagesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                .addGap(14, 14, 14)
                 .addComponent(translatorLabel)
-                .addGap(4, 4, 4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(translatorField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14)
                 .addComponent(overviewLabel)
@@ -424,7 +424,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addBookButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(550, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         jScrollForm.setViewportView(groupFieldPanel);
@@ -451,8 +451,8 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                     .addComponent(backButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addComponent(jScrollForm))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollForm, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
