@@ -96,10 +96,6 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
     private void loadAuthorInto() {
         try {
             var authors = new ArrayList<Author>(authorService.selectAllAuthors());
-            if (authors == null) {
-                throw new NullPointerException();
-            }
-
             authorAutoComp.updateList(authors);
 
         } catch (NullPointerException e) {
@@ -114,10 +110,6 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
     private void loadPublisherInto() {
         try {
             var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
-            if (publishers == null) {
-                throw new NullPointerException();
-            }
-
             publisherAutoComp.updateList(publishers);
 
         } catch (NullPointerException e) {
@@ -133,10 +125,6 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
     private void loadCategoryInto() {
         try {
             var categories = new ArrayList<Category>(categoryService.selectAllCategories());
-            if (categories == null) {
-                throw new NullPointerException();
-            }
-
             categorySelectionPanel.updateList(categories, null);
 
         } catch (NullPointerException e) {

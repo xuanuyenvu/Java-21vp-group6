@@ -18,7 +18,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         private final AuthorService authorService;
         private final PublisherService publisherService;
         private final CategoryService categoryService;
-        private final Book book;
+        private Book book;
 
         public UpdateBook() {
                 this(
@@ -29,28 +29,16 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                                 new CategoryService(new CategoryRepository(DB.db()))),
                                 new AuthorService(new AuthorRepository(DB.db())),
                                 new PublisherService(new PublisherRepository(DB.db())),
-                                new CategoryService(new CategoryRepository(DB.db())), 1);
+                                new CategoryService(new CategoryRepository(DB.db())));
         }
 
         public UpdateBook(BookService bookService, AuthorService authorService, PublisherService publisherService,
-                        CategoryService categoryService, int bookId) {
+                        CategoryService categoryService) {
                 this.bookService = bookService;
                 this.authorService = authorService;
                 this.publisherService = publisherService;
                 this.categoryService = categoryService;
-                Book tempBook;
-                try {
-                        tempBook = bookService.getBook(bookId);
-                } catch (Exception e) {
-                        tempBook = null;
 
-                        JOptionPane.showMessageDialog(null,
-                                        "An error occurred while getting book information: " + e.getMessage(),
-                                        "BSMS Error",
-                                        JOptionPane.ERROR_MESSAGE);
-
-                }
-                book = tempBook;
                 initComponents();
 
                 loadAuthorInto();
@@ -74,6 +62,22 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 CustomLabelInForm.setColoredText(overviewLabel);
 
                 titleField.requestFocus();
+        }
+
+        public void setBookById(int bookId) {
+                
+                try {
+                        this.book = bookService.getBook(bookId);
+                        loadBookInto();
+                } catch (Exception e) {
+                        this.book = null;
+                        JOptionPane.showMessageDialog(null,
+                                        "An error occurred while getting book information: " + e.getMessage(),
+                                        "BSMS Error",
+                                        JOptionPane.ERROR_MESSAGE);
+
+                }
+               
         }
 
         private void setPlaceholder(JTextArea textArea, String placeholder) {
@@ -109,7 +113,9 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         private void loadBookInto() {
                 try {
-
+                        if(book == null){
+                                throw new Exception("please call setBookById(int bookId)");
+                        }
                         titleField.setText(book.title);
                         dimensionField.setText(book.dimension);
                         pagesSpinner.setValue(book.pageCount);
@@ -131,7 +137,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                         (ArrayList<Category>) book.categories);
 
                 } catch (Exception e) {
-                       
+
                         JOptionPane.showMessageDialog(null,
                                         "An error occurred while getting book information: " + e.getMessage(),
                                         "BSMS Error", JOptionPane.ERROR_MESSAGE);
@@ -626,15 +632,19 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         }// GEN-LAST:event_salePriceTextFieldKeyPressed
 
         private void updateBookButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_addBookButtonActionPerformed
-                String title = titleField.getText();
-                ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
-                String dimension = dimensionField.getText();
-                int pages = (Integer) pagesSpinner.getValue();
-                String translator = translatorField.getText();
-                String overview = overviewTextArea.getText();
 
-                Double salePrice = Double.parseDouble(salePriceTextField.getText());
                 try {
+                        if (book == null) {
+                                throw new Exception("The book is empty");
+                        }
+                        String title = titleField.getText();
+                        ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
+                        String dimension = dimensionField.getText();
+                        int pages = (Integer) pagesSpinner.getValue();
+                        String translator = translatorField.getText();
+                        String overview = overviewTextArea.getText();
+
+                        Double salePrice = Double.parseDouble(salePriceTextField.getText());
                         java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
                         Author author = (Author) authorAutoComp.getSelectedObject();
                         if (author == null) {
