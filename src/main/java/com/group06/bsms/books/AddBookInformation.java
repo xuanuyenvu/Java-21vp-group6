@@ -568,22 +568,24 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         boolean hideChecked = hideCheckBox.isSelected();
         try {
             java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-            Author author = (Author)authorAutoComp.getSelectedObject();
+            Author author = (Author) authorAutoComp.getSelectedObject();
             if (author == null) {
                 if (!authorAutoComp.getText().equals("")) {
-                    
+
                     author = new Author(authorAutoComp.getText());
-                } else
+                } else {
                     throw new Exception("Author cannot be empty");
+                }
             }
-            Publisher publisher = (Publisher)publisherAutoComp.getSelectedObject();
+            Publisher publisher = (Publisher) publisherAutoComp.getSelectedObject();
             if (publisher == null) {
                 if (!publisherAutoComp.getText().equals("")) {
                     publisher = new Publisher(publisherAutoComp.getText());
-                } else
+                } else {
                     throw new Exception("Publisher cannot be empty");
+                }
             }
-            
+
             bookService.insertBook(title, author, publisher, categoriesList, publishDate,
                     dimension, pages, translator, overview, hideChecked);
             JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information",
@@ -603,7 +605,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }//GEN-LAST:event_addBookButtonActionPerformed
+    }
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.gray, 24, 17));
