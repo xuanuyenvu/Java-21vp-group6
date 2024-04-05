@@ -50,8 +50,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 translatorField.putClientProperty("JTextField.placeholderText", "Enter translator's name");
                 setPlaceholder(overviewTextArea, "Enter overview description");
 
-                loadBookInto();
-
                 CustomLabelInForm.setColoredText(titleLabel);
                 CustomLabelInForm.setColoredText(authorLabel);
                 CustomLabelInForm.setColoredText(publisherLabel);
