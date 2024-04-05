@@ -4,7 +4,6 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
-import com.group06.bsms.books.UpdateBook;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
@@ -31,7 +30,7 @@ public class Main extends JFrame {
         panel.add(Dashboard.dashboard, "dashboard");
 
         switchTab("dashboard");
-        
+
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
         }

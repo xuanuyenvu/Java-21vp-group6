@@ -34,7 +34,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                  <Component id="backButton" min="-2" pref="-349" max="-2" attributes="0"/>
+                  <Component id="backButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="pageName" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="334" max="-2" attributes="0"/>
@@ -167,33 +167,31 @@
                                       <Component id="publishDatePicker" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="overviewLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="authorLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="categoryLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="translatorLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="titleLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="authorAutoComp" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="titleField" alignment="0" max="32767" attributes="0"/>
-                                  <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="translatorField" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
+                              <Component id="overviewLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="authorLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="categoryLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="translatorLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="titleLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="authorAutoComp" alignment="0" max="32767" attributes="0"/>
+                              <Component id="titleField" alignment="0" max="32767" attributes="0"/>
+                              <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+                                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="translatorField" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="scrollPane" alignment="0" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Component id="updateBookButton" alignment="1" min="-2" pref="94" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                              <Component id="importPriceLabel" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="importPriceTextField" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="updateBookButton" alignment="1" min="-2" pref="94" max="-2" attributes="0"/>
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" attributes="0">
-                                                  <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                                                  <Component id="importPriceLabel" min="-2" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Component id="importPriceTextField" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="salePriceLabel" min="-2" max="-2" attributes="0"/>
-                                              <Component id="salePriceTextField" min="-2" pref="213" max="-2" attributes="0"/>
-                                          </Group>
+                                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="salePriceLabel" min="-2" max="-2" attributes="0"/>
+                                          <Component id="salePriceTextField" min="-2" pref="213" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>

@@ -39,6 +39,7 @@ public class BookCRUD extends javax.swing.JPanel {
     private BookTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
+    private final UpdateBook updateBook;
 
     public void setCurrentOffset(int currentOffset) {
         this.currentOffset = currentOffset;
@@ -48,6 +49,7 @@ public class BookCRUD extends javax.swing.JPanel {
 
     public BookCRUD() {
         this(
+                null,
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
@@ -57,7 +59,20 @@ public class BookCRUD extends javax.swing.JPanel {
         );
     }
 
-    public BookCRUD(BookService bookService) {
+    public BookCRUD(UpdateBook updateBook) {
+        this(
+                updateBook,
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))
+                )
+        );
+    }
+
+    public BookCRUD(UpdateBook updateBook, BookService bookService) {
+        this.updateBook = updateBook;
         this.bookService = bookService;
         this.bookFilter = new BookFilter(this);
         this.model = new BookTableModel(bookService);
@@ -212,6 +227,8 @@ public class BookCRUD extends javax.swing.JPanel {
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
+                int bookId = model.getBook(row).id;
+                updateBook.setBookById(bookId);
                 Dashboard.dashboard.switchTab("updateBook");
             }
 

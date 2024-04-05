@@ -159,6 +159,15 @@ public class BookTableModel extends AbstractTableModel {
             case 4:
                 if ((Double) val != book.salePrice) {
                     try {
+                        if (book.maxImportPrice == null) {
+                            JOptionPane.showMessageDialog(
+                                    app,
+                                    "Cannot edit because import price is null",
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                            return;
+                        }
                         bookService.updateBookAttributeById(book.id, "salePrice", (Double) val);
                         book.salePrice = (Double) val;
                     } catch (Exception e) {

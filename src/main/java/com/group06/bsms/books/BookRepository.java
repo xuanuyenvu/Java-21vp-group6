@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.group06.bsms.authors.Author;
@@ -103,7 +102,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 }
                 deleteBookCategoryResults = deleteBookCategoryStatement.executeBatch();
                 db.commit();
-                
+
                 for (int deleteBookCategoryResult : deleteBookCategoryResults) {
                     if (deleteBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
                         throw new Exception("Cannot delete book's categories");
@@ -177,7 +176,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             // Insert into Book table
             PreparedStatement insertBookQuery = db.prepareStatement(
                     "INSERT INTO Book (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, isHidden, hiddenParentCount, quantity, salePrice) "
-                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
                     Statement.RETURN_GENERATED_KEYS);
 
             insertBookQuery.setInt(1, book.authorId);
