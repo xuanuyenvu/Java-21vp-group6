@@ -45,10 +45,10 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         loadCategoryInto();
         categorySelectionPanel.setCategorySelectionListener(this);
 
-        titleField.putClientProperty("JTextField.placeholderText", "Enter book title");
-        dimensionField.putClientProperty("JTextField.placeholderText", "Length x width x height");
-        translatorField.putClientProperty("JTextField.placeholderText", "Enter translator's name");
-        setPlaceholder(overviewTextArea, "Enter overview description");
+        titleField.putClientProperty("JTextField.placeholderText", "Book title");
+        dimensionField.putClientProperty("JTextField.placeholderText", "Length x Width x Height");
+        translatorField.putClientProperty("JTextField.placeholderText", "Translator name");
+        setPlaceholder(overviewTextArea, "Overview");
 
         CustomLabelInForm.setColoredText(titleLabel);
         CustomLabelInForm.setColoredText(authorLabel);
@@ -215,6 +215,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         pageName.setText("Add book information");
 
         jScrollForm.setBorder(null);
+        jScrollForm.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollForm.setVerifyInputWhenFocusTarget(false);
 
         groupFieldPanel.setBorder(new org.jdesktop.swingx.border.IconBorder());
@@ -246,7 +247,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         categoryLabel.setText("Category");
 
         categorySelectionPanel.setAutoscrolls(true);
-        categorySelectionPanel.setMaximumSize(new java.awt.Dimension(440, 32767));
+        categorySelectionPanel.setMaximumSize(new java.awt.Dimension(440, 40));
         categorySelectionPanel.setMinimumSize(new java.awt.Dimension(440, 40));
         categorySelectionPanel.setPreferredSize(new java.awt.Dimension(440, 40));
 
@@ -317,12 +318,12 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             }
         });
 
-        publisherAutoComp.setPlaceHolderText("Search by publisher's name");
+        publisherAutoComp.setPlaceHolderText("Publisher name");
         publisherAutoComp.setPreferredSize(new java.awt.Dimension(215, 31));
         publisherAutoComp.setRequestFocusEnabled(true);
 
         authorAutoComp.setMinimumSize(new java.awt.Dimension(440, 31));
-        authorAutoComp.setPlaceHolderText("Search by author's name");
+        authorAutoComp.setPlaceHolderText("Author name");
         authorAutoComp.setPreferredSize(new java.awt.Dimension(440, 31));
         authorAutoComp.setRequestFocusEnabled(true);
 
