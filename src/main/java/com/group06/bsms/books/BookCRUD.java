@@ -4,7 +4,6 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
 import static com.group06.bsms.Main.app;
-import com.group06.bsms.books.BookFilter;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
@@ -73,7 +72,6 @@ public class BookCRUD extends javax.swing.JPanel {
 
         setUpTable();
 
-        int currentRow = 0;
         this.loadBooksIntoTable();
     }
 

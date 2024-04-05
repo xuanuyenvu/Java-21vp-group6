@@ -1,10 +1,10 @@
-
 package com.group06.bsms.books;
 
 import com.group06.bsms.DB;
 import com.group06.bsms.components.*;
 import com.group06.bsms.authors.*;
 import com.group06.bsms.categories.*;
+import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.publishers.*;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
@@ -20,17 +20,17 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         private final CategoryService categoryService;
         private Book book;
 
-        public UpdateBook() {
-                this(
-                                new BookService(
-                                                new BookRepository(DB.db()),
-                                                new AuthorService(new AuthorRepository(DB.db())),
-                                                new PublisherService(new PublisherRepository(DB.db())),
-                                                new CategoryService(new CategoryRepository(DB.db()))),
-                                new AuthorService(new AuthorRepository(DB.db())),
-                                new PublisherService(new PublisherRepository(DB.db())),
-                                new CategoryService(new CategoryRepository(DB.db())));
-        }
+    public UpdateBook() {
+        this(
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))),
+                new AuthorService(new AuthorRepository(DB.db())),
+                new PublisherService(new PublisherRepository(DB.db())),
+                new CategoryService(new CategoryRepository(DB.db())));
+    }
 
         public UpdateBook(BookService bookService, AuthorService authorService, PublisherService publisherService,
                         CategoryService categoryService) {
@@ -48,7 +48,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 titleField.putClientProperty("JTextField.placeholderText", "Enter book title");
                 dimensionField.putClientProperty("JTextField.placeholderText", "Length x width x height");
                 translatorField.putClientProperty("JTextField.placeholderText", "Enter translator's name");
-                setPlaceholder(overviewTextArea, "Enter overview description");
+                setPlaceholder(overviewTextArea, "Overview");
 
                 CustomLabelInForm.setColoredText(titleLabel);
                 CustomLabelInForm.setColoredText(authorLabel);
@@ -62,25 +62,8 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 titleField.requestFocus();
         }
 
-        public void setBookById(int bookId) {
-                
-                try {
-                        this.book = bookService.getBook(bookId);
-                        loadBookInto();
-                } catch (Exception e) {
-                        this.book = null;
-                        JOptionPane.showMessageDialog(null,
-                                        "An error occurred while getting book information: " + e.getMessage(),
-                                        "BSMS Error",
-                                        JOptionPane.ERROR_MESSAGE);
-
-                }
-               
-        }
-
         private void setPlaceholder(JTextArea textArea, String placeholder) {
                 textArea.setText(placeholder);
-                textArea.setForeground(UIManager.getColor("mutedColor"));
 
                 textArea.addFocusListener(new FocusListener() {
                         @Override
@@ -96,9 +79,28 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                 if (textArea.getText().isEmpty()) {
                                         textArea.setText(placeholder);
                                         textArea.setForeground(UIManager.getColor("mutedColor"));
+                                } else {
+                                        textArea.setForeground(Color.BLACK);
                                 }
                         }
                 });
+        }
+
+        public void setBookById(int bookId) {
+
+                try {
+                        book = bookService.getBook(bookId);
+                        loadBookInto();
+                } catch (Exception e) {
+                        book = null;
+
+                        JOptionPane.showMessageDialog(null,
+                                        "An error occurred while getting book information: " + e.getMessage(),
+                                        "BSMS Error",
+                                        JOptionPane.ERROR_MESSAGE);
+
+                }
+
         }
 
         @Override
@@ -111,18 +113,18 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         private void loadBookInto() {
                 try {
-                        if(book == null){
-                                throw new Exception("please call setBookById(int bookId)");
-                        }
+
                         titleField.setText(book.title);
                         dimensionField.setText(book.dimension);
                         pagesSpinner.setValue(book.pageCount);
                         translatorField.setText(book.translatorName);
                         overviewTextArea.setText(book.overview);
+
                         if (book.maxImportPrice != null) {
                                 importPriceTextField.setText(Double.toString(book.maxImportPrice));
-                        } else
+                        } else {
                                 salePriceTextField.setEnabled(false);
+                        }
                         salePriceTextField.setText(book.salePrice.toString());
 
                         authorAutoComp.setSelectedObject(book.author);
@@ -180,9 +182,11 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         // <editor-fold defaultstate="collapsed" desc="Generated
         // <editor-fold defaultstate="collapsed" desc="Generated
         // <editor-fold defaultstate="collapsed" desc="Generated
+        // <editor-fold defaultstate="collapsed" desc="Generated
         // Code">//GEN-BEGIN:initComponents
         private void initComponents() {
 
+                jPanel1 = new javax.swing.JPanel();
                 backButton = new javax.swing.JButton();
                 pageName = new javax.swing.JLabel();
                 jSeparator1 = new javax.swing.JSeparator();
@@ -194,7 +198,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 publisherLabel = new javax.swing.JLabel();
                 publishDateLabel = new javax.swing.JLabel();
                 categoryLabel = new javax.swing.JLabel();
-                categorySelectionPanel = new com.group06.bsms.components.CategorySelectionPanel();
                 dimensionLabel = new javax.swing.JLabel();
                 dimensionField = new javax.swing.JTextField();
                 pagesLabel = new javax.swing.JLabel();
@@ -212,6 +215,13 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 salePriceTextField = new javax.swing.JTextField();
                 salePriceLabel = new javax.swing.JLabel();
                 importPriceTextField = new javax.swing.JTextField();
+                jScrollPane1 = new javax.swing.JScrollPane();
+                categorySelectionPanel = new com.group06.bsms.components.CategorySelectionPanel();
+
+                setLayout(new java.awt.BorderLayout());
+
+                jPanel1.setPreferredSize(new java.awt.Dimension(140, 50));
+                jPanel1.setRequestFocusEnabled(false);
 
                 backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
                 backButton.setForeground(UIManager.getColor("mutedColor"));
@@ -235,9 +245,62 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                 backButtonMouseExited(evt);
                         }
                 });
+                backButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                backButtonActionPerformed(evt);
+                        }
+                });
 
                 pageName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
                 pageName.setText("Update book");
+
+                javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+                jPanel1.setLayout(jPanel1Layout);
+                jPanel1Layout.setHorizontalGroup(
+                                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addGap(21, 21, 21)
+                                                                .addComponent(backButton,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(pageName)
+                                                                .addGap(334, 334, 334))
+                                                .addGroup(jPanel1Layout.createParallelGroup(
+                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                                .addContainerGap()
+                                                                                .addComponent(jSeparator1,
+                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                588, Short.MAX_VALUE)
+                                                                                .addContainerGap())));
+                jPanel1Layout.setVerticalGroup(
+                                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addGap(9, 9, 9)
+                                                                .addGroup(jPanel1Layout.createParallelGroup(
+                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                .addComponent(backButton,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(pageName))
+                                                                .addGap(14, 14, 14))
+                                                .addGroup(jPanel1Layout.createParallelGroup(
+                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                jPanel1Layout.createSequentialGroup()
+                                                                                                .addContainerGap(47,
+                                                                                                                Short.MAX_VALUE)
+                                                                                                .addComponent(jSeparator1,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                .addContainerGap())));
+
+                add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
                 jScrollForm.setBorder(null);
                 jScrollForm.setVerifyInputWhenFocusTarget(false);
@@ -269,11 +332,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 categoryLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
                 categoryLabel.setLabelFor(categorySelectionPanel);
                 categoryLabel.setText("Category");
-
-                categorySelectionPanel.setAutoscrolls(true);
-                categorySelectionPanel.setMaximumSize(new java.awt.Dimension(440, 32767));
-                categorySelectionPanel.setMinimumSize(new java.awt.Dimension(440, 40));
-                categorySelectionPanel.setPreferredSize(new java.awt.Dimension(440, 40));
 
                 dimensionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
                 dimensionLabel.setLabelFor(dimensionField);
@@ -363,126 +421,133 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 importPriceTextField.setMinimumSize(new java.awt.Dimension(215, 31));
                 importPriceTextField.setPreferredSize(new java.awt.Dimension(215, 31));
 
+                categorySelectionPanel.setAutoscrolls(true);
+                categorySelectionPanel.setMaximumSize(new java.awt.Dimension(440, 32767));
+                categorySelectionPanel.setMinimumSize(new java.awt.Dimension(440, 40));
+                categorySelectionPanel.setPreferredSize(new java.awt.Dimension(440, 40));
+                jScrollPane1.setViewportView(categorySelectionPanel);
+
                 javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
                 groupFieldPanel.setLayout(groupFieldPanelLayout);
                 groupFieldPanelLayout.setHorizontalGroup(
                                 groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                                                .addContainerGap(61, Short.MAX_VALUE)
+                                                                .addContainerGap(88, Short.MAX_VALUE)
                                                                 .addGroup(groupFieldPanelLayout.createParallelGroup(
-                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                false)
-                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                .createSequentialGroup()
-                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                .addComponent(dimensionLabel)
-                                                                                                                .addComponent(dimensionField,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                                .createSequentialGroup()
-                                                                                                                                .addGap(10, 10, 10)
-                                                                                                                                .addComponent(pagesLabel))
-                                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                                .createSequentialGroup()
-                                                                                                                                .addPreferredGap(
-                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                                                .addComponent(pagesSpinner,
-                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                Short.MAX_VALUE))))
-                                                                                .addComponent(categorySelectionPanel,
+                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                .addComponent(jScrollPane1,
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                 440,
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                .addComponent(overviewLabel)
-                                                                                .addComponent(authorLabel)
-                                                                                .addComponent(categoryLabel)
-                                                                                .addComponent(titleLabel)
-                                                                                .addComponent(translatorLabel)
-                                                                                .addComponent(scrollPane)
-                                                                                .addComponent(translatorField,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                Short.MAX_VALUE)
                                                                                 .addGroup(groupFieldPanelLayout
                                                                                                 .createParallelGroup(
-                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                .addComponent(updateBookButton,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                94,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                false)
                                                                                                 .addGroup(groupFieldPanelLayout
                                                                                                                 .createSequentialGroup()
                                                                                                                 .addGroup(groupFieldPanelLayout
                                                                                                                                 .createParallelGroup(
-                                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                                                .createSequentialGroup()
-                                                                                                                                                .addComponent(importPriceLabel)
-                                                                                                                                                .addGap(149, 149,
-                                                                                                                                                                149))
-                                                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                                                .createSequentialGroup()
-                                                                                                                                                .addComponent(importPriceTextField,
-                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                                                                .addPreferredGap(
-                                                                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                                .addComponent(dimensionLabel)
+                                                                                                                                .addComponent(dimensionField,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                                .addGap(10, 10, 10)
                                                                                                                 .addGroup(groupFieldPanelLayout
                                                                                                                                 .createParallelGroup(
                                                                                                                                                 javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                                .addComponent(salePriceTextField,
+                                                                                                                                .addComponent(pagesLabel)
+                                                                                                                                .addComponent(pagesSpinner,
+                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                217,
+                                                                                                                                                Short.MAX_VALUE)))
+                                                                                                .addGroup(groupFieldPanelLayout
+                                                                                                                .createSequentialGroup()
+                                                                                                                .addGroup(groupFieldPanelLayout
+                                                                                                                                .createParallelGroup(
+                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                                .addComponent(publisherLabel)
+                                                                                                                                .addComponent(publisherAutoComp,
                                                                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                                                .addComponent(salePriceLabel))))
-                                                                                .addComponent(titleField,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                Short.MAX_VALUE)
-                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                .createSequentialGroup()
-                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                .addComponent(publisherLabel)
-                                                                                                                .addComponent(publisherAutoComp,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                                .addGap(10, 10, 10)
-                                                                                                .addGroup(groupFieldPanelLayout
-                                                                                                                .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                                                                false)
+                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                                .addGap(10, 10, 10)
                                                                                                                 .addGroup(groupFieldPanelLayout
-                                                                                                                                .createSequentialGroup()
+                                                                                                                                .createParallelGroup(
+                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
                                                                                                                                 .addComponent(publishDateLabel)
-                                                                                                                                .addGap(136, 136,
-                                                                                                                                                136))
-                                                                                                                .addComponent(publishDatePicker,
-                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                Short.MAX_VALUE)))
-                                                                                .addComponent(authorAutoComp,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                Short.MAX_VALUE))
-                                                                .addContainerGap(61, Short.MAX_VALUE)));
+                                                                                                                                .addComponent(publishDatePicker,
+                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                Short.MAX_VALUE)))
+                                                                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                                                groupFieldPanelLayout
+                                                                                                                                .createParallelGroup(
+                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                                false)
+                                                                                                                                .addComponent(overviewLabel)
+                                                                                                                                .addComponent(authorLabel)
+                                                                                                                                .addComponent(categoryLabel)
+                                                                                                                                .addComponent(translatorLabel)
+                                                                                                                                .addComponent(titleLabel)
+                                                                                                                                .addComponent(authorAutoComp,
+                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                Short.MAX_VALUE)
+                                                                                                                                .addComponent(titleField,
+                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                Short.MAX_VALUE)
+                                                                                                                                .addGroup(groupFieldPanelLayout
+                                                                                                                                                .createParallelGroup(
+                                                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                                                                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                                                groupFieldPanelLayout
+                                                                                                                                                                                .createParallelGroup(
+                                                                                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                                                                                                                                                false)
+                                                                                                                                                                                .addComponent(translatorField,
+                                                                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                                                                Short.MAX_VALUE)
+                                                                                                                                                                                .addComponent(scrollPane,
+                                                                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING))
+                                                                                                                                                .addComponent(updateBookButton,
+                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                                94,
+                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                                                                .addGroup(groupFieldPanelLayout
+                                                                                                                                                                .createSequentialGroup()
+                                                                                                                                                                .addGroup(groupFieldPanelLayout
+                                                                                                                                                                                .createParallelGroup(
+                                                                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                                                                                .addGroup(groupFieldPanelLayout
+                                                                                                                                                                                                .createSequentialGroup()
+                                                                                                                                                                                                .addGap(1, 1, 1)
+                                                                                                                                                                                                .addComponent(importPriceLabel))
+                                                                                                                                                                                .addComponent(importPriceTextField,
+                                                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                                                                                                                .addGap(10, 10, 10)
+                                                                                                                                                                .addGroup(groupFieldPanelLayout
+                                                                                                                                                                                .createParallelGroup(
+                                                                                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                                                                                .addComponent(salePriceLabel)
+                                                                                                                                                                                .addComponent(salePriceTextField,
+                                                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                                                                                                                                213,
+                                                                                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                                                                .addContainerGap(88, Short.MAX_VALUE)));
                 groupFieldPanelLayout.setVerticalGroup(
                                 groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addGroup(groupFieldPanelLayout.createSequentialGroup()
                                                                 .addGap(29, 29, 29)
                                                                 .addComponent(titleLabel)
-                                                                .addGap(4, 4, 4)
+                                                                .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(titleField,
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                 31,
@@ -513,12 +578,13 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                 .addGap(14, 14, 14)
                                                                 .addComponent(categoryLabel)
-                                                                .addGap(0, 0, 0)
-                                                                .addComponent(categorySelectionPanel,
-                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                Short.MAX_VALUE)
-                                                                .addGap(12, 12, 12)
+                                                                .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(jScrollPane1,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                74,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(14, 14, 14)
                                                                 .addGroup(groupFieldPanelLayout.createParallelGroup(
                                                                                 javax.swing.GroupLayout.Alignment.BASELINE)
                                                                                 .addComponent(dimensionLabel)
@@ -534,7 +600,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addGap(27, 27, 27)
+                                                                .addGap(14, 14, 14)
                                                                 .addComponent(translatorLabel)
                                                                 .addGap(4, 4, 4)
                                                                 .addComponent(translatorField,
@@ -571,51 +637,16 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                                                 33,
                                                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addContainerGap(545, Short.MAX_VALUE)));
+                                                                .addContainerGap()));
 
                 jScrollForm.setViewportView(groupFieldPanel);
 
-                javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-                this.setLayout(layout);
-                layout.setHorizontalGroup(
-                                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(layout.createSequentialGroup()
-                                                                .addGap(18, 18, 18)
-                                                                .addComponent(backButton,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(
-                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                .addComponent(pageName)
-                                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                Short.MAX_VALUE))
-                                                .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(jScrollForm));
-                layout.setVerticalGroup(
-                                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(layout.createSequentialGroup()
-                                                                .addContainerGap()
-                                                                .addGroup(layout.createParallelGroup(
-                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                false)
-                                                                                .addComponent(pageName,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                Short.MAX_VALUE)
-                                                                                .addComponent(backButton,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                Short.MAX_VALUE))
-                                                                .addPreferredGap(
-                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(jSeparator1,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                10,
-                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(1, 1, 1)
-                                                                .addComponent(jScrollForm)));
+                add(jScrollForm, java.awt.BorderLayout.CENTER);
         }// </editor-fold>//GEN-END:initComponents
+
+        private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_backButtonActionPerformed
+                Dashboard.dashboard.switchTab("bookCRUD");
+        }// GEN-LAST:event_backButtonActionPerformed
 
         private void salePriceTextFieldKeyPressed(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_salePriceTextFieldKeyPressed
                 // TODO add your handling code here:
@@ -630,11 +661,9 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         }// GEN-LAST:event_salePriceTextFieldKeyPressed
 
         private void updateBookButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_addBookButtonActionPerformed
-
                 try {
-                        if (book == null) {
-                                throw new Exception("The book is empty");
-                        }
+                        if (book == null)
+                                throw new Exception("The book data is empty");
                         String title = titleField.getText();
                         ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
                         String dimension = dimensionField.getText();
@@ -648,16 +677,18 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                         if (author == null) {
                                 if (!authorAutoComp.getText().equals("")) {
                                         author = new Author(authorAutoComp.getText());
-                                } else
+                                } else {
                                         throw new Exception("Author cannot be empty");
+                                }
                         }
 
                         Publisher publisher = (Publisher) publisherAutoComp.getSelectedObject();
                         if (publisher == null) {
                                 if (!publisherAutoComp.getText().equals("")) {
                                         publisher = new Publisher(publisherAutoComp.getText());
-                                } else
+                                } else {
                                         throw new Exception("Publisher cannot be empty");
+                                }
                         }
 
                         Book updatedBook = new Book(author.id, publisher.id, title, pages, publishDate,
@@ -702,7 +733,9 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         private javax.swing.JPanel groupFieldPanel;
         private javax.swing.JLabel importPriceLabel;
         private javax.swing.JTextField importPriceTextField;
+        private javax.swing.JPanel jPanel1;
         private javax.swing.JScrollPane jScrollForm;
+        private javax.swing.JScrollPane jScrollPane1;
         private javax.swing.JSeparator jSeparator1;
         private javax.swing.JLabel overviewLabel;
         private javax.swing.JTextArea overviewTextArea;

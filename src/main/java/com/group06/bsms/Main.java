@@ -32,7 +32,6 @@ public class Main extends JFrame {
 
         switchTab("dashboard");
         
-        
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
         }
