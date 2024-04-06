@@ -16,7 +16,6 @@ public class PublisherService {
             List<Publisher> publishers = publisherDAO.selectAllPublishers();
             return publishers;
         } catch (Exception e) {
-            System.out.println(e);
             return new ArrayList<>();
         }
     }

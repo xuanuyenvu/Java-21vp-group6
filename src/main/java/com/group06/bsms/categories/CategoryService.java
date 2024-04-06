@@ -16,7 +16,6 @@ public class CategoryService {
             List<Category> categories = categoryDAO.selectAllCategories();
             return categories;
         } catch (Exception e) {
-            System.out.println(e);
             return new ArrayList<>();
         }
     }

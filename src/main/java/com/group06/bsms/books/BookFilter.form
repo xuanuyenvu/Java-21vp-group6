@@ -125,6 +125,9 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="13" style="1"/>
             </Property>
+            <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="authorAutoComp1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Author"/>
           </Properties>
         </Component>
@@ -133,6 +136,9 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="13" style="1"/>
             </Property>
+            <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="publisherAutoComp1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Publisher"/>
           </Properties>
         </Component>
@@ -140,6 +146,9 @@
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="13" style="1"/>
+            </Property>
+            <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="categorySelectionPanel1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Category"/>
           </Properties>
@@ -175,6 +184,9 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="13" style="1"/>
             </Property>
+            <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="minPriceField"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Sale price"/>
           </Properties>
         </Component>
@@ -203,10 +215,14 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="UIManager.getColor(&quot;mutedColor&quot;)&#xd;&#xa;" type="code"/>
             </Property>
+            <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="java.awt.event.KeyEvent.VK_L" type="code"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Clear"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
             </Property>
+            <Property name="displayedMnemonicIndex" type="int" value="1"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeAllBtnActionPerformed"/>
@@ -266,10 +282,17 @@
         </Component>
         <Component class="javax.swing.JLabel" name="authorLabel2">
           <Properties>
+            <Property name="displayedMnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="java.awt.event.KeyEvent.VK_I" type="code"/>
+            </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="13" style="1"/>
             </Property>
+            <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="filterComboBox"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Filter"/>
+            <Property name="displayedMnemonicIndex" type="int" value="1"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="filterComboBox">

@@ -59,6 +59,6 @@ public class Book {
                 + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension
                 + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity
                 + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount
-                + ", author=" + author + ", publisher=" + publisher + ", maxImportPrice=" + maxImportPrice + ", category= " + categories.toString() + "}";
+                + ", author=" + author + ", publisher=" + publisher + ", maxImportPrice=" + maxImportPrice + ", category= " + categories + "}";
     }
 }

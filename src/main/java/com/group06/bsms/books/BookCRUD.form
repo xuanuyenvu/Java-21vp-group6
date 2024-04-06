@@ -78,6 +78,9 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="16" style="0"/>
         </Property>
+        <Property name="focusAccelerator" type="char" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="&apos;s&apos;" type="code"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchBarActionPerformed"/>
@@ -97,11 +100,15 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="SVGHelper.createSVGIconWithFilter(&#xa;    &quot;icons/add.svg&quot;,&#xa;    Color.black, Color.white, Color.white,&#xa;    14, 14&#xa;)" type="code"/>
         </Property>
+        <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="java.awt.event.KeyEvent.VK_C" type="code"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Create"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
         </Property>
+        <Property name="displayedMnemonicIndex" type="int" value="0"/>
         <Property name="iconTextGap" type="int" value="2"/>
         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
           <Insets value="[10, 10, 10, 10]"/>
@@ -119,10 +126,14 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
           <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/filter.svg&quot;,&#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    14, 14)" type="code"/>
         </Property>
+        <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="java.awt.event.KeyEvent.VK_F" type="code"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Filter"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
         </Property>
+        <Property name="displayedMnemonicIndex" type="int" value="0"/>
         <Property name="iconTextGap" type="int" value="2"/>
         <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
           <Insets value="[10, 10, 10, 10]"/>

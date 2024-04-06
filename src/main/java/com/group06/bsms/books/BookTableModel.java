@@ -120,10 +120,11 @@ public class BookTableModel extends AbstractTableModel {
         if (col == 5) {
             return;
         }
+
         if (!editable) {
             editable = true;
-            return;
         }
+
         Book book = books.get(row);
         switch (col) {
             case 0:
@@ -224,7 +225,7 @@ public class BookTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return (columnIndex == 0 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5);
+        return (columnIndex == 0 || columnIndex == 4 || columnIndex == 5);
     }
 
     public void reloadAllBooks(List<Book> newBooks) {

@@ -58,9 +58,6 @@ public class BookRepositoryTest {
         }
     }
 
-//    /**
-//     * Test of getHotBooks method, of class BookRepository.
-//     */
     @Test
     public void testGetHotBooks() throws Exception {
         System.out.println("getHotBooks");
@@ -70,10 +67,6 @@ public class BookRepositoryTest {
             System.out.println(book);
         }
     }
-//
-//    /**
-//     * Test of getOutOfStockBooks method, of class BookRepository.
-//     */
 
     @Test
     public void testGetOutOfStockBooks() throws Exception {

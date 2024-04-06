@@ -81,7 +81,6 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             List<Category> deletedCategories = new ArrayList<>(book.categories);
             deletedCategories.removeAll(updatedBook.categories);
             deleteBookCategories(book.id, deletedCategories);
-
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -92,15 +91,21 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             if (!categories.isEmpty()) {
                 int deleteBookCategoryResults[] = null;
+
                 db.setAutoCommit(false);
+
                 String deleteQuery = "DELETE FROM bookCategory WHERE bookId = ? AND categoryId = ?";
+
                 var deleteBookCategoryStatement = db.prepareStatement(deleteQuery);
+
                 for (Category category : categories) {
                     deleteBookCategoryStatement.setInt(1, bookId);
                     deleteBookCategoryStatement.setInt(2, category.id);
                     deleteBookCategoryStatement.addBatch();
                 }
+
                 deleteBookCategoryResults = deleteBookCategoryStatement.executeBatch();
+
                 db.commit();
 
                 for (int deleteBookCategoryResult : deleteBookCategoryResults) {
@@ -109,7 +114,6 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     }
                 }
             }
-
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -121,12 +125,16 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
             if (!categories.isEmpty()) {
                 int addBookCategoryResults[] = null;
+
                 db.setAutoCommit(false);
-                String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES VALUES (?, ?)";
+
+                String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES (?, ?)";
+
                 var addBookCategoryStatement = db.prepareStatement(insertQuery);
                 for (Category category : categories) {
                     addBookCategoryStatement.setInt(1, bookId);
-                    addBookCategoryStatement.setInt(1, category.id);
+                    addBookCategoryStatement.setInt(2, category.id);
+                    addBookCategoryStatement.addBatch();
                 }
                 addBookCategoryResults = addBookCategoryStatement.executeBatch();
 
@@ -137,13 +145,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                         throw new Exception("Cannot insert book's categories");
                     }
                 }
-
             }
         } catch (Exception e) {
             db.rollback();
             throw e;
         }
-
     }
 
     @Override
@@ -189,7 +195,6 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             insertBookQuery.setString(8, book.overview);
             insertBookQuery.setBoolean(9, book.isHidden);
             insertBookQuery.setInt(10, book.hiddenParentCount);
-            //System.out.println(insertBookQuery);
             int rowsAffected = insertBookQuery.executeUpdate();
 
             if (rowsAffected == 0) {

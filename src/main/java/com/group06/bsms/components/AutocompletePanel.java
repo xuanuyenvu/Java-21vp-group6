@@ -1,6 +1,5 @@
 package com.group06.bsms.components;
 
-import java.util.List;
 import java.util.ArrayList;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -34,18 +33,17 @@ public class AutocompletePanel extends javax.swing.JPanel {
         listAllObjects.clear();
         listAllObjects = new ArrayList<>(list);
 
+        autoCompleteButton.removeAllItems();
         for (Object element : list) {
-//            method toString() return attr name of Object
             autoCompleteButton.addItem(element.toString());
         }
         autoCompleteButton.setSelectedItem(null);
     }
 
-
     public Object getSelectedObject() {
 
         int selectedIndex = autoCompleteButton.getSelectedIndex();
-        if (selectedIndex == -1){
+        if (selectedIndex == -1) {
             return null;
         }
         return listAllObjects.get(selectedIndex);

@@ -16,7 +16,6 @@ import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -102,7 +101,7 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         ));
     }
 
-    private void loadAuthorInto() {
+    void loadAuthorInto() {
         try {
             var authors = new ArrayList<Author>(authorService.selectAllAuthors());
             if (authors == null) {
@@ -118,7 +117,7 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         }
     }
 
-    private void loadPublisherInto() {
+    void loadPublisherInto() {
         try {
             var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
             if (publishers == null) {
@@ -134,7 +133,7 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         }
     }
 
-    private void loadCategoryInto() {
+    void loadCategoryInto() {
         try {
             var categories = new ArrayList<Category>(categoryService.selectAllCategories());
             if (categories == null) {
@@ -152,8 +151,7 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
 
     @Override
     public void onCategoriesChanged(int numOfCategories) {
-        int newHeight = (40 + ((int) (numOfCategories / 1.1) * 35));
-        categorySelectionPanel1.setPreferredSize(new Dimension(categorySelectionPanel1.getWidth(), newHeight));
+        categorySelectionPanel1.changeSize(1.1f);
         this.revalidate();
         this.repaint();
 
@@ -188,12 +186,15 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         groupFieldPanel1.setPreferredSize(new java.awt.Dimension(300, 322));
 
         authorLabel1.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        authorLabel1.setLabelFor(authorAutoComp1);
         authorLabel1.setText("Author");
 
         publisherLabel1.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        publisherLabel1.setLabelFor(publisherAutoComp1);
         publisherLabel1.setText("Publisher");
 
         categoryLabel1.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        categoryLabel1.setLabelFor(categorySelectionPanel1);
         categoryLabel1.setText("Category");
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -206,6 +207,7 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         jScrollPane1.setViewportView(categorySelectionPanel1);
 
         salePriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        salePriceLabel.setLabelFor(minPriceField);
         salePriceLabel.setText("Sale price");
 
         minPriceField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -225,8 +227,10 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         removeAllBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         removeAllBtn.setForeground(UIManager.getColor("mutedColor")
         );
+        removeAllBtn.setMnemonic(java.awt.event.KeyEvent.VK_L);
         removeAllBtn.setText("Clear");
         removeAllBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        removeAllBtn.setDisplayedMnemonicIndex(1);
         removeAllBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeAllBtnActionPerformed(evt);
@@ -259,8 +263,11 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         jLabel1.setForeground(new java.awt.Color(204, 204, 204));
         jLabel1.setText("-");
 
+        authorLabel2.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_I);
         authorLabel2.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        authorLabel2.setLabelFor(filterComboBox);
         authorLabel2.setText("Filter");
+        authorLabel2.setDisplayedMnemonicIndex(1);
 
         filterComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         filterComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "Top 20 Newest Books", "Top 20 Hottest Books", "Out-of-stock Books" }));

@@ -2,6 +2,7 @@ package com.group06.bsms.components;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.categories.Category;
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 
@@ -11,22 +12,17 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     ArrayList<Category> listAllCategories = null;
     ArrayList<Category> listSelected = null;
     private int count = 0;
-    private int sumWidth;
 
     public CategorySelectionPanel() {
         initComponents();
         listAllCategories = new ArrayList<>();
         listSelected = new ArrayList<>();
-
-        sumWidth = addButton.getSize().width + 6;
     }
 
     private void createToggleButton(String name) {
         var categoryButton = new CategoryButton(this, name);
         categoryButton.putClientProperty(FlatClientProperties.STYLE, "arc: 36;");
         categoriesPanel.add(categoryButton);
-
-        sumWidth += categoryButton.getPreferredSize().width + 6;
     }
 
     public void updateList(ArrayList<Category> listAllCategories, ArrayList<Category> currentCategories) {
@@ -39,14 +35,15 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
         if (currentCategories != null) {
             listSelected.clear();
+            categoriesPanel.removeAll();
 
             for (Category categorySelected : currentCategories) {
-                //createToggleButton(categorySelected.name);
                 addCategory(categorySelected);
             }
         }
 
         addButton.setSelectedIndex(-1);
+        this.changeSize(1.1f);
     }
 
     public void deleteCategory(String name, CategoryButton instance) {
@@ -58,10 +55,6 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         }
 
         listSelected.remove(categoryToRemove);
-
-        if (instance != null) {
-            sumWidth -= (instance.getWidth() + 6);
-        }
 
         addButton.setSelectedIndex(-1);
 
@@ -84,6 +77,12 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         if (listener != null) {
             listener.onCategoriesChanged(listSelected.size());
         }
+    }
+
+    public void changeSize(float numPerRow) {
+        int numOfCategories = listSelected.size();
+        int newHeight = 40 + ((int) (numOfCategories / numPerRow) * 35);
+        this.setPreferredSize(new Dimension(getWidth(), newHeight));
     }
 
     public ArrayList<Category> getListSelected() {

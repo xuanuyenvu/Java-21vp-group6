@@ -219,8 +219,7 @@ public class BookCRUD extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int columnIndex = table.columnAtPoint(e.getPoint());
                 toggleSortOrder(columnIndex);
-                currentOffset = 0;
-                loadBooksIntoTable();
+                reloadBooks();
                 table.getTableHeader().repaint();
             }
         });
@@ -300,6 +299,7 @@ public class BookCRUD extends javax.swing.JPanel {
         bookLabel.setText("BOOKS");
 
         searchBar.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        searchBar.setFocusAccelerator('s');
         searchBar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchBarActionPerformed(evt);
@@ -314,9 +314,11 @@ public class BookCRUD extends javax.swing.JPanel {
             Color.black, Color.white, Color.white,
             14, 14
         ));
+        createBtn.setMnemonic(java.awt.event.KeyEvent.VK_C);
         createBtn.setText("Create");
         createBtn.setToolTipText("");
         createBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        createBtn.setDisplayedMnemonicIndex(0);
         createBtn.setIconTextGap(2);
         createBtn.setMargin(new java.awt.Insets(10, 10, 10, 10));
         createBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -330,8 +332,10 @@ public class BookCRUD extends javax.swing.JPanel {
             "icons/filter.svg",
             Color.black, Color.black,
             14, 14));
+    filterBtn.setMnemonic(java.awt.event.KeyEvent.VK_F);
     filterBtn.setText("Filter");
     filterBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    filterBtn.setDisplayedMnemonicIndex(0);
     filterBtn.setIconTextGap(2);
     filterBtn.setMargin(new java.awt.Insets(10, 10, 10, 10));
     filterBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -401,9 +405,23 @@ public class BookCRUD extends javax.swing.JPanel {
     );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
+    public void reloadBooks() {
+        reloadBooks(false);
+    }
+
+    public void reloadBooks(boolean reloadFilter) {
         currentOffset = 0;
         loadBooksIntoTable();
+
+        if (reloadFilter) {
+            bookFilter.loadAuthorInto();
+            bookFilter.loadCategoryInto();
+            bookFilter.loadPublisherInto();
+        }
+    }
+
+    private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
+        reloadBooks();
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
