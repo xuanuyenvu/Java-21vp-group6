@@ -29,18 +29,17 @@ public class Repository<Entity extends Object> {
         try {
             db.setAutoCommit(false);
 
-            var query = db.prepareStatement(
-                    "select count(*) from " + entityClass.getSimpleName());
+            try (var query = db.prepareStatement(
+                    "select count(*) from " + entityClass.getSimpleName())) {
+                var result = query.executeQuery();
+                db.commit();
 
-            var result = query.executeQuery();
+                if (!result.next()) {
+                    throw new Exception("Interal database error");
+                }
 
-            db.commit();
-
-            if (!result.next()) {
-                throw new Exception("Interal database error");
+                return result.getInt(1);
             }
-
-            return result.getInt(1);
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -51,19 +50,18 @@ public class Repository<Entity extends Object> {
 
         try {
             db.setAutoCommit(false);
-
-            var query = db.prepareStatement(
+            try (var query = db.prepareStatement(
                     "delete from " + entityClass.getSimpleName() + " "
-                    + "where id = ?");
+                            + "where id = ?")) {
+                query.setInt(1, id);
 
-            query.setInt(1, id);
+                var result = query.executeUpdate();
 
-            var result = query.executeUpdate();
+                db.commit();
 
-            db.commit();
-
-            if (result == 0) {
-                throw new Exception("Entity not found");
+                if (result == 0) {
+                    throw new Exception("Entity not found");
+                }
             }
         } catch (Exception e) {
             db.rollback();
@@ -72,21 +70,18 @@ public class Repository<Entity extends Object> {
     }
 
     public boolean existsById(int id) throws Exception {
-
         try {
             db.setAutoCommit(false);
-
-            var query = db.prepareStatement(
+            try (var query = db.prepareStatement(
                     "select * from " + entityClass.getSimpleName() + " "
-                    + "where id = ?");
+                            + "where id = ?")) {
+                query.setInt(1, id);
 
-            query.setInt(1, id);
+                var result = query.executeQuery();
 
-            var result = query.executeQuery();
-
-            db.commit();
-
-            return result.next();
+                db.commit();
+                return result.next();
+            }
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -99,15 +94,16 @@ public class Repository<Entity extends Object> {
      *
      * @param searchParams optional (null if none), containing the search params
      * @param start
-     * @param count optional (null if none)
-     * @param sortAttr optional (null if none)
-     * @param sortTerm Sort.ASC or Sort.DESC
+     * @param count        optional (null if none)
+     * @param sortAttr     optional (null if none)
+     * @param sortTerm     Sort.ASC or Sort.DESC
      * @param attributes
      * @return [count]/all entity from the [start]'th entity of " select
-     * [attributes] from entity where [searchAttr_1] like '%[searchTerm_1]%' and
-     * [searchAttr_2] like '%[searchTerm_2]%' and ... (currently only accept
-     * string attributes in the same class, no join yet) order by [sortAttr]
-     * [sortTerm]"
+     *         [attributes] from entity where [searchAttr_1] like '%[searchTerm_1]%'
+     *         and
+     *         [searchAttr_2] like '%[searchTerm_2]%' and ... (currently only accept
+     *         string attributes in the same class, no join yet) order by [sortAttr]
+     *         [sortTerm]"
      */
     public List<Entity> selectAll(
             Map<String, Object> searchParams,
@@ -162,38 +158,36 @@ public class Repository<Entity extends Object> {
                 }
                 sortQuery = "order by " + sortAttr + " " + sortTerm.toString();
             }
-
-            var query = db.prepareStatement(
+            try (var query = db.prepareStatement(
                     "select " + attributesQuery + " "
-                    + "from " + entityClass.getSimpleName() + " "
-                    + conditionQuery + " "
-                    + sortQuery
-                    + ((count == null) ? "" : " limit ?")
-                    + " offset ?");
+                            + "from " + entityClass.getSimpleName() + " "
+                            + conditionQuery + " "
+                            + sortQuery
+                            + ((count == null) ? "" : " limit ?")
+                            + " offset ?")) {
+                int nParameter = 1;
 
-            int nParameter = 1;
-
-            if (searchParams != null) {
-                for (var key : searchParams.keySet()) {
-                    query.setString(nParameter++, ("%" + searchParams.get(key).toString() + "%"));
+                if (searchParams != null) {
+                    for (var key : searchParams.keySet()) {
+                        query.setString(nParameter++, ("%" + searchParams.get(key).toString() + "%"));
+                    }
                 }
+
+                if (count != null) {
+                    query.setInt(nParameter++, count);
+                }
+                query.setInt(nParameter++, start);
+
+                var resultSet = query.executeQuery();
+                var result = new ArrayList<Entity>();
+
+                db.commit();
+
+                while (resultSet.next()) {
+                    result.add(populate(resultSet));
+                }
+                return result;
             }
-
-            if (count != null) {
-                query.setInt(nParameter++, count);
-            }
-            query.setInt(nParameter++, start);
-
-            var resultSet = query.executeQuery();
-            var result = new ArrayList<Entity>();
-
-            db.commit();
-
-            while (resultSet.next()) {
-                result.add(populate(resultSet));
-            }
-
-            return result;
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -210,8 +204,9 @@ public class Repository<Entity extends Object> {
      * @param sortTerm
      * @param attributes
      * @return [count] entity from the [start]'th entity of "select [attributes]
-     * from entity where [searchAttr] like '%[searchTerm]%' order by [sortAttr]
-     * [sortTerm]"
+     *         from entity where [searchAttr] like '%[searchTerm]%' order by
+     *         [sortAttr]
+     *         [sortTerm]"
      */
     public List<Entity> selectAll(
             String searchAttr, Object searchTerm,
@@ -242,27 +237,27 @@ public class Repository<Entity extends Object> {
 
             attributesQuery.setLength(attributesQuery.length() - 2);
 
-            var query = db.prepareStatement(
+            try (var query = db.prepareStatement(
                     "select " + attributesQuery + " "
-                    + "from " + entityClass.getSimpleName() + " "
-                    + "where " + searchAttr + " ilike ? "
-                    + "order by " + sortAttr + " "
-                    + sortTerm.toString() + " limit ? offset ?");
+                            + "from " + entityClass.getSimpleName() + " "
+                            + "where " + searchAttr + " ilike ? "
+                            + "order by " + sortAttr + " "
+                            + sortTerm.toString() + " limit ? offset ?")) {
+                query.setObject(1, searchTerm);
+                query.setInt(2, count);
+                query.setInt(3, start);
 
-            query.setObject(1, searchTerm);
-            query.setInt(2, count);
-            query.setInt(3, start);
+                var resultSet = query.executeQuery();
+                var result = new ArrayList<Entity>();
 
-            var resultSet = query.executeQuery();
-            var result = new ArrayList<Entity>();
+                db.commit();
 
-            db.commit();
+                while (resultSet.next()) {
+                    result.add(populate(resultSet));
+                }
 
-            while (resultSet.next()) {
-                result.add(populate(resultSet));
+                return result;
             }
-
-            return result;
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -274,17 +269,17 @@ public class Repository<Entity extends Object> {
         try {
             db.setAutoCommit(false);
 
-            var query = db.prepareStatement(
+            try (var query = db.prepareStatement(
                     "select * from " + entityClass.getSimpleName() + " "
-                    + "where id =  ?");
+                            + "where id =  ?")) {
+                query.setInt(1, id);
 
-            query.setInt(1, id);
+                var result = query.executeQuery();
 
-            var result = query.executeQuery();
+                db.commit();
 
-            db.commit();
-
-            return result.next() ? populate(result) : null;
+                return result.next() ? populate(result) : null;
+            }
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -311,35 +306,34 @@ public class Repository<Entity extends Object> {
             attributesQuery.setLength(attributesQuery.length() - 2);
             valuesQuery.setLength(valuesQuery.length() - 2);
 
-            var query = db.prepareStatement(
-                    attributesQuery.append(valuesQuery).append(")").toString());
+            try (var query = db.prepareStatement(
+                    attributesQuery.append(valuesQuery).append(")").toString())) {
+                int index = 1;
 
-            int index = 1;
+                for (String attribute : attributes) {
+                    var field = entityClass.getDeclaredField(attribute);
 
-            for (String attribute : attributes) {
-                var field = entityClass.getDeclaredField(attribute);
+                    field.setAccessible(true);
 
-                field.setAccessible(true);
+                    var value = field.get(entity);
 
-                var value = field.get(entity);
+                    if (value != null) {
+                        query.setObject(index++, value);
+                    } else {
+                        query.setNull(index++, NULL);
+                    }
 
-                if (value != null) {
-                    query.setObject(index++, value);
-                } else {
-                    query.setNull(index++, NULL);
+                    field.setAccessible(false);
                 }
 
-                field.setAccessible(false);
+                var result = query.executeUpdate();
+
+                db.commit();
+
+                if (result == 0) {
+                    throw new Exception("Internal database error");
+                }
             }
-
-            var result = query.executeUpdate();
-
-            db.commit();
-
-            if (result == 0) {
-                throw new Exception("Internal database error");
-            }
-
             return entity;
         } catch (Exception e) {
             db.rollback();
@@ -362,37 +356,36 @@ public class Repository<Entity extends Object> {
             }
 
             updateQuery.setLength(updateQuery.length() - 2);
-            var query = db.prepareStatement(updateQuery.append(" WHERE id = ?").toString());
+            try (var query = db.prepareStatement(updateQuery.append(" WHERE id = ?").toString())) {
+                int index = 1;
 
-            int index = 1;
+                for (String attribute : attributes) {
+                    var field = entityClass.getDeclaredField(attribute);
+                    field.setAccessible(true);
+                    var value = field.get(entity);
 
-            for (String attribute : attributes) {
-                var field = entityClass.getDeclaredField(attribute);
-                field.setAccessible(true);
-                var value = field.get(entity);
+                    if (value != null) {
+                        query.setObject(index++, value);
+                    } else {
+                        query.setNull(index++, NULL);
+                    }
 
-                if (value != null) {
-                    query.setObject(index++, value);
-                } else {
-                    query.setNull(index++, NULL);
+                    field.setAccessible(false);
                 }
 
-                field.setAccessible(false);
+                var idField = entityClass.getDeclaredField("id");
+                idField.setAccessible(true);
+                var idValue = idField.get(entity);
+                query.setObject(index, idValue);
+
+                var result = query.executeUpdate();
+
+                db.commit();
+
+                if (result == 0) {
+                    throw new Exception("Entity not found");
+                }
             }
-
-            var idField = entityClass.getDeclaredField("id");
-            idField.setAccessible(true);
-            var idValue = idField.get(entity);
-            query.setObject(index, idValue);
-
-            var result = query.executeUpdate();
-
-            db.commit();
-
-            if (result == 0) {
-                throw new Exception("Entity not found");
-            }
-
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -408,20 +401,19 @@ public class Repository<Entity extends Object> {
             if (!isValidIdentifier(attr)) {
                 throw new Exception("invalid set attribute");
             }
-
-            var query = db.prepareStatement(
+            try (var query = db.prepareStatement(
                     "update " + entityClass.getSimpleName() + " "
-                    + "set " + attr + " = ? where id = ?");
+                            + "set " + attr + " = ? where id = ?")) {
+                query.setObject(1, value);
+                query.setInt(2, id);
 
-            query.setObject(1, value);
-            query.setInt(2, id);
+                var result = query.executeUpdate();
 
-            var result = query.executeUpdate();
+                db.commit();
 
-            db.commit();
-
-            if (result == 0) {
-                throw new Exception("Entity not found");
+                if (result == 0) {
+                    throw new Exception("Entity not found");
+                }
             }
         } catch (Exception e) {
             db.rollback();

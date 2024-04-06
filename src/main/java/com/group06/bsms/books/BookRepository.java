@@ -41,25 +41,22 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             book.author = authorRepository.selectById(book.authorId);
             book.publisher = publisherRepository.selectById(book.publisherId);
             db.setAutoCommit(false);
-
-            var selectBookCategoriesQuery = db.prepareStatement(
-                    "SELECT c.id, c.name, c.isHidden FROM Category c JOIN BookCategory bc ON c.id = bc.categoryId WHERE bc.bookId = ?");
-            selectBookCategoriesQuery.setInt(1, id);
-            var result = selectBookCategoriesQuery.executeQuery();
-            if (book.categories == null) {
-                book.categories = new ArrayList<>();
+            try (var selectBookCategoriesQuery = db.prepareStatement(
+                    "SELECT c.id, c.name, c.isHidden FROM Category c JOIN BookCategory bc ON c.id = bc.categoryId WHERE bc.bookId = ?")) {
+                selectBookCategoriesQuery.setInt(1, id);
+                var result = selectBookCategoriesQuery.executeQuery();
+                if (book.categories == null) {
+                    book.categories = new ArrayList<>();
+                }
+                while (result.next()) {
+                    book.categories.add(new Category(
+                            result.getInt("id"),
+                            result.getString("name"),
+                            result.getBoolean("isHidden")));
+                }
+                db.commit();
             }
-            while (result.next()) {
-                book.categories.add(new Category(
-                        result.getInt("id"),
-                        result.getString("name"),
-                        result.getBoolean("isHidden")));
-            }
-
-            db.commit();
-
             return book;
-
         } catch (Exception e) {
             e.printStackTrace();
             db.rollback();
@@ -95,22 +92,21 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 db.setAutoCommit(false);
 
                 String deleteQuery = "DELETE FROM bookCategory WHERE bookId = ? AND categoryId = ?";
+                try (var deleteBookCategoryStatement = db.prepareStatement(deleteQuery)) {
+                    for (Category category : categories) {
+                        deleteBookCategoryStatement.setInt(1, bookId);
+                        deleteBookCategoryStatement.setInt(2, category.id);
+                        deleteBookCategoryStatement.addBatch();
+                    }
 
-                var deleteBookCategoryStatement = db.prepareStatement(deleteQuery);
+                    deleteBookCategoryResults = deleteBookCategoryStatement.executeBatch();
 
-                for (Category category : categories) {
-                    deleteBookCategoryStatement.setInt(1, bookId);
-                    deleteBookCategoryStatement.setInt(2, category.id);
-                    deleteBookCategoryStatement.addBatch();
-                }
+                    db.commit();
 
-                deleteBookCategoryResults = deleteBookCategoryStatement.executeBatch();
-
-                db.commit();
-
-                for (int deleteBookCategoryResult : deleteBookCategoryResults) {
-                    if (deleteBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
-                        throw new Exception("Cannot delete book's categories");
+                    for (int deleteBookCategoryResult : deleteBookCategoryResults) {
+                        if (deleteBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
+                            throw new Exception("Cannot delete book's categories");
+                        }
                     }
                 }
             }
@@ -129,20 +125,20 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 db.setAutoCommit(false);
 
                 String insertQuery = "INSERT INTO bookCategory (bookId, categoryId) VALUES (?, ?)";
+                try (var addBookCategoryStatement = db.prepareStatement(insertQuery)) {
+                    for (Category category : categories) {
+                        addBookCategoryStatement.setInt(1, bookId);
+                        addBookCategoryStatement.setInt(2, category.id);
+                        addBookCategoryStatement.addBatch();
+                    }
+                    addBookCategoryResults = addBookCategoryStatement.executeBatch();
 
-                var addBookCategoryStatement = db.prepareStatement(insertQuery);
-                for (Category category : categories) {
-                    addBookCategoryStatement.setInt(1, bookId);
-                    addBookCategoryStatement.setInt(2, category.id);
-                    addBookCategoryStatement.addBatch();
-                }
-                addBookCategoryResults = addBookCategoryStatement.executeBatch();
+                    db.commit();
 
-                db.commit();
-
-                for (int addBookCategoryResult : addBookCategoryResults) {
-                    if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
-                        throw new Exception("Cannot insert book's categories");
+                    for (int addBookCategoryResult : addBookCategoryResults) {
+                        if (addBookCategoryResult == PreparedStatement.EXECUTE_FAILED) {
+                            throw new Exception("Cannot insert book's categories");
+                        }
                     }
                 }
             }
@@ -180,54 +176,51 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
 
             // Insert into Book table
-            PreparedStatement insertBookQuery = db.prepareStatement(
+            try (PreparedStatement insertBookQuery = db.prepareStatement(
                     "INSERT INTO Book (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, isHidden, hiddenParentCount, quantity, salePrice) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
-                    Statement.RETURN_GENERATED_KEYS);
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
+                    Statement.RETURN_GENERATED_KEYS)) {
+                insertBookQuery.setInt(1, book.authorId);
+                insertBookQuery.setInt(2, book.publisherId);
+                insertBookQuery.setString(3, book.title);
+                insertBookQuery.setInt(4, book.pageCount);
+                insertBookQuery.setDate(5, book.publishDate);
+                insertBookQuery.setString(6, book.dimension);
+                insertBookQuery.setString(7, book.translatorName);
+                insertBookQuery.setString(8, book.overview);
+                insertBookQuery.setBoolean(9, book.isHidden);
+                insertBookQuery.setInt(10, book.hiddenParentCount);
+                int rowsAffected = insertBookQuery.executeUpdate();
 
-            insertBookQuery.setInt(1, book.authorId);
-            insertBookQuery.setInt(2, book.publisherId);
-            insertBookQuery.setString(3, book.title);
-            insertBookQuery.setInt(4, book.pageCount);
-            insertBookQuery.setDate(5, book.publishDate);
-            insertBookQuery.setString(6, book.dimension);
-            insertBookQuery.setString(7, book.translatorName);
-            insertBookQuery.setString(8, book.overview);
-            insertBookQuery.setBoolean(9, book.isHidden);
-            insertBookQuery.setInt(10, book.hiddenParentCount);
-            int rowsAffected = insertBookQuery.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Insertion failed, no rows affected.");
+                }
 
-            if (rowsAffected == 0) {
-                throw new SQLException("Insertion failed, no rows affected.");
-            }
+                ResultSet generatedKeys = insertBookQuery.getGeneratedKeys();
+                int bookId;
+                if (generatedKeys.next()) {
+                    bookId = generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Insertion failed, no ID obtained.");
+                }
+                try (PreparedStatement insertCategoryBookQuery = db.prepareStatement(
+                        "INSERT INTO BookCategory (bookId, categoryId) "
+                                + "VALUES (?, ?)")) {
+                    for (Category category : book.categories) {
+                        insertCategoryBookQuery.setInt(1, bookId);
+                        insertCategoryBookQuery.setInt(2, category.id);
+                        insertCategoryBookQuery.addBatch();
+                    }
 
-            ResultSet generatedKeys = insertBookQuery.getGeneratedKeys();
-            int bookId;
-            if (generatedKeys.next()) {
-                bookId = generatedKeys.getInt(1);
-            } else {
-                throw new SQLException("Insertion failed, no ID obtained.");
-            }
-
-            PreparedStatement insertCategoryBookQuery = db.prepareStatement(
-                    "INSERT INTO BookCategory (bookId, categoryId) "
-                    + "VALUES (?, ?)");
-
-            for (Category category : book.categories) {
-                insertCategoryBookQuery.setInt(1, bookId);
-                insertCategoryBookQuery.setInt(2, category.id);
-                insertCategoryBookQuery.addBatch();
-            }
-
-            int[] categoryRowsAffected = insertCategoryBookQuery.executeBatch();
-            for (int affectedRows : categoryRowsAffected) {
-                if (affectedRows == 0) {
-                    throw new SQLException("Insertion into CategoryBook table failed, no rows affected.");
+                    int[] categoryRowsAffected = insertCategoryBookQuery.executeBatch();
+                    for (int affectedRows : categoryRowsAffected) {
+                        if (affectedRows == 0) {
+                            throw new SQLException("Insertion into CategoryBook table failed, no rows affected.");
+                        }
+                    }
                 }
             }
-
             db.commit();
-
         } catch (SQLException e) {
             db.rollback();
             throw e;
@@ -477,22 +470,21 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         List<Book> result = new ArrayList<>();
         try {
             db.setAutoCommit(false);
-
-            var query = db.prepareStatement(
+            try (var query = db.prepareStatement(
                     "SELECT *\n"
-                    + "FROM Book B\n"
-                    + "ORDER BY B.publishDate DESC\n"
-                    + "LIMIT 20;");
-
-            try (ResultSet resultSet = query.executeQuery()) {
-                while (resultSet.next()) {
-                    result.add(populate(resultSet));
+                            + "FROM Book B\n"
+                            + "ORDER BY B.publishDate DESC\n"
+                            + "LIMIT 20;")) {
+                try (ResultSet resultSet = query.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(populate(resultSet));
+                    }
                 }
-            }
-            db.commit();
-            for (var book : result) {
-                book.author = authorRepository.selectById(book.authorId);
-                book.publisher = publisherRepository.selectById(book.publisherId);
+                db.commit();
+                for (var book : result) {
+                    book.author = authorRepository.selectById(book.authorId);
+                    book.publisher = publisherRepository.selectById(book.publisherId);
+                }
             }
             return result;
         } catch (Exception e) {
@@ -509,24 +501,23 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         List<Book> result = new ArrayList<>();
         try {
             db.setAutoCommit(false);
-
-            var query = db.prepareStatement(
+            try (var query = db.prepareStatement(
                     "SELECT B.*, SUM(OB.quantity) AS total_quantity_ordered\n"
-                    + "FROM Book B\n"
-                    + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
-                    + "GROUP BY B.id\n"
-                    + "ORDER BY total_quantity_ordered DESC\n"
-                    + "LIMIT 20;");
-
-            try (ResultSet resultSet = query.executeQuery()) {
-                while (resultSet.next()) {
-                    result.add(populate(resultSet));
+                            + "FROM Book B\n"
+                            + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
+                            + "GROUP BY B.id\n"
+                            + "ORDER BY total_quantity_ordered DESC\n"
+                            + "LIMIT 20;")) {
+                try (ResultSet resultSet = query.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(populate(resultSet));
+                    }
                 }
-            }
-            db.commit();
-            for (var book : result) {
-                book.author = authorRepository.selectById(book.authorId);
-                book.publisher = publisherRepository.selectById(book.publisherId);
+                db.commit();
+                for (var book : result) {
+                    book.author = authorRepository.selectById(book.authorId);
+                    book.publisher = publisherRepository.selectById(book.publisherId);
+                }
             }
             return result;
         } catch (Exception e) {
@@ -544,18 +535,18 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
 
-            var query = db.prepareStatement(
-                    "SELECT * FROM BOOK WHERE QUANTITY = 0");
-
-            try (ResultSet resultSet = query.executeQuery()) {
-                while (resultSet.next()) {
-                    result.add(populate(resultSet));
+            try (var query = db.prepareStatement(
+                    "SELECT * FROM BOOK WHERE QUANTITY = 0")) {
+                try (ResultSet resultSet = query.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(populate(resultSet));
+                    }
                 }
-            }
-            db.commit();
-            for (var book : result) {
-                book.author = authorRepository.selectById(book.authorId);
-                book.publisher = publisherRepository.selectById(book.publisherId);
+                db.commit();
+                for (var book : result) {
+                    book.author = authorRepository.selectById(book.authorId);
+                    book.publisher = publisherRepository.selectById(book.publisherId);
+                }
             }
             return result;
         } catch (Exception e) {

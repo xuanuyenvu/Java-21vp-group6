@@ -22,8 +22,7 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
                     null,
                     0, null,
                     "name", Sort.ASC,
-                    "name", "id", "email", "address", "isHidden"
-            );
+                    "name", "id", "email", "address", "isHidden");
 
             db.commit();
 
@@ -40,32 +39,30 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
         try {
             db.setAutoCommit(false);
 
-            var query = db.prepareStatement(
-                    "SELECT id FROM Publisher WHERE name = ?");
+            try (var query = db.prepareStatement(
+                    "SELECT id FROM Publisher WHERE name = ?")) {
+                query.setString(1, publisherName);
 
-            query.setString(1, publisherName);
+                var result = query.executeQuery();
 
-            var result = query.executeQuery();
+                int publisherId = -1;
 
-            int publisherId = -1;
+                if (result.next()) {
+                    publisherId = result.getInt("id");
+                } else {
+                    var insertQuery = db.prepareStatement(
+                            "INSERT INTO Publisher (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+                    insertQuery.setString(1, publisherName);
+                    insertQuery.executeUpdate();
 
-            if (result.next()) {
-                publisherId = result.getInt("id");
-            } else {
-                var insertQuery = db.prepareStatement(
-                        "INSERT INTO Publisher (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
-                insertQuery.setString(1, publisherName);
-                insertQuery.executeUpdate();
-
-                var generatedKeys = insertQuery.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    publisherId = generatedKeys.getInt(1);
+                    var generatedKeys = insertQuery.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        publisherId = generatedKeys.getInt(1);
+                    }
                 }
+                db.commit();
+                return publisherId;
             }
-
-            db.commit();
-
-            return publisherId;
         } catch (SQLException e) {
             db.rollback();
             throw e;

@@ -21,9 +21,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
                     null,
                     0, null,
                     "name", Sort.ASC,
-                    "name", "id", "overview", "isHidden"
-            );
-            
+                    "name", "id", "overview", "isHidden");
 
             db.commit();
 
@@ -35,37 +33,36 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
         }
     }
 
-
     @Override
     public int insertAuthorIfNotExists(String authorName) throws Exception {
         try {
             db.setAutoCommit(false);
 
-            var query = db.prepareStatement(
-                    "SELECT id FROM Author WHERE name = ?");
+            try (var query = db.prepareStatement(
+                    "SELECT id FROM Author WHERE name = ?")) {
+                query.setString(1, authorName);
 
-            query.setString(1, authorName);
+                var result = query.executeQuery();
 
-            var result = query.executeQuery();
+                int authorId = -1;
 
-            int authorId = -1;
+                if (result.next()) {
+                    authorId = result.getInt("id");
+                } else {
+                    try (var insertQuery = db.prepareStatement(
+                            "INSERT INTO Author (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+                        insertQuery.setString(1, authorName);
+                        insertQuery.executeUpdate();
 
-            if (result.next()) {
-                authorId = result.getInt("id");
-            } else {
-                var insertQuery = db.prepareStatement(
-                        "INSERT INTO Author (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
-                insertQuery.setString(1, authorName);
-                insertQuery.executeUpdate();
-
-                var generatedKeys = insertQuery.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    authorId = generatedKeys.getInt(1);
+                        var generatedKeys = insertQuery.getGeneratedKeys();
+                        if (generatedKeys.next()) {
+                            authorId = generatedKeys.getInt(1);
+                        }
+                    }
+                    db.commit();
                 }
+                return authorId;
             }
-            db.commit();
-
-            return authorId;
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -94,15 +91,15 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
         Author author = new Author();
         try {
             db.setAutoCommit(false);
-
-            var selectAuthorQuery = db.prepareStatement(
-                    "SELECT * FROM Author WHERE name = ?");
-            selectAuthorQuery.setString(1, authorName);
-            var result = selectAuthorQuery.executeQuery();
-            while (result.next()) {
-                author = populate(result);
+            try (var selectAuthorQuery = db.prepareStatement(
+                    "SELECT * FROM Author WHERE name = ?")) {
+                selectAuthorQuery.setString(1, authorName);
+                var result = selectAuthorQuery.executeQuery();
+                while (result.next()) {
+                    author = populate(result);
+                }
+                db.commit();
             }
-            db.commit();
             return author;
         } catch (Exception e) {
             db.rollback();
