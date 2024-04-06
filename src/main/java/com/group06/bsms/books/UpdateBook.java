@@ -521,7 +521,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         Double salePrice = "".equals(salePriceTextField.getText())
                 ? null
                 : Double.parseDouble(salePriceTextField.getText());
-
         try {
             if (book == null) {
                 throw new Exception("Book data is empty");
@@ -578,6 +577,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             updatedBook.publisher = publisher;
             bookService.updateBook(book, updatedBook);
 
+            setBookById(book.id);
             JOptionPane.showMessageDialog(null, "Book updated successfully.", "BSMS Information",
                     JOptionPane.INFORMATION_MESSAGE);
 
