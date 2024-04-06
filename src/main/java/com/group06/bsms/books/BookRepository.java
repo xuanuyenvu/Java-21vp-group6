@@ -178,7 +178,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             // Insert into Book table
             try (PreparedStatement insertBookQuery = db.prepareStatement(
                     "INSERT INTO Book (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, isHidden, hiddenParentCount, quantity, salePrice) "
-                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
                     Statement.RETURN_GENERATED_KEYS)) {
                 insertBookQuery.setInt(1, book.authorId);
                 insertBookQuery.setInt(2, book.publisherId);
@@ -205,7 +205,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 }
                 try (PreparedStatement insertCategoryBookQuery = db.prepareStatement(
                         "INSERT INTO BookCategory (bookId, categoryId) "
-                                + "VALUES (?, ?)")) {
+                        + "VALUES (?, ?)")) {
                     for (Category category : book.categories) {
                         insertCategoryBookQuery.setInt(1, bookId);
                         insertCategoryBookQuery.setInt(2, category.id);
@@ -219,8 +219,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                         }
                     }
                 }
+                db.commit();
             }
-            db.commit();
         } catch (SQLException e) {
             db.rollback();
             throw e;
@@ -472,9 +472,9 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
             try (var query = db.prepareStatement(
                     "SELECT *\n"
-                            + "FROM Book B\n"
-                            + "ORDER BY B.publishDate DESC\n"
-                            + "LIMIT 20;")) {
+                    + "FROM Book B\n"
+                    + "ORDER BY B.publishDate DESC\n"
+                    + "LIMIT 20;")) {
                 try (ResultSet resultSet = query.executeQuery()) {
                     while (resultSet.next()) {
                         result.add(populate(resultSet));
@@ -503,11 +503,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
             try (var query = db.prepareStatement(
                     "SELECT B.*, SUM(OB.quantity) AS total_quantity_ordered\n"
-                            + "FROM Book B\n"
-                            + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
-                            + "GROUP BY B.id\n"
-                            + "ORDER BY total_quantity_ordered DESC\n"
-                            + "LIMIT 20;")) {
+                    + "FROM Book B\n"
+                    + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
+                    + "GROUP BY B.id\n"
+                    + "ORDER BY total_quantity_ordered DESC\n"
+                    + "LIMIT 20;")) {
                 try (ResultSet resultSet = query.executeQuery()) {
                     while (resultSet.next()) {
                         result.add(populate(resultSet));

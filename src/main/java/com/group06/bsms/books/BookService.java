@@ -37,19 +37,14 @@ public class BookService {
                     || updatedBook.overview == null) {
                 throw new IllegalArgumentException("Please fill in all required information.");
             }
-            if (updatedBook.authorId == 0)
-                updatedBook.authorId = authorService.insertAuthorIfNotExists(updatedBook.author.name);
 
-            if (updatedBook.publisherId == 0)
-                updatedBook.publisherId = publisherService.insertPublisherIfNotExists(updatedBook.publisher.name);
-
-            if (book.maxImportPrice != null &&updatedBook.salePrice <= 1.1 * book.maxImportPrice) {
+            if (book.maxImportPrice != null && updatedBook.salePrice <= 1.1 * book.maxImportPrice) {
                 throw new Exception("Sale price must be bigger than 1.1 * import price");
             }
 
             bookDAO.updateBook(book, updatedBook);
         } catch (Exception e) {
-            
+
             throw e;
         }
 
@@ -58,8 +53,9 @@ public class BookService {
     public Book getBook(int id) throws Exception {
         try {
             Book book = bookDAO.selectBook(id);
-            if (book == null)
+            if (book == null) {
                 throw new Exception("Cannot find book: " + id);
+            }
             return book;
         } catch (Exception e) {
             throw e;
@@ -106,9 +102,9 @@ public class BookService {
                 || publishDate == null
                 || categoriesList.isEmpty()
                 || dimension == null
-                || (Integer)pages == 0
+                || (Integer) pages == 0
                 || overview == null) {
-           
+
             throw new IllegalArgumentException("Please fill in all required information.");
         }
         book.title = title;
@@ -124,7 +120,7 @@ public class BookService {
         int count = 0;
         if (author.id == 0) {
             book.authorId = authorService.insertAuthorIfNotExists(author.name);
-            book.author.id =book.authorId;
+            book.author.id = book.authorId;
         } else {
             book.authorId = author.id;
         }

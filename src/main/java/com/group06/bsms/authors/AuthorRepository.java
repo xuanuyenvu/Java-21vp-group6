@@ -59,8 +59,9 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
                             authorId = generatedKeys.getInt(1);
                         }
                     }
-                    db.commit();
                 }
+
+                db.commit();
                 return authorId;
             }
         } catch (Exception e) {
