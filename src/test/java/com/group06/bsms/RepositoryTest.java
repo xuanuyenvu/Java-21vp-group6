@@ -62,7 +62,7 @@ public class RepositoryTest {
         var book = new Book(
                 1, 1, "Sample Book 100", 5,
                 Date.valueOf(LocalDate.of(2020, 5, 3)),
-                "6x9", "Dank", "Boring", 1, 10, false, 3, 0
+                "6x9x1 cm", "Dank", "Boring", 1, 10.0, false, 3, 0.0
         );
         book.id = 100;
 
@@ -162,7 +162,6 @@ public class RepositoryTest {
 
         pattern = Pattern.compile(".*translator b.*", Pattern.CASE_INSENSITIVE);
         for (var result : results) {
-            System.out.println(result);
             assertTrue(pattern.matcher(result).matches());
         }
 
@@ -201,7 +200,7 @@ public class RepositoryTest {
         var book = new Book(
                 1, 1, "Sample Book 100", 5,
                 Date.valueOf(LocalDate.of(2020, 5, 3)),
-                "6x9", "Dank", "Boring", 1, 10, false, 3, 0
+                "6x9x1 cm", "Dank", "Boring", 1, 10.0, false, 3, 0.0
         );
         book.id = 100;
 
@@ -212,7 +211,6 @@ public class RepositoryTest {
                 "dimension", "translatorName", "overview", "quantity",
                 "salePrice", "hiddenParentCount", "maxImportPrice"
         );
-
         assertTrue(instance.existsById(100));
         assertEquals(((Book) instance.selectById(100)).pageCount, book.pageCount);
 

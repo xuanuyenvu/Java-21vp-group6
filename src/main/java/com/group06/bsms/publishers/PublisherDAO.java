@@ -9,6 +9,4 @@ public interface PublisherDAO {
     public int insertPublisherIfNotExists(String publisherName) throws Exception;
 
     public Publisher selectPublisher(int id) throws Exception;
-
-    public Publisher selectPublisherByName(String publisherName) throws Exception;
 }

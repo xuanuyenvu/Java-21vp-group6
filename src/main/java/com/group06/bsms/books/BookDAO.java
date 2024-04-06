@@ -10,11 +10,13 @@ public interface BookDAO {
 
     void insertBook(Book book) throws Exception;
 
+    Book selectBook(int id) throws Exception;
+
     void showBook(int id) throws Exception;
 
     void hideBook(int id) throws Exception;
 
-    void updateBook(Book book) throws Exception;
+    void updateBook(Book book, Book updatedBook) throws Exception;
 
     void updateBookHiddenParentCount(int id) throws Exception;
 
@@ -29,4 +31,9 @@ public interface BookDAO {
 
     void updateBookAttributeById(int bookId, String attr, Object value) throws Exception;
 
+    List<Book> getNewBooks() throws Exception;
+
+    List<Book> getHotBooks() throws Exception;
+
+    List<Book> getOutOfStockBooks() throws Exception;
 }

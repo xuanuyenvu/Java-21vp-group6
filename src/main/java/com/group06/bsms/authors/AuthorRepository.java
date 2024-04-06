@@ -23,6 +23,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
                     "name", Sort.ASC,
                     "name", "id", "overview", "isHidden"
             );
+            
 
             db.commit();
 
@@ -33,6 +34,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
             throw e;
         }
     }
+
 
     @Override
     public int insertAuthorIfNotExists(String authorName) throws Exception {

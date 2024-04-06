@@ -10,6 +10,10 @@ public class Publisher {
 
     public Publisher() {
     }
+    
+    public Publisher(String name){
+        this.name = name;
+    }
 
     public Publisher(int id, String name, String email, String address, boolean isHidden) {
         this.id = id;

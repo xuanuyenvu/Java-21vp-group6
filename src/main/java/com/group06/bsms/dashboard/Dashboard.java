@@ -1,17 +1,32 @@
 package com.group06.bsms.dashboard;
 
+import com.group06.bsms.books.AddBookInformation;
 import com.group06.bsms.books.BookCRUD;
+import com.group06.bsms.books.UpdateBook;
 import java.awt.CardLayout;
 import javax.swing.UIManager;
 
 public class Dashboard extends javax.swing.JPanel {
 
-    public Dashboard() {
-        initComponents();
+    public static final Dashboard dashboard = new Dashboard();
 
+    private Dashboard() {
+        initComponents();
         layout = new CardLayout();
         main.setLayout(layout);
-        main.add(new BookCRUD(), "bookCRUD");
+
+        var updateBook = new UpdateBook();
+        var bookCRUD = new BookCRUD(updateBook);
+        updateBook.setBookCRUD(bookCRUD);
+        var addBookInfo = new AddBookInformation(bookCRUD);
+
+        main.add(bookCRUD, "bookCRUD");
+        main.add(updateBook, "updateBook");
+        main.add(addBookInfo, "addBookInformation");
+    }
+
+    public void switchTab(String tab) {
+        layout.show(main, tab);
     }
 
     @SuppressWarnings("unchecked")

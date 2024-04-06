@@ -184,8 +184,6 @@ public class Repository<Entity extends Object> {
             }
             query.setInt(nParameter++, start);
 
-            System.out.println(query);
-
             var resultSet = query.executeQuery();
             var result = new ArrayList<Entity>();
 
@@ -343,6 +341,58 @@ public class Repository<Entity extends Object> {
             }
 
             return entity;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    public void update(Entity entity, String... attributes) throws Exception {
+        try {
+            db.setAutoCommit(false);
+
+            var updateQuery = new StringBuilder("UPDATE " + entityClass.getSimpleName() + " SET ");
+
+            for (var attribute : attributes) {
+                if (!isValidIdentifier(attribute)) {
+                    throw new Exception("Invalid update attribute");
+                }
+
+                updateQuery.append(attribute).append(" = ?, ");
+            }
+
+            updateQuery.setLength(updateQuery.length() - 2);
+            var query = db.prepareStatement(updateQuery.append(" WHERE id = ?").toString());
+
+            int index = 1;
+
+            for (String attribute : attributes) {
+                var field = entityClass.getDeclaredField(attribute);
+                field.setAccessible(true);
+                var value = field.get(entity);
+
+                if (value != null) {
+                    query.setObject(index++, value);
+                } else {
+                    query.setNull(index++, NULL);
+                }
+
+                field.setAccessible(false);
+            }
+
+            var idField = entityClass.getDeclaredField("id");
+            idField.setAccessible(true);
+            var idValue = idField.get(entity);
+            query.setObject(index, idValue);
+
+            var result = query.executeUpdate();
+
+            db.commit();
+
+            if (result == 0) {
+                throw new Exception("Entity not found");
+            }
+
         } catch (Exception e) {
             db.rollback();
             throw e;

@@ -16,7 +16,6 @@ public class AuthorService {
             List<Author> authors = authorDAO.selectAllAuthors();
             return authors;
         } catch (Exception e) {
-            System.out.println(e);
             return new ArrayList<>();
         }
     }

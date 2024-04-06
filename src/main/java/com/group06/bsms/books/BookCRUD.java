@@ -11,6 +11,7 @@ import com.group06.bsms.categories.Category;
 import com.group06.bsms.categories.CategoryRepository;
 import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.components.TableActionEvent;
+import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
@@ -21,6 +22,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -33,27 +35,21 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class BookCRUD extends javax.swing.JPanel {
 
-    private static BookCRUD instance;
     private final BookService bookService;
     private BookTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
+    private final UpdateBook updateBook;
 
     public void setCurrentOffset(int currentOffset) {
         this.currentOffset = currentOffset;
     }
-    private int limit = Main.ROW_LIMIT;
+    private final int limit = Main.ROW_LIMIT;
     private boolean isScrollAtBottom = false;
-
-    public static BookCRUD getInstance() {
-        if (instance == null) {
-            instance = new BookCRUD();
-        }
-        return instance;
-    }
 
     public BookCRUD() {
         this(
+                null,
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
@@ -63,8 +59,22 @@ public class BookCRUD extends javax.swing.JPanel {
         );
     }
 
-    public BookCRUD(BookService bookService) {
+    public BookCRUD(UpdateBook updateBook) {
+        this(
+                updateBook,
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))
+                )
+        );
+    }
+
+    public BookCRUD(UpdateBook updateBook, BookService bookService) {
+        this.updateBook = updateBook;
         this.bookService = bookService;
+        this.bookFilter = new BookFilter(this);
         this.model = new BookTableModel(bookService);
         initComponents();
 
@@ -76,15 +86,23 @@ public class BookCRUD extends javax.swing.JPanel {
         ));
 
         setUpTable();
-        loadBooksIntoTable();
+
+        this.loadBooksIntoTable();
     }
 
     public void loadBooksIntoTable() {
-        var searchString = searchBar.getText();
+        if (bookFilter == null) {
+            return;
+        }
 
-        String minPriceField = BookFilter.getInstance().getMinPriceField().getText();
+        var searchString
+                = searchBar == null || searchBar.getText() == null
+                ? ""
+                : searchBar.getText();
+
+        String minPriceField = bookFilter.getMinPriceField().getText();
         Double minPrice = minPriceField.isEmpty() ? Double.MIN_VALUE : Double.valueOf(minPriceField);
-        String maxPriceField = BookFilter.getInstance().getMaxPriceField().getText();
+        String maxPriceField = bookFilter.getMaxPriceField().getText();
         Double maxPrice = maxPriceField.isEmpty() ? Double.MAX_VALUE : Double.valueOf(maxPriceField);
 
         var searchChoiceKey = searchComboBox.getSelectedItem().toString();
@@ -93,19 +111,42 @@ public class BookCRUD extends javax.swing.JPanel {
         searchChoiceMap.put("by Author", "Author.name");
         searchChoiceMap.put("by Publisher", "Publisher.name");
         var searchChoiceValue = searchChoiceMap.get(searchChoiceKey);
-        Author author = (Author) BookFilter.getInstance().getAuthorAutoComp1().getSelectedObject();
-        Publisher publisher = (Publisher) BookFilter.getInstance().getPublisherAutoComp1().getSelectedObject();
-        ArrayList<Category> categoriesList = BookFilter.getInstance().getCategorySelectionPanel1().getListSelected();
+        Author author = (Author) bookFilter.getAuthorAutoComp1().getSelectedObject();
+        Publisher publisher = (Publisher) bookFilter.getPublisherAutoComp1().getSelectedObject();
+        ArrayList<Category> categoriesList = bookFilter.getCategorySelectionPanel1().getListSelected();
+        String filterTopBooks = (String) bookFilter.getFilterComboBox().getSelectedItem();
 
         try {
-            var books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders,
-                    searchString, searchChoiceValue, author, publisher, minPrice, maxPrice, categoriesList);
-            if (currentOffset > 0) {
-                model.loadNewBooks(books);
-            } else {
-                model.reloadAllBooks(books);
-            }
-            currentOffset += limit;
+            int currentRowCount = 0;
+
+            do {
+                List<Book> books = null;
+                if (filterTopBooks.equals("None")) {
+                    books = bookService.searchSortFilterBook(currentOffset, limit, columnSortOrders,
+                            searchString, searchChoiceValue, author, publisher, minPrice, maxPrice, categoriesList);
+                } else if (filterTopBooks.equals("Top 20 Newest Books")) {
+                    books = bookService.getNewBooks();
+                } else if (filterTopBooks.equals("Top 20 Hottest Books")) {
+                    books = bookService.getHotBooks();
+                } else if (filterTopBooks.equals("Out-of-stock Books")) {
+                    books = bookService.getOutOfStockBooks();
+                }
+
+                if (currentOffset > 0) {
+                    model.loadNewBooks(books);
+                } else {
+                    model.reloadAllBooks(books);
+                }
+
+                currentOffset += limit;
+
+                if (currentRowCount == model.getRowCount()) {
+                    break;
+                }
+
+                currentRowCount = model.getRowCount();
+            } while (currentRowCount < 2 * limit);
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     this,
@@ -158,7 +199,7 @@ public class BookCRUD extends javax.swing.JPanel {
         }
     }
 
-    private void setUpTable() {
+    public void setUpTable() {
         table.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender());
 
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
@@ -178,15 +219,16 @@ public class BookCRUD extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int columnIndex = table.columnAtPoint(e.getPoint());
                 toggleSortOrder(columnIndex);
-                currentOffset = 0;
-                loadBooksIntoTable();
+                reloadBooks();
                 table.getTableHeader().repaint();
             }
         });
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
-                System.out.println("Edit row " + row);
+                int bookId = model.getBook(row).id;
+                updateBook.setBookById(bookId);
+                Dashboard.dashboard.switchTab("updateBook");
             }
 
             @Override
@@ -245,9 +287,11 @@ public class BookCRUD extends javax.swing.JPanel {
         searchBar = new javax.swing.JTextField();
         createBtn = new javax.swing.JButton();
         filterBtn = new javax.swing.JButton();
+        searchComboBox = new javax.swing.JComboBox<>();
+        main = new javax.swing.JPanel();
+        bookFilter = new BookFilter(this);
         scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        searchComboBox = new javax.swing.JComboBox<>();
 
         setAutoscrolls(true);
 
@@ -255,21 +299,26 @@ public class BookCRUD extends javax.swing.JPanel {
         bookLabel.setText("BOOKS");
 
         searchBar.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        searchBar.setFocusAccelerator('s');
         searchBar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchBarActionPerformed(evt);
             }
         });
 
+        createBtn.setBackground(UIManager.getColor("accentColor"));
         createBtn.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        createBtn.setForeground(new java.awt.Color(255, 255, 255));
         createBtn.setIcon(SVGHelper.createSVGIconWithFilter(
             "icons/add.svg",
-            Color.black, Color.black,
+            Color.black, Color.white, Color.white,
             14, 14
         ));
+        createBtn.setMnemonic(java.awt.event.KeyEvent.VK_C);
         createBtn.setText("Create");
         createBtn.setToolTipText("");
         createBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        createBtn.setDisplayedMnemonicIndex(0);
         createBtn.setIconTextGap(2);
         createBtn.setMargin(new java.awt.Insets(10, 10, 10, 10));
         createBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -283,8 +332,10 @@ public class BookCRUD extends javax.swing.JPanel {
             "icons/filter.svg",
             Color.black, Color.black,
             14, 14));
+    filterBtn.setMnemonic(java.awt.event.KeyEvent.VK_F);
     filterBtn.setText("Filter");
     filterBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    filterBtn.setDisplayedMnemonicIndex(0);
     filterBtn.setIconTextGap(2);
     filterBtn.setMargin(new java.awt.Insets(10, 10, 10, 10));
     filterBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -293,6 +344,18 @@ public class BookCRUD extends javax.swing.JPanel {
         }
     });
 
+    searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+    searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Title", "by Author", "by Publisher" }));
+    searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
+    searchComboBox.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            searchComboBoxActionPerformed(evt);
+        }
+    });
+
+    main.setLayout(new java.awt.BorderLayout());
+    main.add(bookFilter, java.awt.BorderLayout.EAST);
+
     table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
     table.setModel(this.model);
     table.setToolTipText("");
@@ -300,14 +363,7 @@ public class BookCRUD extends javax.swing.JPanel {
     table.getTableHeader().setReorderingAllowed(false);
     scrollBar.setViewportView(table);
 
-    searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-    searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Title", "by Author", "by Publisher" }));
-    searchComboBox.setPreferredSize(new java.awt.Dimension(130, 28));
-    searchComboBox.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            searchComboBoxActionPerformed(evt);
-        }
-    });
+    main.add(scrollBar, java.awt.BorderLayout.CENTER);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
@@ -321,14 +377,14 @@ public class BookCRUD extends javax.swing.JPanel {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
+                        .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(20, 20, 20)
                             .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(20, 20, 20)
                             .addComponent(createBtn)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
                             .addComponent(filterBtn)))
                     .addGap(50, 50, 50))))
     );
@@ -344,32 +400,47 @@ public class BookCRUD extends javax.swing.JPanel {
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(18, 18, 18)
-            .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
-            .addGap(30, 30, 30))
+            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 1299, Short.MAX_VALUE)
+            .addGap(50, 50, 50))
     );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
+    public void reloadBooks() {
+        reloadBooks(false);
+    }
+
+    public void reloadBooks(boolean reloadFilter) {
         currentOffset = 0;
         loadBooksIntoTable();
 
+        if (reloadFilter) {
+            bookFilter.loadAuthorInto();
+            bookFilter.loadCategoryInto();
+            bookFilter.loadPublisherInto();
+        }
+    }
+
+    private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
+        reloadBooks();
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
-
+        Dashboard.dashboard.switchTab("addBookInformation");
     }//GEN-LAST:event_createBtnActionPerformed
 
     private void filterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBtnActionPerformed
-
+        bookFilter.setVisible(!bookFilter.isVisible());
     }//GEN-LAST:event_filterBtnActionPerformed
 
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
     }//GEN-LAST:event_searchComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.group06.bsms.books.BookFilter bookFilter;
     private javax.swing.JLabel bookLabel;
     private javax.swing.JButton createBtn;
     private javax.swing.JButton filterBtn;
+    private javax.swing.JPanel main;
     private javax.swing.JScrollPane scrollBar;
     private javax.swing.JTextField searchBar;
     private javax.swing.JComboBox<String> searchComboBox;

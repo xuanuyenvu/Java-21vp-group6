@@ -27,7 +27,7 @@ public class Book {
     public Publisher publisher;
     public List<Category> categories;
 
-    public double maxImportPrice;
+    public Double maxImportPrice;
 
     public Book() {
     }
@@ -35,8 +35,8 @@ public class Book {
     public Book(
             int authorId, int publisherId, String title, int pageCount,
             Date publishDate, String dimension, String translatorName,
-            String overview, int quantity, double salePrice,
-            boolean isHidden, int hiddenParentCount, int maxImportPrice) {
+            String overview, int quantity, Double salePrice,
+            boolean isHidden, int hiddenParentCount, Double maxImportPrice) {
         this.authorId = authorId;
         this.publisherId = publisherId;
         this.title = title;
@@ -50,7 +50,7 @@ public class Book {
         this.hiddenParentCount = hiddenParentCount;
         this.isHidden = isHidden;
         this.maxImportPrice = maxImportPrice;
-        categories = new ArrayList<Category>();
+        categories = new ArrayList<>();
     }
 
     @Override
@@ -59,6 +59,6 @@ public class Book {
                 + ", pageCount=" + pageCount + ", publishDate=" + publishDate + ", dimension=" + dimension
                 + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity
                 + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount
-                + ", author=" + author + ", publisher=" + publisher + ", maxImportPrice=" + maxImportPrice + '}';
+                + ", author=" + author + ", publisher=" + publisher + ", maxImportPrice=" + maxImportPrice + ", category= " + categories + "}";
     }
 }

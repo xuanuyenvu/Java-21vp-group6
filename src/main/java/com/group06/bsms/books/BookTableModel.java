@@ -13,7 +13,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
-import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -121,10 +120,11 @@ public class BookTableModel extends AbstractTableModel {
         if (col == 5) {
             return;
         }
+
         if (!editable) {
             editable = true;
-            return;
         }
+
         Book book = books.get(row);
         switch (col) {
             case 0:
@@ -160,6 +160,15 @@ public class BookTableModel extends AbstractTableModel {
             case 4:
                 if ((Double) val != book.salePrice) {
                     try {
+                        if (book.maxImportPrice == null) {
+                            JOptionPane.showMessageDialog(
+                                    app,
+                                    "Cannot edit because import price is null",
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                            return;
+                        }
                         bookService.updateBookAttributeById(book.id, "salePrice", (Double) val);
                         book.salePrice = (Double) val;
                     } catch (Exception e) {
@@ -216,7 +225,7 @@ public class BookTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return (columnIndex == 0 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5);
+        return (columnIndex == 0 || columnIndex == 4 || columnIndex == 5);
     }
 
     public void reloadAllBooks(List<Book> newBooks) {
@@ -244,7 +253,7 @@ public class BookTableModel extends AbstractTableModel {
 
     void addRow(Book book) {
         books.add(book);
-        SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
+//        SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
     }
 
     void setHiddenState(int row) {

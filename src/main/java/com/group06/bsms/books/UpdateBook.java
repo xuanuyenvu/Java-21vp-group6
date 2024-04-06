@@ -1,48 +1,188 @@
 package com.group06.bsms.books;
 
-import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.DB;
+import com.group06.bsms.components.*;
+import com.group06.bsms.authors.*;
+import com.group06.bsms.categories.*;
+import com.group06.bsms.dashboard.Dashboard;
+import com.group06.bsms.publishers.*;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import java.util.*;
+import javax.swing.*;
 
-public class UpdateBook extends javax.swing.JPanel {
+public class UpdateBook extends javax.swing.JPanel implements CategorySelectionListener {
 
-    private final ArrayList<String> authors = new ArrayList<>();
-    private final ArrayList<String> publishers = new ArrayList<>();
+    private BookCRUD bookCRUD;
+    private final BookService bookService;
+    private final AuthorService authorService;
+    private final PublisherService publisherService;
+    private final CategoryService categoryService;
+    private Book book;
+
+    public void setBookCRUD(BookCRUD bookCRUD) {
+        this.bookCRUD = bookCRUD;
+    }
 
     public UpdateBook() {
+        this(
+                null,
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))),
+                new AuthorService(new AuthorRepository(DB.db())),
+                new PublisherService(new PublisherRepository(DB.db())),
+                new CategoryService(new CategoryRepository(DB.db())));
+    }
+
+    public UpdateBook(BookCRUD bookCRUD) {
+        this(
+                bookCRUD,
+                new BookService(
+                        new BookRepository(DB.db()),
+                        new AuthorService(new AuthorRepository(DB.db())),
+                        new PublisherService(new PublisherRepository(DB.db())),
+                        new CategoryService(new CategoryRepository(DB.db()))),
+                new AuthorService(new AuthorRepository(DB.db())),
+                new PublisherService(new PublisherRepository(DB.db())),
+                new CategoryService(new CategoryRepository(DB.db())));
+    }
+
+    public UpdateBook(
+            BookCRUD bookCRUD,
+            BookService bookService,
+            AuthorService authorService, PublisherService publisherService,
+            CategoryService categoryService) {
+        this.bookCRUD = bookCRUD;
+        this.bookService = bookService;
+        this.authorService = authorService;
+        this.publisherService = publisherService;
+        this.categoryService = categoryService;
         initComponents();
-        backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
-        backButton.setToolTipText("Back to previous page");
 
-        authors.add("J.K. Rowling");
-        authors.add("Stephen King");
-        authors.add("Ernest Hemingway");
-        authors.add("Harper Lee");
-        publishers.add("Toni Morrison");
-        publishers.add("F. Scott Fitzgerald");
-        publishers.add("Maya Angelou");
-        authorAutoComp.updateList(authors);
-        publisherAutoComp.updateList(publishers);
+        loadAuthorInto();
+        loadPublisherInto();
+        categorySelectionPanel.setCategorySelectionListener(this);
 
-        titleLabel.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Book Title");
-        scrollPane.putClientProperty(FlatClientProperties.STYLE,
-                "arc: 9;"
-                + "thumbArc: 3;"
-                + "thumbInsets: 2,2,2,2;");
+        publishDatePicker.setDate(new Date());
+        var sm = new SimpleDateFormat("dd/MM/yyyy");
+        publishDatePicker.setText(sm.format(publishDatePicker.getDate()));
+
+        titleField.putClientProperty("JTextField.placeholderText", "Book title");
+        dimensionField.putClientProperty("JTextField.placeholderText", "LxWxH cm");
+        translatorField.putClientProperty("JTextField.placeholderText", "Translator name");
+
+        CustomLabelInForm.setColoredText(titleLabel);
+        CustomLabelInForm.setColoredText(authorLabel);
+        CustomLabelInForm.setColoredText(publisherLabel);
+        CustomLabelInForm.setColoredText(publishDateLabel);
+        CustomLabelInForm.setColoredText(categoryLabel);
+        CustomLabelInForm.setColoredText(dimensionLabel);
+        CustomLabelInForm.setColoredText(pagesLabel);
+        CustomLabelInForm.setColoredText(overviewLabel);
+
+        titleField.requestFocus();
+    }
+
+    public void setBookById(int bookId) {
+        try {
+            book = bookService.getBook(bookId);
+            loadBookInto();
+        } catch (Exception e) {
+            book = null;
+
+            JOptionPane.showMessageDialog(null,
+                    "An error occurred while getting book information: " + e.getMessage(),
+                    "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    @Override
+    public void onCategoriesChanged(int numOfCategories) {
+        categorySelectionPanel.changeSize(1.1f);
+
+        jScrollForm.revalidate();
+        jScrollForm.repaint();
+    }
+
+    private void loadBookInto() {
+        try {
+            titleField.setText(book.title);
+            dimensionField.setText(book.dimension);
+            pagesSpinner.setValue(book.pageCount);
+            translatorField.setText(book.translatorName);
+            overviewTextArea.setText(book.overview);
+
+            if (book.maxImportPrice != null) {
+                importPriceTextField.setText(Double.toString(book.maxImportPrice));
+            } else {
+                salePriceTextField.setEnabled(false);
+            }
+
+            if (book.salePrice != null) {
+                salePriceTextField.setText(Double.toString(book.salePrice));
+            } else {
+                salePriceTextField.setText("");
+            }
+
+            authorAutoComp.setSelectedObject(book.author);
+
+            publisherAutoComp.setSelectedObject(book.publisher);
+            publishDatePicker.setDate(book.publishDate);
+            var categories = categoryService.selectAllCategories();
+
+            categorySelectionPanel.updateList((ArrayList<Category>) categories,
+                    (ArrayList<Category>) book.categories);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                    "An error occurred while getting book information: " + e.getMessage(),
+                    "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadAuthorInto() {
+        try {
+            var authors = new ArrayList<Author>(authorService.selectAllAuthors());
+            authorAutoComp.updateList(authors);
+
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(),
+                    "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Throwable e) {
+            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadPublisherInto() {
+        try {
+            var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
+            publisherAutoComp.updateList(publishers);
+
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(null,
+                    "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Throwable e) {
+            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jFormattedTextField1 = new javax.swing.JFormattedTextField();
+        jPanel1 = new javax.swing.JPanel();
         backButton = new javax.swing.JButton();
         pageName = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jSeparator2 = new javax.swing.JSeparator();
+        jScrollForm = new javax.swing.JScrollPane();
         groupFieldPanel = new javax.swing.JPanel();
         titleLabel = new javax.swing.JLabel();
         titleField = new javax.swing.JTextField();
@@ -50,7 +190,6 @@ public class UpdateBook extends javax.swing.JPanel {
         publisherLabel = new javax.swing.JLabel();
         publishDateLabel = new javax.swing.JLabel();
         categoryLabel = new javax.swing.JLabel();
-        categorySelectionPanel = new com.group06.bsms.components.CategorySelectionPanel();
         dimensionLabel = new javax.swing.JLabel();
         dimensionField = new javax.swing.JTextField();
         pagesLabel = new javax.swing.JLabel();
@@ -59,23 +198,34 @@ public class UpdateBook extends javax.swing.JPanel {
         overviewLabel = new javax.swing.JLabel();
         scrollPane = new javax.swing.JScrollPane();
         overviewTextArea = new javax.swing.JTextArea();
-        cancelButton = new javax.swing.JButton();
-        addButton = new javax.swing.JButton();
+        addBookButton = new javax.swing.JButton();
         publisherAutoComp = new com.group06.bsms.components.AutocompletePanel();
         authorAutoComp = new com.group06.bsms.components.AutocompletePanel();
         pagesSpinner = new javax.swing.JSpinner();
-        publishDatePicker = new org.jdesktop.swingx.JXDatePicker();
-        importPriceLabel = new javax.swing.JLabel();
-        importPriceField = new javax.swing.JTextField();
-        salePriceLabel = new javax.swing.JLabel();
-        salePriceField = new javax.swing.JFormattedTextField();
+        publishDatePicker = new com.group06.bsms.components.DatePickerPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        categorySelectionPanel = new com.group06.bsms.components.CategorySelectionPanel();
+        dimensionLabel1 = new javax.swing.JLabel();
+        importPriceTextField = new javax.swing.JTextField();
+        salePriceTextField = new javax.swing.JTextField();
+        dimensionLabel2 = new javax.swing.JLabel();
 
-        jFormattedTextField1.setText("jFormattedTextField1");
+        setLayout(new java.awt.BorderLayout());
 
         backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        backButton.setForeground(UIManager.getColor("mutedColor"));
+        backButton.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/arrow-back.svg", 
+            Color.white, Color.white,
+            18, 18
+        ));
+        backButton.setMnemonic(java.awt.event.KeyEvent.VK_BACK_SPACE);
+        backButton.setToolTipText("Back to previous page");
         backButton.setBorderPainted(false);
         backButton.setContentAreaFilled(false);
         backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        backButton.setFocusable(false);
+        backButton.setMargin(new java.awt.Insets(4, 14, 3, 14));
         backButton.setPreferredSize(new java.awt.Dimension(33, 33));
         backButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -85,214 +235,222 @@ public class UpdateBook extends javax.swing.JPanel {
                 backButtonMouseExited(evt);
             }
         });
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
+            }
+        });
 
         pageName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         pageName.setText("Update book");
 
-        jScrollPane1.setBorder(null);
-        jScrollPane1.setVerifyInputWhenFocusTarget(false);
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pageName)
+                .addContainerGap(454, Short.MAX_VALUE))
+            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(pageName))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+
+        add(jPanel1, java.awt.BorderLayout.PAGE_START);
+
+        jScrollForm.setBorder(null);
+        jScrollForm.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollForm.setVerifyInputWhenFocusTarget(false);
 
         groupFieldPanel.setBorder(new org.jdesktop.swingx.border.IconBorder());
         groupFieldPanel.setMinimumSize(new java.awt.Dimension(440, 31));
 
+        titleLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         titleLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        titleLabel.setForeground(new java.awt.Color(102, 102, 102));
-        titleLabel.setText("Title *");
+        titleLabel.setLabelFor(titleField);
+        titleLabel.setText("Title");
+        titleLabel.setDisplayedMnemonicIndex(0);
 
         titleField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        titleField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         titleField.setMinimumSize(new java.awt.Dimension(440, 31));
         titleField.setPreferredSize(new java.awt.Dimension(440, 31));
 
         authorLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        authorLabel.setForeground(new java.awt.Color(102, 102, 102));
-        authorLabel.setText("Author *");
+        authorLabel.setLabelFor(authorAutoComp);
+        authorLabel.setText("Author");
 
         publisherLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        publisherLabel.setForeground(new java.awt.Color(102, 102, 102));
-        publisherLabel.setText("Publisher *");
+        publisherLabel.setLabelFor(publisherAutoComp);
+        publisherLabel.setText("Publisher");
 
         publishDateLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        publishDateLabel.setForeground(new java.awt.Color(102, 102, 102));
-        publishDateLabel.setText("Publish Date *");
+        publishDateLabel.setLabelFor(publishDatePicker);
+        publishDateLabel.setText("Publish Date");
 
         categoryLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        categoryLabel.setForeground(new java.awt.Color(102, 102, 102));
-        categoryLabel.setText("Category *");
-
-        categorySelectionPanel.setAutoscrolls(true);
-        categorySelectionPanel.setMaximumSize(new java.awt.Dimension(449, 32767));
-        categorySelectionPanel.setMinimumSize(new java.awt.Dimension(449, 45));
-        categorySelectionPanel.setPreferredSize(new java.awt.Dimension(449, 45));
+        categoryLabel.setLabelFor(categorySelectionPanel);
+        categoryLabel.setText("Category");
 
         dimensionLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        dimensionLabel.setForeground(new java.awt.Color(102, 102, 102));
-        dimensionLabel.setText("Dimension *");
+        dimensionLabel.setLabelFor(dimensionField);
+        dimensionLabel.setText("Dimension");
 
         dimensionField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        dimensionField.setMinimumSize(new java.awt.Dimension(140, 31));
-        dimensionField.setPreferredSize(new java.awt.Dimension(140, 31));
+        dimensionField.setMinimumSize(new java.awt.Dimension(215, 31));
+        dimensionField.setPreferredSize(new java.awt.Dimension(215, 31));
 
         pagesLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        pagesLabel.setForeground(new java.awt.Color(102, 102, 102));
-        pagesLabel.setText("Pages *");
+        pagesLabel.setLabelFor(pagesSpinner);
+        pagesLabel.setText("Pages");
 
         translatorField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        translatorField.setMinimumSize(new java.awt.Dimension(180, 31));
-        translatorField.setPreferredSize(new java.awt.Dimension(180, 31));
+        translatorField.setMinimumSize(new java.awt.Dimension(440, 31));
+        translatorField.setPreferredSize(new java.awt.Dimension(440, 31));
 
         translatorLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        translatorLabel.setForeground(new java.awt.Color(102, 102, 102));
+        translatorLabel.setLabelFor(translatorField);
         translatorLabel.setText("Translator");
 
         overviewLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        overviewLabel.setForeground(new java.awt.Color(102, 102, 102));
-        overviewLabel.setText("Overview *");
+        overviewLabel.setLabelFor(overviewTextArea);
+        overviewLabel.setText("Overview");
 
+        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setAutoscrolls(true);
 
         overviewTextArea.setColumns(20);
         overviewTextArea.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         overviewTextArea.setLineWrap(true);
-        overviewTextArea.setRows(5);
         overviewTextArea.setDragEnabled(true);
-        overviewTextArea.setMinimumSize(new java.awt.Dimension(440, 20));
+        overviewTextArea.setMaximumSize(new java.awt.Dimension(440, 2147483647));
+        overviewTextArea.setMinimumSize(new java.awt.Dimension(0, 0));
         scrollPane.setViewportView(overviewTextArea);
 
-        cancelButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        cancelButton.setForeground(new java.awt.Color(177, 177, 177));
-        cancelButton.setText("Cancel");
-        cancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        cancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                cancelButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                cancelButtonMouseExited(evt);
-            }
-        });
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+        addBookButton.setBackground(new java.awt.Color(65, 105, 225));
+        addBookButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        addBookButton.setForeground(new java.awt.Color(255, 255, 255));
+        addBookButton.setMnemonic(java.awt.event.KeyEvent.VK_U);
+        addBookButton.setText("Update");
+        addBookButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        addBookButton.setDisplayedMnemonicIndex(0);
+        addBookButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
+                addBookButtonActionPerformed(evt);
             }
         });
 
-        addButton.setBackground(new java.awt.Color(65, 105, 225));
-        addButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        addButton.setForeground(new java.awt.Color(255, 255, 255));
-        addButton.setText("Add");
-        addButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        addButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                addButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                addButtonMouseExited(evt);
-            }
-        });
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
-
+        publisherAutoComp.setPlaceHolderText("Publisher name");
         publisherAutoComp.setPreferredSize(new java.awt.Dimension(215, 31));
+        publisherAutoComp.setRequestFocusEnabled(true);
 
         authorAutoComp.setMinimumSize(new java.awt.Dimension(440, 31));
+        authorAutoComp.setPlaceHolderText("Author name");
         authorAutoComp.setPreferredSize(new java.awt.Dimension(440, 31));
+        authorAutoComp.setRequestFocusEnabled(true);
 
         pagesSpinner.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        pagesSpinner.setMinimumSize(new java.awt.Dimension(140, 31));
+        pagesSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        pagesSpinner.setMinimumSize(new java.awt.Dimension(215, 31));
         pagesSpinner.setName(""); // NOI18N
-        pagesSpinner.setPreferredSize(new java.awt.Dimension(140, 31));
+        pagesSpinner.setPreferredSize(new java.awt.Dimension(215, 31));
 
-        publishDatePicker.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         publishDatePicker.setMaximumSize(new java.awt.Dimension(215, 31));
-        publishDatePicker.setMinimumSize(new java.awt.Dimension(215, 31));
+        publishDatePicker.setPlaceholder("dd/mm/yyyy");
         publishDatePicker.setPreferredSize(new java.awt.Dimension(215, 31));
 
-        importPriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        importPriceLabel.setForeground(new java.awt.Color(102, 102, 102));
-        importPriceLabel.setText("Import Price *");
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        importPriceField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        importPriceField.setText("Hello world");
-        importPriceField.setEnabled(false);
-        importPriceField.setMinimumSize(new java.awt.Dimension(140, 31));
-        importPriceField.setPreferredSize(new java.awt.Dimension(140, 31));
+        categorySelectionPanel.setAutoscrolls(true);
+        categorySelectionPanel.setMaximumSize(new java.awt.Dimension(440, 40));
+        categorySelectionPanel.setMinimumSize(new java.awt.Dimension(440, 40));
+        categorySelectionPanel.setPreferredSize(new java.awt.Dimension(440, 40));
+        jScrollPane1.setViewportView(categorySelectionPanel);
 
-        salePriceLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        salePriceLabel.setForeground(new java.awt.Color(102, 102, 102));
-        salePriceLabel.setText("Sale Price *");
+        dimensionLabel1.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        dimensionLabel1.setLabelFor(importPriceTextField);
+        dimensionLabel1.setText("Import price");
 
-        salePriceField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        salePriceField.setMinimumSize(new java.awt.Dimension(140, 31));
-        salePriceField.setPreferredSize(new java.awt.Dimension(140, 31));
-        salePriceField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                salePriceFieldKeyTyped(evt);
+        importPriceTextField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        importPriceTextField.setEnabled(false);
+        importPriceTextField.setMinimumSize(new java.awt.Dimension(215, 31));
+        importPriceTextField.setPreferredSize(new java.awt.Dimension(215, 31));
+
+        salePriceTextField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        salePriceTextField.setMinimumSize(new java.awt.Dimension(215, 31));
+        salePriceTextField.setPreferredSize(new java.awt.Dimension(215, 31));
+        salePriceTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                salePriceTextFieldKeyPressed(evt);
             }
         });
+
+        dimensionLabel2.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        dimensionLabel2.setLabelFor(salePriceTextField);
+        dimensionLabel2.setText("Sale price");
 
         javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
         groupFieldPanel.setLayout(groupFieldPanelLayout);
         groupFieldPanelLayout.setHorizontalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addContainerGap(70, Short.MAX_VALUE)
+                .addContainerGap(91, Short.MAX_VALUE)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(titleField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(authorAutoComp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(categoryLabel)
-                                .addComponent(authorLabel)
-                                .addComponent(titleLabel)
-                                .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(publisherLabel)
-                                        .addComponent(publisherAutoComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                            .addGap(10, 10, 10)
-                                            .addComponent(publishDateLabel))
-                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(publishDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                            .addComponent(categorySelectionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(70, Short.MAX_VALUE))
-                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(translatorLabel)
+                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(addBookButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
                             .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(overviewLabel)
-                                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(dimensionLabel))
-                                        .addGap(10, 10, 10)
-                                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(pagesLabel)
-                                            .addComponent(pagesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(10, 10, 10)
-                                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(translatorLabel)
-                                            .addComponent(translatorField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(scrollPane))
-                                .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(importPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(importPriceLabel))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(salePriceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(salePriceLabel)))))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                                .addComponent(dimensionLabel)
+                                .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(10, 10, 10)
+                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(pagesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(pagesLabel)))
+                        .addComponent(overviewLabel)
+                        .addComponent(authorLabel)
+                        .addComponent(categoryLabel)
+                        .addComponent(titleLabel))
+                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(titleField, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, groupFieldPanelLayout.createSequentialGroup()
+                                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(publisherLabel)
+                                    .addComponent(publisherAutoComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(10, 10, 10)
+                                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(publishDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(publishDateLabel)))
+                            .addComponent(authorAutoComp, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(translatorField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dimensionLabel1)
+                            .addComponent(importPriceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dimensionLabel2)
+                            .addComponent(salePriceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(91, Short.MAX_VALUE))
         );
         groupFieldPanelLayout.setVerticalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -301,195 +459,190 @@ public class UpdateBook extends javax.swing.JPanel {
                 .addComponent(titleLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(titleField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(14, 14, 14)
                 .addComponent(authorLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(authorAutoComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(14, 14, 14)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(publisherLabel)
                     .addComponent(publishDateLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(publisherAutoComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(publishDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(publishDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(publisherAutoComp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
                 .addComponent(categoryLabel)
-                .addGap(0, 0, 0)
-                .addComponent(categorySelectionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(pagesLabel)
-                    .addComponent(translatorLabel)
-                    .addComponent(dimensionLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(translatorField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pagesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                .addGap(14, 14, 14)
+                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dimensionLabel)
+                    .addComponent(pagesLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dimensionField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pagesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addComponent(translatorLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(translatorField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
                 .addComponent(overviewLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                        .addGap(14, 14, 14)
+                        .addComponent(dimensionLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(importPriceLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(importPriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(importPriceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addComponent(salePriceLabel)
+                        .addComponent(dimensionLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(salePriceField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(35, 35, 35)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(465, Short.MAX_VALUE))
+                        .addComponent(salePriceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(14, 14, 14)
+                .addComponent(addBookButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(58, 58, 58))
         );
 
-        jScrollPane1.setViewportView(groupFieldPanel);
+        jScrollForm.setViewportView(groupFieldPanel);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(pageName)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-            .addComponent(jScrollPane1)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(pageName, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addComponent(jScrollPane1))
-        );
+        add(jScrollForm, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        titleField.setText("");
-        authorAutoComp.setEmptyText();
-        publisherAutoComp.setEmptyText();
-        categorySelectionPanel.setEmptyList();
-        dimensionField.setText("");
-        pagesSpinner.setValue(0);
-        translatorField.setText("");
-        overviewTextArea.setText("");
-        importPriceField.setText("");
-        salePriceField.setText("");
-
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+    private void addBookButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_addBookButtonActionPerformed
         String title = titleField.getText();
-        String author = authorAutoComp.getText();
-        String publisher = publisherAutoComp.getText();
-        ArrayList<String> categoriesList = categorySelectionPanel.getListSelected();
+        ArrayList<Category> categoriesList = categorySelectionPanel.getListSelected();
         String dimension = dimensionField.getText();
         Object pages = pagesSpinner.getValue();
         String translator = translatorField.getText();
         String overview = overviewTextArea.getText();
-        String importPrice = importPriceField.getText();
-        String salePrice = salePriceField.getText();
+        Double salePrice = "".equals(salePriceTextField.getText())
+                ? null
+                : Double.parseDouble(salePriceTextField.getText());
 
-        if (!title.isEmpty() && !author.isEmpty()
-                && !publisher.isEmpty() && publishDatePicker.getDate() != null
-                && !categoriesList.isEmpty() && !dimension.isEmpty()
-                && !pages.equals(0) && !overview.isEmpty()) {
+        try {
+            if (book == null) {
+                throw new Exception("Book data is empty");
+            }
 
-            java.sql.Date publishDate = new java.sql.Date(publishDatePicker.getDate().getTime());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            String formattedDate = dateFormat.format(publishDate);
+            java.sql.Date publishDate = publishDatePicker.getDateSQL();
 
-            String newBookInfo = title + "; "
-                    + author + "; "
-                    + publisher + "; "
-                    + formattedDate + "; "
-                    + categoriesList + "; "
-                    + dimension + "; "
-                    + pages + "; "
-                    + translator + "; "
-                    + overview + "; "
-                    + importPrice + "; "
-                    + salePrice + "; ";
-            System.out.print(newBookInfo);
+            if (title == null || title.equals("")) {
+                throw new Exception("Title cannot be empty");
+            }
+
+            Author author = (Author) authorAutoComp.getSelectedObject();
+            if (author == null) {
+                if (!authorAutoComp.getText().equals("")) {
+                    author = new Author(authorAutoComp.getText());
+                } else {
+                    throw new Exception("Author cannot be empty");
+                }
+            }
+
+            Publisher publisher = (Publisher) publisherAutoComp.getSelectedObject();
+            if (publisher == null) {
+                if (!publisherAutoComp.getText().equals("")) {
+                    publisher = new Publisher(publisherAutoComp.getText());
+                } else {
+                    throw new Exception("Publisher cannot be empty");
+                }
+            }
+
+            if (categoriesList.isEmpty()) {
+                throw new Exception("Categories cannot be empty");
+            }
+
+            if (dimension == null || dimension.equals("")) {
+                throw new Exception("Dimension cannot be empty");
+            }
+
+            if (pages == null || pages.equals(0)) {
+                throw new Exception("Pages cannot be 0");
+            }
+
+            if (overview == null || overview.equals("")) {
+                throw new Exception("Overview cannot be empty");
+            }
+
+            Book updatedBook = new Book(
+                    author.id, publisher.id, title, (int) pages, publishDate,
+                    dimension, translator, overview, book.quantity, salePrice,
+                    book.isHidden, book.hiddenParentCount, book.maxImportPrice
+            );
+            updatedBook.id = book.id;
+            updatedBook.categories = categoriesList;
+            updatedBook.author = author;
+            updatedBook.publisher = publisher;
+            bookService.updateBook(book, updatedBook);
+
+            JOptionPane.showMessageDialog(null, "Book updated successfully.", "BSMS Information",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            bookCRUD.reloadBooks(true);
+        } catch (Exception ex) {
+            if (ex.getMessage().contains("book_publishdate_check")) {
+                JOptionPane.showMessageDialog(null, "Publish date must be before today", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("book_title_key")) {
+                JOptionPane.showMessageDialog(null, "A book with this title already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("book_dimension_check")) {
+                JOptionPane.showMessageDialog(null, "Invalid dimension format (must be 'LxWxH cm').", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
+        backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.gray, 18, 18));
+    }// GEN-LAST:event_backButtonMouseEntered
+
+    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseExited
+        backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 18, 18));
+    }// GEN-LAST:event_backButtonMouseExited
+
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        Dashboard.dashboard.switchTab("bookCRUD");
+    }//GEN-LAST:event_backButtonActionPerformed
+
+    private void salePriceTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_salePriceTextFieldKeyPressed
+        char inputChar = evt.getKeyChar();
+        if (Character.isLetter(inputChar)) {
+            salePriceTextField.setEditable(false);
         } else {
-            JOptionPane.showMessageDialog(null, "Please fill in all required information!", "Error", JOptionPane.ERROR_MESSAGE);
+            salePriceTextField.setEditable(true);
         }
-    }//GEN-LAST:event_addButtonActionPerformed
-
-    private void addButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseEntered
-        addButton.setBackground(new Color(59, 98, 214));
-    }//GEN-LAST:event_addButtonMouseEntered
-
-    private void addButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addButtonMouseExited
-        addButton.setBackground(new Color(65, 105, 225));
-    }//GEN-LAST:event_addButtonMouseExited
-
-    private void cancelButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelButtonMouseExited
-        cancelButton.setBackground(Color.white);
-    }//GEN-LAST:event_cancelButtonMouseExited
-
-    private void cancelButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancelButtonMouseEntered
-        cancelButton.setBackground(new Color(250, 250, 250));
-    }//GEN-LAST:event_cancelButtonMouseEntered
-
-    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
-        backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.gray, 24, 17));
-    }//GEN-LAST:event_backButtonMouseEntered
-
-    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
-        backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.black, 24, 17));
-    }//GEN-LAST:event_backButtonMouseExited
-
-    private void salePriceFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_salePriceFieldKeyTyped
-        char enter = evt.getKeyChar();
-        if (!(Character.isDigit(enter))) {
-            evt.consume();
-        }
-    }//GEN-LAST:event_salePriceFieldKeyTyped
+    }//GEN-LAST:event_salePriceTextFieldKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addButton;
+    private javax.swing.JButton addBookButton;
     private com.group06.bsms.components.AutocompletePanel authorAutoComp;
     private javax.swing.JLabel authorLabel;
     private javax.swing.JButton backButton;
-    private javax.swing.JButton cancelButton;
     private javax.swing.JLabel categoryLabel;
     private com.group06.bsms.components.CategorySelectionPanel categorySelectionPanel;
     private javax.swing.JTextField dimensionField;
     private javax.swing.JLabel dimensionLabel;
+    private javax.swing.JLabel dimensionLabel1;
+    private javax.swing.JLabel dimensionLabel2;
     private javax.swing.JPanel groupFieldPanel;
-    private javax.swing.JTextField importPriceField;
-    private javax.swing.JLabel importPriceLabel;
-    private javax.swing.JFormattedTextField jFormattedTextField1;
+    private javax.swing.JTextField importPriceTextField;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollForm;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel overviewLabel;
     private javax.swing.JTextArea overviewTextArea;
     private javax.swing.JLabel pageName;
     private javax.swing.JLabel pagesLabel;
     private javax.swing.JSpinner pagesSpinner;
     private javax.swing.JLabel publishDateLabel;
-    private org.jdesktop.swingx.JXDatePicker publishDatePicker;
+    private com.group06.bsms.components.DatePickerPanel publishDatePicker;
     private com.group06.bsms.components.AutocompletePanel publisherAutoComp;
     private javax.swing.JLabel publisherLabel;
-    private javax.swing.JFormattedTextField salePriceField;
-    private javax.swing.JLabel salePriceLabel;
+    private javax.swing.JTextField salePriceTextField;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTextField titleField;
     private javax.swing.JLabel titleLabel;

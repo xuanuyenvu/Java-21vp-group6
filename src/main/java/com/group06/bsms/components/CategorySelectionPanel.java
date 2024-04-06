@@ -2,6 +2,7 @@ package com.group06.bsms.components;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.categories.Category;
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 
@@ -19,7 +20,7 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     }
 
     private void createToggleButton(String name) {
-        CategoryButton categoryButton = new CategoryButton(this, name);
+        var categoryButton = new CategoryButton(this, name);
         categoryButton.putClientProperty(FlatClientProperties.STYLE, "arc: 36;");
         categoriesPanel.add(categoryButton);
     }
@@ -27,21 +28,25 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     public void updateList(ArrayList<Category> listAllCategories, ArrayList<Category> currentCategories) {
         this.listAllCategories.clear();
         this.listAllCategories = new ArrayList<>(listAllCategories);
+
         for (Category category : listAllCategories) {
             addButton.addItem(category.name);
         }
 
         if (currentCategories != null) {
             listSelected.clear();
-            listSelected = new ArrayList<>(currentCategories);
-            for (Category categorySelected : listSelected) {
-                createToggleButton(categorySelected.name);
+            categoriesPanel.removeAll();
+
+            for (Category categorySelected : currentCategories) {
+                addCategory(categorySelected);
             }
         }
 
+        addButton.setSelectedIndex(-1);
+        this.changeSize(1.1f);
     }
 
-    public void deleteCategory(String name) {
+    public void deleteCategory(String name, CategoryButton instance) {
         Category categoryToRemove = null;
         for (Category categorySelected : listSelected) {
             if (categorySelected.name.equals(name)) {
@@ -51,14 +56,17 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
 
         listSelected.remove(categoryToRemove);
 
-        categoriesPanel.revalidate();
-        categoriesPanel.repaint();
+        addButton.setSelectedIndex(-1);
 
         notifyListener();
     }
 
     public void setEmptyList() {
         listSelected.clear();
+        categoriesPanel.removeAll();
+        addButton.setSelectedIndex(-1);
+        this.revalidate();
+        this.repaint();
     }
 
     public <T extends CategorySelectionListener> void setCategorySelectionListener(T listener) {
@@ -71,7 +79,13 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         }
     }
 
-    public ArrayList getListSelected() {
+    public void changeSize(float numPerRow) {
+        int numOfCategories = listSelected.size();
+        int newHeight = 40 + ((int) (numOfCategories / numPerRow) * 35);
+        this.setPreferredSize(new Dimension(getWidth(), newHeight));
+    }
+
+    public ArrayList<Category> getListSelected() {
         return listSelected;
     }
 
@@ -127,21 +141,35 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void addCategory(Category category) {
+        if (!listSelected.contains(category)) {
+            listSelected.add(category);
+            createToggleButton(category.name);
+
+            categoriesPanel.revalidate();
+            categoriesPanel.repaint();
+
+            notifyListener();
+
+        }
+    }
+
     private void addButtonItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_addButtonItemStateChanged
         if (count == 0) {
             count++;
-        } else {
-            if (evt.getStateChange() == ItemEvent.SELECTED) {
-                int indexNewCategory = addButton.getSelectedIndex();
-                if (!listSelected.contains(listAllCategories.get(indexNewCategory))) {
-                    listSelected.add(listAllCategories.get(indexNewCategory));
-                    createToggleButton(listAllCategories.get(indexNewCategory).name);
+            return;
+        }
 
-                    categoriesPanel.revalidate();
-                    categoriesPanel.repaint();
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            int indexNewCategory = addButton.getSelectedIndex();
 
-                    notifyListener();
-                }
+            if (!listSelected.contains(listAllCategories.get(indexNewCategory))) {
+                listSelected.add(listAllCategories.get(indexNewCategory));
+                createToggleButton(
+                        listAllCategories.get(indexNewCategory).name
+                );
+
+                notifyListener();
             }
         }
     }//GEN-LAST:event_addButtonItemStateChanged
@@ -154,4 +182,5 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> addButton;
     private javax.swing.JPanel categoriesPanel;
     // End of variables declaration//GEN-END:variables
+
 }

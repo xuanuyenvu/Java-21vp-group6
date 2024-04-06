@@ -16,7 +16,6 @@ public class PublisherService {
             List<Publisher> publishers = publisherDAO.selectAllPublishers();
             return publishers;
         } catch (Exception e) {
-            System.out.println(e);
             return new ArrayList<>();
         }
     }
@@ -36,14 +35,6 @@ public class PublisherService {
     public Publisher selectPublisher(int id) throws Exception {
         try {
             return publisherDAO.selectPublisher(id);
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-    public Publisher selectPublisherByName(String authorName) throws Exception {
-        try {
-            return publisherDAO.selectPublisherByName(authorName);
         } catch (Exception e) {
             throw e;
         }

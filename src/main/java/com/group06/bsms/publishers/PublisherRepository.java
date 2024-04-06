@@ -89,30 +89,4 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
             throw e;
         }
     }
-
-    @Override
-    public Publisher selectPublisherByName(String publisherName) throws Exception {
-        Publisher publisher = new Publisher();
-        try {
-            db.setAutoCommit(false);
-
-            var selectPublisherQuery = db.prepareStatement(
-                    "SELECT * FROM Publisher WHERE name = ?");
-
-            selectPublisherQuery.setString(1, publisherName);
-
-            var result = selectPublisherQuery.executeQuery();
-
-            while (result.next()) {
-                publisher = populate(result);
-            }
-
-            db.commit();
-
-            return publisher;
-        } catch (Exception e) {
-            db.rollback();
-            throw e;
-        }
-    }
 }

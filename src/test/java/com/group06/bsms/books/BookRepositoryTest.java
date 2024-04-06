@@ -3,6 +3,9 @@ package com.group06.bsms.books;
 import com.group06.bsms.DB;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import javax.swing.SortOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +41,6 @@ public class BookRepositoryTest {
 
     @Test
     public void testUpdateBookAttributeById() throws Exception {
-        System.out.println("updateBookAttributeById");
         int bookId = 2;
         String attr = "salePrice";
         Object value = Double.valueOf(2121);
@@ -47,4 +49,32 @@ public class BookRepositoryTest {
         assertEquals(Double.valueOf(2121), instance.selectById(bookId).salePrice);
     }
 
+    @Test
+    public void testGetNewBooks() throws Exception {
+        BookRepository instance = new BookRepository(db);
+        List<Book> result = instance.getNewBooks();
+        for (var book : result) {
+            System.out.println(book);
+        }
+    }
+
+    @Test
+    public void testGetHotBooks() throws Exception {
+        System.out.println("getHotBooks");
+        BookRepository instance = new BookRepository(db);
+        List<Book> result = instance.getHotBooks();
+        for (var book : result) {
+            System.out.println(book);
+        }
+    }
+
+    @Test
+    public void testGetOutOfStockBooks() throws Exception {
+        System.out.println("getOutOfStockBooks");
+        BookRepository instance = new BookRepository(db);
+        List<Book> result = instance.getOutOfStockBooks();
+        for (var book : result) {
+            System.out.println(book);
+        }
+    }
 }

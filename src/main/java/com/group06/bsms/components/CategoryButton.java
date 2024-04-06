@@ -90,8 +90,8 @@ public class CategoryButton extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        categorySelectionPanel.deleteCategory(categoryName.getText(), this);
         this.getParent().remove(this);
-        categorySelectionPanel.deleteCategory(categoryName.getText());
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void deleteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseEntered
