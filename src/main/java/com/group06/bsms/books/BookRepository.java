@@ -69,7 +69,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
 
             update(updatedBook, "authorId", "publisherId", "title", "pageCount", "publishDate", "dimension",
-                    "translatorName", "overview", "salePrice");
+                    "translatorName", "overview", "salePrice", "hiddenParentCount");
 
             List<Category> insertedCategories = new ArrayList<>(updatedBook.categories);
             insertedCategories.removeAll(book.categories);

@@ -575,6 +575,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             updatedBook.categories = categoriesList;
             updatedBook.author = author;
             updatedBook.publisher = publisher;
+            System.out.println(author);
             bookService.updateBook(book, updatedBook);
 
             setBookById(book.id);

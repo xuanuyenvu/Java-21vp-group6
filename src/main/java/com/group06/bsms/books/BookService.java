@@ -42,6 +42,20 @@ public class BookService {
                 throw new Exception("Sale price must be bigger than 1.1 * import price");
             }
 
+            int count = 0;
+            if (updatedBook.author.isHidden) {
+                count++;
+            }
+            if (updatedBook.publisher.isHidden) {
+                count++;
+            }
+            for (Category c : updatedBook.categories) {
+                if (c.isHidden) {
+                    count++;
+                }
+            }
+            updatedBook.hiddenParentCount = count;
+            System.out.println(updatedBook);
             bookDAO.updateBook(book, updatedBook);
         } catch (Exception e) {
 

@@ -43,6 +43,7 @@ public class AutocompletePanel extends javax.swing.JPanel {
     public Object getSelectedObject() {
 
         int selectedIndex = autoCompleteButton.getSelectedIndex();
+        System.err.println(selectedIndex);
         if (selectedIndex == -1) {
             return null;
         }
