@@ -43,6 +43,19 @@ public class BookService {
             }
 
             int count = 0;
+            if (updatedBook.author.id == 0) {
+                updatedBook.authorId = authorService.insertAuthorIfNotExists(updatedBook.author.name);
+                updatedBook.author.id = updatedBook.authorId;
+            } else {
+                updatedBook.authorId = updatedBook.author.id;
+            }
+            if (updatedBook.publisher.id == 0) {
+                updatedBook.publisherId = publisherService.insertPublisherIfNotExists(updatedBook.publisher.name);
+                updatedBook.publisher.id = updatedBook.publisherId;
+            } else {
+                updatedBook.publisherId = updatedBook.publisher.id;
+            }
+
             if (updatedBook.author.isHidden) {
                 count++;
             }
