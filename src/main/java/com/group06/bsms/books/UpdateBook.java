@@ -147,7 +147,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         }
     }
 
-    private void loadAuthorInto() {
+    public void loadAuthorInto() {
         try {
             var authors = new ArrayList<Author>(authorService.selectAllAuthors());
             authorAutoComp.updateList(authors);
@@ -161,7 +161,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         }
     }
 
-    private void loadPublisherInto() {
+    public void loadPublisherInto() {
         try {
             var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
             publisherAutoComp.updateList(publishers);
@@ -580,14 +580,11 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             updatedBook.publisher = publisher;
             bookService.updateBook(book, updatedBook);
 
-            loadAuthorInto();
-            loadPublisherInto();
-            setBookById(book.id);
-
             JOptionPane.showMessageDialog(null, "Book updated successfully.", "BSMS Information",
                     JOptionPane.INFORMATION_MESSAGE);
 
             bookCRUD.reloadBooks(true);
+            setBookById(book.id);
         } catch (Exception ex) {
             if (ex.getMessage().contains("book_publishdate_check")) {
                 JOptionPane.showMessageDialog(null, "Publish date must be before today", "BSMS Error", JOptionPane.ERROR_MESSAGE);

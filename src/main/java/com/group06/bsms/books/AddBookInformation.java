@@ -15,7 +15,7 @@ import javax.swing.*;
 
 public class AddBookInformation extends javax.swing.JPanel implements CategorySelectionListener {
 
-    private final BookCRUD bookCRUD;
+    private BookCRUD bookCRUD;
     private final BookService bookService;
     private final AuthorService authorService;
     private final PublisherService publisherService;
@@ -45,6 +45,10 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db())),
                 new CategoryService(new CategoryRepository(DB.db())));
+    }
+
+    public void setBookCRUD(BookCRUD bookCRUD) {
+        this.bookCRUD = bookCRUD;
     }
 
     public AddBookInformation(
@@ -116,7 +120,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         jScrollForm.repaint();
     }
 
-    private void loadAuthorInto() {
+    public void loadAuthorInto() {
         try {
             var authors = new ArrayList<Author>(authorService.selectAllAuthors());
             authorAutoComp.updateList(authors);
@@ -130,7 +134,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         }
     }
 
-    private void loadPublisherInto() {
+    public void loadPublisherInto() {
         try {
             var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
             publisherAutoComp.updateList(publishers);
@@ -560,8 +564,6 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             bookService.insertBook(title, author, publisher, categoriesList, publishDate,
                     dimension, pages, translator, overview, hideChecked);
 
-            loadAuthorInto();
-            loadPublisherInto();
             cancelButtonActionPerformed(null);
 
             JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information",
