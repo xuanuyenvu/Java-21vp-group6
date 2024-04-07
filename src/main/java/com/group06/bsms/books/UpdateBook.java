@@ -116,10 +116,12 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             pagesSpinner.setValue(book.pageCount);
             translatorField.setText(book.translatorName);
             overviewTextArea.setText(book.overview);
-
+            System.err.println(book.maxImportPrice);
             if (book.maxImportPrice != null) {
                 importPriceTextField.setText(Double.toString(book.maxImportPrice));
+                salePriceTextField.setEnabled(true);
             } else {
+                importPriceTextField.setText("");
                 salePriceTextField.setEnabled(false);
             }
 
