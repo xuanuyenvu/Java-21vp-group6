@@ -55,7 +55,6 @@ public class BookService {
                 }
             }
             updatedBook.hiddenParentCount = count;
-            System.out.println(updatedBook);
             bookDAO.updateBook(book, updatedBook);
         } catch (Exception e) {
 

@@ -129,12 +129,15 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 salePriceTextField.setText("");
             }
 
+            authorAutoComp.setEmptyText();
             authorAutoComp.setSelectedObject(book.author);
 
+            publisherAutoComp.setEmptyText();
             publisherAutoComp.setSelectedObject(book.publisher);
-            publishDatePicker.setDate(book.publishDate);
-            var categories = categoryService.selectAllCategories();
 
+            publishDatePicker.setDate(book.publishDate);
+
+            var categories = categoryService.selectAllCategories();
             categorySelectionPanel.updateList((ArrayList<Category>) categories,
                     (ArrayList<Category>) book.categories);
         } catch (Exception e) {
@@ -520,7 +523,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         String overview = overviewTextArea.getText();
         Double salePrice = "".equals(salePriceTextField.getText())
                 ? null
-                : Double.parseDouble(salePriceTextField.getText());
+                : Double.valueOf(salePriceTextField.getText());
         try {
             if (book == null) {
                 throw new Exception("Book data is empty");
@@ -575,10 +578,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             updatedBook.categories = categoriesList;
             updatedBook.author = author;
             updatedBook.publisher = publisher;
-            System.out.println(author);
             bookService.updateBook(book, updatedBook);
 
             setBookById(book.id);
+
             JOptionPane.showMessageDialog(null, "Book updated successfully.", "BSMS Information",
                     JOptionPane.INFORMATION_MESSAGE);
 
