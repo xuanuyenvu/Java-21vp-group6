@@ -16,9 +16,10 @@ public class Dashboard extends javax.swing.JPanel {
         main.setLayout(layout);
 
         var updateBook = new UpdateBook();
-        var bookCRUD = new BookCRUD(updateBook);
+        var addBookInfo = new AddBookInformation();
+        var bookCRUD = new BookCRUD(updateBook, addBookInfo);
         updateBook.setBookCRUD(bookCRUD);
-        var addBookInfo = new AddBookInformation(bookCRUD);
+        addBookInfo.setBookCRUD(bookCRUD);
 
         main.add(bookCRUD, "bookCRUD");
         main.add(updateBook, "updateBook");

@@ -129,12 +129,15 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 salePriceTextField.setText("");
             }
 
+            authorAutoComp.setEmptyText();
             authorAutoComp.setSelectedObject(book.author);
 
+            publisherAutoComp.setEmptyText();
             publisherAutoComp.setSelectedObject(book.publisher);
-            publishDatePicker.setDate(book.publishDate);
-            var categories = categoryService.selectAllCategories();
 
+            publishDatePicker.setDate(book.publishDate);
+
+            var categories = categoryService.selectAllCategories();
             categorySelectionPanel.updateList((ArrayList<Category>) categories,
                     (ArrayList<Category>) book.categories);
         } catch (Exception e) {
@@ -144,7 +147,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         }
     }
 
-    private void loadAuthorInto() {
+    public void loadAuthorInto() {
         try {
             var authors = new ArrayList<Author>(authorService.selectAllAuthors());
             authorAutoComp.updateList(authors);
@@ -158,7 +161,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         }
     }
 
-    private void loadPublisherInto() {
+    public void loadPublisherInto() {
         try {
             var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
             publisherAutoComp.updateList(publishers);
@@ -261,7 +264,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
+                        .addGap(13, 13, 13)
                         .addComponent(pageName))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
@@ -520,8 +523,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         String overview = overviewTextArea.getText();
         Double salePrice = "".equals(salePriceTextField.getText())
                 ? null
-                : Double.parseDouble(salePriceTextField.getText());
-
+                : Double.valueOf(salePriceTextField.getText());
         try {
             if (book == null) {
                 throw new Exception("Book data is empty");
@@ -582,6 +584,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                     JOptionPane.INFORMATION_MESSAGE);
 
             bookCRUD.reloadBooks(true);
+            setBookById(book.id);
         } catch (Exception ex) {
             if (ex.getMessage().contains("book_publishdate_check")) {
                 JOptionPane.showMessageDialog(null, "Publish date must be before today", "BSMS Error", JOptionPane.ERROR_MESSAGE);

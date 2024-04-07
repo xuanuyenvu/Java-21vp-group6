@@ -40,6 +40,7 @@ public class BookCRUD extends javax.swing.JPanel {
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
     private final UpdateBook updateBook;
+    private final AddBookInformation addBookInfo;
 
     public void setCurrentOffset(int currentOffset) {
         this.currentOffset = currentOffset;
@@ -50,6 +51,7 @@ public class BookCRUD extends javax.swing.JPanel {
     public BookCRUD() {
         this(
                 null,
+                null,
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
@@ -59,9 +61,10 @@ public class BookCRUD extends javax.swing.JPanel {
         );
     }
 
-    public BookCRUD(UpdateBook updateBook) {
+    public BookCRUD(UpdateBook updateBook, AddBookInformation addBookInfo) {
         this(
                 updateBook,
+                addBookInfo,
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
@@ -71,8 +74,9 @@ public class BookCRUD extends javax.swing.JPanel {
         );
     }
 
-    public BookCRUD(UpdateBook updateBook, BookService bookService) {
+    public BookCRUD(UpdateBook updateBook, AddBookInformation addBookInfo, BookService bookService) {
         this.updateBook = updateBook;
+        this.addBookInfo = addBookInfo;
         this.bookService = bookService;
         this.bookFilter = new BookFilter(this);
         this.model = new BookTableModel(bookService);
@@ -415,8 +419,13 @@ public class BookCRUD extends javax.swing.JPanel {
 
         if (reloadFilter) {
             bookFilter.loadAuthorInto();
-            bookFilter.loadCategoryInto();
             bookFilter.loadPublisherInto();
+
+            updateBook.loadAuthorInto();
+            updateBook.loadPublisherInto();
+
+            addBookInfo.loadAuthorInto();
+            addBookInfo.loadPublisherInto();
         }
     }
 

@@ -3,8 +3,6 @@ package com.group06.bsms.categories;
 import java.sql.Connection;
 
 import com.group06.bsms.Repository;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryRepository extends Repository<Category> implements CategoryDAO {
