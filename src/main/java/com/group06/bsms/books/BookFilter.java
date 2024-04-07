@@ -352,7 +352,6 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
     private void filter(java.awt.event.ItemEvent evt) {
         bookCRUD.setCurrentOffset(0);
         bookCRUD.loadBooksIntoTable();
-//        bookCRUD.setUpTable();
     }
 
     private void removeAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllBtnActionPerformed

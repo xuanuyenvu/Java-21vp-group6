@@ -580,6 +580,8 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             updatedBook.publisher = publisher;
             bookService.updateBook(book, updatedBook);
 
+            loadAuthorInto();
+            loadPublisherInto();
             setBookById(book.id);
 
             JOptionPane.showMessageDialog(null, "Book updated successfully.", "BSMS Information",

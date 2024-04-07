@@ -560,6 +560,10 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             bookService.insertBook(title, author, publisher, categoriesList, publishDate,
                     dimension, pages, translator, overview, hideChecked);
 
+            loadAuthorInto();
+            loadPublisherInto();
+            cancelButtonActionPerformed(null);
+
             JOptionPane.showMessageDialog(null, "Book added successfully.", "BSMS Information",
                     JOptionPane.INFORMATION_MESSAGE);
 
