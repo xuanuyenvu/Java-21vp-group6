@@ -163,7 +163,16 @@ public class BookTableModel extends AbstractTableModel {
                         if (book.maxImportPrice == null) {
                             JOptionPane.showMessageDialog(
                                     app,
-                                    "Cannot edit because import price is null",
+                                    "Book must be imported before its sale price can be edited",
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                            return;
+                        }
+                        if ((Double) val <= 1.1 * book.maxImportPrice) {
+                            JOptionPane.showMessageDialog(
+                                    app,
+                                    "Sale price must be bigger than 1.1 * import price",
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
