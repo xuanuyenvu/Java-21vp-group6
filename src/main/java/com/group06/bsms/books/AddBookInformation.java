@@ -149,7 +149,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         }
     }
 
-    private void loadCategoryInto() {
+    void loadCategoryInto() {
         try {
             var categories = new ArrayList<Category>(categoryService.selectAllCategories());
             categorySelectionPanel.updateList(categories, null);
@@ -522,17 +522,11 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
         boolean hideChecked = hideCheckBox.isSelected();
         try {
             java.sql.Date publishDate = publishDatePicker.getDateSQL();
+
             Author author = (Author) authorAutoComp.getSelectedObject();
-
-            if (title == null || title.equals("")) {
-                throw new Exception("Title cannot be empty");
-            }
-
             if (author == null) {
                 if (!authorAutoComp.getText().equals("")) {
                     author = new Author(authorAutoComp.getText());
-                } else {
-                    throw new Exception("Author cannot be empty");
                 }
             }
 
@@ -540,29 +534,13 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             if (publisher == null) {
                 if (!publisherAutoComp.getText().equals("")) {
                     publisher = new Publisher(publisherAutoComp.getText());
-                } else {
-                    throw new Exception("Publisher cannot be empty");
                 }
             }
 
-            if (categoriesList.isEmpty()) {
-                throw new Exception("Categories cannot be empty");
-            }
-
-            if (dimension == null || dimension.equals("")) {
-                throw new Exception("Dimension cannot be empty");
-            }
-
-            if (pages == null || pages.equals(0)) {
-                throw new Exception("Pages cannot be 0");
-            }
-
-            if (overview == null || overview.equals("")) {
-                throw new Exception("Overview cannot be empty");
-            }
-
-            bookService.insertBook(title, author, publisher, categoriesList, publishDate,
-                    dimension, pages, translator, overview, hideChecked);
+            bookService.insertBook(
+                    title, author, publisher, categoriesList, publishDate,
+                    dimension, pages, translator, overview, hideChecked
+            );
 
             cancelButtonActionPerformed(null);
 

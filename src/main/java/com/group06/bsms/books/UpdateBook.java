@@ -116,7 +116,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             pagesSpinner.setValue(book.pageCount);
             translatorField.setText(book.translatorName);
             overviewTextArea.setText(book.overview);
-            
+
             if (book.maxImportPrice != null) {
                 importPriceTextField.setText(Double.toString(book.maxImportPrice));
                 salePriceTextField.setEnabled(true);
@@ -146,6 +146,25 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             JOptionPane.showMessageDialog(null,
                     "An error occurred while getting book information: " + e.getMessage(),
                     "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    void loadCategoryInto() {
+        try {
+            var categories = new ArrayList<Category>(categoryService.selectAllCategories());
+            if (categories == null) {
+                throw new NullPointerException();
+            }
+
+            categorySelectionPanel.updateList(
+                    categories,
+                    book == null ? null : (ArrayList<Category>) book.categories
+            );
+
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(null, "An error occurred while getting category information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Throwable e) {
+            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -533,16 +552,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
             java.sql.Date publishDate = publishDatePicker.getDateSQL();
 
-            if (title == null || title.equals("")) {
-                throw new Exception("Title cannot be empty");
-            }
-
             Author author = (Author) authorAutoComp.getSelectedObject();
             if (author == null) {
                 if (!authorAutoComp.getText().equals("")) {
                     author = new Author(authorAutoComp.getText());
-                } else {
-                    throw new Exception("Author cannot be empty");
                 }
             }
 
@@ -550,25 +563,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             if (publisher == null) {
                 if (!publisherAutoComp.getText().equals("")) {
                     publisher = new Publisher(publisherAutoComp.getText());
-                } else {
-                    throw new Exception("Publisher cannot be empty");
                 }
-            }
-
-            if (categoriesList.isEmpty()) {
-                throw new Exception("Categories cannot be empty");
-            }
-
-            if (dimension == null || dimension.equals("")) {
-                throw new Exception("Dimension cannot be empty");
-            }
-
-            if (pages == null || pages.equals(0)) {
-                throw new Exception("Pages cannot be 0");
-            }
-
-            if (overview == null || overview.equals("")) {
-                throw new Exception("Overview cannot be empty");
             }
 
             Book updatedBook = new Book(

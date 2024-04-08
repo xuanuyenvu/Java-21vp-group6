@@ -7,7 +7,6 @@ public class Category {
     public boolean isHidden;
 
     public Category() {
-
     }
 
     public Category(int id, String name, boolean isHidden) {

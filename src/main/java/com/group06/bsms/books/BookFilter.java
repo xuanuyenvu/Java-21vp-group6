@@ -133,7 +133,7 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
         }
     }
 
-    void loadCategoryInto() {
+    public void loadCategoryInto() {
         try {
             var categories = new ArrayList<Category>(categoryService.selectAllCategories());
             if (categories == null) {

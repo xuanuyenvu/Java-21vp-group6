@@ -94,6 +94,12 @@ public class BookCRUD extends javax.swing.JPanel {
         this.loadBooksIntoTable();
     }
 
+    public void loadCategoryInto() {
+        bookFilter.loadCategoryInto();
+        updateBook.loadCategoryInto();
+        addBookInfo.loadCategoryInto();
+    }
+
     public void loadBooksIntoTable() {
         if (bookFilter == null) {
             return;
