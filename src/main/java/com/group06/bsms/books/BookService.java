@@ -27,7 +27,7 @@ public class BookService {
         this.categoryService = categoryService;
     }
 
-    public void updateBook(Book book, Book updatedBook) throws Exception, IllegalArgumentException {
+    public void updateBook(Book book, Book updatedBook) throws Exception {
         try {
             if (updatedBook.title == null
                     || updatedBook.publishDate == null
