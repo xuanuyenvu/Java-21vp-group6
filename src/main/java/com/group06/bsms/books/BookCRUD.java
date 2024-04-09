@@ -100,6 +100,18 @@ public class BookCRUD extends javax.swing.JPanel {
         addBookInfo.loadCategoryInto();
     }
 
+    public void loadAuthorInto() {
+        bookFilter.loadAuthorInto();
+        updateBook.loadAuthorInto();
+        addBookInfo.loadAuthorInto();
+    }
+
+    public void loadPublisherInto() {
+        bookFilter.loadPublisherInto();
+        updateBook.loadPublisherInto();
+        addBookInfo.loadPublisherInto();
+    }
+
     public void loadBooksIntoTable() {
         if (bookFilter == null) {
             return;
@@ -160,7 +172,7 @@ public class BookCRUD extends javax.swing.JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     this,
-                    "An error has occurred: " + e.getMessage(),
+                    e.getMessage(),
                     "BSMS Error",
                     JOptionPane.ERROR_MESSAGE
             );
@@ -253,7 +265,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
                             app,
-                            "An error has occurred while hiding book: " + e.getMessage(),
+                            e.getMessage(),
                             "BSMS Error",
                             JOptionPane.ERROR_MESSAGE
                     );

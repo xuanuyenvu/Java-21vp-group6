@@ -10,7 +10,7 @@ public class Author {
     public Author() {
     }
 
-    public Author(String name){
+    public Author(String name) {
         this.name = name;
     }
 
@@ -31,5 +31,20 @@ public class Author {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Author other = (Author) obj;
+        return (id == other.id
+                && name.equals(other.name)
+                && overview.equals(other.overview)
+                && isHidden == other.isHidden);
     }
 }

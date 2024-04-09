@@ -143,7 +143,7 @@ public class BookTableModel extends AbstractTableModel {
                         } else {
                             JOptionPane.showMessageDialog(
                                     app,
-                                    "An error has occurred: " + e.getMessage(),
+                                    e.getMessage(),
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
@@ -177,7 +177,7 @@ public class BookTableModel extends AbstractTableModel {
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(
                                 app,
-                                "An error has occurred: " + e.getMessage(),
+                                e.getMessage(),
                                 "BSMS Error",
                                 JOptionPane.ERROR_MESSAGE
                         );

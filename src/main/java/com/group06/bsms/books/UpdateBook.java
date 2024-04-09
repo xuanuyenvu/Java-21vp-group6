@@ -95,7 +95,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             book = null;
 
             JOptionPane.showMessageDialog(null,
-                    "An error occurred while getting book information: " + e.getMessage(),
+                    e.getMessage(),
                     "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -144,7 +144,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                     (ArrayList<Category>) book.categories);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "An error occurred while getting book information: " + e.getMessage(),
+                    e.getMessage(),
                     "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -162,9 +162,9 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             );
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting category information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -174,10 +174,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             authorAutoComp.updateList(authors);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(),
+            JOptionPane.showMessageDialog(null, e.getMessage(),
                     "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -189,10 +189,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null,
-                    "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error",
+                    e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

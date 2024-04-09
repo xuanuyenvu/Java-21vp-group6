@@ -19,12 +19,12 @@ public class DatePickerPanel extends javax.swing.JPanel {
         addTextFieldListener();
     }
 
-    public void setText(String text){
+    public void setText(String text) {
         jTextField.setText(text);
-        
+
     }
-    
-    public void setDate(Date date){
+
+    public void setDate(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         jTextField.setText(dateFormat.format(date));
         jXDatePicker.setDate(date);
@@ -56,7 +56,7 @@ public class DatePickerPanel extends javax.swing.JPanel {
                         Date date = dateFormat.parse(text);
                         jXDatePicker.setDate(date);
                     } catch (ParseException ex) {
-                        JOptionPane.showMessageDialog(null, "Invalid date format: " + text, "BSMS Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, text + " is an invalid date format", "BSMS Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

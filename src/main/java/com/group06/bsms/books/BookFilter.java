@@ -111,9 +111,9 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
             authorAutoComp1.updateList(authors);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -127,9 +127,9 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
             publisherAutoComp1.updateList(publishers);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -143,9 +143,9 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
             categorySelectionPanel1.updateList(categories, null);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting category information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

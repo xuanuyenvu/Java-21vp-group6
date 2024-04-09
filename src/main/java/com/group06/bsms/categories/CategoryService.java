@@ -17,7 +17,7 @@ public class CategoryService {
         try {
             Category category = categoryDAO.selectCategory(id);
             if (category == null) {
-                throw new Exception("Cannot find category: " + id);
+                throw new Exception("Cannot find category with id = " + id);
             }
             return category;
         } catch (Exception e) {

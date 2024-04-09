@@ -1,4 +1,4 @@
-package com.group06.bsms.categories;
+package com.group06.bsms.authors;
 
 import com.group06.bsms.DB;
 import com.group06.bsms.components.*;
@@ -7,51 +7,52 @@ import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import javax.swing.*;
 
-public class UpdateCategory extends javax.swing.JPanel {
+public class UpdateAuthor extends javax.swing.JPanel {
 
-    private CategoryCRUD categoryCRUD;
-    private final CategoryService categoryService;
-    private Category category;
+    private AuthorCRUD authorCRUD;
+    private final AuthorService authorService;
+    private Author author;
 
-    public void setCategoryCRUD(CategoryCRUD categoryCRUD) {
-        this.categoryCRUD = categoryCRUD;
+    public void setAuthorCRUD(AuthorCRUD authorCRUD) {
+        this.authorCRUD = authorCRUD;
     }
 
-    public UpdateCategory() {
+    public UpdateAuthor() {
         this(
                 null,
-                new CategoryService(new CategoryRepository(DB.db()))
+                new AuthorService(new AuthorRepository(DB.db()))
         );
     }
 
-    public UpdateCategory(CategoryCRUD categoryCRUD) {
+    public UpdateAuthor(AuthorCRUD authorCRUD) {
         this(
-                categoryCRUD,
-                new CategoryService(new CategoryRepository(DB.db()))
+                authorCRUD,
+                new AuthorService(new AuthorRepository(DB.db()))
         );
     }
 
-    public UpdateCategory(
-            CategoryCRUD categoryCRUD,
-            CategoryService categoryService
+    public UpdateAuthor(
+            AuthorCRUD authorCRUD,
+            AuthorService authorService
     ) {
-        this.categoryCRUD = categoryCRUD;
-        this.categoryService = categoryService;
+        this.authorCRUD = authorCRUD;
+        this.authorService = authorService;
         initComponents();
 
-        nameField.putClientProperty("JTextField.placeholderText", "Category name");
+        nameField.putClientProperty("JTextField.placeholderText", "Author name");
 
         CustomLabelInForm.setColoredText(nameLabel);
+        CustomLabelInForm.setColoredText(overviewLabel);
 
         nameField.requestFocus();
     }
 
-    public void setCategoryById(int categoryId) {
+    public void setAuthorById(int authorId) {
         try {
-            category = categoryService.getCategory(categoryId);
-            loadCategoryInto();
+            author = authorService.getAuthor(authorId);
+            loadAuthorInto();
         } catch (Exception e) {
-            category = null;
+            author = null;
 
             JOptionPane.showMessageDialog(null,
                     e.getMessage(),
@@ -60,9 +61,10 @@ public class UpdateCategory extends javax.swing.JPanel {
         }
     }
 
-    private void loadCategoryInto() {
+    private void loadAuthorInto() {
         try {
-            nameField.setText(category.name);
+            nameField.setText(author.name);
+            overviewTextArea.setText(author.overview);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     e.getMessage(),
@@ -84,6 +86,9 @@ public class UpdateCategory extends javax.swing.JPanel {
         nameLabel = new javax.swing.JLabel();
         nameField = new javax.swing.JTextField();
         addCategoryButton = new javax.swing.JButton();
+        overviewLabel = new javax.swing.JLabel();
+        scrollPane = new javax.swing.JScrollPane();
+        overviewTextArea = new javax.swing.JTextArea();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -117,7 +122,7 @@ public class UpdateCategory extends javax.swing.JPanel {
         });
 
         pageName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        pageName.setText("Update category");
+        pageName.setText("Update author");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -128,7 +133,7 @@ public class UpdateCategory extends javax.swing.JPanel {
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pageName)
-                .addContainerGap(413, Short.MAX_VALUE))
+                .addContainerGap(435, Short.MAX_VALUE))
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         jPanel1Layout.setVerticalGroup(
@@ -174,9 +179,23 @@ public class UpdateCategory extends javax.swing.JPanel {
         addCategoryButton.setDisplayedMnemonicIndex(0);
         addCategoryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addCategoryButtonActionPerformed(evt);
+                addAuthorButtonActionPerformed(evt);
             }
         });
+
+        overviewLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        overviewLabel.setText("Overview");
+
+        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setAutoscrolls(true);
+
+        overviewTextArea.setColumns(20);
+        overviewTextArea.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        overviewTextArea.setLineWrap(true);
+        overviewTextArea.setDragEnabled(true);
+        overviewTextArea.setMaximumSize(new java.awt.Dimension(440, 440));
+        overviewTextArea.setMinimumSize(new java.awt.Dimension(0, 0));
+        scrollPane.setViewportView(overviewTextArea);
 
         javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
         groupFieldPanel.setLayout(groupFieldPanelLayout);
@@ -184,13 +203,12 @@ public class UpdateCategory extends javax.swing.JPanel {
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
                 .addContainerGap(91, Short.MAX_VALUE)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanelLayout.createSequentialGroup()
-                            .addGap(346, 346, 346)
-                            .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(nameLabel))
-                    .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(scrollPane)
+                    .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(overviewLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(nameLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(nameField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(96, Short.MAX_VALUE))
         );
         groupFieldPanelLayout.setVerticalGroup(
@@ -200,6 +218,10 @@ public class UpdateCategory extends javax.swing.JPanel {
                 .addComponent(nameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
+                .addComponent(overviewLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                 .addGap(14, 14, 14)
                 .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
@@ -219,34 +241,35 @@ public class UpdateCategory extends javax.swing.JPanel {
     }// GEN-LAST:event_backButtonMouseExited
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        Dashboard.dashboard.switchTab("categoryCRUD");
+        Dashboard.dashboard.switchTab("authorCRUD");
     }//GEN-LAST:event_backButtonActionPerformed
 
-    private void addCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCategoryButtonActionPerformed
+    private void addAuthorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAuthorButtonActionPerformed
         String name = nameField.getText();
+        String overview = overviewTextArea.getText();
         try {
-            if (category == null) {
-                throw new Exception("Category data is empty");
+            if (author == null) {
+                throw new Exception("Author data is empty");
             }
 
-            Category updatedCategory = new Category(
-                    category.id, name, category.isHidden
+            Author updatedAuthor = new Author(
+                    author.id, name, overview, author.isHidden
             );
-            categoryService.updateCategory(category, updatedCategory);
+            authorService.updateAuthor(author, updatedAuthor);
 
-            JOptionPane.showMessageDialog(null, "Category updated successfully.", "BSMS Information",
+            JOptionPane.showMessageDialog(null, "Author updated successfully.", "BSMS Information",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            categoryCRUD.reloadCategories(true);
-            setCategoryById(category.id);
+            authorCRUD.reloadAuthors(true);
+            setAuthorById(author.id);
         } catch (Exception ex) {
-            if (ex.getMessage().contains("category_name_key")) {
-                JOptionPane.showMessageDialog(null, "A category with this name already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            if (ex.getMessage().contains("author_name_key")) {
+                JOptionPane.showMessageDialog(null, "An author with this name already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }//GEN-LAST:event_addCategoryButtonActionPerformed
+    }//GEN-LAST:event_addAuthorButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCategoryButton;
@@ -257,6 +280,9 @@ public class UpdateCategory extends javax.swing.JPanel {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JTextField nameField;
     private javax.swing.JLabel nameLabel;
+    private javax.swing.JLabel overviewLabel;
+    private javax.swing.JTextArea overviewTextArea;
     private javax.swing.JLabel pageName;
+    private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
 }

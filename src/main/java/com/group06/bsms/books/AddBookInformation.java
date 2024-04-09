@@ -126,10 +126,10 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
             authorAutoComp.updateList(authors);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(),
+            JOptionPane.showMessageDialog(null, e.getMessage(),
                     "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -141,10 +141,10 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null,
-                    "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error",
+                    e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -156,10 +156,10 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null,
-                    "An error occurred while getting category information: " + e.getMessage(), "BSMS Error",
+                    e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

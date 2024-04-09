@@ -1,6 +1,5 @@
-package com.group06.bsms.categories;
+package com.group06.bsms.authors;
 
-import com.group06.bsms.categories.*;
 import static com.group06.bsms.Main.app;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.components.ActionBtn;
@@ -29,7 +28,7 @@ class TableActionCellEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        CategoryTableModel model = (CategoryTableModel) table.getModel();
+        AuthorTableModel model = (AuthorTableModel) table.getModel();
         int isHidden = model.getHiddenState(table.convertRowIndexToModel(row));
         int modelRow = table.convertRowIndexToModel(row);
 
@@ -40,7 +39,6 @@ class TableActionCellEditor extends DefaultCellEditor {
 
         return action;
     }
-
 }
 
 class TableActionCellRender extends DefaultTableCellRenderer {
@@ -51,7 +49,7 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
         int modelRow = table.convertRowIndexToModel(row);
 
-        int isHidden = ((CategoryTableModel) table.getModel()).getHiddenState(modelRow);
+        int isHidden = ((AuthorTableModel) table.getModel()).getHiddenState(modelRow);
 
         ActionBtn action = new ActionBtn(isHidden);
         action.setBackground(Color.WHITE);
@@ -63,22 +61,22 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 /**
  * A custom structure used to display a table
  */
-public class CategoryTableModel extends AbstractTableModel {
+public class AuthorTableModel extends AbstractTableModel {
 
-    private List<Category> categories = new ArrayList<>();
+    private List<Author> authors = new ArrayList<>();
     private String[] columns = {"Name", "Actions"};
     public boolean editable = false;
-    private final CategoryService categoryService;
+    private final AuthorService authorService;
     private final BookCRUD bookCRUD;
 
-    public CategoryTableModel(CategoryService categoryService, BookCRUD bookCRUD) {
-        this.categoryService = categoryService;
+    public AuthorTableModel(AuthorService authorService, BookCRUD bookCRUD) {
         this.bookCRUD = bookCRUD;
+        this.authorService = authorService;
     }
 
     @Override
     public int getRowCount() {
-        return categories.size();
+        return authors.size();
     }
 
     @Override
@@ -93,13 +91,13 @@ public class CategoryTableModel extends AbstractTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        if (row >= categories.size()) {
+        if (row >= authors.size()) {
             return null;
         }
-        Category category = categories.get(row);
+        Author author = authors.get(row);
         switch (col) {
             case 0:
-                return category.name;
+                return author.name;
             default:
                 return null;
         }
@@ -121,20 +119,20 @@ public class CategoryTableModel extends AbstractTableModel {
             editable = true;
         }
 
-        Category category = categories.get(row);
+        Author author = authors.get(row);
         switch (col) {
             case 0:
-                if (!category.name.equals((String) val)) {
+                if (!author.name.equals((String) val)) {
                     try {
-                        categoryService.updateCategoryAttributeById(category.id, "name", (String) val);
-                        category.name = (String) val;
+                        authorService.updateAuthorAttributeById(author.id, "name", (String) val);
+                        author.name = (String) val;
 
-                        bookCRUD.loadCategoryInto();
+                        bookCRUD.loadAuthorInto();
                     } catch (Exception e) {
-                        if (e.getMessage().contains("category_name_key")) {
+                        if (e.getMessage().contains("author_name_key")) {
                             JOptionPane.showMessageDialog(
                                     null,
-                                    "A category with this name already exists",
+                                    "An author with this name already exists",
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
@@ -155,8 +153,8 @@ public class CategoryTableModel extends AbstractTableModel {
         fireTableCellUpdated(row, col);
     }
 
-    public Category getCategory(int row) {
-        return categories.get(row);
+    public Author getAuthor(int row) {
+        return authors.get(row);
     }
 
     @Override
@@ -165,10 +163,10 @@ public class CategoryTableModel extends AbstractTableModel {
     }
 
     public boolean contains(int id) {
-        Optional<Category> foundCategory = categories.stream()
-                .filter(category -> category.id == id)
+        Optional<Author> foundAuthor = authors.stream()
+                .filter(author -> author.id == id)
                 .findFirst();
-        return foundCategory.isPresent();
+        return foundAuthor.isPresent();
     }
 
     @Override
@@ -188,40 +186,40 @@ public class CategoryTableModel extends AbstractTableModel {
         return (columnIndex == 0 || columnIndex == 1);
     }
 
-    public void reloadAllCategories(List<Category> newCategories) {
-        if (newCategories != null) {
-            categories.clear();
+    public void reloadAllAuthors(List<Author> newAuthors) {
+        if (newAuthors != null) {
+            authors.clear();
             fireTableDataChanged();
-            for (var category : newCategories) {
-                if (!contains(category.id)) {
-                    addRow(category);
+            for (var author : newAuthors) {
+                if (!contains(author.id)) {
+                    addRow(author);
                 }
             }
         }
         editable = false;
     }
 
-    public void loadNewCategories(List<Category> newCategories) {
-        if (newCategories != null) {
-            for (var category : newCategories) {
-                if (!contains(category.id)) {
-                    addRow(category);
+    public void loadNewAuthors(List<Author> newAuthors) {
+        if (newAuthors != null) {
+            for (var author : newAuthors) {
+                if (!contains(author.id)) {
+                    addRow(author);
                 }
             }
         }
     }
 
-    void addRow(Category category) {
-        categories.add(category);
+    void addRow(Author author) {
+        authors.add(author);
     }
 
     void setHiddenState(int row) {
-        categories.get(row).isHidden = !categories.get(row).isHidden;
+        authors.get(row).isHidden = !authors.get(row).isHidden;
     }
 
     int getHiddenState(int row) {
-        Category category = categories.get(row);
-        if (category.isHidden) {
+        Author author = authors.get(row);
+        if (author.isHidden) {
             return 1;
         }
         return 0;

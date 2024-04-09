@@ -1,6 +1,5 @@
-package com.group06.bsms.categories;
+package com.group06.bsms.authors;
 
-import com.group06.bsms.categories.*;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
@@ -13,7 +12,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +24,14 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class CategoryCRUD extends javax.swing.JPanel {
+public class AuthorCRUD extends javax.swing.JPanel {
 
-    private final CategoryService categoryService;
-    private CategoryTableModel model;
+    private final AuthorService authorService;
+    private AuthorTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
-    private final UpdateCategory updateCategory;
-    private final AddCategoryInformation addCategoryInfo;
+    private final UpdateAuthor updateAuthor;
+    private final AddAuthorInformation addAuthorInfo;
     private final BookCRUD bookCRUD;
 
     public void setCurrentOffset(int currentOffset) {
@@ -43,34 +41,34 @@ public class CategoryCRUD extends javax.swing.JPanel {
     private final int limit = Main.ROW_LIMIT;
     private boolean isScrollAtBottom = false;
 
-    public CategoryCRUD() {
+    public AuthorCRUD() {
         this(
                 null,
                 null,
                 null,
-                new CategoryService(new CategoryRepository(DB.db()))
+                new AuthorService(new AuthorRepository(DB.db()))
         );
     }
 
-    public CategoryCRUD(UpdateCategory updateCategory, AddCategoryInformation addCategoryInfo, BookCRUD bookCRUD) {
+    public AuthorCRUD(UpdateAuthor updateAuthor, AddAuthorInformation addAuthorInfo, BookCRUD bookCRUD) {
         this(
-                updateCategory,
-                addCategoryInfo,
+                updateAuthor,
+                addAuthorInfo,
                 bookCRUD,
-                new CategoryService(new CategoryRepository(DB.db()))
+                new AuthorService(new AuthorRepository(DB.db()))
         );
     }
 
-    public CategoryCRUD(
-            UpdateCategory updateCategory, AddCategoryInformation addCategoryInfo, BookCRUD bookCRUD,
-            CategoryService categoryService
+    public AuthorCRUD(
+            UpdateAuthor updateAuthor, AddAuthorInformation addAuthorInfo, BookCRUD bookCRUD,
+            AuthorService authorService
     ) {
-        this.updateCategory = updateCategory;
-        this.addCategoryInfo = addCategoryInfo;
+        this.updateAuthor = updateAuthor;
+        this.addAuthorInfo = addAuthorInfo;
         this.bookCRUD = bookCRUD;
-        this.categoryService = categoryService;
+        this.authorService = authorService;
 
-        this.model = new CategoryTableModel(categoryService, bookCRUD);
+        this.model = new AuthorTableModel(authorService, bookCRUD);
         initComponents();
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
@@ -82,10 +80,10 @@ public class CategoryCRUD extends javax.swing.JPanel {
 
         setUpTable();
 
-        this.loadCategoriesIntoTable();
+        this.loadAuthorsIntoTable();
     }
 
-    public void loadCategoriesIntoTable() {
+    public void loadAuthorsIntoTable() {
         var searchString
                 = searchBar == null || searchBar.getText() == null
                 ? ""
@@ -95,14 +93,14 @@ public class CategoryCRUD extends javax.swing.JPanel {
             int currentRowCount = 0;
 
             do {
-                List<Category> categories = categoryService.searchSortFilterCategories(
+                List<Author> authors = authorService.searchSortFilterAuthors(
                         currentOffset, limit, columnSortOrders, searchString
                 );
 
                 if (currentOffset > 0) {
-                    model.loadNewCategories(categories);
+                    model.loadNewAuthors(authors);
                 } else {
-                    model.reloadAllCategories(categories);
+                    model.reloadAllAuthors(authors);
                 }
 
                 currentOffset += limit;
@@ -176,25 +174,25 @@ public class CategoryCRUD extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int columnIndex = table.columnAtPoint(e.getPoint());
                 toggleSortOrder(columnIndex);
-                reloadCategories();
+                reloadAuthors();
                 table.getTableHeader().repaint();
             }
         });
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
-                int categoryId = model.getCategory(row).id;
-                updateCategory.setCategoryById(categoryId);
-                Dashboard.dashboard.switchTab("updateCategory");
+                int authorId = model.getAuthor(row).id;
+                updateAuthor.setAuthorById(authorId);
+                Dashboard.dashboard.switchTab("updateAuthor");
             }
 
             @Override
             public int onHide(int row) {
                 try {
                     if (model.getHiddenState(row) == 1) {
-                        categoryService.showCategory(model.getCategory(row).id);
+                        authorService.showAuthor(model.getAuthor(row).id);
                     } else if (model.getHiddenState(row) == 0) {
-                        categoryService.hideCategory(model.getCategory(row).id);
+                        authorService.hideAuthor(model.getAuthor(row).id);
                     }
                     model.setHiddenState(row);
                 } catch (Exception e) {
@@ -231,7 +229,7 @@ public class CategoryCRUD extends javax.swing.JPanel {
                 isScrollAtBottom
                         = e.getAdjustable().getMaximum() == e.getAdjustable().getValue() + e.getAdjustable().getVisibleAmount();
                 if (isScrollAtBottom) {
-                    loadCategoriesIntoTable();
+                    loadAuthorsIntoTable();
                 }
             }
         });
@@ -251,7 +249,7 @@ public class CategoryCRUD extends javax.swing.JPanel {
         setAutoscrolls(true);
 
         bookLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        bookLabel.setText("CATEGORIES");
+        bookLabel.setText("AUTHORS");
 
         searchBar.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         searchBar.setFocusAccelerator('s');
@@ -328,25 +326,25 @@ public class CategoryCRUD extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public void reloadCategories() {
-        reloadCategories(false);
+    public void reloadAuthors() {
+        reloadAuthors(false);
     }
 
-    public void reloadCategories(boolean reloadFilter) {
+    public void reloadAuthors(boolean reloadFilter) {
         currentOffset = 0;
-        loadCategoriesIntoTable();
+        loadAuthorsIntoTable();
 
         if (reloadFilter) {
-            bookCRUD.loadCategoryInto();
+            bookCRUD.loadAuthorInto();
         }
     }
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
-        reloadCategories();
+        reloadAuthors();
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
-        Dashboard.dashboard.switchTab("addCategoryInformation");
+        Dashboard.dashboard.switchTab("addAuthorInformation");
     }//GEN-LAST:event_createBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

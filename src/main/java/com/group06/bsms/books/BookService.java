@@ -101,7 +101,7 @@ public class BookService {
         try {
             Book book = bookDAO.selectBook(id);
             if (book == null) {
-                throw new Exception("Cannot find book: " + id);
+                throw new Exception("Cannot find book with id = " + id);
             }
             return book;
         } catch (Exception e) {

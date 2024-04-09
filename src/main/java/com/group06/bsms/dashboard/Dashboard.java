@@ -1,5 +1,8 @@
 package com.group06.bsms.dashboard;
 
+import com.group06.bsms.authors.AddAuthorInformation;
+import com.group06.bsms.authors.AuthorCRUD;
+import com.group06.bsms.authors.UpdateAuthor;
 import com.group06.bsms.books.AddBookInformation;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.books.UpdateBook;
@@ -22,6 +25,9 @@ public class Dashboard extends javax.swing.JPanel {
     private final UpdateCategory updateCategory = new UpdateCategory();
     private final AddCategoryInformation addCategoryInfo = new AddCategoryInformation();
     private final CategoryCRUD categoryCRUD = new CategoryCRUD(updateCategory, addCategoryInfo, bookCRUD);
+    private final UpdateAuthor updateAuthor = new UpdateAuthor();
+    private final AddAuthorInformation addAuthorInfo = new AddAuthorInformation();
+    private final AuthorCRUD authorCRUD = new AuthorCRUD(updateAuthor, addAuthorInfo, bookCRUD);
 
     private Dashboard() {
         initComponents();
@@ -30,17 +36,21 @@ public class Dashboard extends javax.swing.JPanel {
 
         updateBook.setBookCRUD(bookCRUD);
         addBookInfo.setBookCRUD(bookCRUD);
-
         main.add(bookCRUD, "bookCRUD");
         main.add(updateBook, "updateBook");
         main.add(addBookInfo, "addBookInformation");
 
         updateCategory.setCategoryCRUD(categoryCRUD);
         addCategoryInfo.setCategoryCRUD(categoryCRUD);
-
         main.add(categoryCRUD, "categoryCRUD");
         main.add(updateCategory, "updateCategory");
         main.add(addCategoryInfo, "addCategoryInformation");
+
+        updateAuthor.setAuthorCRUD(authorCRUD);
+        addAuthorInfo.setAuthorCRUD(authorCRUD);
+        main.add(authorCRUD, "authorCRUD");
+        main.add(updateAuthor, "updateAuthor");
+        main.add(addAuthorInfo, "addAuthorInformation");
     }
 
     public void switchTab(String tab) {
@@ -120,6 +130,11 @@ public class Dashboard extends javax.swing.JPanel {
         authors.setMaximumSize(new java.awt.Dimension(58, 58));
         authors.setMinimumSize(new java.awt.Dimension(58, 58));
         authors.setPreferredSize(new java.awt.Dimension(58, 58));
+        authors.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                authorsActionPerformed(evt);
+            }
+        });
         jToolBar1.add(authors);
 
         publishers.setIcon(SVGHelper.createSVGIconWithFilter(
@@ -211,6 +226,11 @@ public class Dashboard extends javax.swing.JPanel {
         switchTab("categoryCRUD");
         categoryCRUD.reloadCategories();
     }//GEN-LAST:event_categoriesActionPerformed
+
+    private void authorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_authorsActionPerformed
+        switchTab("authorCRUD");
+        authorCRUD.reloadAuthors();
+    }//GEN-LAST:event_authorsActionPerformed
 
     private java.awt.CardLayout layout;
     // Variables declaration - do not modify//GEN-BEGIN:variables
