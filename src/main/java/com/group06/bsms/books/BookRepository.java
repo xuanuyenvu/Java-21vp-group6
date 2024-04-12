@@ -58,7 +58,6 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             }
             return book;
         } catch (Exception e) {
-            e.printStackTrace();
             db.rollback();
             throw e;
         }

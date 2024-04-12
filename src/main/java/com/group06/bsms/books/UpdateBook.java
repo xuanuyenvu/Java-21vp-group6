@@ -95,7 +95,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             book = null;
 
             JOptionPane.showMessageDialog(null,
-                    "An error occurred while getting book information: " + e.getMessage(),
+                    e.getMessage(),
                     "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -116,7 +116,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             pagesSpinner.setValue(book.pageCount);
             translatorField.setText(book.translatorName);
             overviewTextArea.setText(book.overview);
-            
+
             if (book.maxImportPrice != null) {
                 importPriceTextField.setText(Double.toString(book.maxImportPrice));
                 salePriceTextField.setEnabled(true);
@@ -144,8 +144,27 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                     (ArrayList<Category>) book.categories);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "An error occurred while getting book information: " + e.getMessage(),
+                    e.getMessage(),
                     "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    void loadCategoryInto() {
+        try {
+            var categories = new ArrayList<Category>(categoryService.selectAllCategories());
+            if (categories == null) {
+                throw new NullPointerException();
+            }
+
+            categorySelectionPanel.updateList(
+                    categories,
+                    book == null ? null : (ArrayList<Category>) book.categories
+            );
+
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Throwable e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -155,10 +174,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             authorAutoComp.updateList(authors);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(),
+            JOptionPane.showMessageDialog(null, e.getMessage(),
                     "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -170,10 +189,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
         } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null,
-                    "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error",
+                    e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -533,16 +552,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
 
             java.sql.Date publishDate = publishDatePicker.getDateSQL();
 
-            if (title == null || title.equals("")) {
-                throw new Exception("Title cannot be empty");
-            }
-
             Author author = (Author) authorAutoComp.getSelectedObject();
             if (author == null) {
                 if (!authorAutoComp.getText().equals("")) {
                     author = new Author(authorAutoComp.getText());
-                } else {
-                    throw new Exception("Author cannot be empty");
                 }
             }
 
@@ -550,25 +563,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             if (publisher == null) {
                 if (!publisherAutoComp.getText().equals("")) {
                     publisher = new Publisher(publisherAutoComp.getText());
-                } else {
-                    throw new Exception("Publisher cannot be empty");
                 }
-            }
-
-            if (categoriesList.isEmpty()) {
-                throw new Exception("Categories cannot be empty");
-            }
-
-            if (dimension == null || dimension.equals("")) {
-                throw new Exception("Dimension cannot be empty");
-            }
-
-            if (pages == null || pages.equals(0)) {
-                throw new Exception("Pages cannot be 0");
-            }
-
-            if (overview == null || overview.equals("")) {
-                throw new Exception("Overview cannot be empty");
             }
 
             Book updatedBook = new Book(
@@ -592,6 +587,8 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 JOptionPane.showMessageDialog(null, "Publish date must be before today", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else if (ex.getMessage().contains("book_title_key")) {
                 JOptionPane.showMessageDialog(null, "A book with this title already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("book_title_check")) {
+                JOptionPane.showMessageDialog(null, "Title cannot be empty", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else if (ex.getMessage().contains("book_dimension_check")) {
                 JOptionPane.showMessageDialog(null, "Invalid dimension format (must be 'LxWxH cm').", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else {

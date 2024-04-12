@@ -1,6 +1,8 @@
-package com.group06.bsms.books;
+package com.group06.bsms.categories;
 
+import com.group06.bsms.categories.*;
 import static com.group06.bsms.Main.app;
+import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.components.ActionBtn;
 import com.group06.bsms.components.TableActionEvent;
 import java.awt.Color;
@@ -27,7 +29,7 @@ class TableActionCellEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        BookTableModel model = (BookTableModel) table.getModel();
+        CategoryTableModel model = (CategoryTableModel) table.getModel();
         int isHidden = model.getHiddenState(table.convertRowIndexToModel(row));
         int modelRow = table.convertRowIndexToModel(row);
 
@@ -49,7 +51,7 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
         int modelRow = table.convertRowIndexToModel(row);
 
-        int isHidden = ((BookTableModel) table.getModel()).getHiddenState(modelRow);
+        int isHidden = ((CategoryTableModel) table.getModel()).getHiddenState(modelRow);
 
         ActionBtn action = new ActionBtn(isHidden);
         action.setBackground(Color.WHITE);
@@ -61,20 +63,22 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 /**
  * A custom structure used to display a table
  */
-public class BookTableModel extends AbstractTableModel {
+public class CategoryTableModel extends AbstractTableModel {
 
-    private List<Book> books = new ArrayList<>();
-    private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Actions"};
+    private List<Category> categories = new ArrayList<>();
+    private String[] columns = {"Name", "Actions"};
     public boolean editable = false;
-    private final BookService bookService;
+    private final CategoryService categoryService;
+    private final BookCRUD bookCRUD;
 
-    public BookTableModel(BookService bookService) {
-        this.bookService = bookService;
+    public CategoryTableModel(CategoryService categoryService, BookCRUD bookCRUD) {
+        this.categoryService = categoryService;
+        this.bookCRUD = bookCRUD;
     }
 
     @Override
     public int getRowCount() {
-        return books.size();
+        return categories.size();
     }
 
     @Override
@@ -89,21 +93,13 @@ public class BookTableModel extends AbstractTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        if (row >= books.size()) {
+        if (row >= categories.size()) {
             return null;
         }
-        Book book = books.get(row);
+        Category category = categories.get(row);
         switch (col) {
             case 0:
-                return book.title;
-            case 1:
-                return ((book.author == null) ? "" : book.author.name);
-            case 2:
-                return ((book.publisher == null) ? "" : book.publisher.name);
-            case 3:
-                return book.quantity;
-            case 4:
-                return book.salePrice;
+                return category.name;
             default:
                 return null;
         }
@@ -117,7 +113,7 @@ public class BookTableModel extends AbstractTableModel {
      */
     @Override
     public void setValueAt(Object val, int row, int col) {
-        if (col == 5) {
+        if (col == 1) {
             return;
         }
 
@@ -125,25 +121,27 @@ public class BookTableModel extends AbstractTableModel {
             editable = true;
         }
 
-        Book book = books.get(row);
+        Category category = categories.get(row);
         switch (col) {
             case 0:
-                if (!book.title.equals((String) val)) {
+                if (!category.name.equals((String) val)) {
                     try {
-                        bookService.updateBookAttributeById(book.id, "title", (String) val);
-                        book.title = (String) val;
+                        categoryService.updateCategoryAttributeById(category.id, "name", (String) val);
+                        category.name = (String) val;
+
+                        bookCRUD.loadCategoryInto();
                     } catch (Exception e) {
-                        if (e.getMessage().contains("book_title_key")) {
+                        if (e.getMessage().contains("category_name_key")) {
                             JOptionPane.showMessageDialog(
                                     null,
-                                    "A book with this title already exists",
+                                    "A category with this name already exists",
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
-                        } else if (e.getMessage().contains("book_title_check")) {
+                        } else if (e.getMessage().contains("category_name_check")) {
                             JOptionPane.showMessageDialog(
                                     null,
-                                    "Title cannot be empty",
+                                    "Name cannot be empty",
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
@@ -158,47 +156,14 @@ public class BookTableModel extends AbstractTableModel {
                     }
                 }
                 break;
-            case 4:
-                if ((Double) val != book.salePrice) {
-                    try {
-                        if (book.maxImportPrice == null) {
-                            JOptionPane.showMessageDialog(
-                                    app,
-                                    "Book must be imported before its sale price can be edited",
-                                    "BSMS Error",
-                                    JOptionPane.ERROR_MESSAGE
-                            );
-                            return;
-                        }
-                        if ((Double) val <= 1.1 * book.maxImportPrice) {
-                            JOptionPane.showMessageDialog(
-                                    app,
-                                    "Sale price must be greater than 1.1 * import price",
-                                    "BSMS Error",
-                                    JOptionPane.ERROR_MESSAGE
-                            );
-                            return;
-                        }
-                        bookService.updateBookAttributeById(book.id, "salePrice", (Double) val);
-                        book.salePrice = (Double) val;
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(
-                                app,
-                                e.getMessage(),
-                                "BSMS Error",
-                                JOptionPane.ERROR_MESSAGE
-                        );
-                    }
-                }
-                break;
             default:
                 break;
         }
         fireTableCellUpdated(row, col);
     }
 
-    public Book getBook(int row) {
-        return books.get(row);
+    public Category getCategory(int row) {
+        return categories.get(row);
     }
 
     @Override
@@ -207,10 +172,10 @@ public class BookTableModel extends AbstractTableModel {
     }
 
     public boolean contains(int id) {
-        Optional<Book> foundBook = books.stream()
-                .filter(book -> book.id == id)
+        Optional<Category> foundCategory = categories.stream()
+                .filter(category -> category.id == id)
                 .findFirst();
-        return foundBook.isPresent();
+        return foundCategory.isPresent();
     }
 
     @Override
@@ -219,14 +184,6 @@ public class BookTableModel extends AbstractTableModel {
             case 0:
                 return String.class;
             case 1:
-                return String.class;
-            case 2:
-                return String.class;
-            case 3:
-                return Integer.class;
-            case 4:
-                return Double.class;
-            case 5:
                 return Boolean.class;
             default:
                 return null;
@@ -235,47 +192,43 @@ public class BookTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return (columnIndex == 0 || columnIndex == 4 || columnIndex == 5);
+        return (columnIndex == 0 || columnIndex == 1);
     }
 
-    public void reloadAllBooks(List<Book> newBooks) {
-        if (newBooks != null) {
-            books.clear();
+    public void reloadAllCategories(List<Category> newCategories) {
+        if (newCategories != null) {
+            categories.clear();
             fireTableDataChanged();
-            for (var book : newBooks) {
-                if (!contains(book.id)) {
-                    addRow(book);
+            for (var category : newCategories) {
+                if (!contains(category.id)) {
+                    addRow(category);
                 }
             }
         }
         editable = false;
     }
 
-    public void loadNewBooks(List<Book> newBooks) {
-        if (newBooks != null) {
-            for (var book : newBooks) {
-                if (!contains(book.id)) {
-                    addRow(book);
+    public void loadNewCategories(List<Category> newCategories) {
+        if (newCategories != null) {
+            for (var category : newCategories) {
+                if (!contains(category.id)) {
+                    addRow(category);
                 }
             }
         }
     }
 
-    void addRow(Book book) {
-        books.add(book);
-//        SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
+    void addRow(Category category) {
+        categories.add(category);
     }
 
     void setHiddenState(int row) {
-        books.get(row).isHidden = !books.get(row).isHidden;
+        categories.get(row).isHidden = !categories.get(row).isHidden;
     }
 
     int getHiddenState(int row) {
-        Book book = books.get(row);
-        if (book.hiddenParentCount > 0) {
-            return -1;
-        }
-        if (book.isHidden) {
+        Category category = categories.get(row);
+        if (category.isHidden) {
             return 1;
         }
         return 0;

@@ -29,17 +29,40 @@ public class BookService {
 
     public void updateBook(Book book, Book updatedBook) throws Exception, IllegalArgumentException {
         try {
-            if (updatedBook.title == null
-                    || updatedBook.publishDate == null
-                    || updatedBook.categories.isEmpty()
-                    || updatedBook.dimension == null
-                    || updatedBook.pageCount == 0
-                    || updatedBook.overview == null) {
-                throw new IllegalArgumentException("Please fill in all required information.");
+            if (updatedBook.title == null || updatedBook.title.equals("")) {
+                throw new Exception("Title cannot be empty");
+            }
+
+            if (updatedBook.author == null) {
+                throw new Exception("Author cannot be empty");
+            }
+
+            if (updatedBook.publisher == null) {
+                throw new Exception("Publisher cannot be empty");
+            }
+
+            if (updatedBook.publishDate == null) {
+                throw new Exception("Publish date cannot be empty");
+            }
+
+            if (updatedBook.categories.isEmpty()) {
+                throw new Exception("Categories cannot be empty");
+            }
+
+            if (updatedBook.dimension == null || updatedBook.dimension.equals("")) {
+                throw new Exception("Dimension cannot be empty");
+            }
+
+            if (updatedBook.pageCount == 0) {
+                throw new Exception("Pages cannot be 0");
+            }
+
+            if (updatedBook.overview == null || updatedBook.overview.equals("")) {
+                throw new Exception("Overview cannot be empty");
             }
 
             if (book.maxImportPrice != null && updatedBook.salePrice <= 1.1 * book.maxImportPrice) {
-                throw new Exception("Sale price must be bigger than 1.1 * import price");
+                throw new Exception("Sale price must be greater than 1.1 * import price");
             }
 
             int count = 0;
@@ -70,17 +93,15 @@ public class BookService {
             updatedBook.hiddenParentCount = count;
             bookDAO.updateBook(book, updatedBook);
         } catch (Exception e) {
-
             throw e;
         }
-
     }
 
     public Book getBook(int id) throws Exception {
         try {
             Book book = bookDAO.selectBook(id);
             if (book == null) {
-                throw new Exception("Cannot find book: " + id);
+                throw new Exception("Cannot find book with id = " + id);
             }
             return book;
         } catch (Exception e) {
@@ -120,19 +141,44 @@ public class BookService {
         bookDAO.updateBookAttributeById(bookId, attr, value);
     }
 
-    public void insertBook(String title, Author author, Publisher publisher, ArrayList<Category> categoriesList,
+    public void insertBook(
+            String title, Author author, Publisher publisher, ArrayList<Category> categoriesList,
             Date publishDate, String dimension, Object pages, String translator,
-            String overview, boolean hideChecked) throws Exception {
-        Book book = new Book();
-        if (title == null
-                || publishDate == null
-                || categoriesList.isEmpty()
-                || dimension == null
-                || (Integer) pages == 0
-                || overview == null) {
-
-            throw new IllegalArgumentException("Please fill in all required information.");
+            String overview, boolean hideChecked
+    ) throws Exception {
+        if (title == null || title.equals("")) {
+            throw new Exception("Title cannot be empty");
         }
+
+        if (author == null) {
+            throw new Exception("Author cannot be empty");
+        }
+
+        if (publisher == null) {
+            throw new Exception("Publisher cannot be empty");
+        }
+
+        if (publishDate == null) {
+            throw new Exception("Publish date cannot be empty");
+        }
+
+        if (categoriesList.isEmpty()) {
+            throw new Exception("Categories cannot be empty");
+        }
+
+        if (dimension == null || dimension.equals("")) {
+            throw new Exception("Dimension cannot be empty");
+        }
+
+        if (pages == null || pages.equals(0)) {
+            throw new Exception("Pages cannot be 0");
+        }
+
+        if (overview == null || overview.equals("")) {
+            throw new Exception("Overview cannot be empty");
+        }
+
+        Book book = new Book();
         book.title = title;
         book.publishDate = publishDate;
         book.categories = new ArrayList<>(categoriesList);
