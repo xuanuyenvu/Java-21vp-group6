@@ -185,7 +185,7 @@ public class AddPublisherInformation extends javax.swing.JPanel {
 
         emailLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         emailLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        emailLabel.setLabelFor(nameField);
+        emailLabel.setLabelFor(emailField);
         emailLabel.setText("Email");
 
         emailField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -195,7 +195,7 @@ public class AddPublisherInformation extends javax.swing.JPanel {
 
         addressLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         addressLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        addressLabel.setLabelFor(nameField);
+        addressLabel.setLabelFor(addressField);
         addressLabel.setText("Address");
 
         addressField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
