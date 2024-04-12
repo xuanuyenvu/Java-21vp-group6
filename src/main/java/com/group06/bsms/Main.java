@@ -4,7 +4,6 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.group06.bsms.auth.Login;
-import com.group06.bsms.books.BookRevenue;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
@@ -29,7 +28,6 @@ public class Main extends JFrame {
         panel.setLayout(layout);
         panel.add(new Login(), "login");
         panel.add(Dashboard.dashboard, "dashboard");
-        panel.add(new BookRevenue(), "dashboard");
 
         switchTab("dashboard");
 
