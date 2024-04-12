@@ -186,4 +186,12 @@ public class BookService {
         List<Book> books = bookDAO.getOutOfStockBooks();
         return books;
     }
+
+    public List<Book> searchBooksByTitle(String title) throws Exception {
+        try {
+            return bookDAO.searchBooksByTitle(title);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 }

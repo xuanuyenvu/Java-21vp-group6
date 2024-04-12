@@ -558,5 +558,20 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         }
     }
 
+    @Override
+    public List<Book> searchBooksByTitle(String title) throws Exception {
+        try {
+            Map<String, Object> searchParams = new HashMap<>();
+            searchParams.put("title", title);
+            List<Book> result = this.selectAll(searchParams, 0, null, null, null, "id", "title");
+
+            return result;
+
+        } catch (Exception e) {
+            throw e;
+
+        }
+
+    }
 
 }
