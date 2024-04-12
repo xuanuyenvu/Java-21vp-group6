@@ -144,7 +144,7 @@ public class BookRevenue extends javax.swing.JPanel {
         table = new javax.swing.JTable();
 
         bookRevenueLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        bookRevenueLabel.setText("TOP 10 BOOKS REVENUE");
+        bookRevenueLabel.setText("BEST SELLING BOOKS");
 
         table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         table.setModel(this.model);
