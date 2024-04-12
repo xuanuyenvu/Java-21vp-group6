@@ -41,7 +41,7 @@ public class CategoryService {
     public void updateCategory(Category category, Category updatedCategory) throws Exception {
         try {
             if (updatedCategory.name == null || updatedCategory.name.equals("")) {
-                throw new Exception("Title cannot be empty");
+                throw new Exception("Name cannot be empty");
             }
 
             categoryDAO.updateCategory(category, updatedCategory);

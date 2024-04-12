@@ -138,6 +138,13 @@ public class CategoryTableModel extends AbstractTableModel {
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
+                        } else if (e.getMessage().contains("category_name_check")) {
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "Name cannot be empty",
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                         } else {
                             JOptionPane.showMessageDialog(
                                     app,

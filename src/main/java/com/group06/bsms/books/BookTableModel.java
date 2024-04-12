@@ -140,6 +140,13 @@ public class BookTableModel extends AbstractTableModel {
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
+                        } else if (e.getMessage().contains("book_title_check")) {
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "Title cannot be empty",
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                         } else {
                             JOptionPane.showMessageDialog(
                                     app,

@@ -18,8 +18,8 @@
   <SubComponents>
     <Container class="javax.swing.JToolBar" name="jToolBar1">
       <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+          <Connection code="UIManager.getColor(&quot;subBackground&quot;)" type="code"/>
         </Property>
         <Property name="floatable" type="boolean" value="true"/>
         <Property name="orientation" type="int" value="1"/>
@@ -138,6 +138,9 @@
             </Property>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="publishersActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="categories">
           <Properties>
@@ -172,11 +175,8 @@
             <AuxValue name="classDetails" type="java.lang.String" value="Box.Filler.VerticalGlue"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JButton" name="settings">
+        <Component class="javax.swing.JButton" name="settings1">
           <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="UIManager.getColor(&quot;background&quot;)&#xd;&#xa;" type="code"/>
-            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/settings.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    28, 28&#xd;&#xa;)" type="code"/>
             </Property>

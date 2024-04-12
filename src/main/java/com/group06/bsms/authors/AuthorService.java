@@ -69,11 +69,7 @@ public class AuthorService {
     public void updateAuthor(Author author, Author updatedAuthor) throws Exception {
         try {
             if (updatedAuthor.name == null || updatedAuthor.name.equals("")) {
-                throw new Exception("Title cannot be empty");
-            }
-
-            if (updatedAuthor.overview == null || updatedAuthor.overview.equals("")) {
-                throw new Exception("Overview cannot be empty");
+                throw new Exception("Name cannot be empty");
             }
 
             authorDAO.updateAuthor(author, updatedAuthor);
@@ -85,10 +81,6 @@ public class AuthorService {
     public void insertAuthor(String name, String overview, boolean hideChecked) throws Exception {
         if (name == null || name.equals("")) {
             throw new Exception("Name cannot be empty");
-        }
-
-        if (overview == null || overview.equals("")) {
-            throw new Exception("Overview cannot be empty");
         }
 
         Author author = new Author();

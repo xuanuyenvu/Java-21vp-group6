@@ -1,5 +1,6 @@
 package com.group06.bsms.dashboard;
 
+import com.group06.bsms.Main;
 import com.group06.bsms.authors.AddAuthorInformation;
 import com.group06.bsms.authors.AuthorCRUD;
 import com.group06.bsms.authors.UpdateAuthor;
@@ -9,6 +10,9 @@ import com.group06.bsms.books.UpdateBook;
 import com.group06.bsms.categories.AddCategoryInformation;
 import com.group06.bsms.categories.CategoryCRUD;
 import com.group06.bsms.categories.UpdateCategory;
+import com.group06.bsms.publishers.AddPublisherInformation;
+import com.group06.bsms.publishers.PublisherCRUD;
+import com.group06.bsms.publishers.UpdatePublisher;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,12 +26,18 @@ public class Dashboard extends javax.swing.JPanel {
     private final UpdateBook updateBook = new UpdateBook();
     private final AddBookInformation addBookInfo = new AddBookInformation();
     private final BookCRUD bookCRUD = new BookCRUD(updateBook, addBookInfo);
+
     private final UpdateCategory updateCategory = new UpdateCategory();
     private final AddCategoryInformation addCategoryInfo = new AddCategoryInformation();
     private final CategoryCRUD categoryCRUD = new CategoryCRUD(updateCategory, addCategoryInfo, bookCRUD);
+
     private final UpdateAuthor updateAuthor = new UpdateAuthor();
     private final AddAuthorInformation addAuthorInfo = new AddAuthorInformation();
     private final AuthorCRUD authorCRUD = new AuthorCRUD(updateAuthor, addAuthorInfo, bookCRUD);
+
+    private final UpdatePublisher updatePublisher = new UpdatePublisher();
+    private final AddPublisherInformation addPublisherInfo = new AddPublisherInformation();
+    private final PublisherCRUD publisherCRUD = new PublisherCRUD(updatePublisher, addPublisherInfo, bookCRUD);
 
     private Dashboard() {
         initComponents();
@@ -51,6 +61,12 @@ public class Dashboard extends javax.swing.JPanel {
         main.add(authorCRUD, "authorCRUD");
         main.add(updateAuthor, "updateAuthor");
         main.add(addAuthorInfo, "addAuthorInformation");
+
+        updatePublisher.setPublisherCRUD(publisherCRUD);
+        addPublisherInfo.setPublisherCRUD(publisherCRUD);
+        main.add(publisherCRUD, "publisherCRUD");
+        main.add(updatePublisher, "updatePublisher");
+        main.add(addPublisherInfo, "addPublisherInformation");
     }
 
     public void switchTab(String tab) {
@@ -69,13 +85,13 @@ public class Dashboard extends javax.swing.JPanel {
         publishers = new javax.swing.JButton();
         categories = new javax.swing.JButton();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
-        settings = new javax.swing.JButton();
+        settings1 = new javax.swing.JButton();
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 8), new java.awt.Dimension(0, 8), new java.awt.Dimension(32767, 8));
         main = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
 
-        jToolBar1.setBackground(new java.awt.Color(255, 255, 255));
+        jToolBar1.setBackground(UIManager.getColor("subBackground"));
         jToolBar1.setFloatable(true);
         jToolBar1.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jToolBar1.setRollover(true);
@@ -149,6 +165,11 @@ public class Dashboard extends javax.swing.JPanel {
         publishers.setMinimumSize(new java.awt.Dimension(58, 58));
         publishers.setPreferredSize(new java.awt.Dimension(58, 58));
         publishers.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        publishers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                publishersActionPerformed(evt);
+            }
+        });
         jToolBar1.add(publishers);
 
         categories.setIcon(SVGHelper.createSVGIconWithFilter(
@@ -171,23 +192,21 @@ public class Dashboard extends javax.swing.JPanel {
         jToolBar1.add(categories);
         jToolBar1.add(filler2);
 
-        settings.setBackground(UIManager.getColor("background")
-        );
-        settings.setIcon(SVGHelper.createSVGIconWithFilter(
+        settings1.setIcon(SVGHelper.createSVGIconWithFilter(
             "icons/settings.svg", 
             Color.black, Color.black,
             28, 28
         ));
-        settings.setToolTipText("Settings");
-        settings.setFocusPainted(false);
-        settings.setFocusable(false);
-        settings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        settings.setIconTextGap(0);
-        settings.setMaximumSize(new java.awt.Dimension(58, 58));
-        settings.setMinimumSize(new java.awt.Dimension(58, 58));
-        settings.setPreferredSize(new java.awt.Dimension(58, 58));
-        settings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(settings);
+        settings1.setToolTipText("Settings");
+        settings1.setFocusPainted(false);
+        settings1.setFocusable(false);
+        settings1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        settings1.setIconTextGap(0);
+        settings1.setMaximumSize(new java.awt.Dimension(58, 58));
+        settings1.setMinimumSize(new java.awt.Dimension(58, 58));
+        settings1.setPreferredSize(new java.awt.Dimension(58, 58));
+        settings1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(settings1);
         jToolBar1.add(filler3);
 
         add(jToolBar1, java.awt.BorderLayout.LINE_START);
@@ -232,6 +251,11 @@ public class Dashboard extends javax.swing.JPanel {
         authorCRUD.reloadAuthors();
     }//GEN-LAST:event_authorsActionPerformed
 
+    private void publishersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_publishersActionPerformed
+        switchTab("publisherCRUD");
+        publisherCRUD.reloadPublishers();
+    }//GEN-LAST:event_publishersActionPerformed
+
     private java.awt.CardLayout layout;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton authors;
@@ -244,6 +268,6 @@ public class Dashboard extends javax.swing.JPanel {
     private javax.swing.JButton logo;
     private javax.swing.JPanel main;
     private javax.swing.JButton publishers;
-    private javax.swing.JButton settings;
+    private javax.swing.JButton settings1;
     // End of variables declaration//GEN-END:variables
 }

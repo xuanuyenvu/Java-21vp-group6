@@ -1,4 +1,4 @@
-package com.group06.bsms.categories;
+package com.group06.bsms.publishers;
 
 import com.group06.bsms.DB;
 import com.group06.bsms.components.*;
@@ -7,43 +7,71 @@ import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import javax.swing.*;
 
-public class AddCategoryInformation extends javax.swing.JPanel {
+public class UpdatePublisher extends javax.swing.JPanel {
 
-    private CategoryCRUD categoryCRUD;
-    private final CategoryService categoryService;
+    private PublisherCRUD publisherCRUD;
+    private final PublisherService publisherService;
+    private Publisher publisher;
 
-    public AddCategoryInformation() {
+    public void setPublisherCRUD(PublisherCRUD publisherCRUD) {
+        this.publisherCRUD = publisherCRUD;
+    }
+
+    public UpdatePublisher() {
         this(
                 null,
-                new CategoryService(new CategoryRepository(DB.db()))
+                new PublisherService(new PublisherRepository(DB.db()))
         );
     }
 
-    public AddCategoryInformation(CategoryCRUD categoryCRUD) {
+    public UpdatePublisher(PublisherCRUD publisherCRUD) {
         this(
-                categoryCRUD,
-                new CategoryService(new CategoryRepository(DB.db()))
+                publisherCRUD,
+                new PublisherService(new PublisherRepository(DB.db()))
         );
     }
 
-    public void setCategoryCRUD(CategoryCRUD categoryCRUD) {
-        this.categoryCRUD = categoryCRUD;
-    }
-
-    public AddCategoryInformation(
-            CategoryCRUD categoryCRUD,
-            CategoryService categoryService
+    public UpdatePublisher(
+            PublisherCRUD publisherCRUD,
+            PublisherService publisherService
     ) {
-        this.categoryCRUD = categoryCRUD;
-        this.categoryService = categoryService;
+        this.publisherCRUD = publisherCRUD;
+        this.publisherService = publisherService;
         initComponents();
-        hiddenPropLabel.setVisible(false);
 
-        nameField.putClientProperty("JTextField.placeholderText", "Category name");
+        nameField.putClientProperty("JTextField.placeholderText", "Publisher name");
+        emailField.putClientProperty("JTextField.placeholderText", "Publisher email");
+        addressField.putClientProperty("JTextField.placeholderText", "Publisher address");
 
         CustomLabelInForm.setColoredText(nameLabel);
 
         nameField.requestFocus();
+    }
+
+    public void setPublisherById(int publisherId) {
+        try {
+            publisher = publisherService.getPublisher(publisherId);
+            loadPublisherInto();
+        } catch (Exception e) {
+            publisher = null;
+
+            JOptionPane.showMessageDialog(null,
+                    e.getMessage(),
+                    "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadPublisherInto() {
+        try {
+            nameField.setText(publisher.name);
+            emailField.setText(publisher.email);
+            addressField.setText(publisher.address);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                    e.getMessage(),
+                    "BSMS Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -59,10 +87,11 @@ public class AddCategoryInformation extends javax.swing.JPanel {
         groupFieldPanel = new javax.swing.JPanel();
         nameLabel = new javax.swing.JLabel();
         nameField = new javax.swing.JTextField();
-        hideCheckBox = new javax.swing.JCheckBox();
-        hiddenPropLabel = new javax.swing.JLabel();
-        cancelButton = new javax.swing.JButton();
         addCategoryButton = new javax.swing.JButton();
+        emailLabel = new javax.swing.JLabel();
+        emailField = new javax.swing.JTextField();
+        addressField = new javax.swing.JTextField();
+        addressLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -96,7 +125,7 @@ public class AddCategoryInformation extends javax.swing.JPanel {
         });
 
         pageName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        pageName.setText("Add category");
+        pageName.setText("Update publisher");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -107,7 +136,7 @@ public class AddCategoryInformation extends javax.swing.JPanel {
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pageName)
-                .addContainerGap(448, Short.MAX_VALUE))
+                .addContainerGap(392, Short.MAX_VALUE))
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         jPanel1Layout.setVerticalGroup(
@@ -115,7 +144,7 @@ public class AddCategoryInformation extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
+                        .addGap(13, 13, 13)
                         .addComponent(pageName))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
@@ -144,39 +173,38 @@ public class AddCategoryInformation extends javax.swing.JPanel {
         nameField.setMinimumSize(new java.awt.Dimension(440, 31));
         nameField.setPreferredSize(new java.awt.Dimension(440, 31));
 
-        hideCheckBox.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        hideCheckBox.setText("Hidden Category");
-        hideCheckBox.setIconTextGap(5);
-        hideCheckBox.setMargin(new java.awt.Insets(2, 0, 2, 2));
-
-        hiddenPropLabel.setFont(new java.awt.Font("Segoe UI", 2, 13)); // NOI18N
-        hiddenPropLabel.setText("note sth");
-        hiddenPropLabel.setMinimumSize(new java.awt.Dimension(423, 18));
-        hiddenPropLabel.setPreferredSize(new java.awt.Dimension(423, 18));
-
-        cancelButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        cancelButton.setForeground(UIManager.getColor("mutedColor")
-        );
-        cancelButton.setText("Clear");
-        cancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
         addCategoryButton.setBackground(new java.awt.Color(65, 105, 225));
         addCategoryButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         addCategoryButton.setForeground(new java.awt.Color(255, 255, 255));
-        addCategoryButton.setMnemonic(java.awt.event.KeyEvent.VK_A);
-        addCategoryButton.setText("Add");
+        addCategoryButton.setMnemonic(java.awt.event.KeyEvent.VK_U);
+        addCategoryButton.setText("Update");
         addCategoryButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         addCategoryButton.setDisplayedMnemonicIndex(0);
         addCategoryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addCategoryButtonActionPerformed(evt);
+                addPublisherButtonActionPerformed(evt);
             }
         });
+
+        emailLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
+        emailLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        emailLabel.setLabelFor(nameField);
+        emailLabel.setText("Email");
+
+        emailField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        emailField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        emailField.setMinimumSize(new java.awt.Dimension(440, 31));
+        emailField.setPreferredSize(new java.awt.Dimension(440, 31));
+
+        addressField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        addressField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        addressField.setMinimumSize(new java.awt.Dimension(440, 31));
+        addressField.setPreferredSize(new java.awt.Dimension(440, 31));
+
+        addressLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
+        addressLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        addressLabel.setLabelFor(nameField);
+        addressLabel.setText("Address");
 
         javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
         groupFieldPanel.setLayout(groupFieldPanelLayout);
@@ -184,19 +212,22 @@ public class AddCategoryInformation extends javax.swing.JPanel {
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
                 .addContainerGap(91, Short.MAX_VALUE)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addComponent(addressLabel)
+                        .addGap(379, 379, 379))
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addComponent(emailLabel)
+                        .addGap(400, 400, 400))
+                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                            .addGap(21, 21, 21)
-                            .addComponent(hiddenPropLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 423, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(hideCheckBox)
-                        .addComponent(nameLabel)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanelLayout.createSequentialGroup()
-                            .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(92, Short.MAX_VALUE))
+                            .addGap(346, 346, 346)
+                            .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(nameLabel, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(nameField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(emailField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addressField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
         groupFieldPanelLayout.setVerticalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,13 +237,15 @@ public class AddCategoryInformation extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14)
-                .addComponent(hideCheckBox)
+                .addComponent(emailLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hiddenPropLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(emailField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(addressLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addressField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
+                .addComponent(addCategoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
 
@@ -220,34 +253,6 @@ public class AddCategoryInformation extends javax.swing.JPanel {
 
         add(jScrollForm, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cancelButtonActionPerformed
-        nameField.setText("");
-        hideCheckBox.setSelected(false);
-    }// GEN-LAST:event_cancelButtonActionPerformed
-
-    private void addCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_addCategoryButtonActionPerformed
-        String name = nameField.getText();
-        boolean hideChecked = hideCheckBox.isSelected();
-        try {
-            categoryService.insertCategory(name, hideChecked);
-
-            cancelButtonActionPerformed(null);
-
-            JOptionPane.showMessageDialog(null, "Category added successfully.", "BSMS Information",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-            categoryCRUD.reloadCategories(true);
-        } catch (Exception ex) {
-            if (ex.getMessage().contains("category_name_key")) {
-                JOptionPane.showMessageDialog(null, "A category with this name already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
-            } else if (ex.getMessage().contains("category_name_check")) {
-                JOptionPane.showMessageDialog(null, "Name cannot be empty", "BSMS Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
         backButton.setIcon(SVGHelper.createSVGIconWithFilter("icons/arrow-back.svg", Color.black, Color.gray, 18, 18));
@@ -258,16 +263,52 @@ public class AddCategoryInformation extends javax.swing.JPanel {
     }// GEN-LAST:event_backButtonMouseExited
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        Dashboard.dashboard.switchTab("categoryCRUD");
+        Dashboard.dashboard.switchTab("publisherCRUD");
     }//GEN-LAST:event_backButtonActionPerformed
+
+    private void addPublisherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPublisherButtonActionPerformed
+        String name = nameField.getText();
+        String email = emailField.getText().equals("") ? null : emailField.getText();
+        String address = addressField.getText();
+
+        try {
+            if (publisher == null) {
+                throw new Exception("Publisher data is empty");
+            }
+
+            Publisher updatedPublisher = new Publisher(
+                    publisher.id, name, email, address, publisher.isHidden
+            );
+            publisherService.updatePublisher(publisher, updatedPublisher);
+
+            JOptionPane.showMessageDialog(null, "Publisher updated successfully.", "BSMS Information",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            publisherCRUD.reloadPublishers(true);
+            setPublisherById(publisher.id);
+        } catch (Exception ex) {
+            if (ex.getMessage().contains("publisher_name_key")) {
+                JOptionPane.showMessageDialog(null, "A publisher with this name already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("publisher_name_check")) {
+                JOptionPane.showMessageDialog(null, "Name cannot be empty", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("publisher_email_check")) {
+                JOptionPane.showMessageDialog(null, "Invalid email format", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("publisher_email_key")) {
+                JOptionPane.showMessageDialog(null, "A publisher with this email already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_addPublisherButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCategoryButton;
+    private javax.swing.JTextField addressField;
+    private javax.swing.JLabel addressLabel;
     private javax.swing.JButton backButton;
-    private javax.swing.JButton cancelButton;
+    private javax.swing.JTextField emailField;
+    private javax.swing.JLabel emailLabel;
     private javax.swing.JPanel groupFieldPanel;
-    private javax.swing.JLabel hiddenPropLabel;
-    private javax.swing.JCheckBox hideCheckBox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollForm;
     private javax.swing.JSeparator jSeparator2;

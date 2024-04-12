@@ -42,7 +42,6 @@ public class AddAuthorInformation extends javax.swing.JPanel {
         nameField.putClientProperty("JTextField.placeholderText", "Author name");
 
         CustomLabelInForm.setColoredText(nameLabel);
-        CustomLabelInForm.setColoredText(overviewLabel);
 
         nameField.requestFocus();
     }
@@ -268,6 +267,8 @@ public class AddAuthorInformation extends javax.swing.JPanel {
         } catch (Exception ex) {
             if (ex.getMessage().contains("author_name_key")) {
                 JOptionPane.showMessageDialog(null, "An author with this name already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("author_name_check")) {
+                JOptionPane.showMessageDialog(null, "Name cannot be empty", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
             }

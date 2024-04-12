@@ -553,6 +553,8 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                 JOptionPane.showMessageDialog(null, "Publish date must be before today", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else if (ex.getMessage().contains("book_title_key")) {
                 JOptionPane.showMessageDialog(null, "A book with this title already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("book_title_check")) {
+                JOptionPane.showMessageDialog(null, "Title cannot be empty", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else if (ex.getMessage().contains("book_dimension_check")) {
                 JOptionPane.showMessageDialog(null, "Invalid dimension format (must be 'LxWxH cm').", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else {

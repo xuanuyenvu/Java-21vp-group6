@@ -242,6 +242,8 @@ public class UpdateCategory extends javax.swing.JPanel {
         } catch (Exception ex) {
             if (ex.getMessage().contains("category_name_key")) {
                 JOptionPane.showMessageDialog(null, "A category with this name already exists", "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            } else if (ex.getMessage().contains("category_name_check")) {
+                JOptionPane.showMessageDialog(null, "Name cannot be empty", "BSMS Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
             }

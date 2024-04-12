@@ -3,6 +3,7 @@ package com.group06.bsms;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.group06.bsms.auth.Login;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
@@ -15,8 +16,9 @@ public class Main extends JFrame {
     public static Main app;
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
-    public static final boolean DARK_MODE = false;
     public static final int ROW_LIMIT = 10;
+
+    private static boolean darkMode = false;
 
     private Main() {
         if (!INDEV) {
@@ -81,16 +83,24 @@ public class Main extends JFrame {
         layout.show(panel, tab);
     }
 
-    public static void main(String args[]) {
-        FlatLaf.registerCustomDefaultsSource("themes");
+    public void toggleTheme() {
+        darkMode = !darkMode;
 
-        if (DARK_MODE) {
+        FlatAnimatedLafChange.showSnapshot();
+        if (darkMode) {
             FlatDarkLaf.setup();
         } else {
             FlatLightLaf.setup();
         }
+        SwingUtilities.updateComponentTreeUI(this);
+        FlatAnimatedLafChange.hideSnapshotWithAnimation();
+    }
 
+    public static void main(String args[]) {
         try {
+            FlatLaf.registerCustomDefaultsSource("themes");
+            FlatLightLaf.setup();
+
             DB.connectToDB("/env/bsms.properties");
 
             java.awt.EventQueue.invokeLater(() -> {

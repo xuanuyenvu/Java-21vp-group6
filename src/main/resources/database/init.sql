@@ -31,8 +31,8 @@ create table if not exists Account (
 create table if not exists Publisher (
     id serial primary key,
     name varchar(255) unique check (length(name) > 0) not null,
-    email varchar(255) unique check (email ~ '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+$'),
-    address varchar(255) check (length(address) > 0),
+    email varchar(255) unique check (email ~ '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+$' or email = ''),
+    address varchar(255),
     isHidden boolean default false not null
 );
 
