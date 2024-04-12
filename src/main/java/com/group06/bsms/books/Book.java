@@ -29,6 +29,8 @@ public class Book {
 
     public Double maxImportPrice;
 
+    public Double revenue;
+
     public Book() {
     }
 

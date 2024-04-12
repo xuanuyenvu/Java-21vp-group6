@@ -186,4 +186,9 @@ public class BookService {
         List<Book> books = bookDAO.getOutOfStockBooks();
         return books;
     }
+
+    List<Book> getTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttribute) throws Exception {
+        List<Book> books = bookDAO.selectTop10BooksWithHighestRevenue(sortAttribute);
+        return books;
+    }
 }

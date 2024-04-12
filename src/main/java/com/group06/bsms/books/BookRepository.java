@@ -502,7 +502,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
             try (var query = db.prepareStatement(
-                    "SELECT B.*, SUM(OB.quantity) AS total_quantity_ordered\n"
+                    "SELECT B.*, COALESCE(SUM(OB.quantity), 0) AS total_quantity_ordered\n"
                     + "FROM Book B\n"
                     + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
                     + "GROUP BY B.id\n"
@@ -538,6 +538,64 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             try (var query = db.prepareStatement(
                     "SELECT * FROM BOOK WHERE QUANTITY = 0")) {
                 try (ResultSet resultSet = query.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(populate(resultSet));
+                    }
+                }
+                db.commit();
+                for (var book : result) {
+                    book.author = authorRepository.selectById(book.authorId);
+                    book.publisher = publisherRepository.selectById(book.publisherId);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Book not found");
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Book> selectTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder) throws Exception {
+        List<Book> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+            String stringQuery = "SELECT top_10.*\n"
+                    + "FROM (\n"
+                    + "    SELECT Book.*, COALESCE(SUM(OrderedBook.pricePerbook) * SUM(OrderedBook.quantity), 0) AS revenue\n"
+                    + "    FROM Book\n"
+                    + "    LEFT JOIN OrderedBook ON OrderedBook.bookid = Book.id\n"
+                    + "    GROUP BY Book.id\n"
+                    + "    ORDER BY revenue DESC\n"
+                    + "    LIMIT 10\n"
+                    + ") AS top_10\n"
+                    + "JOIN Author ON Author.id = top_10.authorId\n"
+                    + "JOIN Publisher ON Publisher.id = top_10.publisherId\n";
+
+            for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
+                Integer attribute = entry.getKey();
+                SortOrder sortOrder = entry.getValue();
+
+                var sortAttributes = new ArrayList<String>(List.of(
+                        " ORDER BY top_10.title ",
+                        " ORDER BY Author.name ",
+                        " ORDER BY Publisher.name ",
+                        " ORDER BY top_10.quantity ",
+                        " ORDER BY top_10.salePrice ",
+                        " ORDER BY top_10.revenue "));
+
+                var sortOrders = new HashMap<SortOrder, String>();
+                sortOrders.put(SortOrder.ASCENDING, " ASC ");
+                sortOrders.put(SortOrder.DESCENDING, " DESC ");
+
+                stringQuery += sortAttributes.get(attribute);
+                stringQuery += sortOrders.get(sortOrder);
+            }
+            try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         result.add(populate(resultSet));
                     }

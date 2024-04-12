@@ -1,8 +1,10 @@
 package com.group06.bsms.books;
 
 import com.group06.bsms.DB;
+import com.group06.bsms.Repository;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SortOrder;
@@ -11,7 +13,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BookRepositoryTest {
 
@@ -40,41 +41,12 @@ public class BookRepositoryTest {
     }
 
     @Test
-    public void testUpdateBookAttributeById() throws Exception {
-        int bookId = 2;
-        String attr = "salePrice";
-        Object value = Double.valueOf(2121);
+    public void testSelectTop10BooksWithHighestRevenue() throws Exception {
+        System.out.println("selectTop10BooksWithHighestRevenue");
+        Map<Integer, SortOrder> sortAttributeAndOrder = new HashMap<>();
+        sortAttributeAndOrder.put(4, SortOrder.ASCENDING);
         BookRepository instance = new BookRepository(db);
-        instance.updateBookAttributeById(bookId, attr, value);
-        assertEquals(Double.valueOf(2121), instance.selectById(bookId).salePrice);
-    }
-
-    @Test
-    public void testGetNewBooks() throws Exception {
-        BookRepository instance = new BookRepository(db);
-        List<Book> result = instance.getNewBooks();
-        for (var book : result) {
-            System.out.println(book);
-        }
-    }
-
-    @Test
-    public void testGetHotBooks() throws Exception {
-        System.out.println("getHotBooks");
-        BookRepository instance = new BookRepository(db);
-        List<Book> result = instance.getHotBooks();
-        for (var book : result) {
-            System.out.println(book);
-        }
-    }
-
-    @Test
-    public void testGetOutOfStockBooks() throws Exception {
-        System.out.println("getOutOfStockBooks");
-        BookRepository instance = new BookRepository(db);
-        List<Book> result = instance.getOutOfStockBooks();
-        for (var book : result) {
-            System.out.println(book);
-        }
+        List<Book> result = instance.selectTop10BooksWithHighestRevenue(sortAttributeAndOrder);
+        System.err.println(result);
     }
 }
