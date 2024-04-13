@@ -101,6 +101,11 @@ insert into Account (phone, password, name, gender, email, address, isAdmin, isL
     ('1234567890', 'password123', 'John Doe', 'Male', 'john@example.com', '123 Main St', true, false),
     ('9876543210', 'securepass', 'Jane Doe', 'Female', 'jane@example.com', '456 Oak Ave', false, true);
 
+INSERT INTO Account (phone, password, name, gender, email, address, isAdmin, isLocked) VALUES ('1234567810', '$2a$10$kYtHn.cSSmb3C/YXMi3fGuCb0Wq/.8KWFwE0/2ptd568T5MN08li2', 'Graehme Giffon', 'Other', 'ggiffon0@wired.com', '28 Pine View Hill', 'true', 'false');
+INSERT INTO Account (phone, password, name, gender, email, address, isAdmin, isLocked) VALUES ('1234567801', '$2a$10$F8T1jrMzMW.jHNRilCP2NOerVjIQxlW48AFUB2FPRPMJ4e2YnPng6', 'Rhona Lightowlers', 'Other', 'rlightowlersa@adobe.com', '362 Gerald Crossing', 'false', 'true');
+INSERT INTO Account (phone, password, name, gender, email, address, isAdmin, isLocked) VALUES ('1234567800', '$2a$10$PJF/3pPBXSysWAXPDi0fV./s9BJcc.2whUAZ4qqxNGkYPUKdYY39K', 'Melony Hulcoop', 'Female', 'mhulcoop2@nytimes.com', '35217 Schurz Parkway', 'false', 'false');
+INSERT INTO Account (phone, password, name, gender, email, address, isAdmin, isLocked) VALUES ('1234567811', '$2a$10$3xPIpiYMZiHehFQFh0mocOAkUtFH/mDEc.P5C6zMo8DkAgJUnaWk6', 'Robin Attaway', 'Other', 'rattawayb@cbc.ca', '8 Carey Trail', 'true', 'true');
+
 insert into Author (name, overview, isHidden) values
     ('Author X', 'Experienced writer.', false),
     ('Author Y', 'New talent.', true);

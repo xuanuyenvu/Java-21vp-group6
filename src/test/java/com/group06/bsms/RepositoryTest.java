@@ -30,8 +30,8 @@ public class RepositoryTest {
     }
 
     @BeforeAll
-    public static void setUpClass() throws SQLException {
-        DB.connectToDB("/env/bsms.properties");
+    public static void setUpClass() throws Exception {
+        DB.connectToDB("env/bsms.properties");
         db = DB.db();
     }
 
