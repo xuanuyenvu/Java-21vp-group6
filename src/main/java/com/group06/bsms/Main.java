@@ -5,6 +5,7 @@ import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.group06.bsms.auth.Login;
+import com.group06.bsms.dashboard.AdminDashboard;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
@@ -30,8 +31,7 @@ public class Main extends JFrame {
         panel.setLayout(layout);
         panel.add(new Login(), "login");
         panel.add(Dashboard.dashboard, "dashboard");
-
-        switchTab("dashboard");
+        panel.add(AdminDashboard.dashboard, "adminDashboard");
 
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
@@ -41,7 +41,6 @@ public class Main extends JFrame {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -101,7 +100,7 @@ public class Main extends JFrame {
             FlatLaf.registerCustomDefaultsSource("themes");
             FlatLightLaf.setup();
 
-            DB.connectToDB("/env/bsms.properties");
+            DB.connectToDB("env/bsms.properties");
 
             java.awt.EventQueue.invokeLater(() -> {
                 app = new Main();

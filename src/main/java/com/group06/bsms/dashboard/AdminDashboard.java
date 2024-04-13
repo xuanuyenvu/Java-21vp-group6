@@ -21,9 +21,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 
-public class Dashboard extends javax.swing.JPanel {
+public class AdminDashboard extends javax.swing.JPanel {
 
-    public static final Dashboard dashboard = new Dashboard();
+    public static final AdminDashboard dashboard = new AdminDashboard();
     private final UpdateBook updateBook = new UpdateBook();
     private final AddBookInformation addBookInfo = new AddBookInformation();
     private final BookCRUD bookCRUD = new BookCRUD(updateBook, addBookInfo);
@@ -40,7 +40,7 @@ public class Dashboard extends javax.swing.JPanel {
     private final AddPublisherInformation addPublisherInfo = new AddPublisherInformation();
     private final PublisherCRUD publisherCRUD = new PublisherCRUD(updatePublisher, addPublisherInfo, bookCRUD);
 
-    private Dashboard() {
+    private AdminDashboard() {
         initComponents();
         layout = new CardLayout();
         main.setLayout(layout);
@@ -81,10 +81,11 @@ public class Dashboard extends javax.swing.JPanel {
         jToolBar1 = new javax.swing.JToolBar();
         logo = new javax.swing.JButton();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
+        books1 = new javax.swing.JButton();
         books = new javax.swing.JButton();
+        categories = new javax.swing.JButton();
         authors = new javax.swing.JButton();
         publishers = new javax.swing.JButton();
-        categories = new javax.swing.JButton();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         account = new javax.swing.JButton();
         logout = new javax.swing.JButton();
@@ -121,12 +122,32 @@ public class Dashboard extends javax.swing.JPanel {
         jToolBar1.add(logo);
         jToolBar1.add(filler1);
 
+        books1.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/person.svg", 
+            Color.black, Color.black,
+            28, 28
+        ));
+        books1.setMnemonic('1');
+        books1.setToolTipText("Users");
+        books1.setFocusable(false);
+        books1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        books1.setMaximumSize(new java.awt.Dimension(58, 58));
+        books1.setMinimumSize(new java.awt.Dimension(58, 58));
+        books1.setPreferredSize(new java.awt.Dimension(58, 58));
+        books1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        books1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                books1ActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(books1);
+
         books.setIcon(SVGHelper.createSVGIconWithFilter(
             "icons/book.svg", 
             Color.black, Color.black,
             28, 28
         ));
-        books.setMnemonic('1');
+        books.setMnemonic('2');
         books.setToolTipText("Books");
         books.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         books.setMaximumSize(new java.awt.Dimension(58, 58));
@@ -139,50 +160,12 @@ public class Dashboard extends javax.swing.JPanel {
         });
         jToolBar1.add(books);
 
-        authors.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/person.svg", 
-            Color.black, Color.black,
-            28, 28
-        ));
-        authors.setMnemonic('2');
-        authors.setToolTipText("Authors");
-        authors.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        authors.setMaximumSize(new java.awt.Dimension(58, 58));
-        authors.setMinimumSize(new java.awt.Dimension(58, 58));
-        authors.setPreferredSize(new java.awt.Dimension(58, 58));
-        authors.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                authorsActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(authors);
-
-        publishers.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/publisher.svg", 
-            Color.black, Color.black,
-            28, 28
-        ));
-        publishers.setMnemonic('3');
-        publishers.setToolTipText("Publishers");
-        publishers.setFocusable(false);
-        publishers.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        publishers.setMaximumSize(new java.awt.Dimension(58, 58));
-        publishers.setMinimumSize(new java.awt.Dimension(58, 58));
-        publishers.setPreferredSize(new java.awt.Dimension(58, 58));
-        publishers.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        publishers.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                publishersActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(publishers);
-
         categories.setIcon(SVGHelper.createSVGIconWithFilter(
             "icons/category.svg", 
             Color.black, Color.black,
             28, 28
         ));
-        categories.setMnemonic('4');
+        categories.setMnemonic('3');
         categories.setToolTipText("Categories");
         categories.setFocusable(false);
         categories.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -196,6 +179,44 @@ public class Dashboard extends javax.swing.JPanel {
             }
         });
         jToolBar1.add(categories);
+
+        authors.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/person.svg", 
+            Color.black, Color.black,
+            28, 28
+        ));
+        authors.setMnemonic('4');
+        authors.setToolTipText("Customer");
+        authors.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        authors.setMaximumSize(new java.awt.Dimension(58, 58));
+        authors.setMinimumSize(new java.awt.Dimension(58, 58));
+        authors.setPreferredSize(new java.awt.Dimension(58, 58));
+        authors.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                authorsActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(authors);
+
+        publishers.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/person.svg", 
+            Color.black, Color.black,
+            28, 28
+        ));
+        publishers.setMnemonic('5');
+        publishers.setToolTipText("Employees");
+        publishers.setFocusable(false);
+        publishers.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        publishers.setMaximumSize(new java.awt.Dimension(58, 58));
+        publishers.setMinimumSize(new java.awt.Dimension(58, 58));
+        publishers.setPreferredSize(new java.awt.Dimension(58, 58));
+        publishers.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        publishers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                publishersActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(publishers);
         jToolBar1.add(filler2);
 
         account.setIcon(SVGHelper.createSVGIconWithFilter(
@@ -248,7 +269,7 @@ public class Dashboard extends javax.swing.JPanel {
         );
         mainLayout.setVerticalGroup(
             mainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 524, Short.MAX_VALUE)
+            .addGap(0, 640, Short.MAX_VALUE)
         );
 
         add(main, java.awt.BorderLayout.CENTER);
@@ -303,11 +324,16 @@ public class Dashboard extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_logoutActionPerformed
 
+    private void books1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_books1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_books1ActionPerformed
+
     private java.awt.CardLayout layout;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton account;
     private javax.swing.JButton authors;
     private javax.swing.JButton books;
+    private javax.swing.JButton books1;
     private javax.swing.JButton categories;
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
