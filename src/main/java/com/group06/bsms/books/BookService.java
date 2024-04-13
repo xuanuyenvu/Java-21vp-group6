@@ -187,8 +187,9 @@ public class BookService {
         return books;
     }
 
-    List<Book> getTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttribute) throws Exception {
-        List<Book> books = bookDAO.selectTop10BooksWithHighestRevenue(sortAttribute);
+    List<Book> getTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception {
+        List<Book> books = bookDAO.selectTop10BooksWithHighestRevenue(sortAttributeAndOrder, startDate, endDate);
         return books;
     }
 }

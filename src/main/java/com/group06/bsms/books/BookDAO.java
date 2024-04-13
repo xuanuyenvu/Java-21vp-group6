@@ -1,5 +1,6 @@
 package com.group06.bsms.books;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SortOrder;
@@ -37,5 +38,6 @@ public interface BookDAO {
 
     List<Book> getOutOfStockBooks() throws Exception;
 
-    List<Book> selectTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttribute) throws Exception;
+    List<Book> selectTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception;
 }

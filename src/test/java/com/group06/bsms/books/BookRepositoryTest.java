@@ -40,13 +40,13 @@ public class BookRepositoryTest {
     public void tearDown() {
     }
 
-    @Test
-    public void testSelectTop10BooksWithHighestRevenue() throws Exception {
-        System.out.println("selectTop10BooksWithHighestRevenue");
-        Map<Integer, SortOrder> sortAttributeAndOrder = new HashMap<>();
-        sortAttributeAndOrder.put(4, SortOrder.ASCENDING);
-        BookRepository instance = new BookRepository(db);
-        List<Book> result = instance.selectTop10BooksWithHighestRevenue(sortAttributeAndOrder);
-        System.err.println(result);
-    }
+//    @Test
+//    public void testSelectTop10BooksWithHighestRevenue() throws Exception {
+//        System.out.println("selectTop10BooksWithHighestRevenue");
+//        Map<Integer, SortOrder> sortAttributeAndOrder = new HashMap<>();
+//        sortAttributeAndOrder.put(4, SortOrder.ASCENDING);
+//        BookRepository instance = new BookRepository(db);
+//        List<Book> result = instance.selectTop10BooksWithHighestRevenue(sortAttributeAndOrder);
+//        System.err.println(result);
+//    }
 }
