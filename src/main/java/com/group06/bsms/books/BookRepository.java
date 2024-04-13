@@ -564,6 +564,8 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             Map<String, Object> searchParams = new HashMap<>();
             searchParams.put("title", title);
             List<Book> result = this.selectAll(searchParams, 0, null, null, null, "id", "title");
+            System.out.println(title);
+            System.out.println(result.get(0));
 
             return result;
 

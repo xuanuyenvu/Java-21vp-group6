@@ -399,6 +399,11 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
         salePriceTextField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         salePriceTextField.setMinimumSize(new java.awt.Dimension(215, 31));
         salePriceTextField.setPreferredSize(new java.awt.Dimension(215, 31));
+        salePriceTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salePriceTextFieldActionPerformed(evt);
+            }
+        });
         salePriceTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 salePriceTextFieldKeyPressed(evt);
@@ -620,6 +625,10 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
             salePriceTextField.setEditable(true);
         }
     }//GEN-LAST:event_salePriceTextFieldKeyPressed
+
+    private void salePriceTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salePriceTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_salePriceTextFieldActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBookButton;

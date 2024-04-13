@@ -4,17 +4,141 @@
  */
 package com.group06.bsms.importsheet;
 
-/**
- *
- * @author 06vuc
- */
-public class importSheetUI extends javax.swing.JPanel {
+import com.group06.bsms.DB;
+import com.group06.bsms.authors.AuthorRepository;
+import com.group06.bsms.authors.AuthorService;
+import com.group06.bsms.books.Book;
+import com.group06.bsms.books.BookRepository;
+import javax.swing.table.*;
+import com.group06.bsms.books.BookService;
+import com.group06.bsms.categories.CategoryRepository;
+import com.group06.bsms.categories.CategoryService;
+import com.group06.bsms.publishers.PublisherRepository;
+import com.group06.bsms.publishers.PublisherService;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+import javax.swing.event.TableModelEvent;
+import javax.swing.*;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+import javax.swing.event.TableModelListener;
+
+public class ImportSheetUI extends javax.swing.JPanel {
 
     /**
      * Creates new form importSheetUI
      */
-    public importSheetUI() {
+    private BookService bookService;
+    private ImportSheetService importSheetService;
+
+    private final Map<String, Book> bookMap;
+
+    public ImportSheetUI() {
+
+        this(new BookService(
+                new BookRepository(DB.db()),
+                new AuthorService(new AuthorRepository(DB.db())),
+                new PublisherService(new PublisherRepository(DB.db())),
+                new CategoryService(new CategoryRepository(DB.db()))),
+                new ImportSheetService(
+                        new ImportSheetRepository(DB.db(), new BookRepository(DB.db()))));
+
+    }
+
+    public ImportSheetUI(BookService bookService, ImportSheetService importSheetService) {
+        this.bookService = bookService;
+        this.importSheetService = importSheetService;
+        this.bookMap = new HashMap<>();
         initComponents();
+
+        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        model.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() == TableModelEvent.UPDATE) {
+                    updateTotalCost();
+                }
+            }
+        });
+
+        importBooksTable.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
+
+        importBooksTable.getColumnModel().getColumn(0).setCellEditor(new AutoSuggestComboBoxEditor());
+
+        importBooksTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField() {
+            {
+                addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent evt) {
+                        char inputChar = evt.getKeyChar();
+                        if (Character.isLetter(inputChar)) {
+                            setEditable(false);
+                        } else {
+                            setEditable(true);
+                        }
+
+                    }
+                });
+            }
+        }));
+
+        importBooksTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField() {
+            {
+                addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent evt) {
+                        char inputChar = evt.getKeyChar();
+                        if (!Character.isDigit(inputChar) && inputChar != KeyEvent.VK_BACK_SPACE
+                                && inputChar != KeyEvent.VK_DELETE && inputChar != '.') {
+                            evt.consume();
+                        }
+
+                    }
+                });
+            }
+        }));
+    }
+
+    private void updateTotalCost() {
+        double totalCost = 0.0;
+        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String quantityStr = (String) model.getValueAt(i, 1);
+            String pricePerBookStr = (String) model.getValueAt(i, 2);
+            try {
+                double quantity = Double.parseDouble(quantityStr);
+                double pricePerBook = Double.parseDouble(pricePerBookStr);
+                totalCost += quantity * pricePerBook;
+            } catch (NumberFormatException ex) {
+
+            }
+        }
+        totalCostField.setText(String.format("%.2f", totalCost));
+    }
+
+    private class CustomTableCellRenderer extends DefaultTableCellRenderer {
+
+        private final Border defaultBorder = new LineBorder(Color.BLACK);
+        private final Border selectedBorder = new LineBorder(Color.BLUE, 5);
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (isSelected) {
+                ((JComponent) c).setBorder(selectedBorder);
+            } else {
+                ((JComponent) c).setBorder(defaultBorder);
+            }
+            return c;
+        }
     }
 
     /**
@@ -23,6 +147,7 @@ public class importSheetUI extends javax.swing.JPanel {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -34,7 +159,7 @@ public class importSheetUI extends javax.swing.JPanel {
         totalCostField = new javax.swing.JTextField();
         totalCostLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        importBooksTabel = new javax.swing.JTable();
+        importBooksTable = new javax.swing.JTable();
         cancelButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
 
@@ -47,6 +172,7 @@ public class importSheetUI extends javax.swing.JPanel {
         employeeLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         employeeLabel.setText("Employee");
 
+        employeeField.setEditable(false);
         employeeField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         employeeField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         employeeField.setMinimumSize(new java.awt.Dimension(440, 31));
@@ -59,6 +185,7 @@ public class importSheetUI extends javax.swing.JPanel {
         importDateLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         importDateLabel.setText("Import Date");
 
+        totalCostField.setEditable(false);
         totalCostField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         totalCostField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         totalCostField.setMinimumSize(new java.awt.Dimension(440, 31));
@@ -68,7 +195,10 @@ public class importSheetUI extends javax.swing.JPanel {
         totalCostLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         totalCostLabel.setText("Total cost");
 
-        jScrollPane1.setViewportView(importBooksTabel);
+        importBooksTable.setModel(new ImportSheetTableModel());
+        importBooksTable.setRowHeight(40);
+        importBooksTable.setRowSelectionAllowed(false);
+        jScrollPane1.setViewportView(importBooksTable);
 
         cancelButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cancelButton.setForeground(UIManager.getColor("mutedColor")
@@ -140,28 +270,157 @@ public class importSheetUI extends javax.swing.JPanel {
                         .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(61, 61, 61)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(759, Short.MAX_VALUE))
+                .addContainerGap(802, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cancelButtonActionPerformed
+    private class AutoSuggestComboBoxEditor extends AbstractCellEditor implements TableCellEditor {
 
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_saveButtonActionPerformed
+        private final JComboBox<String> comboBox = new JComboBox<>();
+        private final Vector<String> suggestions = new Vector<>();
 
+        public AutoSuggestComboBoxEditor() {
+            comboBox.setEditable(true);
+            JTextField textField = (JTextField) comboBox.getEditor().getEditorComponent();
+            textField.addKeyListener(new KeyAdapter() {
+                public void keyTyped(KeyEvent e) {
+                    EventQueue.invokeLater(() -> {
+                        String text = textField.getText();
+                        if (text.length() == 0) {
+                            comboBox.hidePopup();
+                            setModel(new DefaultComboBoxModel<>(suggestions), "");
+                        } else {
+
+                            java.util.List<Book> books;
+                            try {
+
+                                books = bookService.searchBooksByTitle(text);
+                            } catch (Exception ex) {
+                                books = null;
+
+                            }
+                            suggestions.clear();
+                            bookMap.clear();
+                            for (var book : books) {
+                                suggestions.add(book.title);
+                                bookMap.put(book.title, book);
+                            }
+                            DefaultComboBoxModel<String> model = getSuggestedModel(suggestions, text);
+                            if (model.getSize() == 0) {
+                                comboBox.hidePopup();
+                            } else {
+                                setModel(model, text);
+                                comboBox.showPopup();
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        private void setModel(DefaultComboBoxModel<String> model, String str) {
+            comboBox.setModel(model);
+            comboBox.setSelectedIndex(-1);
+            comboBox.getEditor().setItem(str);
+        }
+
+        private DefaultComboBoxModel<String> getSuggestedModel(java.util.List<String> list, String text) {
+            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+            for (String s : list) {
+                model.addElement(s);
+            }
+            return model;
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+                int column) {
+            comboBox.setSelectedItem(value);
+            return comboBox;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return comboBox.getEditor().getItem();
+        }
+    }
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_saveButtonActionPerformed
+        // TODO add your handling code here:
+
+        int employeeInChargeId;
+        Date importDate;
+        Double totalCost;
+
+        boolean isTableValid = true;
+        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String title = (String) model.getValueAt(i, 0);
+            String quantityStr = (String) model.getValueAt(i, 1);
+            String pricePerBookStr = (String) model.getValueAt(i, 2);
+
+            if (title.isEmpty() || (quantityStr.isEmpty() || pricePerBookStr.isEmpty())) {
+                isTableValid = false;
+                break;
+            }
+        }
+
+        if (isTableValid) {
+            try {
+                employeeInChargeId = Integer.parseInt("10");
+                importDate = new java.sql.Date(importDatePicker.getDate().getTime());
+                totalCost = Double.parseDouble(totalCostField.getText());
+
+                List<ImportedBook> importedBooks = new ArrayList<>();
+
+                for (int i = 0; i < model.getRowCount(); i++) {
+
+                    Book book = bookMap.get((String) model.getValueAt(i, 0));
+                    if(book == null) continue;
+                    int bookId = book.id;
+                    String title = book.title;
+                    int quantity = Integer.parseInt((String) model.getValueAt(i, 1));
+                    Double pricePerBook = Double.parseDouble((String) model.getValueAt(i, 2));
+
+                    
+                    ImportedBook importedBook = new ImportedBook(bookId, title, quantity, pricePerBook);
+                    importedBooks.add(importedBook);
+                }
+                
+                ImportSheet importSheet = new ImportSheet(employeeInChargeId, importDate, totalCost, importedBooks);
+                System.out.println(importSheet);
+            } catch (NumberFormatException ex) {
+                // Handle number format exception
+                System.err.println("Error parsing number: " + ex.getMessage());
+            }
+        } else {
+            // Inform the user about empty fields in the table
+            JOptionPane.showMessageDialog(this, "Please fill in all fields in the table.", "Empty Fields",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }// GEN-LAST:event_saveButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here
+
+        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            for (int j = 0; j < model.getColumnCount(); j++) {
+                model.setValueAt("", i, j);
+            }
+        }
+    }// GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextField employeeField;
     private javax.swing.JLabel employeeLabel;
-    private javax.swing.JTable importBooksTabel;
+    private javax.swing.JTable importBooksTable;
     private javax.swing.JLabel importDateLabel;
     private com.group06.bsms.components.DatePickerPanel importDatePicker;
     private javax.swing.JLabel importSheetLabel;
