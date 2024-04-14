@@ -6,8 +6,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.swing.SortOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +20,8 @@ public class BookRepositoryTest {
     }
 
     @BeforeAll
-    public static void setUpClass() throws SQLException {
-        DB.connectToDB("/env/bsms.properties");
+    public static void setUpClass() throws Exception {
+        DB.connectToDB("env/bsms.properties");
         db = DB.db();
     }
 

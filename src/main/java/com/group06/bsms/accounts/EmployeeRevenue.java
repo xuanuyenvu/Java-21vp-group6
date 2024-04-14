@@ -52,7 +52,7 @@ public class EmployeeRevenue extends javax.swing.JPanel {
 
     public EmployeeRevenue(AccountService accountService) {
         this.accountService = accountService;
-        this.model = new EmployeeRevenueTableModel(accountService);
+        this.model = new EmployeeRevenueTableModel();
         initComponents();
         setUpTable();
         loadEmployeesIntoTable();

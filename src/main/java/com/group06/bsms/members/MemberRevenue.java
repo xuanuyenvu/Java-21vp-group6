@@ -52,7 +52,7 @@ public class MemberRevenue extends javax.swing.JPanel {
 
     public MemberRevenue(MemberService memberService) {
         this.memberService = memberService;
-        this.model = new MemberRevenueTableModel(memberService);
+        this.model = new MemberRevenueTableModel();
         initComponents();
         setUpTable();
         loadMembersIntoTable();

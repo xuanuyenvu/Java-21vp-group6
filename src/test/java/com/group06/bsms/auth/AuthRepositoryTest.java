@@ -20,8 +20,8 @@ public class AuthRepositoryTest {
     }
 
     @BeforeAll
-    public static void setUpClass() throws SQLException {
-        DB.connectToDB("/env/bsms.properties");
+    public static void setUpClass() throws Exception {
+        DB.connectToDB("env/bsms.properties");
         db = DB.db();
     }
 
@@ -42,31 +42,31 @@ public class AuthRepositoryTest {
     public void testExistsAccountByCredentials() throws Exception {
         var instance = new AuthRepository(db);
 
-        assertFalse(instance.existsAccountByCredentials(
-                "1234567890", "123"
-        ));
+        assertFalse(instance.selectAccountByCredentials(
+                "1234567800", "123"
+        ) != null);
 
-        assertTrue(instance.existsAccountByCredentials(
-                "1234567890", "password123"
-        ));
+        assertTrue(instance.selectAccountByCredentials(
+                "1234567800", "employee"
+        ) != null);
     }
 
     @Test
     public void testUpdateAccountPassword() throws Exception {
         var instance = new AuthRepository(db);
 
-        var phone = "1234567890";
-        var oldPassword = "password123";
-        var newPassword = "pass123";
+        var phone = "1234567800";
+        var oldPassword = "employee";
+        var newPassword = "admin";
 
-        assertThrows(SQLException.class, () -> {
+        assertThrows(Exception.class, () -> {
             instance.updateAccountPassword(phone, oldPassword, "");
         });
 
         instance.updateAccountPassword(phone, oldPassword, newPassword);
-        assertTrue(instance.existsAccountByCredentials(phone, newPassword));
+        assertTrue(instance.selectAccountByCredentials(phone, newPassword) != null);
 
         instance.updateAccountPassword(phone, newPassword, oldPassword);
-        assertTrue(instance.existsAccountByCredentials(phone, oldPassword));
+        assertTrue(instance.selectAccountByCredentials(phone, oldPassword) != null);
     }
 }

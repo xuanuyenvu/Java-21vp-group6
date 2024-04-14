@@ -9,10 +9,8 @@ public class BookRevenueTableModel extends AbstractTableModel {
 
     private List<Book> books = new ArrayList<>();
     private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Revenue"};
-    private final BookService bookService;
 
-    public BookRevenueTableModel(BookService bookService) {
-        this.bookService = bookService;
+    public BookRevenueTableModel() {
     }
 
     @Override

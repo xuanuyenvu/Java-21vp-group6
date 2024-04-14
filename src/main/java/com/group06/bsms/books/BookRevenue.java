@@ -3,8 +3,6 @@ package com.group06.bsms.books;
 import com.group06.bsms.DB;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
-import com.group06.bsms.categories.CategoryRepository;
-import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
 import java.awt.BorderLayout;
@@ -53,15 +51,14 @@ public class BookRevenue extends javax.swing.JPanel {
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))
+                        new PublisherService(new PublisherRepository(DB.db()))
                 )
         );
     }
 
     public BookRevenue(BookService bookService) {
         this.bookService = bookService;
-        this.model = new BookRevenueTableModel(bookService);
+        this.model = new BookRevenueTableModel();
         initComponents();
         setUpTable();
         loadBooksIntoTable();

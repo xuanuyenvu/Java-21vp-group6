@@ -8,8 +8,6 @@ import com.group06.bsms.authors.Author;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
 import com.group06.bsms.categories.Category;
-import com.group06.bsms.categories.CategoryRepository;
-import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.components.TableActionEvent;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.publishers.Publisher;
@@ -55,8 +53,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))
+                        new PublisherService(new PublisherRepository(DB.db()))
                 )
         );
     }
@@ -68,8 +65,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))
+                        new PublisherService(new PublisherRepository(DB.db()))
                 )
         );
     }
@@ -92,6 +88,24 @@ public class BookCRUD extends javax.swing.JPanel {
         setUpTable();
 
         this.loadBooksIntoTable();
+    }
+
+    public void loadCategoryInto() {
+        bookFilter.loadCategoryInto();
+        updateBook.loadCategoryInto();
+        addBookInfo.loadCategoryInto();
+    }
+
+    public void loadAuthorInto() {
+        bookFilter.loadAuthorInto();
+        updateBook.loadAuthorInto();
+        addBookInfo.loadAuthorInto();
+    }
+
+    public void loadPublisherInto() {
+        bookFilter.loadPublisherInto();
+        updateBook.loadPublisherInto();
+        addBookInfo.loadPublisherInto();
     }
 
     public void loadBooksIntoTable() {
@@ -154,7 +168,7 @@ public class BookCRUD extends javax.swing.JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     this,
-                    "An error has occurred: " + e.getMessage(),
+                    e.getMessage(),
                     "BSMS Error",
                     JOptionPane.ERROR_MESSAGE
             );
@@ -247,7 +261,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
                             app,
-                            "An error has occurred while hiding book: " + e.getMessage(),
+                            e.getMessage(),
                             "BSMS Error",
                             JOptionPane.ERROR_MESSAGE
                     );

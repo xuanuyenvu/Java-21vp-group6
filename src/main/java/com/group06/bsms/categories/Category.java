@@ -8,7 +8,6 @@ public class Category {
     public Double revenue;
 
     public Category() {
-
     }
 
     public Category(int id, String name, boolean isHidden) {

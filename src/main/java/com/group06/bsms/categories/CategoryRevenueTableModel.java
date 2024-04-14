@@ -9,10 +9,8 @@ public class CategoryRevenueTableModel extends AbstractTableModel {
 
     private List<Category> categories = new ArrayList<>();
     private String[] columns = {"Name", "Revenue"};
-    private final CategoryService categoryService;
 
-    public CategoryRevenueTableModel(CategoryService categoryService) {
-        this.categoryService = categoryService;
+    public CategoryRevenueTableModel() {
     }
 
     @Override

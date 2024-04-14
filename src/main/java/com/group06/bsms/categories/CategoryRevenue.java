@@ -52,7 +52,7 @@ public class CategoryRevenue extends javax.swing.JPanel {
 
     public CategoryRevenue(CategoryService categoryService) {
         this.categoryService = categoryService;
-        this.model = new CategoryRevenueTableModel(categoryService);
+        this.model = new CategoryRevenueTableModel();
         initComponents();
         setUpTable();
         loadCategoriesIntoTable();

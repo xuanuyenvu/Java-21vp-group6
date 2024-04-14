@@ -3,8 +3,14 @@ package com.group06.bsms.authors;
 import java.sql.Connection;
 
 import com.group06.bsms.Repository;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.swing.SortOrder;
 
 public class AuthorRepository extends Repository<Author> implements AuthorDAO {
 
@@ -15,18 +21,13 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
     @Override
     public List<Author> selectAllAuthors() throws Exception {
         try {
-            db.setAutoCommit(false);
-
             var authors = selectAll(
                     null,
                     0, null,
                     "name", Sort.ASC,
                     "name", "id", "overview", "isHidden");
 
-            db.commit();
-
             return authors;
-
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -77,10 +78,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
                 throw new Exception("Author not found");
             }
 
-            db.commit();
-
             return author;
-
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -102,6 +100,154 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
                 db.commit();
             }
             return author;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void updateAuthorAttributeById(int authorId, String attr, Object value) throws Exception {
+        try {
+            updateById(authorId, attr, value);
+        } catch (Exception e) {
+            db.rollback();
+
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Author not found");
+            }
+
+            throw e;
+        }
+    }
+
+    @Override
+    public void showAuthor(int id) throws Exception {
+        try {
+            var author = this.selectById(id);
+
+            if (author == null || author.isHidden == false) {
+                return;
+            }
+
+            db.setAutoCommit(false);
+
+            try (PreparedStatement preparedStatement = db.prepareStatement(""
+                    + "update book set hiddenParentCount = hiddenParentCount - 1 "
+                    + "where authorId = ?"
+            )) {
+                preparedStatement.setInt(1, id);
+
+                preparedStatement.executeUpdate();
+            }
+
+            db.commit();
+
+            updateById(id, "isHidden", false);
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void hideAuthor(int id) throws Exception {
+        try {
+            var author = this.selectById(id);
+
+            if (author == null || author.isHidden == true) {
+                return;
+            }
+
+            db.setAutoCommit(false);
+
+            try (PreparedStatement preparedStatement = db.prepareStatement(""
+                    + "update book set hiddenParentCount = hiddenParentCount + 1 "
+                    + "where authorId = ?"
+            )) {
+                preparedStatement.setInt(1, id);
+
+                preparedStatement.executeUpdate();
+            }
+
+            db.commit();
+
+            updateById(id, "isHidden", true);
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void updateAuthor(Author author, Author updatedAuthor) throws Exception {
+        try {
+            update(updatedAuthor, "name", "overview");
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void insertAuthor(Author author) throws Exception {
+        try {
+            this.insert(author, "name", "overview", "isHidden");
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Author> selectSearchSortFilterAuthors(
+            int offset, int limit, Map<Integer, SortOrder> sortValue,
+            String searchString
+    ) throws Exception {
+        List<Author> result = new ArrayList<>();
+
+        try {
+            db.setAutoCommit(false);
+
+            String stringQuery = "SELECT * FROM Author";
+
+            stringQuery += " WHERE name LIKE ? ";
+
+            for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
+                Integer key = entry.getKey();
+                SortOrder value = entry.getValue();
+
+                var sortKeys = new ArrayList<String>(List.of(
+                        " ORDER BY Author.name "
+                ));
+
+                var sortValues = new HashMap<SortOrder, String>();
+                sortValues.put(SortOrder.ASCENDING, " ASC ");
+                sortValues.put(SortOrder.DESCENDING, " DESC ");
+
+                stringQuery += sortKeys.get(key);
+                stringQuery += sortValues.get(value);
+            }
+
+            stringQuery += " OFFSET ? LIMIT ? ";
+
+            try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
+                int parameterIndex = 1;
+                preparedStatement.setString(parameterIndex++, "%" + searchString + "%");
+
+                preparedStatement.setInt(parameterIndex++, offset);
+                preparedStatement.setInt(parameterIndex++, limit);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(populate(resultSet));
+                    }
+                }
+            }
+
+            db.commit();
+
+            return result;
         } catch (Exception e) {
             db.rollback();
             throw e;

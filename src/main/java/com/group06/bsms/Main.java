@@ -3,10 +3,10 @@ package com.group06.bsms;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import com.group06.bsms.accounts.EmployeeRevenue;
+import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.group06.bsms.auth.Login;
+import com.group06.bsms.dashboard.AdminDashboard;
 import com.group06.bsms.dashboard.Dashboard;
-import com.group06.bsms.members.MemberRevenue;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -17,8 +17,9 @@ public class Main extends JFrame {
     public static Main app;
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
-    public static final boolean DARK_MODE = false;
     public static final int ROW_LIMIT = 10;
+
+    private static boolean darkMode = false;
 
     private Main() {
         if (!INDEV) {
@@ -30,9 +31,7 @@ public class Main extends JFrame {
         panel.setLayout(layout);
         panel.add(new Login(), "login");
         panel.add(Dashboard.dashboard, "dashboard");
-        panel.add(new EmployeeRevenue(), "dashboard");
-
-        switchTab("dashboard");
+        panel.add(AdminDashboard.dashboard, "adminDashboard");
 
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
@@ -42,7 +41,6 @@ public class Main extends JFrame {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -84,17 +82,25 @@ public class Main extends JFrame {
         layout.show(panel, tab);
     }
 
-    public static void main(String args[]) {
-        FlatLaf.registerCustomDefaultsSource("themes");
+    public void toggleTheme() {
+        darkMode = !darkMode;
 
-        if (DARK_MODE) {
+        FlatAnimatedLafChange.showSnapshot();
+        if (darkMode) {
             FlatDarkLaf.setup();
         } else {
             FlatLightLaf.setup();
         }
+        SwingUtilities.updateComponentTreeUI(this);
+        FlatAnimatedLafChange.hideSnapshotWithAnimation();
+    }
 
+    public static void main(String args[]) {
         try {
-            DB.connectToDB("/env/bsms.properties");
+            FlatLaf.registerCustomDefaultsSource("themes");
+            FlatLightLaf.setup();
+
+            DB.connectToDB("env/bsms.properties");
 
             java.awt.EventQueue.invokeLater(() -> {
                 app = new Main();

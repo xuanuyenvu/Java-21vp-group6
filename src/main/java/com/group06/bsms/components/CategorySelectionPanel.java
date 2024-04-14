@@ -26,17 +26,20 @@ public class CategorySelectionPanel extends javax.swing.JPanel {
     }
 
     public void updateList(ArrayList<Category> listAllCategories, ArrayList<Category> currentCategories) {
+        count = 0;
+
         this.listAllCategories.clear();
         this.listAllCategories = new ArrayList<>(listAllCategories);
 
+        this.addButton.removeAllItems();
         for (Category category : listAllCategories) {
             addButton.addItem(category.name);
         }
 
-        if (currentCategories != null) {
-            listSelected.clear();
-            categoriesPanel.removeAll();
+        listSelected.clear();
+        categoriesPanel.removeAll();
 
+        if (currentCategories != null) {
             for (Category categorySelected : currentCategories) {
                 addCategory(categorySelected);
             }

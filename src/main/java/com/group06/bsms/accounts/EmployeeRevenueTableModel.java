@@ -9,10 +9,8 @@ public class EmployeeRevenueTableModel extends AbstractTableModel {
 
     private List<Account> employees = new ArrayList<>();
     private String[] columns = {"Name", "Email", "Phone", "Address", "Gender", "Revenue"};
-    private final AccountService accountService;
 
-    public EmployeeRevenueTableModel(AccountService accountService) {
-        this.accountService = accountService;
+    public EmployeeRevenueTableModel() {
     }
 
     @Override

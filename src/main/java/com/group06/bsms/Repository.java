@@ -35,7 +35,7 @@ public class Repository<Entity extends Object> {
                 db.commit();
 
                 if (!result.next()) {
-                    throw new Exception("Interal database error");
+                    throw new Exception("Internal database error");
                 }
 
                 return result.getInt(1);
@@ -140,7 +140,7 @@ public class Repository<Entity extends Object> {
 
                 for (String key : searchParams.keySet()) {
                     if (!isValidIdentifier(key) || !allowedSearches.containsKey(key)) {
-                        throw new Exception("Invalid search attribute: " + key);
+                        throw new Exception(key + " is an invalid search attribute");
                     }
                     if (conditionQuery.length() > 6) {
                         conditionQuery.append(" and ");

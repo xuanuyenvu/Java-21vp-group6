@@ -104,48 +104,39 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
     void loadAuthorInto() {
         try {
             var authors = new ArrayList<Author>(authorService.selectAllAuthors());
-            if (authors == null) {
-                throw new NullPointerException();
-            }
 
             authorAutoComp1.updateList(authors);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting author information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     void loadPublisherInto() {
         try {
             var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
-            if (publishers == null) {
-                throw new NullPointerException();
-            }
 
             publisherAutoComp1.updateList(publishers);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting publisher information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    void loadCategoryInto() {
+    public void loadCategoryInto() {
         try {
             var categories = new ArrayList<Category>(categoryService.selectAllCategories());
-            if (categories == null) {
-                throw new NullPointerException();
-            }
 
             categorySelectionPanel1.updateList(categories, null);
 
         } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(null, "An error occurred while getting category information: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         } catch (Throwable e) {
-            JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

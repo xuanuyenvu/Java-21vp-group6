@@ -10,10 +10,8 @@ public class MemberRevenueTableModel extends AbstractTableModel {
 
     private List<Member> members = new ArrayList<>();
     private String[] columns = {"Name", "Email", "Phone", "Address", "Date of birth", "Gender", "Revenue"};
-    private final MemberService memberService;
 
-    public MemberRevenueTableModel(MemberService memberService) {
-        this.memberService = memberService;
+    public MemberRevenueTableModel() {
     }
 
     @Override
