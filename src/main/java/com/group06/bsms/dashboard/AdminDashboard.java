@@ -1,15 +1,19 @@
 package com.group06.bsms.dashboard;
 
 import com.group06.bsms.Main;
+import com.group06.bsms.accounts.EmployeeRevenue;
 import com.group06.bsms.authors.AddAuthorInformation;
 import com.group06.bsms.authors.AuthorCRUD;
 import com.group06.bsms.authors.UpdateAuthor;
 import com.group06.bsms.books.AddBookInformation;
 import com.group06.bsms.books.BookCRUD;
+import com.group06.bsms.books.BookRevenue;
 import com.group06.bsms.books.UpdateBook;
 import com.group06.bsms.categories.AddCategoryInformation;
 import com.group06.bsms.categories.CategoryCRUD;
+import com.group06.bsms.categories.CategoryRevenue;
 import com.group06.bsms.categories.UpdateCategory;
+import com.group06.bsms.members.MemberRevenue;
 import com.group06.bsms.publishers.AddPublisherInformation;
 import com.group06.bsms.publishers.PublisherCRUD;
 import com.group06.bsms.publishers.UpdatePublisher;
@@ -40,34 +44,20 @@ public class AdminDashboard extends javax.swing.JPanel {
     private final AddPublisherInformation addPublisherInfo = new AddPublisherInformation();
     private final PublisherCRUD publisherCRUD = new PublisherCRUD(updatePublisher, addPublisherInfo, bookCRUD);
 
+    private final BookRevenue bookRevenue = new BookRevenue();
+    private final CategoryRevenue categoryRevenue = new CategoryRevenue();
+    private final MemberRevenue memberRevenue = new MemberRevenue();
+    private final EmployeeRevenue employeeRevenue = new EmployeeRevenue();
+
     private AdminDashboard() {
         initComponents();
         layout = new CardLayout();
         main.setLayout(layout);
 
-        updateBook.setBookCRUD(bookCRUD);
-        addBookInfo.setBookCRUD(bookCRUD);
-        main.add(bookCRUD, "bookCRUD");
-        main.add(updateBook, "updateBook");
-        main.add(addBookInfo, "addBookInformation");
-
-        updateCategory.setCategoryCRUD(categoryCRUD);
-        addCategoryInfo.setCategoryCRUD(categoryCRUD);
-        main.add(categoryCRUD, "categoryCRUD");
-        main.add(updateCategory, "updateCategory");
-        main.add(addCategoryInfo, "addCategoryInformation");
-
-        updateAuthor.setAuthorCRUD(authorCRUD);
-        addAuthorInfo.setAuthorCRUD(authorCRUD);
-        main.add(authorCRUD, "authorCRUD");
-        main.add(updateAuthor, "updateAuthor");
-        main.add(addAuthorInfo, "addAuthorInformation");
-
-        updatePublisher.setPublisherCRUD(publisherCRUD);
-        addPublisherInfo.setPublisherCRUD(publisherCRUD);
-        main.add(publisherCRUD, "publisherCRUD");
-        main.add(updatePublisher, "updatePublisher");
-        main.add(addPublisherInfo, "addPublisherInformation");
+        main.add(bookRevenue, "bookRevenue");
+        main.add(categoryRevenue, "categoryRevenue");
+        main.add(memberRevenue, "memberRevenue");
+        main.add(employeeRevenue, "employeeRevenue");
     }
 
     public void switchTab(String tab) {
@@ -287,23 +277,20 @@ public class AdminDashboard extends javax.swing.JPanel {
     }//GEN-LAST:event_jToolBar1ComponentResized
 
     private void booksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_booksActionPerformed
-        switchTab("bookCRUD");
-        bookCRUD.reloadBooks();
+        switchTab("bookRevenue");
+        System.err.println("here");
     }//GEN-LAST:event_booksActionPerformed
 
     private void categoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoriesActionPerformed
-        switchTab("categoryCRUD");
-        categoryCRUD.reloadCategories();
+        switchTab("categoryRevenue");
     }//GEN-LAST:event_categoriesActionPerformed
 
     private void authorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_authorsActionPerformed
-        switchTab("authorCRUD");
-        authorCRUD.reloadAuthors();
+        switchTab("memberRevenue");
     }//GEN-LAST:event_authorsActionPerformed
 
     private void publishersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_publishersActionPerformed
-        switchTab("publisherCRUD");
-        publisherCRUD.reloadPublishers();
+        switchTab("employeeRevenue");
     }//GEN-LAST:event_publishersActionPerformed
 
     private void logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutActionPerformed

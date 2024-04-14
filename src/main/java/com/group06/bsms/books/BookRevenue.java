@@ -191,9 +191,9 @@ public class BookRevenue extends javax.swing.JPanel {
         ChartPanel barpChartPanel = new ChartPanel(chart);
         barpChartPanel.setDomainZoomable(false);
         barpChartPanel.setRangeZoomable(false);
-        barChartPanel.removeAll();
-        barChartPanel.add(barpChartPanel, BorderLayout.CENTER);
-        barChartPanel.validate();
+        chartBarPanel.removeAll();
+        chartBarPanel.add(barpChartPanel, BorderLayout.CENTER);
+        chartBarPanel.validate();
     }
 
     @SuppressWarnings("unchecked")
@@ -201,48 +201,22 @@ public class BookRevenue extends javax.swing.JPanel {
     private void initComponents() {
 
         bookRevenueLabel = new javax.swing.JLabel();
-        jTabbedPane = new javax.swing.JTabbedPane();
-        tablePanel = new javax.swing.JPanel();
-        scrollBar = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
-        chartPanel = new javax.swing.JPanel();
         confimrBtn = new javax.swing.JButton();
         startDatePicker = new com.group06.bsms.components.DatePickerPanel();
         endDatePicker = new com.group06.bsms.components.DatePickerPanel();
         durationDaysComboBox = new javax.swing.JComboBox<>();
         startDateLabel = new javax.swing.JLabel();
         endDateLabel = new javax.swing.JLabel();
-        barChartPanel = new javax.swing.JPanel();
+        jTabbedPane = new javax.swing.JTabbedPane();
+        tablePanel = new javax.swing.JPanel();
+        scrollBar = new javax.swing.JScrollPane();
+        table = new javax.swing.JTable();
+        chartPanel = new javax.swing.JPanel();
+        chartBarPanel = new javax.swing.JPanel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         bookRevenueLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         bookRevenueLabel.setText("BEST SELLING BOOKS");
-
-        jTabbedPane.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-
-        table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        table.setModel(this.model);
-        table.setToolTipText("");
-        table.setRowHeight(40);
-        table.getTableHeader().setReorderingAllowed(false);
-        scrollBar.setViewportView(table);
-
-        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
-        tablePanel.setLayout(tablePanelLayout);
-        tablePanelLayout.setHorizontalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 818, Short.MAX_VALUE))
-        );
-        tablePanelLayout.setVerticalGroup(
-            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(tablePanelLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
-
-        jTabbedPane.addTab("Table", tablePanel);
 
         confimrBtn.setBackground(new java.awt.Color(65, 105, 225));
         confimrBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -279,54 +253,50 @@ public class BookRevenue extends javax.swing.JPanel {
         endDateLabel.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         endDateLabel.setText("To Date");
 
-        barChartPanel.setLayout(new java.awt.GridLayout(1, 0));
+        jTabbedPane.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+
+        table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        table.setModel(this.model);
+        table.setToolTipText("");
+        table.setRowHeight(40);
+        table.getTableHeader().setReorderingAllowed(false);
+        scrollBar.setViewportView(table);
+
+        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
+        tablePanel.setLayout(tablePanelLayout);
+        tablePanelLayout.setHorizontalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tablePanelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 705, Short.MAX_VALUE))
+        );
+        tablePanelLayout.setVerticalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tablePanelLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
+        );
+
+        jTabbedPane.addTab("Table", tablePanel);
+
+        chartBarPanel.setLayout(new java.awt.GridLayout());
 
         javax.swing.GroupLayout chartPanelLayout = new javax.swing.GroupLayout(chartPanel);
         chartPanel.setLayout(chartPanelLayout);
         chartPanelLayout.setHorizontalGroup(
             chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(chartPanelLayout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addComponent(durationDaysComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(startDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(startDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
-                .addGroup(chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(endDateLabel)
-                    .addComponent(endDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(confimrBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(79, Short.MAX_VALUE))
-            .addComponent(barChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(chartBarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         chartPanelLayout.setVerticalGroup(
             chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, chartPanelLayout.createSequentialGroup()
-                .addGroup(chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, chartPanelLayout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addComponent(confimrBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(chartPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(chartPanelLayout.createSequentialGroup()
-                                .addGroup(chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(chartPanelLayout.createSequentialGroup()
-                                        .addComponent(endDateLabel)
-                                        .addGap(6, 6, 6))
-                                    .addGroup(chartPanelLayout.createSequentialGroup()
-                                        .addComponent(startDateLabel)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                                .addGroup(chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(startDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(endDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(chartPanelLayout.createSequentialGroup()
-                                .addComponent(durationDaysComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(3, 3, 3)))))
-                .addGap(15, 15, 15)
-                .addComponent(barChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE))
+            .addGroup(chartPanelLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(chartBarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         jTabbedPane.addTab("Chart", chartPanel);
@@ -342,7 +312,23 @@ public class BookRevenue extends javax.swing.JPanel {
                         .addComponent(jTabbedPane)
                         .addGap(50, 50, 50))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(bookRevenueLabel)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(bookRevenueLabel)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(durationDaysComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(20, 20, 20)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(startDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(startDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(endDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(confimrBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(endDateLabel))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -350,7 +336,24 @@ public class BookRevenue extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(48, 48, 48)
                 .addComponent(bookRevenueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(startDateLabel)
+                        .addComponent(endDateLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(3, 3, 3)
+                            .addComponent(startDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(durationDaysComboBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(endDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(confimrBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(jTabbedPane)
                 .addGap(50, 50, 50))
         );
@@ -401,13 +404,14 @@ public class BookRevenue extends javax.swing.JPanel {
     }//GEN-LAST:event_confimrBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel barChartPanel;
     private javax.swing.JLabel bookRevenueLabel;
+    private javax.swing.JPanel chartBarPanel;
     private javax.swing.JPanel chartPanel;
     private javax.swing.JButton confimrBtn;
     private javax.swing.JComboBox<String> durationDaysComboBox;
     private javax.swing.JLabel endDateLabel;
     private com.group06.bsms.components.DatePickerPanel endDatePicker;
+    private javax.swing.Box.Filler filler1;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JScrollPane scrollBar;
     private javax.swing.JLabel startDateLabel;

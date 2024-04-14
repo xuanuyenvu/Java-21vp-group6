@@ -56,7 +56,7 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                 stringQuery += sortOrders.get(sortOrder);
             }
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
-                System.out.println(preparedStatement);
+
                 preparedStatement.setDate(1, startDate);
                 preparedStatement.setDate(2, endDate);
 
