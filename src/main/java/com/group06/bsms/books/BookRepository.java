@@ -567,16 +567,17 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
             String stringQuery = "SELECT top_10.*\n"
                     + "FROM\n"
-                    + "  (SELECT Book.*,\n"
-                    + "          COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue, orderdate\n"
-                    + "   FROM Book\n"
-                    + "   LEFT JOIN OrderedBook ON OrderedBook.bookid = Book.id\n"
-                    + "   LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id\n"
-                    + "   GROUP BY Book.id, orderdate\n"
-                    + "   ORDER BY revenue DESC) AS top_10\n"
+                    + "    (SELECT Book.*,\n"
+                    + "     COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue\n"
+                    + "     FROM Book\n"
+                    + "     LEFT JOIN OrderedBook ON OrderedBook.bookid = Book.id\n"
+                    + "     LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id\n"
+                    + "     WHERE orderDate BETWEEN ? AND ?\n"
+                    + "     GROUP BY Book.id\n"
+                    + "     ORDER BY revenue DESC\n"
+                    + "	 LIMIT 10) AS top_10\n"
                     + "JOIN Author ON Author.id = top_10.authorId\n"
-                    + "JOIN Publisher ON Publisher.id = top_10.publisherId\n"
-                    + "WHERE top_10.orderDate BETWEEN ? AND ?";
+                    + "JOIN Publisher ON Publisher.id = top_10.publisherId\n";
 
             for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
                 Integer attribute = entry.getKey();

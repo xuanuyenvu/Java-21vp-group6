@@ -1,12 +1,6 @@
-package com.group06.bsms.books;
+package com.group06.bsms.members;
 
 import com.group06.bsms.DB;
-import com.group06.bsms.authors.AuthorRepository;
-import com.group06.bsms.authors.AuthorService;
-import com.group06.bsms.categories.CategoryRepository;
-import com.group06.bsms.categories.CategoryService;
-import com.group06.bsms.publishers.PublisherRepository;
-import com.group06.bsms.publishers.PublisherService;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -38,33 +32,30 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public class BookRevenue extends javax.swing.JPanel {
+public class MemberRevenue extends javax.swing.JPanel {
 
-    private final BookService bookService;
-    private BookRevenueTableModel model;
+    private final MemberService memberService;
+    private MemberRevenueTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private static String previousComboBoxSelection;
     private LocalDate endDate = LocalDate.now();
     private LocalDate startDate = LocalDate.now().minusDays(7);
-    private List<Book> books;
+    private List<Member> members;
 
-    public BookRevenue() {
+    public MemberRevenue() {
         this(
-                new BookService(
-                        new BookRepository(DB.db()),
-                        new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))
+                new MemberService(
+                        new MemberRepository(DB.db())
                 )
         );
     }
 
-    public BookRevenue(BookService bookService) {
-        this.bookService = bookService;
-        this.model = new BookRevenueTableModel(bookService);
+    public MemberRevenue(MemberService memberService) {
+        this.memberService = memberService;
+        this.model = new MemberRevenueTableModel(memberService);
         initComponents();
         setUpTable();
-        loadBooksIntoTable();
+        loadMembersIntoTable();
         isVisibleDatePicker(false);
 
         startDatePicker.setDate(new java.util.Date());
@@ -82,11 +73,9 @@ public class BookRevenue extends javax.swing.JPanel {
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
 
-        columnSortOrders.put(5, SortOrder.DESCENDING);
+        columnSortOrders.put(6, SortOrder.DESCENDING);
         table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
 
         table.getTableHeader().addMouseListener(new MouseAdapter() {
@@ -94,7 +83,7 @@ public class BookRevenue extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int columnIndex = table.columnAtPoint(e.getPoint());
                 toggleSortOrder(columnIndex);
-                loadBooksIntoTable();
+                loadMembersIntoTable();
                 table.getTableHeader().repaint();
             }
         });
@@ -111,12 +100,12 @@ public class BookRevenue extends javax.swing.JPanel {
         });
     }
 
-    public void loadBooksIntoTable() {
+    public void loadMembersIntoTable() {
         try {
             Date start = java.sql.Date.valueOf(startDate);
             Date end = java.sql.Date.valueOf(endDate);
-            books = bookService.getTop10BooksWithHighestRevenue(columnSortOrders, start, end);
-            model.reloadAllBooks(books);
+            members = memberService.getTop10MembersWithHighestRevenue(columnSortOrders, start, end);
+            model.reloadAllMembers(members);
             showBarChart();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
@@ -125,6 +114,7 @@ public class BookRevenue extends javax.swing.JPanel {
                     "BSMS Error",
                     JOptionPane.ERROR_MESSAGE
             );
+            System.out.println(e);
         }
     }
 
@@ -143,7 +133,7 @@ public class BookRevenue extends javax.swing.JPanel {
             int modelColumn = table.convertColumnIndexToModel(column);
             SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
             Icon sortIcon = null;
-            if (column == 3 || column == 4 || column == 5) {
+            if (column == 6) {
                 setHorizontalAlignment(JLabel.CENTER);
                 if (sortOrder == SortOrder.ASCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
@@ -174,11 +164,11 @@ public class BookRevenue extends javax.swing.JPanel {
 
     public void showBarChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (var book : books) {
-            dataset.setValue(book.revenue, "$", book.title);
+        for (var member : members) {
+            dataset.setValue(member.revenue, "$", member.name);
         }
 
-        JFreeChart chart = ChartFactory.createBarChart("Best selling books", "Title", "Revenue",
+        JFreeChart chart = ChartFactory.createBarChart("Top Buyers", "Buyer's Name", "Revenue",
                 dataset, PlotOrientation.VERTICAL, false, true, false);
 
         CategoryPlot categoryPlot = chart.getCategoryPlot();
@@ -203,7 +193,7 @@ public class BookRevenue extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        bookRevenueLabel = new javax.swing.JLabel();
+        memberRevenueLabel = new javax.swing.JLabel();
         jTabbedPane = new javax.swing.JTabbedPane();
         tablePanel = new javax.swing.JPanel();
         scrollBar = new javax.swing.JScrollPane();
@@ -217,8 +207,8 @@ public class BookRevenue extends javax.swing.JPanel {
         endDateLabel = new javax.swing.JLabel();
         barChartPanel = new javax.swing.JPanel();
 
-        bookRevenueLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        bookRevenueLabel.setText("BEST SELLING BOOKS");
+        memberRevenueLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        memberRevenueLabel.setText("TOP BUYERS");
 
         jTabbedPane.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
 
@@ -345,14 +335,14 @@ public class BookRevenue extends javax.swing.JPanel {
                         .addComponent(jTabbedPane)
                         .addGap(50, 50, 50))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(bookRevenueLabel)
+                        .addComponent(memberRevenueLabel)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(48, 48, 48)
-                .addComponent(bookRevenueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(memberRevenueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25)
                 .addComponent(jTabbedPane)
                 .addGap(50, 50, 50))
@@ -372,21 +362,21 @@ public class BookRevenue extends javax.swing.JPanel {
             isVisibleDatePicker(false);
             previousComboBoxSelection = "by Week";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
-            loadBooksIntoTable();
+            columnSortOrders.put(6, SortOrder.DESCENDING);
+            loadMembersIntoTable();
         } else if (durationDaysComboBox.getSelectedItem().toString() == "by Month") {
             endDate = LocalDate.now();
             startDate = LocalDate.now().minusDays(30);
             isVisibleDatePicker(false);
             previousComboBoxSelection = "by Month";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
-            loadBooksIntoTable();
+            columnSortOrders.put(6, SortOrder.DESCENDING);
+            loadMembersIntoTable();
         } else if (durationDaysComboBox.getSelectedItem().toString() == "Date to Date") {
             isVisibleDatePicker(true);
             previousComboBoxSelection = "by Date";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
+            columnSortOrders.put(6, SortOrder.DESCENDING);
         }
     }//GEN-LAST:event_durationDaysComboBoxActionPerformed
 
@@ -399,19 +389,19 @@ public class BookRevenue extends javax.swing.JPanel {
         } else {
             startDate = start;
             endDate = end;
-            loadBooksIntoTable();
+            loadMembersIntoTable();
         }
     }//GEN-LAST:event_confimrBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel barChartPanel;
-    private javax.swing.JLabel bookRevenueLabel;
     private javax.swing.JPanel chartPanel;
     private javax.swing.JButton confimrBtn;
     private javax.swing.JComboBox<String> durationDaysComboBox;
     private javax.swing.JLabel endDateLabel;
     private com.group06.bsms.components.DatePickerPanel endDatePicker;
     private javax.swing.JTabbedPane jTabbedPane;
+    private javax.swing.JLabel memberRevenueLabel;
     private javax.swing.JScrollPane scrollBar;
     private javax.swing.JLabel startDateLabel;
     private com.group06.bsms.components.DatePickerPanel startDatePicker;

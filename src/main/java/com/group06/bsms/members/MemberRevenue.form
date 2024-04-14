@@ -24,7 +24,7 @@
                       <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="bookRevenueLabel" min="-2" max="-2" attributes="0"/>
+                      <Component id="memberRevenueLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="152" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -35,7 +35,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="48" max="-2" attributes="0"/>
-              <Component id="bookRevenueLabel" min="-2" pref="33" max="-2" attributes="0"/>
+              <Component id="memberRevenueLabel" min="-2" pref="33" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
               <Component id="jTabbedPane" max="32767" attributes="0"/>
               <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
@@ -44,12 +44,12 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="bookRevenueLabel">
+    <Component class="javax.swing.JLabel" name="memberRevenueLabel">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="36" style="1"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="BEST SELLING BOOKS"/>
+        <Property name="text" type="java.lang.String" value="TOP BUYERS"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JTabbedPane" name="jTabbedPane">

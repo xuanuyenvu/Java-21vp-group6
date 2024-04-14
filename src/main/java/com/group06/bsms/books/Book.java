@@ -28,7 +28,6 @@ public class Book {
     public List<Category> categories;
 
     public Double maxImportPrice;
-
     public Double revenue;
 
     public Book() {

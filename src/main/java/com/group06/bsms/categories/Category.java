@@ -5,6 +5,7 @@ public class Category {
     public int id;
     public String name;
     public boolean isHidden;
+    public Double revenue;
 
     public Category() {
 
