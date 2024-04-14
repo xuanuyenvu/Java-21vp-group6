@@ -5,10 +5,9 @@ import javax.swing.table.DefaultTableModel;
 public class ImportSheetTableModel extends DefaultTableModel {
 
     public ImportSheetTableModel() {
-        super(new Object[][] { { "", "", "" }, { "", "", "" }, { "", "", "" }, { "", "", "" }, { "", "", "" },
-                { "", "", "" }, { "", "", "" }, { "", "", "" }, { "", "", "" }, { "", "", "" } },
-                new String[] { "Title", "Quantity", "Price per book" });
-    
+        super(new Object[][]{{"", "", ""}},
+                new String[]{"Title", "Quantity", "Price per book"});
+
     }
 
     @Override

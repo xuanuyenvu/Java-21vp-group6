@@ -20,7 +20,7 @@ public class ImportedBook {
 
     @Override
     public String toString() {
-        return "Import Book {" + ", id=" + bookId + ", title=" + title + ", quantity="
+        return "Import Book {" + "id=" + bookId + ", title=" + title + ", quantity="
                 + quantity + ", pricePerBook=" + pricePerBook + "}";
     }
 

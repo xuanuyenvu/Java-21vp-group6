@@ -15,7 +15,9 @@ import com.group06.bsms.categories.CategoryRepository;
 import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
+import com.group06.bsms.components.CustomTableCellRenderer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -26,8 +28,6 @@ import javax.swing.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.event.TableModelListener;
 
 public class ImportSheetUI extends javax.swing.JPanel {
@@ -37,8 +37,8 @@ public class ImportSheetUI extends javax.swing.JPanel {
      */
     private BookService bookService;
     private ImportSheetService importSheetService;
-
-    private final Map<String, Book> bookMap;
+    private Map<String, Book> bookMap;
+    private boolean isSettingValue = false;
 
     public ImportSheetUI() {
 
@@ -56,7 +56,30 @@ public class ImportSheetUI extends javax.swing.JPanel {
         this.bookService = bookService;
         this.importSheetService = importSheetService;
         this.bookMap = new HashMap<>();
+
         initComponents();
+
+        importBooksTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
+        importBooksTable.getActionMap().put("enter", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                int editingRow = importBooksTable.getEditingRow();
+                int editingColumn = importBooksTable.getEditingColumn();
+                int rowCount = importBooksTable.getRowCount();
+                if (editingColumn == 2) {
+                    if (editingRow == rowCount - 1) {
+                        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+                        model.addRow(new Object[model.getColumnCount()]);
+                    }
+
+                    importBooksTable.editCellAt(editingRow + 1, 0);
+                    Rectangle cellRect = importBooksTable.getCellRect(editingRow + 1, 0, true);
+                    importBooksTable.scrollRectToVisible(cellRect);
+                    importBooksTable.requestFocusInWindow();
+
+                }
+            }
+        });
 
         DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
         model.addTableModelListener(new TableModelListener() {
@@ -93,52 +116,77 @@ public class ImportSheetUI extends javax.swing.JPanel {
             {
                 addKeyListener(new KeyAdapter() {
                     @Override
-                    public void keyTyped(KeyEvent evt) {
+                    public void keyPressed(KeyEvent evt) {
                         char inputChar = evt.getKeyChar();
-                        if (!Character.isDigit(inputChar) && inputChar != KeyEvent.VK_BACK_SPACE
-                                && inputChar != KeyEvent.VK_DELETE && inputChar != '.') {
-                            evt.consume();
+                        if (Character.isLetter(inputChar)) {
+                            setEditable(false);
+                        } else {
+                            setEditable(true);
                         }
 
                     }
                 });
             }
         }));
+
+        importBooksTable.getModel().addTableModelListener((TableModelEvent e) -> {
+            if (e.getType() == TableModelEvent.UPDATE) {
+                int row = e.getFirstRow();
+                int column = e.getColumn();
+
+                if (column == 0) {
+
+                    if (!isSettingValue) {
+                        String newTitle = (String) importBooksTable.getValueAt(row, column);
+                        if (isDuplicateTitle(newTitle, row)) {
+
+                            isSettingValue = true;
+                            importBooksTable.setValueAt("", row, column);
+                            isSettingValue = false;
+
+                            // Should have allert
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void updateTotalCost() {
         double totalCost = 0.0;
         DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
+
             String quantityStr = (String) model.getValueAt(i, 1);
             String pricePerBookStr = (String) model.getValueAt(i, 2);
-            try {
-                double quantity = Double.parseDouble(quantityStr);
-                double pricePerBook = Double.parseDouble(pricePerBookStr);
-                totalCost += quantity * pricePerBook;
-            } catch (NumberFormatException ex) {
+            if (quantityStr != null && !quantityStr.trim().isEmpty()
+                    && pricePerBookStr != null && !pricePerBookStr.trim().isEmpty()) {
+                try {
+                    double quantity = Double.parseDouble(quantityStr);
+                    double pricePerBook = Double.parseDouble(pricePerBookStr);
+                    totalCost += quantity * pricePerBook;
+                } catch (NumberFormatException ex) {
 
+                }
             }
         }
         totalCostField.setText(String.format("%.2f", totalCost));
     }
 
-    private class CustomTableCellRenderer extends DefaultTableCellRenderer {
+    private boolean isDuplicateTitle(String newTitle, int currentRow) {
+        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        int rowCount = model.getRowCount();
 
-        private final Border defaultBorder = new LineBorder(Color.BLACK);
-        private final Border selectedBorder = new LineBorder(Color.BLUE, 5);
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
-            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (isSelected) {
-                ((JComponent) c).setBorder(selectedBorder);
-            } else {
-                ((JComponent) c).setBorder(defaultBorder);
+        for (int i = 0; i < rowCount; i++) {
+            if (i == currentRow) {
+                continue;
             }
-            return c;
+            String title = (String) model.getValueAt(i, 0);
+            if (newTitle.equalsIgnoreCase(title)) {
+                return true;
+            }
         }
+        return false;
     }
 
     /**
@@ -305,9 +353,11 @@ public class ImportSheetUI extends javax.swing.JPanel {
                             }
                             suggestions.clear();
                             bookMap.clear();
-                            for (var book : books) {
-                                suggestions.add(book.title);
-                                bookMap.put(book.title, book);
+                            if (books != null) {
+                                for (var book : books) {
+                                    suggestions.add(book.title);
+                                    bookMap.put(book.title, book);
+                                }
                             }
                             DefaultComboBoxModel<String> model = getSuggestedModel(suggestions, text);
                             if (model.getSize() == 0) {
@@ -320,6 +370,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
                     });
                 }
             });
+            comboBox.setMaximumRowCount(10);
         }
 
         private void setModel(DefaultComboBoxModel<String> model, String str) {
@@ -358,13 +409,13 @@ public class ImportSheetUI extends javax.swing.JPanel {
 
         boolean isTableValid = true;
         DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
-        
+
         for (int i = 0; i < model.getRowCount(); i++) {
             String title = (String) model.getValueAt(i, 0);
             String quantityStr = (String) model.getValueAt(i, 1);
             String pricePerBookStr = (String) model.getValueAt(i, 2);
 
-            if (title.isEmpty() || (quantityStr.isEmpty() || pricePerBookStr.isEmpty())) {
+            if (!title.isEmpty() && (quantityStr.isEmpty() || pricePerBookStr.isEmpty())) {
                 isTableValid = false;
                 break;
             }
@@ -381,19 +432,27 @@ public class ImportSheetUI extends javax.swing.JPanel {
                 for (int i = 0; i < model.getRowCount(); i++) {
 
                     Book book = bookMap.get((String) model.getValueAt(i, 0));
-                    if(book == null) continue;
+                    if (book == null) {
+                        continue;
+                    }
                     int bookId = book.id;
                     String title = book.title;
                     int quantity = Integer.parseInt((String) model.getValueAt(i, 1));
                     Double pricePerBook = Double.parseDouble((String) model.getValueAt(i, 2));
 
-                    
                     ImportedBook importedBook = new ImportedBook(bookId, title, quantity, pricePerBook);
                     importedBooks.add(importedBook);
                 }
-                
+
                 ImportSheet importSheet = new ImportSheet(employeeInChargeId, importDate, totalCost, importedBooks);
                 System.out.println(importSheet);
+
+                try {
+                    importSheetService.insertImportSheet(importSheet);
+                } catch (Exception e) {
+                    /////////////////////////////////////
+
+                }
             } catch (NumberFormatException ex) {
                 // Handle number format exception
                 System.err.println("Error parsing number: " + ex.getMessage());
@@ -414,6 +473,8 @@ public class ImportSheetUI extends javax.swing.JPanel {
                 model.setValueAt("", i, j);
             }
         }
+        importBooksTable.changeSelection(0, 0, false, false);
+        importBooksTable.requestFocusInWindow();
     }// GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
