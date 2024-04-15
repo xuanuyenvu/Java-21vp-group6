@@ -1,6 +1,6 @@
 package com.group06.bsms.authors;
 
-import static com.group06.bsms.Main.app;
+import com.group06.bsms.Main;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.components.ActionBtn;
 import com.group06.bsms.components.TableActionEvent;
@@ -144,7 +144,7 @@ public class AuthorTableModel extends AbstractTableModel {
                                     JOptionPane.ERROR_MESSAGE);
                         } else {
                             JOptionPane.showMessageDialog(
-                                    app,
+                                    Main.getApp(),
                                     e.getMessage(),
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE

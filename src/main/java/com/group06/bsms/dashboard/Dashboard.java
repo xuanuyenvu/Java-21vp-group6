@@ -1,6 +1,7 @@
 package com.group06.bsms.dashboard;
 
 import com.group06.bsms.Main;
+import com.group06.bsms.accounts.UpdateAccount;
 import com.group06.bsms.authors.AddAuthorInformation;
 import com.group06.bsms.authors.AuthorCRUD;
 import com.group06.bsms.authors.UpdateAuthor;
@@ -40,6 +41,8 @@ public class Dashboard extends javax.swing.JPanel {
     private final AddPublisherInformation addPublisherInfo = new AddPublisherInformation();
     private final PublisherCRUD publisherCRUD = new PublisherCRUD(updatePublisher, addPublisherInfo, bookCRUD);
 
+    private final UpdateAccount updateUser = new UpdateAccount();
+
     private Dashboard() {
         initComponents();
         layout = new CardLayout();
@@ -68,6 +71,8 @@ public class Dashboard extends javax.swing.JPanel {
         main.add(publisherCRUD, "publisherCRUD");
         main.add(updatePublisher, "updatePublisher");
         main.add(addPublisherInfo, "addPublisherInformation");
+
+        main.add(updateUser, "updateUser");
     }
 
     public void switchTab(String tab) {
@@ -213,6 +218,11 @@ public class Dashboard extends javax.swing.JPanel {
         account.setMinimumSize(new java.awt.Dimension(58, 58));
         account.setPreferredSize(new java.awt.Dimension(58, 58));
         account.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        account.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountActionPerformed(evt);
+            }
+        });
         jToolBar1.add(account);
 
         logout.setIcon(SVGHelper.createSVGIconWithFilter(
@@ -289,7 +299,7 @@ public class Dashboard extends javax.swing.JPanel {
         var options = new String[]{"Logout", "Cancel"};
 
         if (JOptionPane.showOptionDialog(
-                Main.app,
+                Main.getApp(),
                 "Are you sure you want to logout?",
                 "BSMS Confirmation",
                 JOptionPane.YES_NO_OPTION,
@@ -299,9 +309,14 @@ public class Dashboard extends javax.swing.JPanel {
                 options[0]
         ) == JOptionPane.YES_OPTION) {
             switchTab("bookCRUD");
-            Main.app.switchTab("login");
+            Main.getApp().switchTab("login");
         }
     }//GEN-LAST:event_logoutActionPerformed
+
+    private void accountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountActionPerformed
+        updateUser.setAccountById(Main.getUserId());
+        switchTab("updateAccount");
+    }//GEN-LAST:event_accountActionPerformed
 
     private java.awt.CardLayout layout;
     // Variables declaration - do not modify//GEN-BEGIN:variables

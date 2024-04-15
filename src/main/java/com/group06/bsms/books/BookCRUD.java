@@ -3,7 +3,6 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
-import static com.group06.bsms.Main.app;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
@@ -264,7 +263,7 @@ public class BookCRUD extends javax.swing.JPanel {
                     model.setHiddenState(row);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
-                            app,
+                            Main.getApp(),
                             e.getMessage(),
                             "BSMS Error",
                             JOptionPane.ERROR_MESSAGE

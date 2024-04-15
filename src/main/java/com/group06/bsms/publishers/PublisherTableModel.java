@@ -1,7 +1,5 @@
 package com.group06.bsms.publishers;
 
-import com.group06.bsms.publishers.*;
-import static com.group06.bsms.Main.app;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.components.ActionBtn;
 import com.group06.bsms.components.TableActionEvent;
@@ -136,14 +134,22 @@ public class PublisherTableModel extends AbstractTableModel {
                     }
                     break;
                 case 1:
-                    if (!publisher.email.equals((String) val)) {
-                        publisherService.updatePublisherAttributeById(publisher.id, "email", (String) val);
+                    if (!((String) val).equals(publisher.email)) {
+                        publisherService.updatePublisherAttributeById(
+                                publisher.id,
+                                "email",
+                                ((String) val).equals("") ? null : (String) val
+                        );
                         publisher.email = (String) val;
                     }
                     break;
                 case 2:
-                    if (!publisher.address.equals((String) val)) {
-                        publisherService.updatePublisherAttributeById(publisher.id, "address", (String) val);
+                    if (!((String) val).equals(publisher.address)) {
+                        publisherService.updatePublisherAttributeById(
+                                publisher.id,
+                                "address",
+                                ((String) val).equals("") ? null : (String) val
+                        );
                         publisher.address = (String) val;
                     }
                     break;

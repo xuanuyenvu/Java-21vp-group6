@@ -1,6 +1,6 @@
 package com.group06.bsms.books;
 
-import static com.group06.bsms.Main.app;
+import com.group06.bsms.Main;
 import com.group06.bsms.components.ActionBtn;
 import com.group06.bsms.components.TableActionEvent;
 import java.awt.Color;
@@ -149,7 +149,7 @@ public class BookTableModel extends AbstractTableModel {
                             );
                         } else {
                             JOptionPane.showMessageDialog(
-                                    app,
+                                    Main.getApp(),
                                     e.getMessage(),
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
@@ -163,7 +163,7 @@ public class BookTableModel extends AbstractTableModel {
                     try {
                         if (book.maxImportPrice == null) {
                             JOptionPane.showMessageDialog(
-                                    app,
+                                    Main.getApp(),
                                     "Book must be imported before its sale price can be edited",
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
@@ -172,7 +172,7 @@ public class BookTableModel extends AbstractTableModel {
                         }
                         if ((Double) val <= 1.1 * book.maxImportPrice) {
                             JOptionPane.showMessageDialog(
-                                    app,
+                                    Main.getApp(),
                                     "Sale price must be greater than 1.1 * import price",
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
@@ -183,7 +183,7 @@ public class BookTableModel extends AbstractTableModel {
                         book.salePrice = (Double) val;
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(
-                                app,
+                                Main.getApp(),
                                 e.getMessage(),
                                 "BSMS Error",
                                 JOptionPane.ERROR_MESSAGE

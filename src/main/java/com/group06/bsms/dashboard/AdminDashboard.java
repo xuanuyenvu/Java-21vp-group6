@@ -1,6 +1,9 @@
 package com.group06.bsms.dashboard;
 
 import com.group06.bsms.Main;
+import com.group06.bsms.accounts.AccountCRUD;
+import com.group06.bsms.accounts.AddAccountInformation;
+import com.group06.bsms.accounts.UpdateAccount;
 import com.group06.bsms.authors.AddAuthorInformation;
 import com.group06.bsms.authors.AuthorCRUD;
 import com.group06.bsms.authors.UpdateAuthor;
@@ -40,6 +43,12 @@ public class AdminDashboard extends javax.swing.JPanel {
     private final AddPublisherInformation addPublisherInfo = new AddPublisherInformation();
     private final PublisherCRUD publisherCRUD = new PublisherCRUD(updatePublisher, addPublisherInfo, bookCRUD);
 
+    private final UpdateAccount updateAccount = new UpdateAccount();
+    private final AddAccountInformation addAccountInfo = new AddAccountInformation();
+    private final AccountCRUD accountCRUD = new AccountCRUD(updateAccount, addAccountInfo, bookCRUD);
+
+    private final UpdateAccount updateProfile = new UpdateAccount();
+
     private AdminDashboard() {
         initComponents();
         layout = new CardLayout();
@@ -68,6 +77,14 @@ public class AdminDashboard extends javax.swing.JPanel {
         main.add(publisherCRUD, "publisherCRUD");
         main.add(updatePublisher, "updatePublisher");
         main.add(addPublisherInfo, "addPublisherInformation");
+
+        updateAccount.setAccountCRUD(accountCRUD);
+        addAccountInfo.setAccountCRUD(accountCRUD);
+        main.add(accountCRUD, "accountCRUD");
+        main.add(updateAccount, "updateAccount");
+        main.add(addAccountInfo, "addAccountInformation");
+
+        main.add(updateProfile, "updateProfile");
     }
 
     public void switchTab(String tab) {
@@ -81,7 +98,7 @@ public class AdminDashboard extends javax.swing.JPanel {
         jToolBar1 = new javax.swing.JToolBar();
         logo = new javax.swing.JButton();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
-        books1 = new javax.swing.JButton();
+        accounts = new javax.swing.JButton();
         books = new javax.swing.JButton();
         categories = new javax.swing.JButton();
         authors = new javax.swing.JButton();
@@ -122,25 +139,25 @@ public class AdminDashboard extends javax.swing.JPanel {
         jToolBar1.add(logo);
         jToolBar1.add(filler1);
 
-        books1.setIcon(SVGHelper.createSVGIconWithFilter(
+        accounts.setIcon(SVGHelper.createSVGIconWithFilter(
             "icons/person.svg", 
             Color.black, Color.black,
             28, 28
         ));
-        books1.setMnemonic('1');
-        books1.setToolTipText("Users");
-        books1.setFocusable(false);
-        books1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        books1.setMaximumSize(new java.awt.Dimension(58, 58));
-        books1.setMinimumSize(new java.awt.Dimension(58, 58));
-        books1.setPreferredSize(new java.awt.Dimension(58, 58));
-        books1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        books1.addActionListener(new java.awt.event.ActionListener() {
+        accounts.setMnemonic('1');
+        accounts.setToolTipText("Accounts");
+        accounts.setFocusable(false);
+        accounts.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        accounts.setMaximumSize(new java.awt.Dimension(58, 58));
+        accounts.setMinimumSize(new java.awt.Dimension(58, 58));
+        accounts.setPreferredSize(new java.awt.Dimension(58, 58));
+        accounts.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        accounts.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                books1ActionPerformed(evt);
+                accountsActionPerformed(evt);
             }
         });
-        jToolBar1.add(books1);
+        jToolBar1.add(accounts);
 
         books.setIcon(SVGHelper.createSVGIconWithFilter(
             "icons/book.svg", 
@@ -234,6 +251,11 @@ public class AdminDashboard extends javax.swing.JPanel {
         account.setMinimumSize(new java.awt.Dimension(58, 58));
         account.setPreferredSize(new java.awt.Dimension(58, 58));
         account.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        account.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountActionPerformed(evt);
+            }
+        });
         jToolBar1.add(account);
 
         logout.setIcon(SVGHelper.createSVGIconWithFilter(
@@ -310,7 +332,7 @@ public class AdminDashboard extends javax.swing.JPanel {
         var options = new String[]{"Logout", "Cancel"};
 
         if (JOptionPane.showOptionDialog(
-                Main.app,
+                Main.getApp(),
                 "Are you sure you want to logout?",
                 "BSMS Confirmation",
                 JOptionPane.YES_NO_OPTION,
@@ -320,20 +342,26 @@ public class AdminDashboard extends javax.swing.JPanel {
                 options[0]
         ) == JOptionPane.YES_OPTION) {
             switchTab("bookCRUD");
-            Main.app.switchTab("login");
+            Main.getApp().switchTab("login");
         }
     }//GEN-LAST:event_logoutActionPerformed
 
-    private void books1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_books1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_books1ActionPerformed
+    private void accountsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountsActionPerformed
+        switchTab("accountCRUD");
+        accountCRUD.reloadAccounts();
+    }//GEN-LAST:event_accountsActionPerformed
+
+    private void accountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountActionPerformed
+        updateProfile.setAccountById(Main.getUserId());
+        switchTab("updateProfile");
+    }//GEN-LAST:event_accountActionPerformed
 
     private java.awt.CardLayout layout;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton account;
+    private javax.swing.JButton accounts;
     private javax.swing.JButton authors;
     private javax.swing.JButton books;
-    private javax.swing.JButton books1;
     private javax.swing.JButton categories;
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;

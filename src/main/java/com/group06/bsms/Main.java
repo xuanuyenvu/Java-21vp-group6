@@ -14,12 +14,25 @@ import javax.swing.*;
 
 public class Main extends JFrame {
 
-    public static Main app;
+    private static Main app;
+    private static int userId;
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
     public static final int ROW_LIMIT = 10;
 
     private static boolean darkMode = false;
+
+    public static Main getApp() {
+        return app;
+    }
+
+    public static int getUserId() {
+        return userId;
+    }
+
+    public static void setUserId(int newUserId) {
+        userId = newUserId;
+    }
 
     private Main() {
         if (!INDEV) {
