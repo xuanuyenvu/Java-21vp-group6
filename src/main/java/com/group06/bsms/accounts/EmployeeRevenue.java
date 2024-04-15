@@ -74,8 +74,9 @@ public class EmployeeRevenue extends javax.swing.JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
 
-        columnSortOrders.put(5, SortOrder.DESCENDING);
+        columnSortOrders.put(6, SortOrder.DESCENDING);
         table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
 
         table.getTableHeader().addMouseListener(new MouseAdapter() {
@@ -133,7 +134,7 @@ public class EmployeeRevenue extends javax.swing.JPanel {
             int modelColumn = table.convertColumnIndexToModel(column);
             SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
             Icon sortIcon = null;
-            if (column == 5) {
+            if (column == 5 || column == 6) {
                 setHorizontalAlignment(JLabel.CENTER);
                 if (sortOrder == SortOrder.ASCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
@@ -165,7 +166,7 @@ public class EmployeeRevenue extends javax.swing.JPanel {
     public void showBarChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (var member : employees) {
-            dataset.setValue(member.revenue, "$", member.name);
+            dataset.setValue(member.revenue.revenue, "$", member.name);
         }
 
         JFreeChart chart = ChartFactory.createBarChart("Top Sellers", "Seller's Name", "Revenue",
@@ -206,7 +207,7 @@ public class EmployeeRevenue extends javax.swing.JPanel {
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         startDatePicker = new com.group06.bsms.components.DatePickerPanel();
         endDatePicker = new com.group06.bsms.components.DatePickerPanel();
-        durationDaysComboBox1 = new javax.swing.JComboBox<>();
+        durationDaysComboBox = new javax.swing.JComboBox<>();
 
         memberRevenueLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         memberRevenueLabel.setText("TOP SELLERS");
@@ -281,12 +282,12 @@ public class EmployeeRevenue extends javax.swing.JPanel {
         endDatePicker.setPlaceholder("dd/mm/yyyy");
         endDatePicker.setPreferredSize(new java.awt.Dimension(215, 31));
 
-        durationDaysComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        durationDaysComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Week", "by Month", "Date to Date" }));
-        durationDaysComboBox1.setPreferredSize(new java.awt.Dimension(154, 28));
-        durationDaysComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        durationDaysComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Week", "by Month", "Date to Date" }));
+        durationDaysComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
+        durationDaysComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                durationDaysComboBox1ActionPerformed(evt);
+                durationDaysComboBoxActionPerformed(evt);
             }
         });
 
@@ -300,7 +301,7 @@ public class EmployeeRevenue extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(filler2, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(durationDaysComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(durationDaysComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(startDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -336,7 +337,7 @@ public class EmployeeRevenue extends javax.swing.JPanel {
                         .addGroup(layout.createSequentialGroup()
                             .addGap(3, 3, 3)
                             .addComponent(startDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(durationDaysComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(durationDaysComboBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addComponent(endDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -362,7 +363,7 @@ public class EmployeeRevenue extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_confimrBtnActionPerformed
 
-    private void durationDaysComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_durationDaysComboBox1ActionPerformed
+    private void durationDaysComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_durationDaysComboBoxActionPerformed
         if (durationDaysComboBox.getSelectedItem().toString() == previousComboBoxSelection) {
             return;
         }
@@ -373,7 +374,7 @@ public class EmployeeRevenue extends javax.swing.JPanel {
             isVisibleDatePicker(false);
             previousComboBoxSelection = "by Week";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
+            columnSortOrders.put(6, SortOrder.DESCENDING);
             loadEmployeesIntoTable();
         } else if (durationDaysComboBox.getSelectedItem().toString() == "by Month") {
             endDate = LocalDate.now();
@@ -381,22 +382,21 @@ public class EmployeeRevenue extends javax.swing.JPanel {
             isVisibleDatePicker(false);
             previousComboBoxSelection = "by Month";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
+            columnSortOrders.put(6, SortOrder.DESCENDING);
             loadEmployeesIntoTable();
         } else if (durationDaysComboBox.getSelectedItem().toString() == "Date to Date") {
             isVisibleDatePicker(true);
             previousComboBoxSelection = "by Date";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
+            columnSortOrders.put(6, SortOrder.DESCENDING);
         }
-    }//GEN-LAST:event_durationDaysComboBox1ActionPerformed
+    }//GEN-LAST:event_durationDaysComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel barChartPanel;
     private javax.swing.JPanel chartPanel;
     private javax.swing.JButton confimrBtn;
     private javax.swing.JComboBox<String> durationDaysComboBox;
-    private javax.swing.JComboBox<String> durationDaysComboBox1;
     private javax.swing.JLabel endDateLabel;
     private com.group06.bsms.components.DatePickerPanel endDatePicker;
     private javax.swing.Box.Filler filler2;

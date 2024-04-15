@@ -1,6 +1,7 @@
 package com.group06.bsms.accounts;
 
 import com.group06.bsms.Repository;
+import com.group06.bsms.revenues.Revenue;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -24,17 +25,20 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
         List<Account> result = new ArrayList<>();
         try {
             db.setAutoCommit(false);
-            String stringQuery = "SELECT top_10.*\n"
-                    + "FROM\n"
-                    + "    (SELECT Account.*,\n"
-                    + "     COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue\n"
-                    + "     FROM Account\n"
-                    + "     JOIN OrderSheet ON Account.id = OrderSheet.employeeInchargeId\n"
-                    + "     JOIN OrderedBook ON OrderedBook.orderSheetId = OrderSheet.id\n"
-                    + "     WHERE orderDate BETWEEN ? AND ?\n"
-                    + "     GROUP BY Account.id\n"
-                    + "     ORDER BY revenue DESC\n"
-                    + "     LIMIT 10) AS top_10\n";
+            String stringQuery = """
+                                 SELECT top_10.*
+                                 FROM
+                                     (SELECT Account.*,
+                                      COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
+                                 	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
+                                      FROM Account
+                                      JOIN OrderSheet ON Account.id = OrderSheet.employeeInchargeId
+                                      JOIN OrderedBook ON OrderedBook.orderSheetId = OrderSheet.id
+                                      WHERE orderDate BETWEEN ? AND ?
+                                      GROUP BY Account.id
+                                      ORDER BY revenue DESC
+                                      LIMIT 10) AS top_10\n
+                                 """;
 
             for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
                 Integer attribute = entry.getKey();
@@ -46,6 +50,7 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                         " ORDER BY phone ",
                         " ORDER BY address ",
                         " ORDER BY gender ",
+                        " ORDER BY saleQuantity ",
                         " ORDER BY revenue "));
 
                 var sortOrders = new HashMap<SortOrder, String>();
@@ -56,13 +61,18 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                 stringQuery += sortOrders.get(sortOrder);
             }
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
-
+                System.err.println(preparedStatement);
                 preparedStatement.setDate(1, startDate);
                 preparedStatement.setDate(2, endDate);
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        result.add(populate(resultSet));
+                        var account = populate(resultSet);
+                        account.revenue = new Revenue(
+                                resultSet.getDouble("revenue"),
+                                resultSet.getInt("saleQuantity")
+                        );
+                        result.add(account);
                     }
                 }
                 db.commit();

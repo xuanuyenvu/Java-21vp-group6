@@ -8,7 +8,7 @@ import javax.swing.table.AbstractTableModel;
 public class BookRevenueTableModel extends AbstractTableModel {
 
     private List<Book> books = new ArrayList<>();
-    private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Revenue"};
+    private String[] columns = {"Title", "Author", "Publisher", "Quantity", "Sale Price", "Sale Quantity", "Revenue"};
 
     public BookRevenueTableModel() {
     }
@@ -46,7 +46,9 @@ public class BookRevenueTableModel extends AbstractTableModel {
             case 4:
                 return book.salePrice;
             case 5:
-                return book.revenue;
+                return book.revenue.saleQuantity;
+            case 6:
+                return book.revenue.revenue;
             default:
                 return null;
         }
@@ -88,6 +90,8 @@ public class BookRevenueTableModel extends AbstractTableModel {
             case 4:
                 return Double.class;
             case 5:
+                return Integer.class;
+            case 6:
                 return Double.class;
             default:
                 return null;
@@ -122,6 +126,5 @@ public class BookRevenueTableModel extends AbstractTableModel {
 
     void addRow(Book book) {
         books.add(book);
-//        SwingUtilities.invokeLater(() -> fireTableRowsInserted(books.size() - 1, books.size() - 1));
     }
 }

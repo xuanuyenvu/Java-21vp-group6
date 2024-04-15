@@ -278,7 +278,6 @@ public class AdminDashboard extends javax.swing.JPanel {
 
     private void booksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_booksActionPerformed
         switchTab("bookRevenue");
-        System.err.println("here");
     }//GEN-LAST:event_booksActionPerformed
 
     private void categoriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoriesActionPerformed

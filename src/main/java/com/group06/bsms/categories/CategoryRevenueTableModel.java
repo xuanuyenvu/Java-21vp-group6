@@ -8,7 +8,7 @@ import javax.swing.table.AbstractTableModel;
 public class CategoryRevenueTableModel extends AbstractTableModel {
 
     private List<Category> categories = new ArrayList<>();
-    private String[] columns = {"Name", "Revenue"};
+    private String[] columns = {"Name", "Sale Quantity", "Revenue"};
 
     public CategoryRevenueTableModel() {
     }
@@ -38,7 +38,9 @@ public class CategoryRevenueTableModel extends AbstractTableModel {
             case 0:
                 return ((category.name == null) ? "" : category.name);
             case 1:
-                return ((category.revenue == null) ? "" : category.revenue);
+                return category.revenue.saleQuantity;
+            case 2:
+                return ((category.revenue.revenue == null) ? "" : category.revenue.revenue);
             default:
                 return null;
         }
@@ -72,6 +74,8 @@ public class CategoryRevenueTableModel extends AbstractTableModel {
             case 0:
                 return String.class;
             case 1:
+                return Integer.class;
+            case 2:
                 return Double.class;
             default:
                 return null;

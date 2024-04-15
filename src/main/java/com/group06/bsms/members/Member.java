@@ -1,5 +1,6 @@
 package com.group06.bsms.members;
 
+import com.group06.bsms.revenues.Revenue;
 import java.util.Date;
 
 public class Member {
@@ -11,12 +12,12 @@ public class Member {
     public String name;
     public String gender;
     public Date dateOfBirth;
-    public Double revenue;
+    public Revenue revenue;
 
     public Member() {
     }
 
-    public Member(int id, String phone, String email, String address, String name, String gender, Date dateOfBirth, Double revenue) {
+    public Member(int id, String phone, String email, String address, String name, String gender, Date dateOfBirth, Revenue revenue) {
         this.id = id;
         this.phone = phone;
         this.email = email;

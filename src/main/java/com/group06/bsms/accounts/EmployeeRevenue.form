@@ -22,7 +22,7 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="filler2" alignment="0" min="-2" pref="18" max="-2" attributes="0"/>
-                          <Component id="durationDaysComboBox1" alignment="0" min="-2" pref="160" max="-2" attributes="0"/>
+                          <Component id="durationDaysComboBox" alignment="0" min="-2" pref="160" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -71,7 +71,7 @@
                           <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                           <Component id="startDatePicker" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="durationDaysComboBox1" alignment="1" min="-2" pref="37" max="-2" attributes="0"/>
+                      <Component id="durationDaysComboBox" alignment="1" min="-2" pref="37" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
@@ -269,7 +269,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="durationDaysComboBox1">
+    <Component class="javax.swing.JComboBox" name="durationDaysComboBox">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="16" style="0"/>
@@ -286,7 +286,7 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="durationDaysComboBox1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="durationDaysComboBoxActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>

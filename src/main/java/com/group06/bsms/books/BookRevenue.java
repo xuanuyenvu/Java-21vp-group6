@@ -82,8 +82,9 @@ public class BookRevenue extends javax.swing.JPanel {
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
 
-        columnSortOrders.put(5, SortOrder.DESCENDING);
+        columnSortOrders.put(6, SortOrder.DESCENDING);
         table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
 
         table.getTableHeader().addMouseListener(new MouseAdapter() {
@@ -140,7 +141,7 @@ public class BookRevenue extends javax.swing.JPanel {
             int modelColumn = table.convertColumnIndexToModel(column);
             SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
             Icon sortIcon = null;
-            if (column == 3 || column == 4 || column == 5) {
+            if (column == 3 || column == 4 || column == 5 || column == 6) {
                 setHorizontalAlignment(JLabel.CENTER);
                 if (sortOrder == SortOrder.ASCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
@@ -172,7 +173,7 @@ public class BookRevenue extends javax.swing.JPanel {
     public void showBarChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (var book : books) {
-            dataset.setValue(book.revenue, "$", book.title);
+            dataset.setValue(book.revenue.revenue, "$", book.title);
         }
 
         JFreeChart chart = ChartFactory.createBarChart("Best selling books", "Title", "Revenue",
@@ -372,7 +373,7 @@ public class BookRevenue extends javax.swing.JPanel {
             isVisibleDatePicker(false);
             previousComboBoxSelection = "by Week";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
+            columnSortOrders.put(6, SortOrder.DESCENDING);
             loadBooksIntoTable();
         } else if (durationDaysComboBox.getSelectedItem().toString() == "by Month") {
             endDate = LocalDate.now();
@@ -380,13 +381,13 @@ public class BookRevenue extends javax.swing.JPanel {
             isVisibleDatePicker(false);
             previousComboBoxSelection = "by Month";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
+            columnSortOrders.put(6, SortOrder.DESCENDING);
             loadBooksIntoTable();
         } else if (durationDaysComboBox.getSelectedItem().toString() == "Date to Date") {
             isVisibleDatePicker(true);
             previousComboBoxSelection = "by Date";
             columnSortOrders.clear();
-            columnSortOrders.put(5, SortOrder.DESCENDING);
+            columnSortOrders.put(6, SortOrder.DESCENDING);
         }
     }//GEN-LAST:event_durationDaysComboBoxActionPerformed
 

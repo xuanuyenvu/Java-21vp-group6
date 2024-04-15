@@ -9,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
 public class MemberRevenueTableModel extends AbstractTableModel {
 
     private List<Member> members = new ArrayList<>();
-    private String[] columns = {"Name", "Email", "Phone", "Address", "Date of birth", "Gender", "Revenue"};
+    private String[] columns = {"Name", "Email", "Phone", "Address", "Date of birth", "Gender", "Sale Quantity", "Revenue"};
 
     public MemberRevenueTableModel() {
     }
@@ -49,7 +49,9 @@ public class MemberRevenueTableModel extends AbstractTableModel {
             case 5:
                 return ((member.gender == null) ? "" : member.gender);
             case 6:
-                return ((member.revenue == null) ? "" : member.revenue);
+                return member.revenue.saleQuantity;
+            case 7:
+                return ((member.revenue.revenue == null) ? "" : member.revenue.revenue);
             default:
                 return null;
         }
@@ -93,16 +95,14 @@ public class MemberRevenueTableModel extends AbstractTableModel {
             case 5:
                 return String.class;
             case 6:
+                return Integer.class;
+            case 7:
                 return Double.class;
             default:
                 return null;
         }
     }
 
-//    @Override
-//    public boolean isCellEditable(int rowIndex, int columnIndex) {
-//        return (columnIndex == 0 || columnIndex == 4 || columnIndex == 5);
-//    }
     public void reloadAllMembers(List<Member> newMembers) {
         if (newMembers != null) {
             members.clear();

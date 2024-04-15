@@ -74,8 +74,9 @@ public class MemberRevenue extends javax.swing.JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(7).setCellRenderer(centerRenderer);
 
-        columnSortOrders.put(6, SortOrder.DESCENDING);
+        columnSortOrders.put(7, SortOrder.DESCENDING);
         table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
 
         table.getTableHeader().addMouseListener(new MouseAdapter() {
@@ -133,7 +134,7 @@ public class MemberRevenue extends javax.swing.JPanel {
             int modelColumn = table.convertColumnIndexToModel(column);
             SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
             Icon sortIcon = null;
-            if (column == 6) {
+            if (column == 6 || column == 7) {
                 setHorizontalAlignment(JLabel.CENTER);
                 if (sortOrder == SortOrder.ASCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
@@ -165,7 +166,7 @@ public class MemberRevenue extends javax.swing.JPanel {
     public void showBarChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (var member : members) {
-            dataset.setValue(member.revenue, "$", member.name);
+            dataset.setValue(member.revenue.revenue, "$", member.name);
         }
 
         JFreeChart chart = ChartFactory.createBarChart("Top Buyers", "Buyer's Name", "Revenue",
@@ -373,7 +374,7 @@ public class MemberRevenue extends javax.swing.JPanel {
             isVisibleDatePicker(false);
             previousComboBoxSelection = "by Week";
             columnSortOrders.clear();
-            columnSortOrders.put(6, SortOrder.DESCENDING);
+            columnSortOrders.put(7, SortOrder.DESCENDING);
             loadMembersIntoTable();
         } else if (durationDaysComboBox.getSelectedItem().toString() == "by Month") {
             endDate = LocalDate.now();
@@ -381,13 +382,13 @@ public class MemberRevenue extends javax.swing.JPanel {
             isVisibleDatePicker(false);
             previousComboBoxSelection = "by Month";
             columnSortOrders.clear();
-            columnSortOrders.put(6, SortOrder.DESCENDING);
+            columnSortOrders.put(7, SortOrder.DESCENDING);
             loadMembersIntoTable();
         } else if (durationDaysComboBox.getSelectedItem().toString() == "Date to Date") {
             isVisibleDatePicker(true);
             previousComboBoxSelection = "by Date";
             columnSortOrders.clear();
-            columnSortOrders.put(6, SortOrder.DESCENDING);
+            columnSortOrders.put(7, SortOrder.DESCENDING);
         }
     }//GEN-LAST:event_durationDaysComboBoxActionPerformed
 

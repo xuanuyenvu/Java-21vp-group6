@@ -3,6 +3,7 @@ package com.group06.bsms.categories;
 import java.sql.Connection;
 
 import com.group06.bsms.Repository;
+import com.group06.bsms.revenues.Revenue;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -210,20 +211,22 @@ public class CategoryRepository extends Repository<Category> implements Category
         List<Category> result = new ArrayList<>();
         try {
             db.setAutoCommit(false);
-            String stringQuery = "SELECT top_10.*\n"
-                    + "	FROM\n"
-                    + "	(SELECT Category.*,\n"
-                    + "		   COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue\n"
-                    + "FROM Category\n"
-                    + "JOIN BookCategory ON BookCategory.CategoryId = Category.id\n"
-                    + "JOIN Book ON Book.id = BookCategory.bookId\n"
-                    + "LEFT JOIN OrderedBook ON OrderedBook.bookId = Book.id\n"
-                    + "LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id\n"
-                    + "WHERE orderDate BETWEEN ? AND ?\n"
-                    + "GROUP BY Category.id\n"
-                    + "ORDER BY revenue DESC\n"
-                    + "LIMIT 10\n"
-                    + " ) AS top_10";
+            String stringQuery = """
+                                 SELECT top_10.*
+                                 FROM
+                                 	(SELECT Category.*,
+                                      COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
+                                 	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
+                                      FROM Category
+                                      JOIN BookCategory ON BookCategory.CategoryId = Category.id
+                                      JOIN Book ON Book.id = BookCategory.bookId
+                                      LEFT JOIN OrderedBook ON OrderedBook.bookId = Book.id
+                                      LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id
+                                      WHERE orderDate BETWEEN ? AND ?
+                                      GROUP BY Category.id
+                                      ORDER BY revenue DESC
+                                      LIMIT 10) AS top_10 
+                                 """;
 
             for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
                 Integer attribute = entry.getKey();
@@ -231,6 +234,7 @@ public class CategoryRepository extends Repository<Category> implements Category
 
                 var sortAttributes = new ArrayList<String>(List.of(
                         " ORDER BY name ",
+                        " ORDER BY saleQuantity ",
                         " ORDER BY revenue "));
 
                 var sortOrders = new HashMap<SortOrder, String>();
@@ -247,7 +251,12 @@ public class CategoryRepository extends Repository<Category> implements Category
                 preparedStatement.setDate(2, endDate);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        result.add(populate(resultSet));
+                        var category = populate(resultSet);
+                        category.revenue = new Revenue(
+                                resultSet.getDouble("revenue"),
+                                resultSet.getInt("saleQuantity")
+                        );
+                        result.add(category);
                     }
                 }
                 db.commit();

@@ -1,5 +1,7 @@
 package com.group06.bsms.accounts;
 
+import com.group06.bsms.revenues.Revenue;
+
 public class Account {
 
     public int id;
@@ -10,7 +12,7 @@ public class Account {
     public String gender;
     public boolean isAdmin;
     public boolean isLocked;
-    public Double revenue;
+    public Revenue revenue;
 
     public Account() {
     }

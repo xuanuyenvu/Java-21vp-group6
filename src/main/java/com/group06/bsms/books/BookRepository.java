@@ -13,6 +13,7 @@ import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.categories.Category;
+import com.group06.bsms.revenues.Revenue;
 import java.sql.Date;
 
 import java.sql.Statement;
@@ -564,19 +565,22 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         List<Book> result = new ArrayList<>();
         try {
             db.setAutoCommit(false);
-            String stringQuery = "SELECT top_10.*\n"
-                    + "FROM\n"
-                    + "    (SELECT Book.*,\n"
-                    + "     COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue\n"
-                    + "     FROM Book\n"
-                    + "     LEFT JOIN OrderedBook ON OrderedBook.bookid = Book.id\n"
-                    + "     LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id\n"
-                    + "     WHERE orderDate BETWEEN ? AND ?\n"
-                    + "     GROUP BY Book.id\n"
-                    + "     ORDER BY revenue DESC\n"
-                    + "	 LIMIT 10) AS top_10\n"
-                    + "JOIN Author ON Author.id = top_10.authorId\n"
-                    + "JOIN Publisher ON Publisher.id = top_10.publisherId\n";
+            String stringQuery = """
+                                 SELECT top_10.*
+                                 FROM
+                                     (SELECT Book.*,
+                                      COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
+                                 	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
+                                      FROM Book
+                                      LEFT JOIN OrderedBook ON OrderedBook.bookid = Book.id
+                                      LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id
+                                      WHERE orderDate BETWEEN ? AND ?
+                                      GROUP BY Book.id
+                                      ORDER BY revenue DESC
+                                      LIMIT 10) AS top_10
+                                 JOIN Author ON Author.id = top_10.authorId
+                                 JOIN Publisher ON Publisher.id = top_10.publisherId
+                                 """;
 
             for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
                 Integer attribute = entry.getKey();
@@ -588,6 +592,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                         " ORDER BY Publisher.name ",
                         " ORDER BY top_10.quantity ",
                         " ORDER BY top_10.salePrice ",
+                        " ORDER BY top_10.saleQuantity ",
                         " ORDER BY top_10.revenue "));
 
                 var sortOrders = new HashMap<SortOrder, String>();
@@ -604,7 +609,12 @@ public class BookRepository extends Repository<Book> implements BookDAO {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        result.add(populate(resultSet));
+                        var book = populate(resultSet);
+                        book.revenue = new Revenue(
+                                resultSet.getDouble("revenue"),
+                                resultSet.getInt("saleQuantity")
+                        );
+                        result.add(book);
                     }
                 }
                 db.commit();
