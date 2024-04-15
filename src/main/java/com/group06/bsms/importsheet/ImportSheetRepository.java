@@ -25,6 +25,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             db.setAutoCommit(false);
             if (importSheet == null)
                 throw new NullPointerException("The parameer cannot be null");
+            if(importSheet.importedBooks.isEmpty()) throw new Exception("The imported books is empty");
 
             try (PreparedStatement insertImportSheetQuery = db.prepareStatement(
                     "INSERT INTO ImportSheet (employeeInChargeId, importDate, totalCost) "
@@ -68,6 +69,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             String insertQuery = "INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (?, ?, ?, ?)";
             try (var importedBookStatement = db.prepareStatement(insertQuery)) {
                 for (ImportedBook importedBook : importedBooks) {
+                    
                     importedBookStatement.setInt(1, importSheetId);
                     importedBookStatement.setInt(2, importedBook.bookId);
                     importedBookStatement.setInt(3, importedBook.quantity);

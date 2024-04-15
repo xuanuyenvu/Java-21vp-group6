@@ -53,11 +53,13 @@ public class ImportSheetUI extends javax.swing.JPanel {
     }
 
     public ImportSheetUI(BookService bookService, ImportSheetService importSheetService) {
+
         this.bookService = bookService;
         this.importSheetService = importSheetService;
         this.bookMap = new HashMap<>();
 
         initComponents();
+        setEmployeeId("3");
 
         importBooksTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
         importBooksTable.getActionMap().put("enter", new AbstractAction() {
@@ -101,6 +103,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
                     @Override
                     public void keyPressed(KeyEvent evt) {
                         char inputChar = evt.getKeyChar();
+
                         if (Character.isLetter(inputChar)) {
                             setEditable(false);
                         } else {
@@ -144,12 +147,36 @@ public class ImportSheetUI extends javax.swing.JPanel {
                             importBooksTable.setValueAt("", row, column);
                             isSettingValue = false;
 
-                            // Should have allert
+                            JOptionPane.showMessageDialog(null, "There's already a " + newTitle + " row.", "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            importBooksTable.requestFocusInWindow();
+
+                        }
+                    }
+                }
+                if (column == 1) {
+
+                    if (!isSettingValue) {
+                        String newTitle = (String) importBooksTable.getValueAt(row, column);
+                        if (Integer.parseInt(newTitle) == 0) {
+
+                            isSettingValue = true;
+                            importBooksTable.setValueAt("", row, column);
+                            isSettingValue = false;
+
+                            JOptionPane.showMessageDialog(null, "Cannot have zero quantity", "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            importBooksTable.requestFocusInWindow();
+
                         }
                     }
                 }
             }
         });
+    }
+
+    public void setEmployeeId(String id) {
+        employeeField.setText(id);
     }
 
     private void updateTotalCost() {
@@ -208,7 +235,6 @@ public class ImportSheetUI extends javax.swing.JPanel {
         totalCostLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         importBooksTable = new javax.swing.JTable();
-        cancelButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(944, 1503));
@@ -223,6 +249,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
         employeeField.setEditable(false);
         employeeField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         employeeField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        employeeField.setFocusable(false);
         employeeField.setMinimumSize(new java.awt.Dimension(440, 31));
         employeeField.setPreferredSize(new java.awt.Dimension(440, 31));
 
@@ -236,6 +263,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
         totalCostField.setEditable(false);
         totalCostField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         totalCostField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        totalCostField.setFocusable(false);
         totalCostField.setMinimumSize(new java.awt.Dimension(440, 31));
         totalCostField.setPreferredSize(new java.awt.Dimension(440, 31));
 
@@ -247,17 +275,6 @@ public class ImportSheetUI extends javax.swing.JPanel {
         importBooksTable.setRowHeight(40);
         importBooksTable.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(importBooksTable);
-
-        cancelButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        cancelButton.setForeground(UIManager.getColor("mutedColor")
-        );
-        cancelButton.setText("Clear");
-        cancelButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
 
         saveButton.setBackground(new java.awt.Color(65, 105, 225));
         saveButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -278,10 +295,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(employeeLabel)
@@ -319,10 +333,8 @@ public class ImportSheetUI extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(802, Short.MAX_VALUE))
+                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(450, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -415,28 +427,39 @@ public class ImportSheetUI extends javax.swing.JPanel {
             String quantityStr = (String) model.getValueAt(i, 1);
             String pricePerBookStr = (String) model.getValueAt(i, 2);
 
-            if (!title.isEmpty() && (quantityStr.isEmpty() || pricePerBookStr.isEmpty())) {
-                isTableValid = false;
-                break;
+            if (!(title.equals("") && quantityStr.equals("") && pricePerBookStr.equals(""))) {
+                if (title.equals("") || quantityStr.equals("") || pricePerBookStr.equals("")) {
+                    System.out.println("hi");
+                    isTableValid = false;
+                    break;
+                }
             }
         }
 
         if (isTableValid) {
             try {
-                employeeInChargeId = Integer.parseInt("10");
+                employeeInChargeId = Integer.parseInt(employeeField.getText());
                 importDate = new java.sql.Date(importDatePicker.getDate().getTime());
-                totalCost = Double.parseDouble(totalCostField.getText());
+
+                if (totalCostField.getText().isEmpty()) {
+                    throw new Exception("Please input the books sheet");
+                }
+                totalCost = Double.valueOf(totalCostField.getText());
 
                 List<ImportedBook> importedBooks = new ArrayList<>();
 
                 for (int i = 0; i < model.getRowCount(); i++) {
-
-                    Book book = bookMap.get((String) model.getValueAt(i, 0));
-                    if (book == null) {
+                    String title = (String) model.getValueAt(i, 0);
+                    String quantityStr = (String) model.getValueAt(i, 1);
+                    String pricePerBookStr = (String) model.getValueAt(i, 2);
+                    if ((title.equals("") && quantityStr.equals("") && pricePerBookStr.equals(""))) {
                         continue;
                     }
+                    Book book = bookMap.get((String) model.getValueAt(i, 0));
+                    if (book == null) {
+                        throw new Exception("Cannot find book: " + (String) model.getValueAt(i, 0));
+                    }
                     int bookId = book.id;
-                    String title = book.title;
                     int quantity = Integer.parseInt((String) model.getValueAt(i, 1));
                     Double pricePerBook = Double.parseDouble((String) model.getValueAt(i, 2));
 
@@ -449,36 +472,26 @@ public class ImportSheetUI extends javax.swing.JPanel {
 
                 try {
                     importSheetService.insertImportSheet(importSheet);
+                    JOptionPane.showMessageDialog(null, "Import sheet added successfully.", "BSMS Information",
+                            JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e) {
-                    /////////////////////////////////////
+                    JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(), "BSMS Error",
+                            JOptionPane.ERROR_MESSAGE);
 
                 }
-            } catch (NumberFormatException ex) {
-                // Handle number format exception
-                System.err.println("Error parsing number: " + ex.getMessage());
+            } catch (Exception e) {
+
+                JOptionPane.showMessageDialog(null, e.getMessage(), "BSMS Information",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            // Inform the user about empty fields in the table
-            JOptionPane.showMessageDialog(this, "Please fill in all fields in the table.", "Empty Fields",
-                    JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Please fill in all fields in the table.", "BSMS Information",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }// GEN-LAST:event_saveButtonActionPerformed
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cancelButtonActionPerformed
-        // TODO add your handling code here
-
-        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            for (int j = 0; j < model.getColumnCount(); j++) {
-                model.setValueAt("", i, j);
-            }
-        }
-        importBooksTable.changeSelection(0, 0, false, false);
-        importBooksTable.requestFocusInWindow();
-    }// GEN-LAST:event_cancelButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
     private javax.swing.JTextField employeeField;
     private javax.swing.JLabel employeeLabel;
     private javax.swing.JTable importBooksTable;
