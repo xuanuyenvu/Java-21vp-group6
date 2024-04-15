@@ -27,8 +27,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))),
+                        new PublisherService(new PublisherRepository(DB.db()))),
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db())),
                 new CategoryService(new CategoryRepository(DB.db())));
@@ -40,8 +39,7 @@ public class AddBookInformation extends javax.swing.JPanel implements CategorySe
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))),
+                        new PublisherService(new PublisherRepository(DB.db()))),
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db())),
                 new CategoryService(new CategoryRepository(DB.db())));

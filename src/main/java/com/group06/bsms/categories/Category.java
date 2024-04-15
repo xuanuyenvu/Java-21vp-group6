@@ -1,10 +1,13 @@
 package com.group06.bsms.categories;
 
+import com.group06.bsms.revenues.Revenue;
+
 public class Category {
 
     public int id;
     public String name;
     public boolean isHidden;
+    public Revenue revenue;
 
     public Category() {
     }

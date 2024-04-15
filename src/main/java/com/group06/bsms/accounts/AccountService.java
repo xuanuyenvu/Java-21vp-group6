@@ -1,5 +1,6 @@
 package com.group06.bsms.accounts;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,12 @@ public class AccountService {
 
     public AccountService(AccountDAO accountDAO) {
         this.accountDAO = accountDAO;
+    }
+
+    List<Account> getTop10EmployeesWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception {
+        List<Account> employees = accountDAO.selectTop10EmployeesWithHighestRevenue(sortAttributeAndOrder, startDate, endDate);
+        return employees;
     }
 
     public List<Account> selectAllAccounts() {

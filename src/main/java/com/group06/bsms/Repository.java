@@ -459,7 +459,6 @@ public class Repository<Entity extends Object> {
                 }
 
             } catch (Exception e) {
-
             }
         }
 

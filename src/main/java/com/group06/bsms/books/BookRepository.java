@@ -13,6 +13,8 @@ import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.categories.Category;
+import com.group06.bsms.revenues.Revenue;
+import java.sql.Date;
 
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -501,7 +503,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
             try (var query = db.prepareStatement(
-                    "SELECT B.*, SUM(OB.quantity) AS total_quantity_ordered\n"
+                    "SELECT B.*, COALESCE(SUM(OB.quantity), 0) AS total_quantity_ordered\n"
                     + "FROM Book B\n"
                     + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
                     + "GROUP BY B.id\n"
@@ -539,6 +541,80 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 try (ResultSet resultSet = query.executeQuery()) {
                     while (resultSet.next()) {
                         result.add(populate(resultSet));
+                    }
+                }
+                db.commit();
+                for (var book : result) {
+                    book.author = authorRepository.selectById(book.authorId);
+                    book.publisher = publisherRepository.selectById(book.publisherId);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Book not found");
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Book> selectTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception {
+        List<Book> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+            String stringQuery = """
+                                 SELECT top_10.*
+                                 FROM
+                                     (SELECT Book.*,
+                                      COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
+                                 	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
+                                      FROM Book
+                                      LEFT JOIN OrderedBook ON OrderedBook.bookid = Book.id
+                                      LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id
+                                      WHERE orderDate BETWEEN ? AND ?
+                                      GROUP BY Book.id
+                                      ORDER BY revenue DESC
+                                      LIMIT 10) AS top_10
+                                 JOIN Author ON Author.id = top_10.authorId
+                                 JOIN Publisher ON Publisher.id = top_10.publisherId
+                                 """;
+
+            for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
+                Integer attribute = entry.getKey();
+                SortOrder sortOrder = entry.getValue();
+
+                var sortAttributes = new ArrayList<String>(List.of(
+                        " ORDER BY top_10.title ",
+                        " ORDER BY Author.name ",
+                        " ORDER BY Publisher.name ",
+                        " ORDER BY top_10.quantity ",
+                        " ORDER BY top_10.salePrice ",
+                        " ORDER BY top_10.saleQuantity ",
+                        " ORDER BY top_10.revenue "));
+
+                var sortOrders = new HashMap<SortOrder, String>();
+                sortOrders.put(SortOrder.ASCENDING, " ASC ");
+                sortOrders.put(SortOrder.DESCENDING, " DESC ");
+
+                stringQuery += sortAttributes.get(attribute);
+                stringQuery += sortOrders.get(sortOrder);
+            }
+            try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
+
+                preparedStatement.setDate(1, startDate);
+                preparedStatement.setDate(2, endDate);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        var book = populate(resultSet);
+                        book.revenue = new Revenue(
+                                resultSet.getDouble("revenue"),
+                                resultSet.getInt("saleQuantity")
+                        );
+                        result.add(book);
                     }
                 }
                 db.commit();
