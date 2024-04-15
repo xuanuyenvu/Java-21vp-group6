@@ -3,6 +3,7 @@ package com.group06.bsms.auth;
 import com.group06.bsms.Repository;
 import com.group06.bsms.accounts.Account;
 import java.sql.Connection;
+import java.sql.Statement;
 
 public class AuthRepository extends Repository<Account> implements AuthDAO {
 
@@ -84,12 +85,13 @@ public class AuthRepository extends Repository<Account> implements AuthDAO {
     }
 
     @Override
-    public void insertAccount(String phone, String password, boolean isAdmin, boolean isLocked) throws Exception {
+    public int insertAccount(String phone, String password, boolean isAdmin, boolean isLocked) throws Exception {
         try {
             db.setAutoCommit(false);
 
             try (var query = db.prepareStatement(
-                    "insert into Account(phone, password, isAdmin, isLocked) values (?, ?, ?, ?)"
+                    "insert into Account(phone, password, isAdmin, isLocked) values (?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
             )) {
                 query.setString(1, phone);
                 query.setString(2, Hasher.encryptPassword(password));
@@ -102,6 +104,13 @@ public class AuthRepository extends Repository<Account> implements AuthDAO {
 
                 if (result == 0) {
                     throw new Exception("Internal database error");
+                }
+
+                var generatedKeys = query.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new Exception("Unable to get user id");
                 }
             }
         } catch (Exception e) {

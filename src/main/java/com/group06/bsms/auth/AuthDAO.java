@@ -12,5 +12,5 @@ public interface AuthDAO {
 
     boolean existsAccounts() throws Exception;
 
-    void insertAccount(String phone, String password, boolean isAdmin, boolean isLocked) throws Exception;
+    int insertAccount(String phone, String password, boolean isAdmin, boolean isLocked) throws Exception;
 }

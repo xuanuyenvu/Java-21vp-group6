@@ -71,6 +71,12 @@ public class PublisherService {
             if (updatedPublisher.name == null || updatedPublisher.name.equals("")) {
                 throw new Exception("Name cannot be empty");
             }
+            if ("".equals(updatedPublisher.email)) {
+                updatedPublisher.email = null;
+            }
+            if ("".equals(updatedPublisher.address)) {
+                updatedPublisher.address = null;
+            }
 
             publisherDAO.updatePublisher(publisher, updatedPublisher);
         } catch (Exception e) {
@@ -81,6 +87,12 @@ public class PublisherService {
     public void insertPublisher(String name, String email, String address, boolean hideChecked) throws Exception {
         if (name == null || name.equals("")) {
             throw new Exception("Name cannot be empty");
+        }
+        if ("".equals(email)) {
+            email = null;
+        }
+        if ("".equals(address)) {
+            address = null;
         }
 
         Publisher publisher = new Publisher();

@@ -134,14 +134,22 @@ public class PublisherTableModel extends AbstractTableModel {
                     }
                     break;
                 case 1:
-                    if (!publisher.email.equals((String) val)) {
-                        publisherService.updatePublisherAttributeById(publisher.id, "email", (String) val);
+                    if (!((String) val).equals(publisher.email)) {
+                        publisherService.updatePublisherAttributeById(
+                                publisher.id,
+                                "email",
+                                ((String) val).equals("") ? null : (String) val
+                        );
                         publisher.email = (String) val;
                     }
                     break;
                 case 2:
-                    if (!publisher.address.equals((String) val)) {
-                        publisherService.updatePublisherAttributeById(publisher.id, "address", (String) val);
+                    if (!((String) val).equals(publisher.address)) {
+                        publisherService.updatePublisherAttributeById(
+                                publisher.id,
+                                "address",
+                                ((String) val).equals("") ? null : (String) val
+                        );
                         publisher.address = (String) val;
                     }
                     break;

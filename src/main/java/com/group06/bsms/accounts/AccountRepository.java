@@ -1,9 +1,11 @@
 package com.group06.bsms.accounts;
 
-import com.group06.bsms.Repository;
 import com.group06.bsms.revenues.Revenue;
-import java.sql.Connection;
 import java.sql.Date;
+import java.sql.Connection;
+
+import com.group06.bsms.Repository;
+import com.group06.bsms.auth.Hasher;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -83,6 +85,219 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
             if (e.getMessage().equals("Entity not found")) {
                 throw new Exception("Employee not found");
             }
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Account> selectAllAccounts() throws Exception {
+        try {
+            var accounts = selectAll(
+                    null,
+                    0, null,
+                    "name", Sort.ASC,
+                    "name", "id", "email",
+                    "address", "isLocked", "phone",
+                    "gender", "isAdmin"
+            );
+
+            return accounts;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    public Account selectAccount(int id) throws Exception {
+        try {
+            Account account = selectById(id);
+            if (account == null) {
+                throw new Exception("Account not found");
+            }
+
+            return account;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public Account selectAccountByName(String accountName) throws Exception {
+        Account account = new Account();
+        try {
+            db.setAutoCommit(false);
+            try (var selectAccountQuery = db.prepareStatement(
+                    "SELECT * FROM Account WHERE name = ?")) {
+                selectAccountQuery.setString(1, accountName);
+
+                var result = selectAccountQuery.executeQuery();
+                while (result.next()) {
+                    account = populate(result);
+                }
+
+                db.commit();
+            }
+            return account;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void updateAccountAttributeById(int accountId, String attr, Object value) throws Exception {
+        try {
+            updateById(accountId, attr, value);
+        } catch (Exception e) {
+            db.rollback();
+
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Account not found");
+            }
+
+            throw e;
+        }
+    }
+
+    @Override
+    public void unlockAccount(int id) throws Exception {
+        try {
+            updateById(id, "isLocked", false);
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void lockAccount(int id) throws Exception {
+        try {
+            updateById(id, "isLocked", true);
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void updateAccount(Account account, AccountWithPassword updatedAccount) throws Exception {
+        try {
+            this.update(
+                    updatedAccount,
+                    "name", "email",
+                    "address", "isLocked", "phone",
+                    "gender", "isAdmin"
+            );
+
+            if (updatedAccount.password != null) {
+                this.updateById(
+                        updatedAccount.id,
+                        "password",
+                        Hasher.encryptPassword(updatedAccount.password)
+                );
+            }
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public void insertAccount(AccountWithPassword account) throws Exception {
+        try {
+            db.setAutoCommit(false);
+
+            try (var query = db.prepareStatement(
+                    """
+                            insert into Account(
+                                name, email, password, address, isLocked, phone,
+                                gender, isAdmin
+                            ) values (
+                                ?, ?, ?, ?, ?, ?, ?, ?
+                            )
+                        """
+            )) {
+                int index = 1;
+                query.setString(index++, account.name);
+                query.setString(index++, account.email);
+                query.setString(index++, Hasher.encryptPassword(account.password));
+                query.setString(index++, account.address);
+                query.setBoolean(index++, account.isLocked);
+                query.setString(index++, account.phone);
+                query.setString(index++, account.gender);
+                query.setBoolean(index++, account.isAdmin);
+
+                var result = query.executeUpdate();
+
+                db.commit();
+
+                if (result == 0) {
+                    throw new Exception("Internal database error");
+                }
+            }
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Account> selectSearchSortFilterAccounts(
+            int offset, int limit, Map<Integer, SortOrder> sortValue,
+            String searchString, String searchChoice
+    ) throws Exception {
+        List<Account> result = new ArrayList<>();
+
+        try {
+            db.setAutoCommit(false);
+
+            String stringQuery = "SELECT * FROM Account";
+
+            stringQuery += " WHERE " + searchChoice + " LIKE ? ";
+
+            for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
+                Integer key = entry.getKey();
+                SortOrder value = entry.getValue();
+
+                var sortKeys = new ArrayList<String>(List.of(
+                        " ORDER BY Account.phone ",
+                        " ORDER BY Account.name ",
+                        " ORDER BY Account.email ",
+                        " ORDER BY Account.address ",
+                        " ORDER BY Account.gender ",
+                        " ORDER BY Account.isAdmin "
+                ));
+
+                var sortValues = new HashMap<SortOrder, String>();
+                sortValues.put(SortOrder.ASCENDING, " ASC ");
+                sortValues.put(SortOrder.DESCENDING, " DESC ");
+
+                stringQuery += sortKeys.get(key);
+                stringQuery += sortValues.get(value);
+            }
+
+            stringQuery += " OFFSET ? LIMIT ? ";
+
+            try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
+                int parameterIndex = 1;
+                preparedStatement.setString(parameterIndex++, "%" + searchString + "%");
+
+                preparedStatement.setInt(parameterIndex++, offset);
+                preparedStatement.setInt(parameterIndex++, limit);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        result.add(populate(resultSet));
+                    }
+                }
+            }
+
+            db.commit();
+
+            return result;
+        } catch (Exception e) {
+            db.rollback();
             throw e;
         }
     }

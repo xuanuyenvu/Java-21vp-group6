@@ -1,5 +1,7 @@
 package com.group06.bsms.auth;
 
+import com.group06.bsms.Main;
+
 public class AuthService {
 
     private final AuthDAO authDAO;
@@ -19,7 +21,9 @@ public class AuthService {
 
         if (isFirstLogin()) {
             try {
-                authDAO.insertAccount(phone, password, true, false);
+                var userId = authDAO.insertAccount(phone, password, true, false);
+
+                Main.setUserId(userId);
             } catch (Exception e) {
                 if (e.getMessage().contains("account_phone_check")) {
                     throw new Exception("Invalid phone format");
@@ -42,6 +46,8 @@ public class AuthService {
                 throw new Exception("Account is locked");
             }
 
+            Main.setUserId(account.id);
+            
             return account.isAdmin;
         }
     }

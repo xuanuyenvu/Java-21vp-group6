@@ -64,6 +64,8 @@ public class MemberRevenue extends javax.swing.JPanel {
 
         endDatePicker.setDate(new java.util.Date());
         endDatePicker.setText(sm.format(endDatePicker.getDate()));
+
+        this.durationDaysComboBox.requestFocus();
     }
 
     public void setUpTable() {
@@ -115,7 +117,6 @@ public class MemberRevenue extends javax.swing.JPanel {
                     "BSMS Error",
                     JOptionPane.ERROR_MESSAGE
             );
-            System.out.println(e);
         }
     }
 
@@ -227,7 +228,7 @@ public class MemberRevenue extends javax.swing.JPanel {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE))
+                .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE))
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,7 +246,7 @@ public class MemberRevenue extends javax.swing.JPanel {
         chartPanel.setLayout(chartPanelLayout);
         chartPanelLayout.setHorizontalGroup(
             chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(barChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
+            .addComponent(barChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE)
         );
         chartPanelLayout.setVerticalGroup(
             chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -257,15 +258,17 @@ public class MemberRevenue extends javax.swing.JPanel {
         jTabbedPane.addTab("Chart", chartPanel);
 
         startDateLabel.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        startDateLabel.setLabelFor(startDatePicker);
         startDateLabel.setText("From Date");
 
         endDateLabel.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        endDateLabel.setLabelFor(endDatePicker);
         endDateLabel.setText("To Date");
 
         confimrBtn.setBackground(new java.awt.Color(65, 105, 225));
         confimrBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         confimrBtn.setForeground(new java.awt.Color(255, 255, 255));
-        confimrBtn.setMnemonic(java.awt.event.KeyEvent.VK_A);
+        confimrBtn.setMnemonic(java.awt.event.KeyEvent.VK_C);
         confimrBtn.setText("Confirm");
         confimrBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         confimrBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -296,7 +299,7 @@ public class MemberRevenue extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(42, 42, 42)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -316,7 +319,7 @@ public class MemberRevenue extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jTabbedPane)
-                        .addGap(50, 50, 50))
+                        .addGap(42, 42, 42))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(memberRevenueLabel)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))

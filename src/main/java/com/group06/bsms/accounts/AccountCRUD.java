@@ -1,10 +1,11 @@
-package com.group06.bsms.authors;
+package com.group06.bsms.accounts;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.components.TableActionEvent;
+import com.group06.bsms.dashboard.AdminDashboard;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
@@ -23,14 +24,14 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
-public class AuthorCRUD extends javax.swing.JPanel {
+public class AccountCRUD extends javax.swing.JPanel {
 
-    private final AuthorService authorService;
-    private AuthorTableModel model;
+    private final AccountService accountService;
+    private AccountTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
-    private final UpdateAuthor updateAuthor;
-    private final AddAuthorInformation addAuthorInfo;
+    private final UpdateAccount updateAccount;
+    private final AddAccountInformation addAccountInfo;
     private final BookCRUD bookCRUD;
 
     public void setCurrentOffset(int currentOffset) {
@@ -40,34 +41,34 @@ public class AuthorCRUD extends javax.swing.JPanel {
     private final int limit = Main.ROW_LIMIT;
     private boolean isScrollAtBottom = false;
 
-    public AuthorCRUD() {
+    public AccountCRUD() {
         this(
                 null,
                 null,
                 null,
-                new AuthorService(new AuthorRepository(DB.db()))
+                new AccountService(new AccountRepository(DB.db()))
         );
     }
 
-    public AuthorCRUD(UpdateAuthor updateAuthor, AddAuthorInformation addAuthorInfo, BookCRUD bookCRUD) {
+    public AccountCRUD(UpdateAccount updateAccount, AddAccountInformation addAccountInfo, BookCRUD bookCRUD) {
         this(
-                updateAuthor,
-                addAuthorInfo,
+                updateAccount,
+                addAccountInfo,
                 bookCRUD,
-                new AuthorService(new AuthorRepository(DB.db()))
+                new AccountService(new AccountRepository(DB.db()))
         );
     }
 
-    public AuthorCRUD(
-            UpdateAuthor updateAuthor, AddAuthorInformation addAuthorInfo, BookCRUD bookCRUD,
-            AuthorService authorService
+    public AccountCRUD(
+            UpdateAccount updateAccount, AddAccountInformation addAccountInfo, BookCRUD bookCRUD,
+            AccountService accountService
     ) {
-        this.updateAuthor = updateAuthor;
-        this.addAuthorInfo = addAuthorInfo;
+        this.updateAccount = updateAccount;
+        this.addAccountInfo = addAccountInfo;
         this.bookCRUD = bookCRUD;
-        this.authorService = authorService;
+        this.accountService = accountService;
 
-        this.model = new AuthorTableModel(authorService, bookCRUD);
+        this.model = new AccountTableModel(accountService, bookCRUD);
         initComponents();
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
@@ -79,27 +80,35 @@ public class AuthorCRUD extends javax.swing.JPanel {
 
         setUpTable();
 
-        this.loadAuthorsIntoTable();
+        this.loadAccountsIntoTable();
     }
 
-    public void loadAuthorsIntoTable() {
+    public void loadAccountsIntoTable() {
         var searchString
                 = searchBar == null || searchBar.getText() == null
                 ? ""
                 : searchBar.getText();
 
+        var searchChoiceKey = searchComboBox.getSelectedItem().toString();
+        var searchChoiceMap = new HashMap<String, String>();
+        searchChoiceMap.put("by Name", "Account.name");
+        searchChoiceMap.put("by Phone", "Account.phone");
+        searchChoiceMap.put("by Email", "Account.email");
+        var searchChoiceValue = searchChoiceMap.get(searchChoiceKey);
+
         try {
             int currentRowCount = 0;
 
             do {
-                List<Author> authors = authorService.searchSortFilterAuthors(
-                        currentOffset, limit, columnSortOrders, searchString
+                List<Account> accounts = accountService.searchSortFilterAccounts(
+                        currentOffset, limit, columnSortOrders,
+                        searchString, searchChoiceValue
                 );
 
                 if (currentOffset > 0) {
-                    model.loadNewAuthors(authors);
+                    model.loadNewAccounts(accounts);
                 } else {
-                    model.reloadAllAuthors(authors);
+                    model.reloadAllAccounts(accounts);
                 }
 
                 currentOffset += limit;
@@ -122,7 +131,7 @@ public class AuthorCRUD extends javax.swing.JPanel {
     }
 
     private void toggleSortOrder(int columnIndex) {
-        if (columnIndex != 1) {
+        if (columnIndex != 6) {
             SortOrder currentOrder = columnSortOrders.getOrDefault(columnIndex, SortOrder.UNSORTED);
             SortOrder newOrder = currentOrder == SortOrder.ASCENDING ? SortOrder.DESCENDING : SortOrder.ASCENDING;
             columnSortOrders.clear();
@@ -138,7 +147,7 @@ public class AuthorCRUD extends javax.swing.JPanel {
             int modelColumn = table.convertColumnIndexToModel(column);
             SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
             Icon sortIcon = null;
-            if (column != 1) {
+            if (column != 6) {
                 if (sortOrder == SortOrder.ASCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
                 } else if (sortOrder == SortOrder.DESCENDING) {
@@ -156,7 +165,7 @@ public class AuthorCRUD extends javax.swing.JPanel {
     }
 
     public void setUpTable() {
-        table.getColumnModel().getColumn(1).setCellRenderer(new TableActionCellRender());
+        table.getColumnModel().getColumn(6).setCellRenderer(new TableActionCellRender());
 
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
@@ -173,25 +182,25 @@ public class AuthorCRUD extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int columnIndex = table.columnAtPoint(e.getPoint());
                 toggleSortOrder(columnIndex);
-                reloadAuthors();
+                reloadAccounts();
                 table.getTableHeader().repaint();
             }
         });
         TableActionEvent event = new TableActionEvent() {
             @Override
             public void onEdit(int row) {
-                int authorId = model.getAuthor(row).id;
-                updateAuthor.setAuthorById(authorId);
-                Dashboard.dashboard.switchTab("updateAuthor");
+                int accountId = model.getAccount(row).id;
+                updateAccount.setAccountById(accountId);
+                AdminDashboard.dashboard.switchTab("updateAccount");
             }
 
             @Override
             public int onHide(int row) {
                 try {
                     if (model.getHiddenState(row) == 1) {
-                        authorService.showAuthor(model.getAuthor(row).id);
+                        accountService.unlockAccount(model.getAccount(row).id);
                     } else if (model.getHiddenState(row) == 0) {
-                        authorService.hideAuthor(model.getAuthor(row).id);
+                        accountService.lockAccount(model.getAccount(row).id);
                     }
                     model.setHiddenState(row);
                 } catch (Exception e) {
@@ -207,7 +216,7 @@ public class AuthorCRUD extends javax.swing.JPanel {
             }
         };
 
-        table.getColumnModel().getColumn(1).setCellEditor(new TableActionCellEditor(event));
+        table.getColumnModel().getColumn(6).setCellEditor(new TableActionCellEditor(event));
 
         table.addMouseMotionListener(new MouseAdapter() {
             @Override
@@ -215,7 +224,7 @@ public class AuthorCRUD extends javax.swing.JPanel {
                 int row = table.rowAtPoint(e.getPoint());
                 int column = table.columnAtPoint(e.getPoint());
 
-                if (column == 1) {
+                if (column == 6) {
                     table.editCellAt(row, column);
                     table.setRowSelectionInterval(row, row);
                 }
@@ -228,7 +237,7 @@ public class AuthorCRUD extends javax.swing.JPanel {
                 isScrollAtBottom
                         = e.getAdjustable().getMaximum() == e.getAdjustable().getValue() + e.getAdjustable().getVisibleAmount();
                 if (isScrollAtBottom) {
-                    loadAuthorsIntoTable();
+                    loadAccountsIntoTable();
                 }
             }
         });
@@ -244,11 +253,12 @@ public class AuthorCRUD extends javax.swing.JPanel {
         main = new javax.swing.JPanel();
         scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        searchComboBox = new javax.swing.JComboBox<>();
 
         setAutoscrolls(true);
 
         bookLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        bookLabel.setText("AUTHORS");
+        bookLabel.setText("ACCOUNTS");
 
         searchBar.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         searchBar.setFocusAccelerator('s');
@@ -290,6 +300,15 @@ public class AuthorCRUD extends javax.swing.JPanel {
 
         main.add(scrollBar, java.awt.BorderLayout.CENTER);
 
+        searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Phone", "by Name", "by Email" }));
+        searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
+        searchComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchComboBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -306,6 +325,8 @@ public class AuthorCRUD extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(20, 20, 20)
+                                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
                                 .addComponent(createBtn)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(50, 50, 50))))
@@ -318,33 +339,38 @@ public class AuthorCRUD extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 1299, Short.MAX_VALUE)
                 .addGap(50, 50, 50))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public void reloadAuthors() {
-        reloadAuthors(false);
+    public void reloadAccounts() {
+        reloadAccounts(false);
     }
 
-    public void reloadAuthors(boolean reloadFilter) {
+    public void reloadAccounts(boolean reloadFilter) {
         currentOffset = 0;
-        loadAuthorsIntoTable();
+        loadAccountsIntoTable();
 
         if (reloadFilter) {
-            bookCRUD.loadAuthorInto();
+//            bookCRUD.loadAccountInto();
         }
     }
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
-        reloadAuthors();
+        reloadAccounts();
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
-        Dashboard.dashboard.switchTab("addAuthorInformation");
+        AdminDashboard.dashboard.switchTab("addAccountInformation");
     }//GEN-LAST:event_createBtnActionPerformed
+
+    private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
+
+    }//GEN-LAST:event_searchComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bookLabel;
@@ -352,6 +378,7 @@ public class AuthorCRUD extends javax.swing.JPanel {
     private javax.swing.JPanel main;
     private javax.swing.JScrollPane scrollBar;
     private javax.swing.JTextField searchBar;
+    private javax.swing.JComboBox<String> searchComboBox;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 }
