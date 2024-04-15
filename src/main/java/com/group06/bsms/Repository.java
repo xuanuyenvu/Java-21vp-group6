@@ -3,6 +3,7 @@ package com.group06.bsms;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import static java.sql.Types.NULL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -305,7 +306,9 @@ public class Repository<Entity extends Object> {
             valuesQuery.setLength(valuesQuery.length() - 2);
 
             try (var query = db.prepareStatement(
-                    attributesQuery.append(valuesQuery).append(")").toString())) {
+                    attributesQuery.append(valuesQuery).append(")").toString(),
+                    Statement.RETURN_GENERATED_KEYS
+            )) {
                 int index = 1;
 
                 for (String attribute : attributes) {
@@ -325,6 +328,16 @@ public class Repository<Entity extends Object> {
                 }
 
                 var result = query.executeUpdate();
+
+                try {
+                    var generatedKeys = query.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        entityClass
+                                .getDeclaredField("id")
+                                .set(entity, generatedKeys.getInt(1));
+                    }
+                } catch (Exception e) {
+                }
 
                 db.commit();
 
@@ -402,7 +415,12 @@ public class Repository<Entity extends Object> {
             try (var query = db.prepareStatement(
                     "update " + entityClass.getSimpleName() + " "
                     + "set " + attr + " = ? where id = ?")) {
-                query.setObject(1, value);
+
+                if (value != null) {
+                    query.setObject(1, value);
+                } else {
+                    query.setNull(1, NULL);
+                }
                 query.setInt(2, id);
 
                 var result = query.executeUpdate();

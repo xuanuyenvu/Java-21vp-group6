@@ -3,13 +3,10 @@ package com.group06.bsms.auth;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
-import static com.group06.bsms.Main.app;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 
 public class Login extends JPanel {
@@ -38,7 +35,7 @@ public class Login extends JPanel {
         try {
             if (authService.isFirstLogin()) {
                 JOptionPane.showMessageDialog(
-                        app,
+                        Main.getApp(),
                         "This seems to be your first time logging in.\n"
                         + "Choose your phone and password and we will register your account!",
                         "BSMS Information",
@@ -46,7 +43,7 @@ public class Login extends JPanel {
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(
-                    app,
+                    Main.getApp(),
                     "Unable to get accounts. Please login normally or try restarting.",
                     "BSMS Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -257,13 +254,13 @@ public class Login extends JPanel {
 
         try {
             if (authService.authenticate(phoneValue, passwordValue)) {
-                Main.app.switchTab("adminDashboard");
+                Main.getApp().switchTab("adminDashboard");
             } else {
-                Main.app.switchTab("dashboard");
+                Main.getApp().switchTab("dashboard");
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
-                    Main.app,
+                    Main.getApp(),
                     e.getMessage(),
                     "BSMS Error",
                     JOptionPane.ERROR_MESSAGE

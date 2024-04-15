@@ -1,7 +1,6 @@
 package com.group06.bsms.categories;
 
-import com.group06.bsms.categories.*;
-import static com.group06.bsms.Main.app;
+import com.group06.bsms.Main;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.components.ActionBtn;
 import com.group06.bsms.components.TableActionEvent;
@@ -147,7 +146,7 @@ public class CategoryTableModel extends AbstractTableModel {
                             );
                         } else {
                             JOptionPane.showMessageDialog(
-                                    app,
+                                    Main.getApp(),
                                     e.getMessage(),
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
