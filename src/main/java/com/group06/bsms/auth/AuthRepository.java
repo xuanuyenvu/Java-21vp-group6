@@ -11,24 +11,31 @@ public class AuthRepository extends Repository<Account> implements AuthDAO {
     }
 
     @Override
-    public boolean existsAccountByCredentials(String phone, String password)
+    public Account selectAccountByCredentials(String phone, String password)
             throws Exception {
 
         try {
             db.setAutoCommit(false);
 
             var query = db.prepareStatement(
-                    "select * from Account where phone = ? and password = ?"
+                    "select * from Account where phone = ?"
             );
 
             query.setString(1, phone);
-            query.setString(2, password);
 
             var result = query.executeQuery();
 
             db.commit();
 
-            return result.next();
+            if (result.next() && Hasher.checkPassword(
+                    password,
+                    result.getString("password")
+            )) {
+                return populate(result);
+            }
+
+            return null;
+
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -40,24 +47,62 @@ public class AuthRepository extends Repository<Account> implements AuthDAO {
             String phone, String oldPassword, String newPassword)
             throws Exception {
 
+        if ("".equals(newPassword)) {
+            throw new IllegalArgumentException("New password cannot be empty");
+        }
+
+        if (selectAccountByCredentials(phone, oldPassword) == null) {
+            throw new Exception("Account not found");
+        }
+
         try {
             db.setAutoCommit(false);
 
             var query = db.prepareStatement("""
-                update Account set password = ?
-                where phone = ? and password = ?
+                update Account set password = ? where phone = ?
             """);
 
-            query.setString(1, newPassword);
+            query.setString(1, Hasher.encryptPassword(newPassword));
             query.setString(2, phone);
-            query.setString(3, oldPassword);
 
             var result = query.executeUpdate();
 
             db.commit();
 
             if (result == 0) {
-                throw new Exception("Entity not found");
+                throw new Exception("Account not found");
+            }
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public boolean existsAccounts() throws Exception {
+        return this.count() > 0;
+    }
+
+    @Override
+    public void insertAccount(String phone, String password, boolean isAdmin, boolean isLocked) throws Exception {
+        try {
+            db.setAutoCommit(false);
+
+            try (var query = db.prepareStatement(
+                    "insert into Account(phone, password, isAdmin, isLocked) values (?, ?, ?, ?)"
+            )) {
+                query.setString(1, phone);
+                query.setString(2, Hasher.encryptPassword(password));
+                query.setBoolean(3, isAdmin);
+                query.setBoolean(4, isLocked);
+
+                var result = query.executeUpdate();
+
+                db.commit();
+
+                if (result == 0) {
+                    throw new Exception("Internal database error");
+                }
             }
         } catch (Exception e) {
             db.rollback();

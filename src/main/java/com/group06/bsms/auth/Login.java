@@ -3,10 +3,13 @@ package com.group06.bsms.auth;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
+import static com.group06.bsms.Main.app;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public class Login extends JPanel {
@@ -31,6 +34,23 @@ public class Login extends JPanel {
                 + "arc: 36;"
                 + "buttonType: borderless;"
         );
+
+        try {
+            if (authService.isFirstLogin()) {
+                JOptionPane.showMessageDialog(
+                        app,
+                        "This seems to be your first time logging in.\n"
+                        + "Choose your phone and password and we will register your account!",
+                        "BSMS Information",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    app,
+                    "Unable to get accounts. Please login normally or try restarting.",
+                    "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -159,6 +179,7 @@ public class Login extends JPanel {
         password.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
 
         login.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        login.setMnemonic('L');
         login.setText("Login");
         login.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -236,13 +257,15 @@ public class Login extends JPanel {
 
         try {
             if (authService.authenticate(phoneValue, passwordValue)) {
+                Main.app.switchTab("adminDashboard");
+            } else {
                 Main.app.switchTab("dashboard");
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     Main.app,
-                    e,
-                    "BSMS Critical error",
+                    e.getMessage(),
+                    "BSMS Error",
                     JOptionPane.ERROR_MESSAGE
             );
         }

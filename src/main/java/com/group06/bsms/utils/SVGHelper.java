@@ -23,6 +23,18 @@ public class SVGHelper {
             String url, Color current, Color color,
             Integer width, Integer height
     ) {
+        if (color == Color.white) {
+            return createSVGIconWithFilter(
+                    url, current, color, Color.black, width, height
+            );
+        }
+
+        if (color == Color.black) {
+            return createSVGIconWithFilter(
+                    url, current, color, Color.white, width, height
+            );
+        }
+
         return createSVGIconWithFilter(
                 url, current, color, color, width, height
         );

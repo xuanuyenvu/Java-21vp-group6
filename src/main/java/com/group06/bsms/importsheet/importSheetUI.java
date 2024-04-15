@@ -59,7 +59,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
         this.bookMap = new HashMap<>();
 
         initComponents();
-        setEmployeeId("3");
+        
 
         importBooksTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
         importBooksTable.getActionMap().put("enter", new AbstractAction() {

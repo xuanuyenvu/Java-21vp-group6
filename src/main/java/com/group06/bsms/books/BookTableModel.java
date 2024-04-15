@@ -133,27 +133,28 @@ public class BookTableModel extends AbstractTableModel {
                         bookService.updateBookAttributeById(book.id, "title", (String) val);
                         book.title = (String) val;
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(
-                                app,
-                                "An error has occurred: " + e.getMessage(),
-                                "BSMS Error",
-                                JOptionPane.ERROR_MESSAGE
-                        );
-                    }
-                }
-                break;
-            case 3:
-                if ((Integer) val != book.quantity) {
-                    try {
-                        bookService.updateBookAttributeById(book.id, "quantity", (Integer) val);
-                        book.quantity = (Integer) val;
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(
-                                app,
-                                "An error has occurred: " + e.getMessage(),
-                                "BSMS Error",
-                                JOptionPane.ERROR_MESSAGE
-                        );
+                        if (e.getMessage().contains("book_title_key")) {
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "A book with this title already exists",
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        } else if (e.getMessage().contains("book_title_check")) {
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "Title cannot be empty",
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    app,
+                                    e.getMessage(),
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
                     }
                 }
                 break;
@@ -172,7 +173,7 @@ public class BookTableModel extends AbstractTableModel {
                         if ((Double) val <= 1.1 * book.maxImportPrice) {
                             JOptionPane.showMessageDialog(
                                     app,
-                                    "Sale price must be bigger than 1.1 * import price",
+                                    "Sale price must be greater than 1.1 * import price",
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );
@@ -183,7 +184,7 @@ public class BookTableModel extends AbstractTableModel {
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(
                                 app,
-                                "An error has occurred: " + e.getMessage(),
+                                e.getMessage(),
                                 "BSMS Error",
                                 JOptionPane.ERROR_MESSAGE
                         );

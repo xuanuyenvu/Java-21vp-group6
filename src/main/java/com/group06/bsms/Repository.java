@@ -35,7 +35,7 @@ public class Repository<Entity extends Object> {
                 db.commit();
 
                 if (!result.next()) {
-                    throw new Exception("Interal database error");
+                    throw new Exception("Internal database error");
                 }
 
                 return result.getInt(1);
@@ -52,7 +52,7 @@ public class Repository<Entity extends Object> {
             db.setAutoCommit(false);
             try (var query = db.prepareStatement(
                     "delete from " + entityClass.getSimpleName() + " "
-                            + "where id = ?")) {
+                    + "where id = ?")) {
                 query.setInt(1, id);
 
                 var result = query.executeUpdate();
@@ -74,7 +74,7 @@ public class Repository<Entity extends Object> {
             db.setAutoCommit(false);
             try (var query = db.prepareStatement(
                     "select * from " + entityClass.getSimpleName() + " "
-                            + "where id = ?")) {
+                    + "where id = ?")) {
                 query.setInt(1, id);
 
                 var result = query.executeQuery();
@@ -94,16 +94,15 @@ public class Repository<Entity extends Object> {
      *
      * @param searchParams optional (null if none), containing the search params
      * @param start
-     * @param count        optional (null if none)
-     * @param sortAttr     optional (null if none)
-     * @param sortTerm     Sort.ASC or Sort.DESC
+     * @param count optional (null if none)
+     * @param sortAttr optional (null if none)
+     * @param sortTerm Sort.ASC or Sort.DESC
      * @param attributes
      * @return [count]/all entity from the [start]'th entity of " select
-     *         [attributes] from entity where [searchAttr_1] like '%[searchTerm_1]%'
-     *         and
-     *         [searchAttr_2] like '%[searchTerm_2]%' and ... (currently only accept
-     *         string attributes in the same class, no join yet) order by [sortAttr]
-     *         [sortTerm]"
+     * [attributes] from entity where [searchAttr_1] like '%[searchTerm_1]%' and
+     * [searchAttr_2] like '%[searchTerm_2]%' and ... (currently only accept
+     * string attributes in the same class, no join yet) order by [sortAttr]
+     * [sortTerm]"
      */
     public List<Entity> selectAll(
             Map<String, Object> searchParams,
@@ -141,7 +140,7 @@ public class Repository<Entity extends Object> {
 
                 for (String key : searchParams.keySet()) {
                     if (!isValidIdentifier(key) || !allowedSearches.containsKey(key)) {
-                        throw new Exception("Invalid search attribute: " + key);
+                        throw new Exception(key + " is an invalid search attribute");
                     }
                     if (conditionQuery.length() > 6) {
                         conditionQuery.append(" and ");
@@ -160,11 +159,11 @@ public class Repository<Entity extends Object> {
             }
             try (var query = db.prepareStatement(
                     "select " + attributesQuery + " "
-                            + "from " + entityClass.getSimpleName() + " "
-                            + conditionQuery + " "
-                            + sortQuery
-                            + ((count == null) ? "" : " limit ?")
-                            + " offset ?")) {
+                    + "from " + entityClass.getSimpleName() + " "
+                    + conditionQuery + " "
+                    + sortQuery
+                    + ((count == null) ? "" : " limit ?")
+                    + " offset ?")) {
                 int nParameter = 1;
 
                 if (searchParams != null) {
@@ -204,9 +203,8 @@ public class Repository<Entity extends Object> {
      * @param sortTerm
      * @param attributes
      * @return [count] entity from the [start]'th entity of "select [attributes]
-     *         from entity where [searchAttr] like '%[searchTerm]%' order by
-     *         [sortAttr]
-     *         [sortTerm]"
+     * from entity where [searchAttr] like '%[searchTerm]%' order by [sortAttr]
+     * [sortTerm]"
      */
     public List<Entity> selectAll(
             String searchAttr, Object searchTerm,
@@ -239,10 +237,10 @@ public class Repository<Entity extends Object> {
 
             try (var query = db.prepareStatement(
                     "select " + attributesQuery + " "
-                            + "from " + entityClass.getSimpleName() + " "
-                            + "where " + searchAttr + " ilike ? "
-                            + "order by " + sortAttr + " "
-                            + sortTerm.toString() + " limit ? offset ?")) {
+                    + "from " + entityClass.getSimpleName() + " "
+                    + "where " + searchAttr + " ilike ? "
+                    + "order by " + sortAttr + " "
+                    + sortTerm.toString() + " limit ? offset ?")) {
                 query.setObject(1, searchTerm);
                 query.setInt(2, count);
                 query.setInt(3, start);
@@ -271,7 +269,7 @@ public class Repository<Entity extends Object> {
 
             try (var query = db.prepareStatement(
                     "select * from " + entityClass.getSimpleName() + " "
-                            + "where id =  ?")) {
+                    + "where id =  ?")) {
                 query.setInt(1, id);
 
                 var result = query.executeQuery();
@@ -403,7 +401,7 @@ public class Repository<Entity extends Object> {
             }
             try (var query = db.prepareStatement(
                     "update " + entityClass.getSimpleName() + " "
-                            + "set " + attr + " = ? where id = ?")) {
+                    + "set " + attr + " = ? where id = ?")) {
                 query.setObject(1, value);
                 query.setInt(2, id);
 
