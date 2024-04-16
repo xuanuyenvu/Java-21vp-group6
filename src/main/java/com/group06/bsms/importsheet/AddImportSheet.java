@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.event.TableModelListener;
 
-public class ImportSheetUI extends javax.swing.JPanel {
+public class AddImportSheet extends javax.swing.JPanel {
 
     /**
      * Creates new form importSheetUI
@@ -40,7 +40,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
     private Map<String, Book> bookMap;
     private boolean isSettingValue = false;
 
-    public ImportSheetUI() {
+    public AddImportSheet() {
 
         this(new BookService(
                 new BookRepository(DB.db()),
@@ -51,7 +51,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
 
     }
 
-    public ImportSheetUI(BookService bookService, ImportSheetService importSheetService) {
+    public AddImportSheet(BookService bookService, ImportSheetService importSheetService) {
 
         this.bookService = bookService;
         this.importSheetService = importSheetService;
@@ -222,7 +222,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         importSheetLabel = new javax.swing.JLabel();
@@ -239,7 +239,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(944, 1503));
 
         importSheetLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        importSheetLabel.setText("IMPORT SHEET");
+        importSheetLabel.setText("Add import sheet");
 
         employeeLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         employeeLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -270,7 +270,7 @@ public class ImportSheetUI extends javax.swing.JPanel {
         totalCostLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         totalCostLabel.setText("Total cost");
 
-        importBooksTable.setModel(new ImportSheetTableModel());
+        importBooksTable.setModel(new ImportedBooksTableModel());
         importBooksTable.setRowHeight(40);
         importBooksTable.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(importBooksTable);
@@ -290,67 +290,51 @@ public class ImportSheetUI extends javax.swing.JPanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(employeeLabel)
+                        .addComponent(importSheetLabel)
                         .addGroup(layout.createSequentialGroup()
-                                .addGap(41, 41, 41)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(employeeLabel)
-                                                .addComponent(importSheetLabel)
-                                                .addGroup(layout.createSequentialGroup()
-                                                        .addGroup(layout
-                                                                .createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.LEADING)
-                                                                .addComponent(importDateLabel)
-                                                                .addComponent(importDatePicker,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 215,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                        .addPreferredGap(
-                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                        .addGroup(layout
-                                                                .createParallelGroup(
-                                                                        javax.swing.GroupLayout.Alignment.LEADING)
-                                                                .addComponent(totalCostLabel)
-                                                                .addComponent(totalCostField,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 215,
-                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 862,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(41, Short.MAX_VALUE)));
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(importDateLabel)
+                                .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(totalCostLabel)
+                                .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(41, Short.MAX_VALUE))
+        );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(40, 40, 40)
-                                .addComponent(importSheetLabel)
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(employeeLabel)
-                                                .addGap(2, 2, 2)
-                                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(importDateLabel)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(totalCostLabel)
-                                                .addGap(2, 2, 2)
-                                                .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        31, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(450, Short.MAX_VALUE)));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(importSheetLabel)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(employeeLabel)
+                        .addGap(2, 2, 2)
+                        .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(importDateLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(totalCostLabel)
+                        .addGap(2, 2, 2)
+                        .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(450, Short.MAX_VALUE))
+        );
     }// </editor-fold>//GEN-END:initComponents
 
     private class AutoSuggestComboBoxEditor extends AbstractCellEditor implements TableCellEditor {

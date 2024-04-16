@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ArrayList;
 import com.group06.bsms.Repository;
 import com.group06.bsms.books.BookRepository;
 import com.group06.bsms.books.Book;
@@ -25,7 +26,8 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             db.setAutoCommit(false);
             if (importSheet == null)
                 throw new NullPointerException("The parameer cannot be null");
-            if(importSheet.importedBooks.isEmpty()) throw new Exception("The imported books is empty");
+            if (importSheet.importedBooks.isEmpty())
+                throw new Exception("The imported books is empty");
 
             try (PreparedStatement insertImportSheetQuery = db.prepareStatement(
                     "INSERT INTO ImportSheet (employeeInChargeId, importDate, totalCost) "
@@ -58,7 +60,6 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
     }
 
-    
     private void insertImportedBooksList(int importSheetId, List<ImportedBook> importedBooks) throws Exception {
         try {
             db.setAutoCommit(false);
@@ -69,7 +70,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             String insertQuery = "INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (?, ?, ?, ?)";
             try (var importedBookStatement = db.prepareStatement(insertQuery)) {
                 for (ImportedBook importedBook : importedBooks) {
-                    
+
                     importedBookStatement.setInt(1, importSheetId);
                     importedBookStatement.setInt(2, importedBook.bookId);
                     importedBookStatement.setInt(3, importedBook.quantity);
@@ -118,6 +119,42 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             throw e;
         }
 
+    }
+
+    @Override
+    public ImportSheet selectImportSheet(int id) throws Exception {
+        try {
+            ImportSheet importSheet = selectById(id);
+            if (importSheet == null) {
+                throw new Exception("Entity not found");
+            }
+            db.setAutoCommit(false);
+            try (var selectImportedBooksQuery = db.prepareStatement(
+                    "SELECT ib.bookId, b.title, ib.quantity, ib.pricePerBook FROM ImportedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.importSheetId = ?")) {
+                selectImportedBooksQuery.setInt(1, id);
+                var result = selectImportedBooksQuery.executeQuery();
+
+                if (importSheet.importedBooks == null) {
+                    importSheet.importedBooks = new ArrayList<>();
+                }
+
+                while (result.next()) {
+                    importSheet.importedBooks.add(new ImportedBook(id,
+                            result.getInt("bookId"),
+                            result.getString("title"),
+                            result.getInt("quantity"),
+                            result.getDouble("pricePerBook")));
+                }
+                
+                db.commit();
+            }
+            return importSheet;
+
+        } catch (Exception e) {
+
+            throw e;
+
+        }
     }
 
 }

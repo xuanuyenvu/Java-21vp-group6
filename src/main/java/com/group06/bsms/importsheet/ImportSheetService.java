@@ -15,4 +15,12 @@ public class ImportSheetService {
         }
     }
 
+    public ImportSheet selectImportSheet(int id) throws Exception {
+        try {
+            return importSheetDAO.selectImportSheet(id);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 }

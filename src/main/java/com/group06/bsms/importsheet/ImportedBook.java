@@ -1,6 +1,7 @@
 package com.group06.bsms.importsheet;
 
 public class ImportedBook {
+    public int importSheetId;
     public int bookId;
     public String title;
     public Integer quantity;
@@ -18,10 +19,20 @@ public class ImportedBook {
 
     }
 
-    @Override
-    public String toString() {
-        return "Import Book {" + "id=" + bookId + ", title=" + title + ", quantity="
-                + quantity + ", pricePerBook=" + pricePerBook + "}";
+    public ImportedBook(int impportedSheetId, int bookId, String title, Integer quantity, Double pricePerBook) {
+        this.importSheetId = impportedSheetId;
+        this.bookId = bookId;
+        this.title = title;
+        this.quantity = quantity;
+        this.pricePerBook = pricePerBook;
+
     }
 
+    @Override
+    public String toString() {
+        return "ImportedBook {importSheetId=" + importSheetId + ", bookId=" + bookId + ", title=" + title
+                + ", quantity=" + quantity + ", pricePerBook=" + pricePerBook + "}";
+    }
+
+    
 }
