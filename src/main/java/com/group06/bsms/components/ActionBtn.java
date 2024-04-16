@@ -7,10 +7,27 @@ import java.awt.event.ActionEvent;
 public class ActionBtn extends javax.swing.JPanel {
 
     private int hidden;
+    private final String lockIcon;
+    private final String unlockIcon;
+    private final String lockTip;
+    private final String unlockTip;
 
     public ActionBtn(int isHidden) {
-        initComponents();
+        this(
+                isHidden,
+                "icons/unhide.svg", "icons/hide.svg",
+                "Hide", "Show"
+        );
+    }
+
+    public ActionBtn(int isHidden, String lockIcon, String unlockIcon, String lockTip, String unlockTip) {
         this.hidden = isHidden;
+        this.lockIcon = lockIcon;
+        this.unlockIcon = unlockIcon;
+        this.lockTip = lockTip;
+        this.unlockTip = unlockTip;
+
+        initComponents();
         updateHideButtonAppearance();
     }
 
@@ -33,15 +50,15 @@ public class ActionBtn extends javax.swing.JPanel {
     private void updateHideButtonAppearance() {
         switch (hidden) {
             case 0:
-                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/unhide.svg", Color.black, Color.black, 14, 14));
-                hideBtn.setToolTipText("Hide");
+                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter(lockIcon, Color.black, Color.black, 14, 14));
+                hideBtn.setToolTipText(lockTip);
                 break;
             case 1:
-                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/hide.svg", Color.black, Color.black, 14, 14));
-                hideBtn.setToolTipText("Show");
+                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter(unlockIcon, Color.black, Color.black, 14, 14));
+                hideBtn.setToolTipText(unlockTip);
                 break;
             default:
-                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter("icons/hide.svg", Color.black, Color.black, 14, 14));
+                hideBtn.setIcon(SVGHelper.createSVGIconWithFilter(unlockIcon, Color.black, Color.black, 14, 14));
                 hideBtn.setEnabled(false);
                 hideBtn.setToolTipText("Hidden due to Book \nAuthor/Publisher/Category\nbeing hidden");
                 break;

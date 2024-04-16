@@ -3,6 +3,7 @@ package com.group06.bsms.books;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.categories.Category;
+import com.group06.bsms.revenues.Revenue;
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -28,6 +29,7 @@ public class Book {
     public List<Category> categories;
 
     public Double maxImportPrice;
+    public Revenue revenue;
 
     public Book() {
     }

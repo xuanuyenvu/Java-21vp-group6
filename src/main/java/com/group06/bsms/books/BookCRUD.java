@@ -3,13 +3,10 @@ package com.group06.bsms.books;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
-import static com.group06.bsms.Main.app;
 import com.group06.bsms.authors.Author;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
 import com.group06.bsms.categories.Category;
-import com.group06.bsms.categories.CategoryRepository;
-import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.components.TableActionEvent;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.publishers.Publisher;
@@ -55,8 +52,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))
+                        new PublisherService(new PublisherRepository(DB.db()))
                 )
         );
     }
@@ -68,8 +64,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))
+                        new PublisherService(new PublisherRepository(DB.db()))
                 )
         );
     }
@@ -264,7 +259,7 @@ public class BookCRUD extends javax.swing.JPanel {
                     model.setHiddenState(row);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
-                            app,
+                            Main.getApp(),
                             e.getMessage(),
                             "BSMS Error",
                             JOptionPane.ERROR_MESSAGE

@@ -104,9 +104,6 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
     void loadAuthorInto() {
         try {
             var authors = new ArrayList<Author>(authorService.selectAllAuthors());
-            if (authors == null) {
-                throw new NullPointerException();
-            }
 
             authorAutoComp1.updateList(authors);
 
@@ -120,9 +117,6 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
     void loadPublisherInto() {
         try {
             var publishers = new ArrayList<Publisher>(publisherService.selectAllPublishers());
-            if (publishers == null) {
-                throw new NullPointerException();
-            }
 
             publisherAutoComp1.updateList(publishers);
 
@@ -136,9 +130,6 @@ public class BookFilter extends javax.swing.JPanel implements CategorySelectionL
     public void loadCategoryInto() {
         try {
             var categories = new ArrayList<Category>(categoryService.selectAllCategories());
-            if (categories == null) {
-                throw new NullPointerException();
-            }
 
             categorySelectionPanel1.updateList(categories, null);
 

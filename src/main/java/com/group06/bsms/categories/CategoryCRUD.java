@@ -1,10 +1,8 @@
 package com.group06.bsms.categories;
 
-import com.group06.bsms.categories.*;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
-import static com.group06.bsms.Main.app;
 import com.group06.bsms.books.BookCRUD;
 import com.group06.bsms.components.TableActionEvent;
 import com.group06.bsms.dashboard.Dashboard;
@@ -13,7 +11,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -199,7 +196,7 @@ public class CategoryCRUD extends javax.swing.JPanel {
                     model.setHiddenState(row);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(
-                            app,
+                            Main.getApp(),
                             e.getMessage(),
                             "BSMS Error",
                             JOptionPane.ERROR_MESSAGE

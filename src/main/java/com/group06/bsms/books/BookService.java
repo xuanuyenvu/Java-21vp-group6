@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.swing.SortOrder;
 import com.group06.bsms.authors.AuthorService;
 import com.group06.bsms.categories.Category;
-import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.publishers.Publisher;
 import com.group06.bsms.publishers.PublisherService;
 import java.sql.Date;
@@ -17,14 +16,11 @@ public class BookService {
     private final BookDAO bookDAO;
     private final AuthorService authorService;
     private final PublisherService publisherService;
-    private final CategoryService categoryService;
 
-    public BookService(BookDAO bookDAO, AuthorService authorService, PublisherService publisherService,
-            CategoryService categoryService) {
+    public BookService(BookDAO bookDAO, AuthorService authorService, PublisherService publisherService) {
         this.bookDAO = bookDAO;
         this.authorService = authorService;
         this.publisherService = publisherService;
-        this.categoryService = categoryService;
     }
 
     public void updateBook(Book book, Book updatedBook) throws Exception {
@@ -144,8 +140,7 @@ public class BookService {
     public void insertBook(
             String title, Author author, Publisher publisher, ArrayList<Category> categoriesList,
             Date publishDate, String dimension, Object pages, String translator,
-            String overview, boolean hideChecked
-    ) throws Exception {
+            String overview, boolean hideChecked) throws Exception {
         if (title == null || title.equals("")) {
             throw new Exception("Title cannot be empty");
         }
@@ -239,5 +234,11 @@ public class BookService {
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    List<Book> getTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception {
+        List<Book> books = bookDAO.selectTop10BooksWithHighestRevenue(sortAttributeAndOrder, startDate, endDate);
+        return books;
     }
 }

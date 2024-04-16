@@ -1,5 +1,6 @@
 package com.group06.bsms.categories;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -73,13 +74,18 @@ public class CategoryService {
 
     public List<Category> searchSortFilterCategories(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
-            String searchString
-    ) throws Exception {
+            String searchString) throws Exception {
 
         List<Category> categories = categoryDAO.selectSearchSortFilterCategories(
-                offset, limit, sortValue, searchString
-        );
+                offset, limit, sortValue, searchString);
 
         return categories;
+    }
+
+    List<Category> getTop10CategoriesWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception {
+        List<Category> books = categoryDAO.selectTop10CategoriesWithHighestRevenue(sortAttributeAndOrder, startDate,
+                endDate);
+        return books;
     }
 }

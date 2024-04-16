@@ -31,8 +31,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))),
+                        new PublisherService(new PublisherRepository(DB.db()))),
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db())),
                 new CategoryService(new CategoryRepository(DB.db())));
@@ -44,8 +43,7 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
                 new BookService(
                         new BookRepository(DB.db()),
                         new AuthorService(new AuthorRepository(DB.db())),
-                        new PublisherService(new PublisherRepository(DB.db())),
-                        new CategoryService(new CategoryRepository(DB.db()))),
+                        new PublisherService(new PublisherRepository(DB.db()))),
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db())),
                 new CategoryService(new CategoryRepository(DB.db())));
@@ -152,9 +150,6 @@ public class UpdateBook extends javax.swing.JPanel implements CategorySelectionL
     void loadCategoryInto() {
         try {
             var categories = new ArrayList<Category>(categoryService.selectAllCategories());
-            if (categories == null) {
-                throw new NullPointerException();
-            }
 
             categorySelectionPanel.updateList(
                     categories,

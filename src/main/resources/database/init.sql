@@ -22,8 +22,8 @@ create table if not exists Account (
     password varchar(255) check (length(password) > 4) not null,
     name varchar(255) check (length(name) > 0),
     gender varchar(10) check (gender in ('Male', 'Female', 'Other')),
-    email varchar(255) unique check (email ~ '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+$'),
-    address varchar(255) check (length(address) > 0),
+    email varchar(255) unique check (email ~ '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+$' or email is null),
+    address varchar(255) check (length(address) > 0 or address is null),
     isAdmin boolean default false not null,
     isLocked boolean default false not null
 );
@@ -31,8 +31,8 @@ create table if not exists Account (
 create table if not exists Publisher (
     id serial primary key,
     name varchar(255) unique check (length(name) > 0) not null,
-    email varchar(255) unique check (email ~ '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+$' or email = ''),
-    address varchar(255),
+    email varchar(255) unique check (email ~ '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+$' or email is null),
+    address varchar(255) check (length(address) > 0 or address is null),
     isHidden boolean default false not null
 );
 

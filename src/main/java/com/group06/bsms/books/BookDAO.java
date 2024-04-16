@@ -1,5 +1,6 @@
 package com.group06.bsms.books;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SortOrder;
@@ -24,10 +25,12 @@ public interface BookDAO {
 
     void updateBookHiddenParentCountByPublisherId(int publisherId) throws Exception;
 
-    List<Book> selectSearchSortFilterBooks(int offset, int limit, Map<Integer, SortOrder> sortValue,
+    List<Book> selectSearchSortFilterBooks(
+            int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice,
             int authorId, int publisherId, Double minPrice, Double maxPrice,
-            List<Integer> listBookCategoryId) throws Exception;
+            List<Integer> listBookCategoryId
+    ) throws Exception;
 
     void updateBookAttributeById(int bookId, String attr, Object value) throws Exception;
 
@@ -38,4 +41,6 @@ public interface BookDAO {
     List<Book> getOutOfStockBooks() throws Exception;
 
     List<Book> searchBooksByTitle(String title) throws Exception; 
+    List<Book> selectTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception;
 }

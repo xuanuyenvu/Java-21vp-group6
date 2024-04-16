@@ -4,12 +4,13 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
+import com.group06.bsms.accounts.EmployeeRevenue;
 import com.group06.bsms.auth.Login;
+import com.group06.bsms.books.BookRevenue;
+import com.group06.bsms.categories.CategoryRevenue;
 import com.group06.bsms.dashboard.AdminDashboard;
 import com.group06.bsms.dashboard.Dashboard;
-
-
-
+import com.group06.bsms.members.MemberRevenue;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -17,12 +18,25 @@ import javax.swing.*;
 
 public class Main extends JFrame {
 
-    public static Main app;
+    private static Main app;
+    private static int userId;
     public static final boolean INDEV = true;
     public static final int BREAK_POINT = 640;
     public static final int ROW_LIMIT = 10;
 
     private static boolean darkMode = false;
+
+    public static Main getApp() {
+        return app;
+    }
+
+    public static int getUserId() {
+        return userId;
+    }
+
+    public static void setUserId(int newUserId) {
+        userId = newUserId;
+    }
 
     private Main() {
         if (!INDEV) {

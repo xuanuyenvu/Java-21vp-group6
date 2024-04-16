@@ -3,6 +3,9 @@ package com.group06.bsms.categories;
 import java.sql.Connection;
 
 import com.group06.bsms.Repository;
+import com.group06.bsms.revenues.Revenue;
+
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -26,8 +29,7 @@ public class CategoryRepository extends Repository<Category> implements Category
                     null,
                     0, null,
                     "name", Sort.ASC,
-                    "name", "id", "isHidden"
-            );
+                    "name", "id", "isHidden");
 
             db.commit();
 
@@ -84,8 +86,7 @@ public class CategoryRepository extends Repository<Category> implements Category
                     + "where exists( "
                     + " select * from bookCategory "
                     + " where bookId = id and categoryId = ? "
-                    + ")"
-            )) {
+                    + ")")) {
                 preparedStatement.setInt(1, id);
 
                 preparedStatement.executeUpdate();
@@ -116,8 +117,7 @@ public class CategoryRepository extends Repository<Category> implements Category
                     + "where exists( "
                     + " select * from bookCategory "
                     + " where bookId = id and categoryId = ?"
-                    + ")"
-            )) {
+                    + ")")) {
                 preparedStatement.setInt(1, id);
 
                 preparedStatement.executeUpdate();
@@ -155,8 +155,7 @@ public class CategoryRepository extends Repository<Category> implements Category
     @Override
     public List<Category> selectSearchSortFilterCategories(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
-            String searchString
-    ) throws Exception {
+            String searchString) throws Exception {
         List<Category> result = new ArrayList<>();
 
         try {
@@ -171,8 +170,7 @@ public class CategoryRepository extends Repository<Category> implements Category
                 SortOrder value = entry.getValue();
 
                 var sortKeys = new ArrayList<String>(List.of(
-                        " ORDER BY Category.name "
-                ));
+                        " ORDER BY Category.name "));
 
                 var sortValues = new HashMap<SortOrder, String>();
                 sortValues.put(SortOrder.ASCENDING, " ASC ");
@@ -203,6 +201,72 @@ public class CategoryRepository extends Repository<Category> implements Category
             return result;
         } catch (Exception e) {
             db.rollback();
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Category> selectTop10CategoriesWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception {
+        List<Category> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+            String stringQuery = """
+                                 SELECT top_10.*
+                                 FROM
+                                 	(SELECT Category.*,
+                                      COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
+                                 	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
+                                      FROM Category
+                                      JOIN BookCategory ON BookCategory.CategoryId = Category.id
+                                      JOIN Book ON Book.id = BookCategory.bookId
+                                      LEFT JOIN OrderedBook ON OrderedBook.bookId = Book.id
+                                      LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id
+                                      WHERE orderDate BETWEEN ? AND ?
+                                      GROUP BY Category.id
+                                      ORDER BY revenue DESC
+                                      LIMIT 10) AS top_10 
+                                 """;
+
+            for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
+                Integer attribute = entry.getKey();
+                SortOrder sortOrder = entry.getValue();
+
+                var sortAttributes = new ArrayList<String>(List.of(
+                        " ORDER BY name ",
+                        " ORDER BY saleQuantity ",
+                        " ORDER BY revenue "));
+
+                var sortOrders = new HashMap<SortOrder, String>();
+                sortOrders.put(SortOrder.ASCENDING, " ASC ");
+                sortOrders.put(SortOrder.DESCENDING, " DESC ");
+
+                stringQuery += sortAttributes.get(attribute);
+                stringQuery += sortOrders.get(sortOrder);
+            }
+
+            try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
+
+                preparedStatement.setDate(1, startDate);
+                preparedStatement.setDate(2, endDate);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        var category = populate(resultSet);
+                        category.revenue = new Revenue(
+                                resultSet.getDouble("revenue"),
+                                resultSet.getInt("saleQuantity")
+                        );
+                        result.add(category);
+                    }
+                }
+                db.commit();
+            }
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Category not found");
+            }
             throw e;
         }
     }
