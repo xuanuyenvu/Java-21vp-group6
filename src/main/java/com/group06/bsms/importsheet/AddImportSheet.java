@@ -5,6 +5,7 @@
 package com.group06.bsms.importsheet;
 
 import com.group06.bsms.DB;
+import com.group06.bsms.accounts.AccountRepository;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
 import com.group06.bsms.books.Book;
@@ -47,7 +48,7 @@ public class AddImportSheet extends javax.swing.JPanel {
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db()))),
                 new ImportSheetService(
-                        new ImportSheetRepository(DB.db(), new BookRepository(DB.db()))));
+                        new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(new DB.db()))));
 
     }
 

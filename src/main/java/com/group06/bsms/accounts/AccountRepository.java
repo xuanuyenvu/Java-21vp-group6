@@ -28,19 +28,19 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
         try {
             db.setAutoCommit(false);
             String stringQuery = """
-                                 SELECT top_10.*
-                                 FROM
-                                     (SELECT Account.*,
-                                      COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
-                                 	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
-                                      FROM Account
-                                      JOIN OrderSheet ON Account.id = OrderSheet.employeeInchargeId
-                                      JOIN OrderedBook ON OrderedBook.orderSheetId = OrderSheet.id
-                                      WHERE orderDate BETWEEN ? AND ?
-                                      GROUP BY Account.id
-                                      ORDER BY revenue DESC
-                                      LIMIT 10) AS top_10\n
-                                 """;
+                    SELECT top_10.*
+                    FROM
+                        (SELECT Account.*,
+                         COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
+                    	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
+                         FROM Account
+                         JOIN OrderSheet ON Account.id = OrderSheet.employeeInchargeId
+                         JOIN OrderedBook ON OrderedBook.orderSheetId = OrderSheet.id
+                         WHERE orderDate BETWEEN ? AND ?
+                         GROUP BY Account.id
+                         ORDER BY revenue DESC
+                         LIMIT 10) AS top_10\n
+                    """;
 
             for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
                 Integer attribute = entry.getKey();
@@ -72,8 +72,7 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                         var account = populate(resultSet);
                         account.revenue = new Revenue(
                                 resultSet.getDouble("revenue"),
-                                resultSet.getInt("saleQuantity")
-                        );
+                                resultSet.getInt("saleQuantity"));
                         result.add(account);
                     }
                 }
@@ -98,8 +97,7 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                     "name", Sort.ASC,
                     "name", "id", "email",
                     "address", "isLocked", "phone",
-                    "gender", "isAdmin"
-            );
+                    "gender", "isAdmin");
 
             return accounts;
         } catch (Exception e) {
@@ -187,15 +185,13 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                     updatedAccount,
                     "name", "email",
                     "address", "isLocked", "phone",
-                    "gender", "isAdmin"
-            );
+                    "gender", "isAdmin");
 
             if (updatedAccount.password != null) {
                 this.updateById(
                         updatedAccount.id,
                         "password",
-                        Hasher.encryptPassword(updatedAccount.password)
-                );
+                        Hasher.encryptPassword(updatedAccount.password));
             }
         } catch (Exception e) {
             db.rollback();
@@ -210,14 +206,13 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
 
             try (var query = db.prepareStatement(
                     """
-                            insert into Account(
-                                name, email, password, address, isLocked, phone,
-                                gender, isAdmin
-                            ) values (
-                                ?, ?, ?, ?, ?, ?, ?, ?
-                            )
-                        """
-            )) {
+                                insert into Account(
+                                    name, email, password, address, isLocked, phone,
+                                    gender, isAdmin
+                                ) values (
+                                    ?, ?, ?, ?, ?, ?, ?, ?
+                                )
+                            """)) {
                 int index = 1;
                 query.setString(index++, account.name);
                 query.setString(index++, account.email);
@@ -245,8 +240,7 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
     @Override
     public List<Account> selectSearchSortFilterAccounts(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
-            String searchString, String searchChoice
-    ) throws Exception {
+            String searchString, String searchChoice) throws Exception {
         List<Account> result = new ArrayList<>();
 
         try {
@@ -266,8 +260,7 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                         " ORDER BY Account.email ",
                         " ORDER BY Account.address ",
                         " ORDER BY Account.gender ",
-                        " ORDER BY Account.isAdmin "
-                ));
+                        " ORDER BY Account.isAdmin "));
 
                 var sortValues = new HashMap<SortOrder, String>();
                 sortValues.put(SortOrder.ASCENDING, " ASC ");

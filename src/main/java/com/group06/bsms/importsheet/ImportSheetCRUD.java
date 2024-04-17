@@ -4,17 +4,58 @@
  */
 package com.group06.bsms.importsheet;
 
-/**
- *
- * @author 06vuc
- */
+import com.formdev.flatlaf.FlatClientProperties;
+import com.group06.bsms.DB;
+import com.group06.bsms.Main;
+import com.group06.bsms.accounts.AccountRepository;
+import com.group06.bsms.books.BookRepository;
+import com.group06.bsms.utils.SVGHelper;
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.SortOrder;
+import javax.swing.UIManager;
+
 public class ImportSheetCRUD extends javax.swing.JPanel {
 
-    /**
-     * Creates new form ImportSheetCRUD
-     */
+    private final ImportSheetService importSheetService;
+    private ImportSheetTableModel model;
+    private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
+    private int currentOffset = 0;
+    //private final UpdateAccount updateAccount;
+    //private final AddAccountInformation addAccountInfo;
+    //private final BookCRUD bookCRUD;
+
+    public void setCurrentOffset(int currentOffset) {
+        this.currentOffset = currentOffset;
+    }
+
+    private final int limit = Main.ROW_LIMIT;
+    private boolean isScrollAtBottom = false;
+
     public ImportSheetCRUD() {
+        this(
+                new ImportSheetService(new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(DB.db())))
+        );
+
+    }
+
+    public ImportSheetCRUD(ImportSheetService importSheetService) {
+        this.importSheetService = importSheetService;
+        this.model = new ImportSheetTableModel(importSheetService);
+
         initComponents();
+
+        searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
+        searchBar.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
+                "icons/search.svg",
+                Color.black, Color.black,
+                14, 14
+        ));
+    }
+
+    public void setUpTable() {
+
     }
 
     /**
@@ -26,19 +67,126 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        importSheetLabel = new javax.swing.JLabel();
+        searchBar = new javax.swing.JTextField();
+        createBtn = new javax.swing.JButton();
+        main = new javax.swing.JPanel();
+        scrollBar = new javax.swing.JScrollPane();
+        table = new javax.swing.JTable();
+        searchComboBox = new javax.swing.JComboBox<>();
+
+        setMinimumSize(new java.awt.Dimension(928, 1503));
+
+        importSheetLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        importSheetLabel.setText("IMPORT SHEET");
+
+        searchBar.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        searchBar.setFocusAccelerator('s');
+        searchBar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBarActionPerformed(evt);
+            }
+        });
+
+        createBtn.setBackground(UIManager.getColor("accentColor"));
+        createBtn.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        createBtn.setForeground(new java.awt.Color(255, 255, 255));
+        createBtn.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/add.svg",
+            Color.black, Color.white, Color.white,
+            14, 14
+        ));
+        createBtn.setMnemonic(java.awt.event.KeyEvent.VK_C);
+        createBtn.setText("Create");
+        createBtn.setToolTipText("");
+        createBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        createBtn.setDisplayedMnemonicIndex(0);
+        createBtn.setIconTextGap(2);
+        createBtn.setMargin(new java.awt.Insets(10, 10, 10, 10));
+        createBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createBtnActionPerformed(evt);
+            }
+        });
+
+        main.setLayout(new java.awt.BorderLayout());
+
+        table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        table.setModel(this.model);
+        table.setToolTipText("");
+        table.setRowHeight(40);
+        table.getTableHeader().setReorderingAllowed(false);
+        scrollBar.setViewportView(table);
+
+        main.add(scrollBar, java.awt.BorderLayout.CENTER);
+
+        searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Phone", "by Name", "by Email" }));
+        searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
+        searchComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchComboBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(importSheetLabel)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(createBtn)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(50, 50, 50))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(48, 48, 48)
+                .addComponent(importSheetLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 1299, Short.MAX_VALUE)
+                .addGap(50, 50, 50))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
+        //reloadAccounts();
+    }//GEN-LAST:event_searchBarActionPerformed
+
+    private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
+        //AdminDashboard.dashboard.switchTab("addAccountInformation");
+    }//GEN-LAST:event_createBtnActionPerformed
+
+    private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
+
+    }//GEN-LAST:event_searchComboBoxActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton createBtn;
+    private javax.swing.JLabel importSheetLabel;
+    private javax.swing.JPanel main;
+    private javax.swing.JScrollPane scrollBar;
+    private javax.swing.JTextField searchBar;
+    private javax.swing.JComboBox<String> searchComboBox;
+    private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 }

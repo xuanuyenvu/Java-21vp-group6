@@ -37,4 +37,5 @@ public class DB {
     public static Connection db() {
         return db;
     }
+
 }

@@ -8,15 +8,18 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 import com.group06.bsms.Repository;
+import com.group06.bsms.accounts.AccountRepository;
 import com.group06.bsms.books.BookRepository;
 import com.group06.bsms.books.Book;
 
 public class ImportSheetRepository extends Repository<ImportSheet> implements ImportSheetDAO {
     private final BookRepository bookRepository;
+    private final AccountRepository accountRepository;
 
-    public ImportSheetRepository(Connection db, BookRepository bookRepository) {
+    public ImportSheetRepository(Connection db, BookRepository bookRepository, AccountRepository accountRepository) {
         super(db, ImportSheet.class);
         this.bookRepository = bookRepository;
+        this.accountRepository = accountRepository;
 
     }
 
@@ -145,9 +148,11 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                             result.getInt("quantity"),
                             result.getDouble("pricePerBook")));
                 }
-                
+
                 db.commit();
             }
+            importSheet.employee = accountRepository.selectAccount(importSheet.employeeInChargeId);
+            
             return importSheet;
 
         } catch (Exception e) {
