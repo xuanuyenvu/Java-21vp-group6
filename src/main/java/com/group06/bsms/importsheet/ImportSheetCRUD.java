@@ -7,14 +7,25 @@ package com.group06.bsms.importsheet;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
+import com.group06.bsms.accounts.Account;
 import com.group06.bsms.accounts.AccountRepository;
 import com.group06.bsms.books.BookRepository;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SortOrder;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class ImportSheetCRUD extends javax.swing.JPanel {
 
@@ -45,6 +56,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         this.model = new ImportSheetTableModel(importSheetService);
 
         initComponents();
+        
+      
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
         searchBar.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
@@ -52,10 +65,138 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                 Color.black, Color.black,
                 14, 14
         ));
+        
+        setUpTable();
+        
+        loadImportSheetsIntoTable();
+    }
+
+    private void toggleSortOrder(int columnIndex) {
+        if (columnIndex < 3) {
+            SortOrder currentOrder = columnSortOrders.getOrDefault(columnIndex, SortOrder.UNSORTED);
+            SortOrder newOrder = currentOrder == SortOrder.ASCENDING ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+            columnSortOrders.clear();
+            columnSortOrders.put(columnIndex, newOrder);
+        }
+    }
+
+    class CustomHeaderRenderer extends DefaultTableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            int modelColumn = table.convertColumnIndexToModel(column);
+            SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
+            Icon sortIcon = null;
+            if (column != 6) {
+                if (sortOrder == SortOrder.ASCENDING) {
+                    sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                } else if (sortOrder == SortOrder.DESCENDING) {
+                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
+                }
+                setHorizontalAlignment(JLabel.LEFT);
+            } else {
+                setHorizontalAlignment(JLabel.CENTER);
+                sortIcon = null;
+            }
+            setHorizontalTextPosition(JLabel.LEFT);
+            label.setIcon(sortIcon);
+            return label;
+        }
     }
 
     public void setUpTable() {
 
+        table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
+        table.setShowVerticalLines(true);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+        columnSortOrders.put(0, SortOrder.ASCENDING);
+
+        table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
+
+        table.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int columnIndex = table.columnAtPoint(e.getPoint());
+                toggleSortOrder(columnIndex);
+                reloadImportSheets();
+                table.getTableHeader().repaint();
+            }
+        });
+
+        scrollBar.getVerticalScrollBar().addAdjustmentListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                //Check if scrolled to the bottom
+                isScrollAtBottom
+                        = e.getAdjustable().getMaximum() == e.getAdjustable().getValue() + e.getAdjustable().getVisibleAmount();
+                if (isScrollAtBottom) {
+                    loadImportSheetsIntoTable();
+                }
+            }
+        });
+    }
+
+    public void reloadImportSheets() {
+        reloadImportSheets(false);
+    }
+
+    public void reloadImportSheets(boolean reloadFilter) {
+        currentOffset = 0;
+        loadImportSheetsIntoTable();
+
+        if (reloadFilter) {
+//            bookCRUD.loadAccountInto();
+        }
+    }
+
+    public void loadImportSheetsIntoTable() {
+        var searchString
+                = searchBar == null || searchBar.getText() == null
+                ? ""
+                : searchBar.getText();
+
+        var searchChoiceKey = searchComboBox.getSelectedItem().toString();
+        var searchChoiceMap = new HashMap<String, String>();
+        searchChoiceMap.put("by Import Date", "ImportSheet.importDate");
+        searchChoiceMap.put("by Employee's phone", "Account.phone");
+        searchChoiceMap.put("by Total Cost", "ImportSheet.totalCost");
+        var searchChoiceValue = searchChoiceMap.get(searchChoiceKey);
+
+        try {
+            int currentRowCount = 0;
+
+            do {
+                List<ImportSheet> importSheets = importSheetService.searchSortFilterImportSheets(
+                        currentOffset, limit, columnSortOrders,
+                        searchString, searchChoiceValue
+                );
+
+                if (currentOffset > 0) {
+                    model.loadNewImportSheets(importSheets);
+                } else {
+                    model.reloadAllImportSheets(importSheets);
+                }
+
+                currentOffset += limit;
+
+                if (currentRowCount == model.getRowCount()) {
+                    break;
+                }
+
+                currentRowCount = model.getRowCount();
+            } while (currentRowCount < 2 * limit);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     /**
@@ -121,7 +262,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         main.add(scrollBar, java.awt.BorderLayout.CENTER);
 
         searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Phone", "by Name", "by Email" }));
+        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Total Cost", "by Import Date", "by Employee's phone" }));
         searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         searchComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

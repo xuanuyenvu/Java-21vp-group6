@@ -40,16 +40,12 @@ public class ImportSheetTableModel extends AbstractTableModel {
             return null;
         }
         ImportSheet importSheet = importSheets.get(row);
-        switch (col) {
-            case 0:
-                return importSheet.employeeInChargeId;
-            case 1:
-                return importSheet.importDate;
-            case 2:
-                return importSheet.totalCost;
-            default:
-                return null;
-        }
+        return switch (col) {
+            case 0 -> importSheet.employee.phone;
+            case 1 -> importSheet.importDate;
+            case 2 -> importSheet.totalCost;
+            default -> null;
+        };
     }
 
     @Override
@@ -74,22 +70,12 @@ public class ImportSheetTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int col) {
-        switch (col) {
-            case 0:
-                return String.class;
-            case 1:
-                return String.class;
-            case 2:
-                return String.class;
-            case 3:
-                return Integer.class;
-            case 4:
-                return Double.class;
-            case 5:
-                return Boolean.class;
-            default:
-                return null;
-        }
+        return switch (col) {
+            case 0 -> String.class;
+            case 1 -> String.class;
+            case 2 -> String.class;
+            default -> null;
+        };
     }
 
     @Override
@@ -110,7 +96,7 @@ public class ImportSheetTableModel extends AbstractTableModel {
 
     }
 
-    public void loadNewBooks(List<ImportSheet> newImportSheets) {
+    public void loadNewImportSheets(List<ImportSheet> newImportSheets) {
         if (newImportSheets != null) {
             for (var importSheet : newImportSheets) {
                 if (!contains(importSheet.id)) {

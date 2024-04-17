@@ -48,7 +48,7 @@ public class AddImportSheet extends javax.swing.JPanel {
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db()))),
                 new ImportSheetService(
-                        new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(new DB.db()))));
+                        new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(DB.db()))));
 
     }
 

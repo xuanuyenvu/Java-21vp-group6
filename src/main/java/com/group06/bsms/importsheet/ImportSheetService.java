@@ -1,5 +1,9 @@
 package com.group06.bsms.importsheet;
 
+import java.util.List;
+import java.util.Map;
+import javax.swing.SortOrder;
+
 public class ImportSheetService {
     private final ImportSheetDAO importSheetDAO;
 
@@ -21,6 +25,18 @@ public class ImportSheetService {
         } catch (Exception e) {
             throw e;
         }
+    }
+    
+    public List<ImportSheet> searchSortFilterImportSheets(
+            int offset, int limit, Map<Integer, SortOrder> sortValue,
+            String searchString, String searchChoice
+    ) throws Exception {
+
+        List<ImportSheet> importSheets = importSheetDAO.selectSearchSortFilterImportSheets(
+                offset, limit, sortValue, searchString, searchChoice
+        );
+
+        return importSheets;
     }
 
 }

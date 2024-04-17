@@ -6,6 +6,7 @@ import java.util.List;
 import com.group06.bsms.accounts.Account;
 
 public class ImportSheet {
+
     public int id;
     public int employeeInChargeId;
     public Account employee;
@@ -15,6 +16,14 @@ public class ImportSheet {
 
     public ImportSheet() {
 
+    }
+
+    public ImportSheet(int id, int employeeInChargeId, Date importDate, Double totalCost, List<ImportedBook> importedBooks) {
+        this.id = id;
+        this.employeeInChargeId = employeeInChargeId;
+        this.importDate = importDate;
+        this.totalCost = totalCost;
+        this.importedBooks = importedBooks;
     }
 
     public ImportSheet(int employeeInChargeId, Date importDate, Double totalCost, List<ImportedBook> importedBooks) {
