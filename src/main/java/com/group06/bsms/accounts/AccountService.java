@@ -130,4 +130,22 @@ public class AccountService {
 
         return accounts;
     }
+
+    public void updatePasswordById(int id, String password, String confirmPassword) throws Exception {
+        try {
+            if (password == null || password.equals("") 
+                    || confirmPassword == null || confirmPassword.equals("")) {
+                throw new Exception("Password and confirm password cannot be empty");
+            }
+
+            if (!password.equals(confirmPassword)) {
+                throw new Exception("Passwords do not match");
+            }
+
+            accountDAO.updatePasswordById(id, password);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 }

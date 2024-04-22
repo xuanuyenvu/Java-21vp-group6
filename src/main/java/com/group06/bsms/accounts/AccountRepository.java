@@ -301,4 +301,17 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
             throw e;
         }
     }
+
+    public void updatePasswordById(int id, String password) throws Exception {
+        try {
+            db.setAutoCommit(false);
+
+            updateById(id, "password", Hasher.encryptPassword(password));
+
+            db.commit();
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
 }
