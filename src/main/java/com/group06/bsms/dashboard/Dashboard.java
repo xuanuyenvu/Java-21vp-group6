@@ -14,6 +14,9 @@ import com.group06.bsms.categories.UpdateCategory;
 import com.group06.bsms.publishers.AddPublisherInformation;
 import com.group06.bsms.publishers.PublisherCRUD;
 import com.group06.bsms.publishers.UpdatePublisher;
+import com.group06.bsms.importsheet.ImportSheetCRUD;
+import com.group06.bsms.importsheet.AddImportSheet;
+import com.group06.bsms.importsheet.ViewImportSheet;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -42,6 +45,12 @@ public class Dashboard extends javax.swing.JPanel {
     private final PublisherCRUD publisherCRUD = new PublisherCRUD(updatePublisher, addPublisherInfo, bookCRUD);
 
     private final UpdateAccount updateUser = new UpdateAccount();
+    
+    private final AddImportSheet addImportSheet = new AddImportSheet();
+    private final ImportSheetCRUD importSheetCRUD = new ImportSheetCRUD();
+    private final ViewImportSheet viewImportSheetCRUD = new ViewImportSheet();
+    
+    
 
     private Dashboard() {
         initComponents();
@@ -73,6 +82,13 @@ public class Dashboard extends javax.swing.JPanel {
         main.add(addPublisherInfo, "addPublisherInformation");
 
         main.add(updateUser, "updateUser");
+        
+        addImportSheet.setImportSheetCRUD(importSheetCRUD);
+        main.add(importSheetCRUD, "importSheetCRUD");
+        main.add(addImportSheet,"addImportSheet");
+        
+        
+        
     }
 
     public void switchTab(String tab) {
@@ -90,6 +106,8 @@ public class Dashboard extends javax.swing.JPanel {
         authors = new javax.swing.JButton();
         publishers = new javax.swing.JButton();
         categories = new javax.swing.JButton();
+        importSheets = new javax.swing.JButton();
+        orderSheet = new javax.swing.JButton();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         account = new javax.swing.JButton();
         logout = new javax.swing.JButton();
@@ -201,6 +219,46 @@ public class Dashboard extends javax.swing.JPanel {
             }
         });
         jToolBar1.add(categories);
+
+        importSheets.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/import-sheet.svg", 
+            Color.black, Color.black,
+            28, 28
+        ));
+        importSheets.setMnemonic('4');
+        importSheets.setToolTipText("Categories");
+        importSheets.setFocusable(false);
+        importSheets.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        importSheets.setMaximumSize(new java.awt.Dimension(58, 58));
+        importSheets.setMinimumSize(new java.awt.Dimension(58, 58));
+        importSheets.setPreferredSize(new java.awt.Dimension(58, 58));
+        importSheets.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        importSheets.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importSheetsActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(importSheets);
+
+        orderSheet.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/order-sheet.svg", 
+            Color.black, Color.black,
+            28, 28
+        ));
+        orderSheet.setMnemonic('4');
+        orderSheet.setToolTipText("Categories");
+        orderSheet.setFocusable(false);
+        orderSheet.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        orderSheet.setMaximumSize(new java.awt.Dimension(58, 58));
+        orderSheet.setMinimumSize(new java.awt.Dimension(58, 58));
+        orderSheet.setPreferredSize(new java.awt.Dimension(58, 58));
+        orderSheet.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        orderSheet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                orderSheetActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(orderSheet);
         jToolBar1.add(filler2);
 
         account.setIcon(SVGHelper.createSVGIconWithFilter(
@@ -318,6 +376,15 @@ public class Dashboard extends javax.swing.JPanel {
         switchTab("updateAccount");
     }//GEN-LAST:event_accountActionPerformed
 
+    private void importSheetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importSheetsActionPerformed
+        switchTab("importSheetCRUD");
+        importSheetCRUD.reloadImportSheets();
+    }//GEN-LAST:event_importSheetsActionPerformed
+
+    private void orderSheetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orderSheetActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_orderSheetActionPerformed
+
     private java.awt.CardLayout layout;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton account;
@@ -327,10 +394,12 @@ public class Dashboard extends javax.swing.JPanel {
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
+    private javax.swing.JButton importSheets;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton logo;
     private javax.swing.JButton logout;
     private javax.swing.JPanel main;
+    private javax.swing.JButton orderSheet;
     private javax.swing.JButton publishers;
     // End of variables declaration//GEN-END:variables
 }

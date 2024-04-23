@@ -30,6 +30,10 @@ public class ViewImportSheet extends javax.swing.JPanel {
     private ImportSheetService importSheetService;
     private Map<String, Book> bookMap;
     private ImportSheet importSheet;
+     private ImportSheetCRUD importSheetCRUD;
+    public void setImportSheetCRUD(ImportSheetCRUD importSheetCRUD) {
+        this.importSheetCRUD = importSheetCRUD;
+    }
 
     public ViewImportSheet() {
 

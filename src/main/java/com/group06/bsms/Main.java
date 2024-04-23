@@ -4,12 +4,8 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
-import com.group06.bsms.accounts.EmployeeRevenue;
 
 import com.group06.bsms.auth.Login;
-import com.group06.bsms.books.BookCRUD;
-import com.group06.bsms.books.BookRevenue;
-import com.group06.bsms.categories.CategoryRevenue;
 import com.group06.bsms.dashboard.AdminDashboard;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.importsheet.AddImportSheet;
@@ -51,10 +47,10 @@ public class Main extends JFrame {
         initComponents();
         layout = new CardLayout();
         panel.setLayout(layout);
-//        panel.add(new Login(), "login");
-//        panel.add(Dashboard.dashboard, "dashboard");
-//        panel.add(AdminDashboard.dashboard, "adminDashboard");
-        panel.add(new ImportSheetCRUD(), "test");
+        panel.add(new Login(), "login");
+        panel.add(Dashboard.dashboard, "dashboard");
+        panel.add(AdminDashboard.dashboard, "adminDashboard");
+       // panel.add(new ImportSheetCRUD(), "test");
 
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);

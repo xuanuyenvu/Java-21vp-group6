@@ -31,7 +31,7 @@
                   <Component id="backButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="pageName" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="489" max="32767" attributes="0"/>
+                  <EmptySpace pref="501" max="32767" attributes="0"/>
               </Group>
               <Component id="jSeparator2" alignment="1" max="32767" attributes="0"/>
           </Group>

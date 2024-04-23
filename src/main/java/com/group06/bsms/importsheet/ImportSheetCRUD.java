@@ -7,7 +7,7 @@ package com.group06.bsms.importsheet;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
-import com.group06.bsms.accounts.Account;
+import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.accounts.AccountRepository;
 import com.group06.bsms.books.BookRepository;
 import com.group06.bsms.utils.SVGHelper;
@@ -33,10 +33,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
     private ImportSheetTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
-    //private final UpdateAccount updateAccount;
-    //private final AddAccountInformation addAccountInfo;
-    //private final BookCRUD bookCRUD;
-
+    
     public void setCurrentOffset(int currentOffset) {
         this.currentOffset = currentOffset;
     }
@@ -315,6 +312,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
         //AdminDashboard.dashboard.switchTab("addAccountInformation");
+        Dashboard.dashboard.switchTab("addImportSheet");
     }//GEN-LAST:event_createBtnActionPerformed
 
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
