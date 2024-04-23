@@ -4,11 +4,72 @@ package com.group06.bsms.importsheet;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+import com.group06.bsms.components.TableActionEvent;
+import com.group06.bsms.components.UpdateActionBtn;
+import java.awt.Color;
+import java.awt.Component;
+import java.text.SimpleDateFormat;
 import javax.swing.table.AbstractTableModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+
+class DateCellRenderer extends DefaultTableCellRenderer {
+    private static final SimpleDateFormat sdfSource = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat sdfTarget = new SimpleDateFormat("dd/MM/yyyy");
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value instanceof java.sql.Date) {
+            value = sdfTarget.format((java.sql.Date) value);
+        }
+        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    }
+}
+
+class TableActionCellEditor extends DefaultCellEditor {
+
+    private final TableActionEvent event;
+
+    public TableActionCellEditor(TableActionEvent event) {
+        super(new JCheckBox());
+        this.event = event;
+    }
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        ImportSheetTableModel model = (ImportSheetTableModel) table.getModel();
+        
+        int modelRow = table.convertRowIndexToModel(row);
+
+        UpdateActionBtn action = new UpdateActionBtn();
+        action.initEvent(event, modelRow);
+
+        action.setBackground(Color.WHITE);
+
+        return action;
+    }
+}
+
+class TableActionCellRender extends DefaultTableCellRenderer {
+
+    @Override
+    public Component getTableCellRendererComponent(
+            JTable table, Object value,
+            boolean isSelected, boolean hasFocus, int row, int column
+    ) {
+
+        UpdateActionBtn action = new UpdateActionBtn();
+        action.setBackground(Color.WHITE);
+
+        return action;
+    }
+}
 
 public class ImportSheetTableModel extends AbstractTableModel {
     private List<ImportSheet> importSheets = new ArrayList<>();
@@ -57,6 +118,7 @@ public class ImportSheetTableModel extends AbstractTableModel {
         return importSheets.get(row);
     }
 
+    @Override
     public String getColumnName(int col) {
         return columns[col];
     }
@@ -72,8 +134,8 @@ public class ImportSheetTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int col) {
         return switch (col) {
             case 0 -> String.class;
-            case 1 -> String.class;
-            case 2 -> String.class;
+            case 1 -> java.sql.Date.class;
+            case 2 -> Double.class;
             default -> null;
         };
     }

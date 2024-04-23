@@ -56,8 +56,6 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         this.model = new ImportSheetTableModel(importSheetService);
 
         initComponents();
-        
-      
 
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
         searchBar.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
@@ -65,9 +63,9 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                 Color.black, Color.black,
                 14, 14
         ));
-        
+
         setUpTable();
-        
+
         loadImportSheetsIntoTable();
     }
 
@@ -106,6 +104,9 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
     }
 
     public void setUpTable() {
+
+        table.getColumnModel().getColumn(1).setCellRenderer(new DateCellRenderer());
+        table.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
 
         table.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         table.setShowVerticalLines(true);
@@ -262,7 +263,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         main.add(scrollBar, java.awt.BorderLayout.CENTER);
 
         searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Total Cost", "by Import Date", "by Employee's phone" }));
+        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Employee's phone", "by Import Date", "by Total Cost" }));
         searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         searchComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -286,8 +287,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(20, 20, 20)
-                                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(20, 20, 20)
+                                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addComponent(createBtn)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(50, 50, 50))))
@@ -309,7 +310,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
-        //reloadAccounts();
+        reloadImportSheets();
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
@@ -317,6 +318,17 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
     }//GEN-LAST:event_createBtnActionPerformed
 
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
+        String choice = (String) searchComboBox.getSelectedItem();
+        switch (choice) {
+            case "by Employee's phone" ->
+                searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
+            case "by Import Date" ->
+                searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "dd/MM/yyyy");
+            case "by Total Cost 1" ->
+                searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
+            default -> {
+            }
+        }
 
     }//GEN-LAST:event_searchComboBoxActionPerformed
 

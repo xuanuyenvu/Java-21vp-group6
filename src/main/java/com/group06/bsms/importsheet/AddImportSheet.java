@@ -5,15 +5,15 @@
 package com.group06.bsms.importsheet;
 
 import com.group06.bsms.DB;
+import com.group06.bsms.accounts.Account;
 import com.group06.bsms.accounts.AccountRepository;
+import com.group06.bsms.accounts.AccountService;
 import com.group06.bsms.authors.AuthorRepository;
 import com.group06.bsms.authors.AuthorService;
 import com.group06.bsms.books.Book;
 import com.group06.bsms.books.BookRepository;
 import javax.swing.table.*;
 import com.group06.bsms.books.BookService;
-import com.group06.bsms.categories.CategoryRepository;
-import com.group06.bsms.categories.CategoryService;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
 import com.group06.bsms.components.CustomTableCellRenderer;
@@ -29,7 +29,6 @@ import javax.swing.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.event.TableModelListener;
 
 public class AddImportSheet extends javax.swing.JPanel {
 
@@ -37,9 +36,11 @@ public class AddImportSheet extends javax.swing.JPanel {
      * Creates new form importSheetUI
      */
     private BookService bookService;
+    private AccountService accountService;
     private ImportSheetService importSheetService;
     private Map<String, Book> bookMap;
     private boolean isSettingValue = false;
+    private Account employee;
 
     public AddImportSheet() {
 
@@ -48,13 +49,16 @@ public class AddImportSheet extends javax.swing.JPanel {
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db()))),
                 new ImportSheetService(
-                        new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(DB.db()))));
+                        new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(DB.db()))),
+                new AccountService(new AccountRepository(DB.db()))
+        );
 
     }
 
-    public AddImportSheet(BookService bookService, ImportSheetService importSheetService) {
+    public AddImportSheet(BookService bookService, ImportSheetService importSheetService, AccountService accountService) {
 
         this.bookService = bookService;
+        this.accountService = accountService;
         this.importSheetService = importSheetService;
         this.bookMap = new HashMap<>();
 
@@ -83,12 +87,9 @@ public class AddImportSheet extends javax.swing.JPanel {
         });
 
         DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
-        model.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                if (e.getType() == TableModelEvent.UPDATE) {
-                    updateTotalCost();
-                }
+        model.addTableModelListener((TableModelEvent e) -> {
+            if (e.getType() == TableModelEvent.UPDATE) {
+                updateTotalCost();
             }
         });
 
@@ -172,10 +173,19 @@ public class AddImportSheet extends javax.swing.JPanel {
                 }
             }
         });
+
+        importBooksTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
+        importBooksTable.setShowVerticalLines(true);
     }
 
-    public void setEmployeeId(String id) {
-        employeeField.setText(id);
+    public void loadEmployee(int id) {
+        try {
+            this.employee = accountService.selectAccount(id);
+        } catch (Exception e) {
+        }
+        if (employee != null) {
+            employeeField.setText(employee.phone);
+        }
     }
 
     private void updateTotalCost() {
@@ -240,7 +250,7 @@ public class AddImportSheet extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(944, 1503));
 
         importSheetLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        importSheetLabel.setText("Add import sheet");
+        importSheetLabel.setText("ADD IMPORT SHEET");
 
         employeeLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         employeeLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -271,7 +281,7 @@ public class AddImportSheet extends javax.swing.JPanel {
         totalCostLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         totalCostLabel.setText("Total cost");
 
-        importBooksTable.setModel(new ImportedBooksTableModel());
+        importBooksTable.setModel(new com.group06.bsms.importsheet.ImportedBooksTableModel());
         importBooksTable.setRowHeight(40);
         importBooksTable.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(importBooksTable);

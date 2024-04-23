@@ -11,6 +11,7 @@ import com.group06.bsms.Repository;
 import com.group06.bsms.accounts.AccountRepository;
 import com.group06.bsms.books.BookRepository;
 import com.group06.bsms.books.Book;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -225,12 +226,16 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                     if (searchString == null || searchString.isEmpty()) {
                         return result;
                     } else {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        Date searchDate = dateFormat.parse(searchString);
-                        preparedStatement.setDate(parameterIndex++, new java.sql.Date(searchDate.getTime()));
+                        try {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            Date searchDate = dateFormat.parse(searchString);
+                            preparedStatement.setDate(parameterIndex++, new java.sql.Date(searchDate.getTime()));
+                        } catch (ParseException e) {
+                            return result;
+                        }
+
                     }
-                }
-                if (searchChoice.trim().equals("ImportSheet.totalCost")) {
+                } else if (searchChoice.trim().equals("ImportSheet.totalCost")) {
                     if (searchString == null || searchString.isEmpty()) {
                         return result;
                     } else {
@@ -246,6 +251,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                 }
 
                 preparedStatement.setInt(parameterIndex++, offset);
+                System.out.println(preparedStatement.toString());
                 preparedStatement.setInt(parameterIndex++, limit);
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
