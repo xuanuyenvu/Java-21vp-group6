@@ -10,6 +10,8 @@ import com.group06.bsms.Main;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.accounts.AccountRepository;
 import com.group06.bsms.books.BookRepository;
+import com.group06.bsms.components.TableActionEvent;
+import static com.group06.bsms.dashboard.Dashboard.dashboard;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.awt.Component;
@@ -29,11 +31,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class ImportSheetCRUD extends javax.swing.JPanel {
 
+    private final ViewImportSheet viewImportSheet;
+    private final AddImportSheet addImportSheet;
     private final ImportSheetService importSheetService;
     private ImportSheetTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
-    
+
     public void setCurrentOffset(int currentOffset) {
         this.currentOffset = currentOffset;
     }
@@ -42,13 +46,22 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
     private boolean isScrollAtBottom = false;
 
     public ImportSheetCRUD() {
-        this(
+        this(null, null,
                 new ImportSheetService(new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(DB.db())))
         );
 
     }
 
-    public ImportSheetCRUD(ImportSheetService importSheetService) {
+    public ImportSheetCRUD(ViewImportSheet viewImportSheet, AddImportSheet addImportSheet) {
+        this(viewImportSheet,
+                addImportSheet,
+                new ImportSheetService(new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(DB.db())))
+        );
+    }
+
+    public ImportSheetCRUD(ViewImportSheet viewImportSheet, AddImportSheet addImportSheet, ImportSheetService importSheetService) {
+        this.addImportSheet = addImportSheet;
+        this.viewImportSheet = viewImportSheet;
         this.importSheetService = importSheetService;
         this.model = new ImportSheetTableModel(importSheetService);
 
@@ -135,6 +148,24 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                 }
             }
         });
+
+        TableActionEvent event = new TableActionEvent() {
+            @Override
+            public void onEdit(int row) {
+                int importSheetId = model.getImportSheet(row).id;
+                viewImportSheet.loadImportSheet(importSheetId);
+
+                Dashboard.dashboard.switchTab("viewImportSheet");
+            }
+
+            @Override
+            public int onHide(int row) {
+                return -1;
+            }
+        };
+
+        table.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
+
     }
 
     public void reloadImportSheets() {

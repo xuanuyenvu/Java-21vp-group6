@@ -47,8 +47,8 @@ public class Dashboard extends javax.swing.JPanel {
     private final UpdateAccount updateUser = new UpdateAccount();
     
     private final AddImportSheet addImportSheet = new AddImportSheet();
-    private final ImportSheetCRUD importSheetCRUD = new ImportSheetCRUD();
-    private final ViewImportSheet viewImportSheetCRUD = new ViewImportSheet();
+    private final ViewImportSheet viewImportSheet = new ViewImportSheet();
+    private final ImportSheetCRUD importSheetCRUD = new ImportSheetCRUD(viewImportSheet, addImportSheet); 
     
     
 
@@ -86,7 +86,7 @@ public class Dashboard extends javax.swing.JPanel {
         addImportSheet.setImportSheetCRUD(importSheetCRUD);
         main.add(importSheetCRUD, "importSheetCRUD");
         main.add(addImportSheet,"addImportSheet");
-        
+        main.add(viewImportSheet, "viewImportSheet");
         
         
     }

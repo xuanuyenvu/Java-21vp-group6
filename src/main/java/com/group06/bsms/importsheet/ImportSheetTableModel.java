@@ -142,7 +142,7 @@ public class ImportSheetTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
+        return columnIndex == 3;
     }
 
     public void reloadAllImportSheets(List<ImportSheet> newImportSheets) {

@@ -17,6 +17,8 @@ import com.group06.bsms.books.BookService;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
 import com.group06.bsms.components.CustomTableCellRenderer;
+import com.group06.bsms.dashboard.Dashboard;
+import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -241,21 +243,50 @@ public class AddImportSheet extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        importSheetLabel = new javax.swing.JLabel();
+        formScrollPane = new javax.swing.JScrollPane();
+        groupFieldPanel = new javax.swing.JPanel();
+        totalCostField = new javax.swing.JTextField();
+        totalCostLabel = new javax.swing.JLabel();
+        importBookScrollPane = new javax.swing.JScrollPane();
+        importBooksTable = new javax.swing.JTable();
+        saveButton = new javax.swing.JButton();
         employeeLabel = new javax.swing.JLabel();
         employeeField = new javax.swing.JTextField();
         importDatePicker = new com.group06.bsms.components.DatePickerPanel();
         importDateLabel = new javax.swing.JLabel();
-        totalCostField = new javax.swing.JTextField();
-        totalCostLabel = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        importBooksTable = new javax.swing.JTable();
-        saveButton = new javax.swing.JButton();
+        titleBar = new javax.swing.JPanel();
+        backButton = new javax.swing.JButton();
+        pageName = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
 
-        setPreferredSize(new java.awt.Dimension(944, 1503));
+        setPreferredSize(new java.awt.Dimension(849, 661));
+        setLayout(new java.awt.BorderLayout());
 
-        importSheetLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        importSheetLabel.setText("ADD IMPORT SHEET");
+        formScrollPane.setBorder(null);
+        formScrollPane.setPreferredSize(new java.awt.Dimension(893, 661));
+
+        totalCostField.setEditable(false);
+        totalCostField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        totalCostField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        totalCostField.setFocusable(false);
+        totalCostField.setMinimumSize(new java.awt.Dimension(440, 31));
+        totalCostField.setPreferredSize(new java.awt.Dimension(440, 31));
+
+        totalCostLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
+        totalCostLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        totalCostLabel.setText("Total cost");
+
+        importBooksTable.setModel(new com.group06.bsms.importsheet.ImportedBooksTableModel());
+        importBooksTable.setRowHeight(40);
+        importBooksTable.setRowSelectionAllowed(false);
+        importBookScrollPane.setViewportView(importBooksTable);
+
+        saveButton.setBackground(new java.awt.Color(65, 105, 225));
+        saveButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        saveButton.setForeground(new java.awt.Color(255, 255, 255));
+        saveButton.setMnemonic(java.awt.event.KeyEvent.VK_A);
+        saveButton.setText("Save");
+        saveButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         employeeLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         employeeLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -275,85 +306,136 @@ public class AddImportSheet extends javax.swing.JPanel {
         importDateLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         importDateLabel.setText("Import Date");
 
-        totalCostField.setEditable(false);
-        totalCostField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        totalCostField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        totalCostField.setFocusable(false);
-        totalCostField.setMinimumSize(new java.awt.Dimension(440, 31));
-        totalCostField.setPreferredSize(new java.awt.Dimension(440, 31));
+        javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
+        groupFieldPanel.setLayout(groupFieldPanelLayout);
+        groupFieldPanelLayout.setHorizontalGroup(
+            groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                .addContainerGap(130, Short.MAX_VALUE)
+                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(saveButton)
+                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(employeeLabel))
+                            .addGap(18, 18, 18)
+                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(importDateLabel)
+                                .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(18, 18, 18)
+                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                    .addGap(1, 1, 1)
+                                    .addComponent(totalCostLabel))))
+                        .addComponent(importBookScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 827, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(130, Short.MAX_VALUE))
+        );
+        groupFieldPanelLayout.setVerticalGroup(
+            groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addComponent(employeeLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                            .addComponent(importDateLabel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                            .addComponent(totalCostLabel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addComponent(importBookScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(saveButton)
+                .addContainerGap(937, Short.MAX_VALUE))
+        );
 
-        totalCostLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
-        totalCostLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        totalCostLabel.setText("Total cost");
+        formScrollPane.setViewportView(groupFieldPanel);
 
-        importBooksTable.setModel(new com.group06.bsms.importsheet.ImportedBooksTableModel());
-        importBooksTable.setRowHeight(40);
-        importBooksTable.setRowSelectionAllowed(false);
-        jScrollPane1.setViewportView(importBooksTable);
+        add(formScrollPane, java.awt.BorderLayout.CENTER);
 
-        saveButton.setBackground(new java.awt.Color(65, 105, 225));
-        saveButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        saveButton.setForeground(new java.awt.Color(255, 255, 255));
-        saveButton.setMnemonic(java.awt.event.KeyEvent.VK_A);
-        saveButton.setText("Save");
-        saveButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
+        titleBar.setPreferredSize(new java.awt.Dimension(849, 57));
+
+        backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        backButton.setForeground(UIManager.getColor("mutedColor"));
+        backButton.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/arrow-back.svg", 
+            Color.white, Color.white,
+            18, 18
+        ));
+        backButton.setMnemonic(java.awt.event.KeyEvent.VK_BACK_SPACE);
+        backButton.setToolTipText("Back to previous page");
+        backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        backButton.setFocusable(false);
+        backButton.setMargin(new java.awt.Insets(4, 14, 3, 14));
+        backButton.setPreferredSize(new java.awt.Dimension(33, 33));
+        backButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                backButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                backButtonMouseExited(evt);
+            }
+        });
+        backButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveButtonActionPerformed(evt);
+                backButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(importSheetLabel)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(employeeLabel))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(importDateLabel)
-                                .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(totalCostLabel)
-                                .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(41, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(importSheetLabel)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(employeeLabel)
-                        .addGap(2, 2, 2)
-                        .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(importDateLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(totalCostLabel)
-                        .addGap(2, 2, 2)
-                        .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        pageName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        pageName.setText("Add import sheet");
+
+        javax.swing.GroupLayout titleBarLayout = new javax.swing.GroupLayout(titleBar);
+        titleBar.setLayout(titleBarLayout);
+        titleBarLayout.setHorizontalGroup(
+            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(titleBarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(877, Short.MAX_VALUE))
+                .addComponent(pageName)
+                .addContainerGap(650, Short.MAX_VALUE))
+            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
         );
+        titleBarLayout.setVerticalGroup(
+            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(titleBarLayout.createSequentialGroup()
+                .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(titleBarLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(pageName))
+                    .addGroup(titleBarLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+
+        add(titleBar, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_backButtonMouseEntered
+
+    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_backButtonMouseExited
+
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        Dashboard.dashboard.switchTab("importSheetCRUD");
+    }//GEN-LAST:event_backButtonActionPerformed
 
     private class AutoSuggestComboBoxEditor extends AbstractCellEditor implements TableCellEditor {
 
@@ -509,14 +591,19 @@ public class AddImportSheet extends javax.swing.JPanel {
     }// GEN-LAST:event_saveButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backButton;
     private javax.swing.JTextField employeeField;
     private javax.swing.JLabel employeeLabel;
+    private javax.swing.JScrollPane formScrollPane;
+    private javax.swing.JPanel groupFieldPanel;
+    private javax.swing.JScrollPane importBookScrollPane;
     private javax.swing.JTable importBooksTable;
     private javax.swing.JLabel importDateLabel;
     private com.group06.bsms.components.DatePickerPanel importDatePicker;
-    private javax.swing.JLabel importSheetLabel;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel pageName;
     private javax.swing.JButton saveButton;
+    private javax.swing.JPanel titleBar;
     private javax.swing.JTextField totalCostField;
     private javax.swing.JLabel totalCostLabel;
     // End of variables declaration//GEN-END:variables
