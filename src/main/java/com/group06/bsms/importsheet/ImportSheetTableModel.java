@@ -20,7 +20,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 class DateCellRenderer extends DefaultTableCellRenderer {
-    private static final SimpleDateFormat sdfSource = new SimpleDateFormat("yyyy-MM-dd");
+   
     private static final SimpleDateFormat sdfTarget = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override

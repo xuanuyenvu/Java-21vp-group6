@@ -96,7 +96,15 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             int modelColumn = table.convertColumnIndexToModel(column);
             SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
             Icon sortIcon = null;
-            if (column != 6) {
+            if (column == 2) {
+                setHorizontalAlignment(JLabel.CENTER);
+                if (sortOrder == SortOrder.ASCENDING) {
+                    sortIcon = UIManager.getIcon("Table.descendingSortIcon");
+                } else if (sortOrder == SortOrder.DESCENDING) {
+                    sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
+                }
+            }
+            else if (column != 3) {
                 if (sortOrder == SortOrder.ASCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
                 } else if (sortOrder == SortOrder.DESCENDING) {
@@ -123,7 +131,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-
+        table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+       
         columnSortOrders.put(0, SortOrder.ASCENDING);
 
         table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());

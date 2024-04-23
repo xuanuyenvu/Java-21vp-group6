@@ -12,6 +12,7 @@ import com.group06.bsms.books.Book;
 import com.group06.bsms.books.BookRepository;
 import javax.swing.table.*;
 import com.group06.bsms.books.BookService;
+import com.group06.bsms.components.CustomTableCellRenderer;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
@@ -27,9 +28,7 @@ import javax.swing.UIManager;
 
 public class ViewImportSheet extends javax.swing.JPanel {
 
-    /**
-     * Creates new form importSheetUI
-     */
+    
     private BookService bookService;
     private ImportSheetService importSheetService;
     private Map<String, Book> bookMap;
@@ -60,7 +59,8 @@ public class ViewImportSheet extends javax.swing.JPanel {
 
         importBooksTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         importBooksTable.setShowVerticalLines(true);
-        
+        importBooksTable.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
+
         ((ImportedBooksTableModel) importBooksTable.getModel()).setTableEnabled(false);
     }
 
@@ -78,6 +78,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
             for (ImportedBook importedBook : importedBooks) {
 
                 Object[] rowData = {importedBook.title, importedBook.quantity, importedBook.pricePerBook};
+                
                 model.addRow(rowData);
             }
 
@@ -178,7 +179,6 @@ public class ViewImportSheet extends javax.swing.JPanel {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanelLayout.createSequentialGroup()
                                 .addComponent(importDateField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                        .addGap(18, 18, 18)
                         .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(totalCostLabel)
                             .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -189,16 +189,15 @@ public class ViewImportSheet extends javax.swing.JPanel {
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                            .addComponent(employeeLabel)
-                            .addGap(2, 2, 2)
-                            .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                .addComponent(importDateLabel)
-                                .addGap(37, 37, 37))
-                            .addComponent(importDateField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addComponent(importDateLabel)
+                        .addGap(37, 37, 37))
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addComponent(employeeLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(importDateField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
                         .addComponent(totalCostLabel)
                         .addGap(2, 2, 2)

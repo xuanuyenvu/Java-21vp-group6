@@ -44,11 +44,12 @@ public class AddImportSheet extends javax.swing.JPanel {
     private boolean isSettingValue = false;
     private Account employee;
 
-    
     private ImportSheetCRUD importSheetCRUD;
+
     public void setImportSheetCRUD(ImportSheetCRUD importSheetCRUD) {
         this.importSheetCRUD = importSheetCRUD;
     }
+
     public AddImportSheet() {
 
         this(new BookService(
@@ -83,12 +84,9 @@ public class AddImportSheet extends javax.swing.JPanel {
                         DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
                         model.addRow(new Object[model.getColumnCount()]);
                     }
-
+                    importBooksTable.changeSelection(editingRow + 1, 0, false, false);
                     importBooksTable.editCellAt(editingRow + 1, 0);
-                    Rectangle cellRect = importBooksTable.getCellRect(editingRow + 1, 0, true);
-                    importBooksTable.scrollRectToVisible(cellRect);
-                    importBooksTable.requestFocusInWindow();
-
+                    importBooksTable.transferFocus(); 
                 }
             }
         });
@@ -164,24 +162,31 @@ public class AddImportSheet extends javax.swing.JPanel {
                 if (column == 1) {
 
                     if (!isSettingValue) {
-                        String newTitle = (String) importBooksTable.getValueAt(row, column);
-                        if (Integer.parseInt(newTitle) == 0) {
+                        String newQuantityStr = (String) importBooksTable.getValueAt(row, column);
+                        try {
+                            int newQuantity = Integer.parseInt(newQuantityStr);
+                            if (newQuantity == 0) {
 
-                            isSettingValue = true;
-                            importBooksTable.setValueAt("", row, column);
-                            isSettingValue = false;
+                                isSettingValue = true;
+                                importBooksTable.setValueAt("", row, column);
+                                isSettingValue = false;
 
-                            JOptionPane.showMessageDialog(null, "Cannot have zero quantity", "BSMS Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                            importBooksTable.requestFocusInWindow();
+                                JOptionPane.showMessageDialog(null, "Cannot have zero quantity", "BSMS Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                                importBooksTable.requestFocusInWindow();
+                            }
+
+                        } catch (NumberFormatException nfe) {
 
                         }
+
                     }
                 }
             }
         });
 
         importBooksTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
+        importBooksTable.getTableHeader().setReorderingAllowed(false);
         importBooksTable.setShowVerticalLines(true);
     }
 
@@ -287,6 +292,11 @@ public class AddImportSheet extends javax.swing.JPanel {
         saveButton.setMnemonic(java.awt.event.KeyEvent.VK_A);
         saveButton.setText("Save");
         saveButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
 
         employeeLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         employeeLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -404,7 +414,7 @@ public class AddImportSheet extends javax.swing.JPanel {
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pageName)
-                .addContainerGap(650, Short.MAX_VALUE))
+                .addContainerGap(827, Short.MAX_VALUE))
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         titleBarLayout.setVerticalGroup(
@@ -437,82 +447,7 @@ public class AddImportSheet extends javax.swing.JPanel {
         Dashboard.dashboard.switchTab("importSheetCRUD");
     }//GEN-LAST:event_backButtonActionPerformed
 
-    private class AutoSuggestComboBoxEditor extends AbstractCellEditor implements TableCellEditor {
-
-        private final JComboBox<String> comboBox = new JComboBox<>();
-        private final Vector<String> suggestions = new Vector<>();
-
-        public AutoSuggestComboBoxEditor() {
-            comboBox.setEditable(true);
-            JTextField textField = (JTextField) comboBox.getEditor().getEditorComponent();
-            textField.addKeyListener(new KeyAdapter() {
-                public void keyTyped(KeyEvent e) {
-                    EventQueue.invokeLater(() -> {
-                        String text = textField.getText();
-                        if (text.length() == 0) {
-                            comboBox.hidePopup();
-                            setModel(new DefaultComboBoxModel<>(suggestions), "");
-                        } else {
-
-                            java.util.List<Book> books;
-                            try {
-
-                                books = bookService.searchBooksByTitle(text);
-                            } catch (Exception ex) {
-                                books = null;
-
-                            }
-                            suggestions.clear();
-                            bookMap.clear();
-                            if (books != null) {
-                                for (var book : books) {
-                                    suggestions.add(book.title);
-                                    bookMap.put(book.title, book);
-                                }
-                            }
-                            DefaultComboBoxModel<String> model = getSuggestedModel(suggestions, text);
-                            if (model.getSize() == 0) {
-                                comboBox.hidePopup();
-                            } else {
-                                setModel(model, text);
-                                comboBox.showPopup();
-                            }
-                        }
-                    });
-                }
-            });
-            comboBox.setMaximumRowCount(10);
-        }
-
-        private void setModel(DefaultComboBoxModel<String> model, String str) {
-            comboBox.setModel(model);
-            comboBox.setSelectedIndex(-1);
-            comboBox.getEditor().setItem(str);
-        }
-
-        private DefaultComboBoxModel<String> getSuggestedModel(java.util.List<String> list, String text) {
-            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-            for (String s : list) {
-                model.addElement(s);
-            }
-            return model;
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
-                int column) {
-            comboBox.setSelectedItem(value);
-            return comboBox;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return comboBox.getEditor().getItem();
-        }
-    }
-
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_saveButtonActionPerformed
-        // TODO add your handling code here:
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
 
         int employeeInChargeId;
         Date importDate;
@@ -588,7 +523,86 @@ public class AddImportSheet extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "Please fill in all fields in the table.", "BSMS Information",
                     JOptionPane.ERROR_MESSAGE);
         }
-    }// GEN-LAST:event_saveButtonActionPerformed
+
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private class AutoSuggestComboBoxEditor extends AbstractCellEditor implements TableCellEditor {
+
+        private final JComboBox<String> comboBox = new JComboBox<>();
+        private final Vector<String> suggestions = new Vector<>();
+
+        public AutoSuggestComboBoxEditor() {
+            comboBox.setEditable(true);
+            comboBox.setFont(new Font("Segoe UI", 0, 16));
+            JTextField textField = (JTextField) comboBox.getEditor().getEditorComponent();
+            textField.addKeyListener(new KeyAdapter() {
+                public void keyTyped(KeyEvent e) {
+                    EventQueue.invokeLater(() -> {
+                        String text = textField.getText();
+                        if (text.length() == 0) {
+                            comboBox.hidePopup();
+                            setModel(new DefaultComboBoxModel<>(suggestions), "");
+                        } else {
+
+                            java.util.List<Book> books;
+                            try {
+
+                                books = bookService.searchBooksByTitle(text);
+                            } catch (Exception ex) {
+                                books = null;
+
+                            }
+                            suggestions.clear();
+                            bookMap.clear();
+                            if (books != null) {
+                                for (var book : books) {
+                                    suggestions.add(book.title);
+                                    bookMap.put(book.title, book);
+                                }
+                            }
+                            DefaultComboBoxModel<String> model = getSuggestedModel(suggestions, text);
+                            if (model.getSize() == 0) {
+                                comboBox.hidePopup();
+                            } else {
+                                setModel(model, text);
+                                comboBox.showPopup();
+                            }
+                        }
+                    });
+                }
+            });
+            comboBox.setMaximumRowCount(10);
+            comboBox.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXX");
+
+        }
+
+        private void setModel(DefaultComboBoxModel<String> model, String str) {
+            comboBox.setModel(model);
+            comboBox.setSelectedIndex(-1);
+            comboBox.getEditor().setItem(str);
+        }
+
+        private DefaultComboBoxModel<String> getSuggestedModel(java.util.List<String> list, String text) {
+            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+            for (String s : list) {
+                model.addElement(s);
+            }
+            return model;
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+                int column) {
+            comboBox.setSelectedItem(value);
+            return comboBox;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return comboBox.getEditor().getItem();
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;

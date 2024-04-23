@@ -251,7 +251,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                 }
 
                 preparedStatement.setInt(parameterIndex++, offset);
-                System.out.println(preparedStatement.toString());
+                
                 preparedStatement.setInt(parameterIndex++, limit);
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
