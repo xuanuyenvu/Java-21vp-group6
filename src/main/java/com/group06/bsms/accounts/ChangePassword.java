@@ -20,10 +20,11 @@ public class ChangePassword extends javax.swing.JPanel {
         this.accountService = accountService;
         initComponents();
 
+        currentPasswordField.putClientProperty("JTextField.placeholderText", "Current password");
         newPasswordField.putClientProperty("JTextField.placeholderText", "New password");
         confirmNewPasswordField.putClientProperty("JTextField.placeholderText", "Confirm new password");
 
-        newPasswordField.requestFocus();
+        currentPasswordField.requestFocus();
     }
 
     public void setAccountById(int accountId) {
@@ -31,6 +32,7 @@ public class ChangePassword extends javax.swing.JPanel {
     }
     
     private void resetField() {
+        currentPasswordField.setText("");
         newPasswordField.setText("");
         confirmNewPasswordField.setText("");
     }
@@ -47,6 +49,8 @@ public class ChangePassword extends javax.swing.JPanel {
         pageName = new javax.swing.JLabel();
         newPasswordField = new javax.swing.JPasswordField();
         confirmNewPasswordField = new javax.swing.JPasswordField();
+        currentPasswordLabel = new javax.swing.JLabel();
+        currentPasswordField = new javax.swing.JPasswordField();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -91,27 +95,41 @@ public class ChangePassword extends javax.swing.JPanel {
         confirmNewPasswordField.setMinimumSize(new java.awt.Dimension(440, 31));
         confirmNewPasswordField.setPreferredSize(new java.awt.Dimension(440, 31));
 
+        currentPasswordLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
+        currentPasswordLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        currentPasswordLabel.setText("Current password");
+
+        currentPasswordField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        currentPasswordField.setMinimumSize(new java.awt.Dimension(440, 31));
+        currentPasswordField.setPreferredSize(new java.awt.Dimension(440, 31));
+
         javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
         groupFieldPanel.setLayout(groupFieldPanelLayout);
         groupFieldPanelLayout.setHorizontalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addContainerGap(91, Short.MAX_VALUE)
+                .addContainerGap(160, Short.MAX_VALUE)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pageName)
-                    .addComponent(updateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(currentPasswordLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(confirmNewPasswordField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(confirmNewPasswordLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(newPasswordLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(newPasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(96, Short.MAX_VALUE))
+                    .addComponent(newPasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pageName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(updateButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(currentPasswordField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(160, Short.MAX_VALUE))
         );
         groupFieldPanelLayout.setVerticalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
                 .addGap(48, 48, 48)
                 .addComponent(pageName)
-                .addGap(18, 18, 18)
+                .addGap(20, 20, 20)
+                .addComponent(currentPasswordLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(currentPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
                 .addComponent(newPasswordLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(newPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -119,9 +137,9 @@ public class ChangePassword extends javax.swing.JPanel {
                 .addComponent(confirmNewPasswordLabel)
                 .addGap(6, 6, 6)
                 .addComponent(confirmNewPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(20, 20, 20)
                 .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(48, 48, 48))
         );
 
         jScrollForm.setViewportView(groupFieldPanel);
@@ -130,28 +148,27 @@ public class ChangePassword extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addAccountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAccountButtonActionPerformed
-        String password = new String(newPasswordField.getPassword());
+        String currentPassword = new String(currentPasswordField.getPassword());
+        String newPassword = new String(newPasswordField.getPassword());
         String confirmPassword = new String(confirmNewPasswordField.getPassword());
 
         try {
-            accountService.updatePasswordById(accountId, password, confirmPassword);
+            accountService.updatePasswordById(accountId, currentPassword, newPassword, confirmPassword);
 
             JOptionPane.showMessageDialog(null, "Password updated successfully.", "BSMS Information",
                     JOptionPane.INFORMATION_MESSAGE);
 
             resetField();
         } catch (Exception ex) {
-            if (ex.getMessage().contains("account_password_check")) {
-                JOptionPane.showMessageDialog(null, "Insufficient password length", "BSMS Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "BSMS Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_addAccountButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPasswordField confirmNewPasswordField;
     private javax.swing.JLabel confirmNewPasswordLabel;
+    private javax.swing.JPasswordField currentPasswordField;
+    private javax.swing.JLabel currentPasswordLabel;
     private javax.swing.JPanel groupFieldPanel;
     private javax.swing.JScrollPane jScrollForm;
     private javax.swing.JPasswordField newPasswordField;

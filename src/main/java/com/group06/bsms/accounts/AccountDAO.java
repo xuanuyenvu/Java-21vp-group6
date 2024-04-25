@@ -25,6 +25,8 @@ public interface AccountDAO {
 
     void updateAccountAttributeById(int accountId, String attr, Object value) throws Exception;
     
+    boolean checkPasswordById(int id, String password) throws Exception;
+    
     void updatePasswordById(int id, String password) throws Exception;
 
     public List<Account> selectSearchSortFilterAccounts(
