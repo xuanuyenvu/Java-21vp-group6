@@ -10,6 +10,7 @@ import com.group06.bsms.dashboard.AdminDashboard;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.importsheet.AddImportSheet;
 import com.group06.bsms.importsheet.ImportSheetCRUD;
+import com.group06.bsms.importsheet.ImportSheetFilter;
 import com.group06.bsms.importsheet.ViewImportSheet;
 import com.group06.bsms.members.MemberRevenue;
 import com.group06.bsms.utils.SVGHelper;
@@ -50,7 +51,6 @@ public class Main extends JFrame {
         panel.add(new Login(), "login");
         panel.add(Dashboard.dashboard, "dashboard");
         panel.add(AdminDashboard.dashboard, "adminDashboard");
-       // panel.add(new ImportSheetCRUD(), "test");
 
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);

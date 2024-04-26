@@ -198,16 +198,13 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
                     String sortKey;
                     switch (key) {
-                        case 0:
+                        case 0 ->
                             sortKey = "Account.phone";
-                            break;
-                        case 1:
+                        case 1 ->
                             sortKey = "ImportSheet.importDate";
-                            break;
-                        case 2:
+                        case 2 ->
                             sortKey = "ImportSheet.totalCost";
-                            break;
-                        default:
+                        default ->
                             throw new IllegalArgumentException("Invalid sort key: " + key);
                     }
 
@@ -251,7 +248,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                 }
 
                 preparedStatement.setInt(parameterIndex++, offset);
-                
+
                 preparedStatement.setInt(parameterIndex++, limit);
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -272,10 +269,82 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
             return result;
         } catch (Exception e) {
-            e.printStackTrace();
+
             db.rollback();
             throw e;
         }
+    }
+
+    @Override
+    public List<ImportSheet> selectTop10ImportSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder, java.sql.Date startDate, java.sql.Date endDate) throws Exception {
+
+        List<ImportSheet> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+            String stringQuery = """
+                                 SELECT * FROM
+                                 (SELECT ImportSheet.id, ImportSheet.employeeInChargeId, ImportSheet.totalCost, ImportSheet.importDate, Account.phone 
+                                      FROM ImportSheet JOIN Account ON Account.id = ImportSheet.employeeInChargeId   
+                                      WHERE ImportSheet.importDate BETWEEN ? AND ?
+                                      ORDER BY ImportSheet.totalCost DESC
+                                      LIMIT 10)
+                                 AS top_10
+                                 """;
+
+            if (!sortAttributeAndOrder.isEmpty()) {
+                stringQuery += " ORDER BY ";
+                for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
+                    Integer key = entry.getKey();
+                    SortOrder value = entry.getValue();
+
+                    String sortKey;
+                    switch (key) {
+                        case 0 ->
+                            sortKey = "top_10.phone";
+                        case 1 ->
+                            sortKey = "top_10.importDate";
+                        case 2 ->
+                            sortKey = "top_10.totalCost";
+                        default ->
+                            throw new IllegalArgumentException("Invalid sort key: " + key);
+                    }
+
+                    stringQuery += sortKey + (value == SortOrder.ASCENDING ? " ASC" : " DESC") + ", ";
+                }
+
+                stringQuery = stringQuery.substring(0, stringQuery.length() - 2);
+            }
+
+            try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
+
+                preparedStatement.setDate(1, startDate);
+                preparedStatement.setDate(2, endDate);
+                System.out.println(preparedStatement.toString());
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        ImportSheet importSheet = new ImportSheet(resultSet.getInt("id"),
+                                resultSet.getInt("employeeInChargeId"),
+                                resultSet.getDate("importDate"),
+                                resultSet.getDouble("totalCost"), null
+                        );
+                        importSheet.employee = accountRepository.selectAccount(importSheet.employeeInChargeId);
+
+                        result.add(importSheet);
+                    }
+                }
+                db.commit();
+
+            }
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            if (e.getMessage().equals("Entity not found")) {
+                throw new Exception("Book not found");
+            }
+            throw e;
+        }
+
     }
 
 }

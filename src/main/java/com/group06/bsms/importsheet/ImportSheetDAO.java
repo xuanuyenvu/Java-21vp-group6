@@ -1,5 +1,6 @@
 package com.group06.bsms.importsheet;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SortOrder;
@@ -15,4 +16,6 @@ public interface ImportSheetDAO {
             String searchString, String searchChoice
     ) throws Exception;
 
+    List<ImportSheet> selectTop10ImportSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+                        Date startDate, Date endDate) throws Exception;
 }

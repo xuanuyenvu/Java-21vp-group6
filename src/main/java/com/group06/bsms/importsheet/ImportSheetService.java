@@ -1,10 +1,12 @@
 package com.group06.bsms.importsheet;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SortOrder;
 
 public class ImportSheetService {
+
     private final ImportSheetDAO importSheetDAO;
 
     public ImportSheetService(ImportSheetDAO importSheetDAO) {
@@ -26,7 +28,7 @@ public class ImportSheetService {
             throw e;
         }
     }
-    
+
     public List<ImportSheet> searchSortFilterImportSheets(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice
@@ -37,6 +39,12 @@ public class ImportSheetService {
         );
 
         return importSheets;
+    }
+    
+        List<ImportSheet> getTop10ImportSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            Date startDate, Date endDate) throws Exception {
+        return importSheetDAO.selectTop10ImportSheetsWithHighestRevenue(sortAttributeAndOrder, startDate, endDate);
+        
     }
 
 }

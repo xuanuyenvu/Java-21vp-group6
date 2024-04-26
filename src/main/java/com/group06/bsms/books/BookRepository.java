@@ -574,7 +574,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         }
 
     }
-
+    @Override
     public List<Book> selectTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
             Date startDate, Date endDate) throws Exception {
         List<Book> result = new ArrayList<>();

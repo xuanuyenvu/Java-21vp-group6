@@ -17,6 +17,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +68,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         this.model = new ImportSheetTableModel(importSheetService);
 
         initComponents();
-
+       
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
         searchBar.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
                 "icons/search.svg",
@@ -103,8 +105,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                 } else if (sortOrder == SortOrder.DESCENDING) {
                     sortIcon = UIManager.getIcon("Table.ascendingSortIcon");
                 }
-            }
-            else if (column != 3) {
+            } else if (column != 3) {
                 if (sortOrder == SortOrder.ASCENDING) {
                     sortIcon = UIManager.getIcon("Table.descendingSortIcon");
                 } else if (sortOrder == SortOrder.DESCENDING) {
@@ -132,7 +133,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-       
+
         columnSortOrders.put(0, SortOrder.ASCENDING);
 
         table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
@@ -175,6 +176,24 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
 
         table.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
 
+    }
+
+    public void loadImportSheetsIntoTableByFilter(LocalDate startDate, LocalDate endDate) {
+        try {
+            Date start = java.sql.Date.valueOf(startDate);
+            Date end = java.sql.Date.valueOf(endDate);
+            var importSheets = importSheetService.getTop10ImportSheetsWithHighestRevenue(columnSortOrders, start, end);
+            model.reloadAllImportSheets(importSheets);
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "An error has occurred: " + e.getMessage(),
+                    "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     public void reloadImportSheets() {
@@ -228,6 +247,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             } while (currentRowCount < 2 * limit);
 
         } catch (Exception e) {
+
             JOptionPane.showMessageDialog(
                     this,
                     e.getMessage(),
@@ -249,12 +269,15 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         importSheetLabel = new javax.swing.JLabel();
         searchBar = new javax.swing.JTextField();
         createBtn = new javax.swing.JButton();
+        searchComboBox = new javax.swing.JComboBox<>();
+        filterBtn = new javax.swing.JButton();
         main = new javax.swing.JPanel();
         scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        searchComboBox = new javax.swing.JComboBox<>();
+        importSheetFilter = new com.group06.bsms.importsheet.ImportSheetFilter(this);
 
         setMinimumSize(new java.awt.Dimension(928, 1503));
+        setPreferredSize(new java.awt.Dimension(944, 1503));
 
         importSheetLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         importSheetLabel.setText("IMPORT SHEET");
@@ -288,17 +311,6 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             }
         });
 
-        main.setLayout(new java.awt.BorderLayout());
-
-        table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        table.setModel(this.model);
-        table.setToolTipText("");
-        table.setRowHeight(40);
-        table.getTableHeader().setReorderingAllowed(false);
-        scrollBar.setViewportView(table);
-
-        main.add(scrollBar, java.awt.BorderLayout.CENTER);
-
         searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Employee's phone", "by Import Date", "by Total Cost" }));
         searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
@@ -308,42 +320,70 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(42, 42, 42)
+        filterBtn.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        filterBtn.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/filter.svg",
+            Color.black, Color.black,
+            14, 14));
+    filterBtn.setMnemonic(java.awt.event.KeyEvent.VK_F);
+    filterBtn.setText("Filter");
+    filterBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    filterBtn.setDisplayedMnemonicIndex(0);
+    filterBtn.setIconTextGap(2);
+    filterBtn.setMargin(new java.awt.Insets(10, 10, 10, 10));
+    filterBtn.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            filterBtnActionPerformed(evt);
+        }
+    });
+
+    main.setLayout(new java.awt.BorderLayout());
+
+    table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+    table.setModel(this.model);
+    table.setToolTipText("");
+    table.setRowHeight(40);
+    table.getTableHeader().setReorderingAllowed(false);
+    scrollBar.setViewportView(table);
+
+    main.add(scrollBar, java.awt.BorderLayout.CENTER);
+    main.add(importSheetFilter, java.awt.BorderLayout.LINE_END);
+
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+    this.setLayout(layout);
+    layout.setHorizontalGroup(
+        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(layout.createSequentialGroup()
+            .addGap(42, 42, 42)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addComponent(createBtn)
+                    .addGap(18, 18, 18)
+                    .addComponent(filterBtn))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(importSheetLabel)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(20, 20, 20)
-                                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(createBtn)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(50, 50, 50))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addComponent(importSheetLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 1299, Short.MAX_VALUE)
-                .addGap(50, 50, 50))
-        );
+                    .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(importSheetLabel)))
+            .addContainerGap(40, Short.MAX_VALUE))
+    );
+    layout.setVerticalGroup(
+        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(layout.createSequentialGroup()
+            .addGap(48, 48, 48)
+            .addComponent(importSheetLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(24, 24, 24)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(24, 24, 24)
+            .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(935, Short.MAX_VALUE))
+    );
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
@@ -370,9 +410,16 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
 
     }//GEN-LAST:event_searchComboBoxActionPerformed
 
+    private void filterBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterBtnActionPerformed
+
+        importSheetFilter.setVisible(!importSheetFilter.isVisible());
+    }//GEN-LAST:event_filterBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createBtn;
+    private javax.swing.JButton filterBtn;
+    private com.group06.bsms.importsheet.ImportSheetFilter importSheetFilter;
     private javax.swing.JLabel importSheetLabel;
     private javax.swing.JPanel main;
     private javax.swing.JScrollPane scrollBar;
