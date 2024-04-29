@@ -851,9 +851,12 @@ INSERT INTO BookCategory (bookId, categoryId) VALUES (103, 3);
 INSERT INTO BookCategory (bookId, categoryId) VALUES (103, 16);
 INSERT INTO BookCategory (bookId, categoryId) VALUES (104, 3);
 INSERT INTO BookCategory (bookId, categoryId) VALUES (104, 16);
-INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (1, '8787887636', 'nC3@z&uKXJ', 'Graehme Giffon', 'Other', 'ggiffon0@wired.com', '28 Pine View Hill', 'true', 'false');
+INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (1, '1234567810', '$2a$10$kYtHn.cSSmb3C/YXMi3fGuCb0Wq/.8KWFwE0/2ptd568T5MN08li2', 'Graehme Giffon', 'Other', 'ggiffon0@wired.com', '28 Pine View Hill', 'true', 'false');
+INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (11, '1234567801', '$2a$10$F8T1jrMzMW.jHNRilCP2NOerVjIQxlW48AFUB2FPRPMJ4e2YnPng6', 'Rhona Lightowlers', 'Other', 'rlightowlersa@adobe.com', '362 Gerald Crossing', 'false', 'true');
+INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (3, '1234567800', '$2a$10$PJF/3pPBXSysWAXPDi0fV./s9BJcc.2whUAZ4qqxNGkYPUKdYY39K', 'Melony Hulcoop', 'Female', 'mhulcoop2@nytimes.com', '35217 Schurz Parkway', 'false', 'false');
+INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (12, '1234567811', '$2a$10$3xPIpiYMZiHehFQFh0mocOAkUtFH/mDEc.P5C6zMo8DkAgJUnaWk6', 'Robin Attaway', 'Other', 'rattawayb@cbc.ca', '8 Carey Trail', 'true', 'true');
+
 INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (2, '4826548630', 'gE7,b', 'Alane McCullouch', 'Female', 'amccullouch1@imgur.com', '3 Sugar Plaza', 'true', 'false');
-INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (3, '2223868021', 'wM5`hGh&*', 'Melony Hulcoop', 'Female', 'mhulcoop2@nytimes.com', '35217 Schurz Parkway', 'false', 'false');
 INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (4, '6227898268', 'uH4#(=j./', 'Lenard Ateridge', 'Female', 'lateridge3@mozilla.org', '20 Glacier Hill Avenue', 'false', 'false');
 INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (5, '7393193348', 'tX7#|g#LP', 'Casi Ainley', 'Female', 'cainley4@redcross.org', '89908 Summit Plaza', 'false', 'false');
 INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (6, '6251725090', 'fL2@mqkw|Z', 'Giacinta Coey', 'Male', 'gcoey5@noaa.gov', '2 Upham Junction', 'false', 'false');
@@ -861,8 +864,6 @@ INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin,
 INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (8, '4654441932', 'kL7)IMr#', 'Angel Annakin', 'Other', 'aannakin7@wired.com', '58990 Ronald Regan Street', 'false', 'false');
 INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (9, '9138407685', 'mJ4@DzD', 'Dalton Thornbarrow', 'Other', 'dthornbarrow8@statcounter.com', '120 Mariners Cove Crossing', 'false', 'false');
 INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (10, '3168247064', 'zM2.''8mw', 'Laina Rennock', 'Male', 'lrennock9@tiny.cc', '556 Duke Pass', 'false', 'true');
-INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (11, '8859756391', 'fW4&3{', 'Rhona Lightowlers', 'Other', 'rlightowlersa@adobe.com', '362 Gerald Crossing', 'false', 'true');
-INSERT INTO Account (id, phone, password, name, gender, email, address, isAdmin, isLocked) VALUES (12, '2773167281', 'yC8(f', 'Robin Attaway', 'Other', 'rattawayb@cbc.ca', '8 Carey Trail', 'true', 'true');
 INSERT INTO Member (id, phone, name, gender, dateOfBirth, email, address) VALUES (1, '3123467423', 'Umeko Cottisford', 'Male', '2012-06-28', 'ucottisford0@wp.com', NULL);
 INSERT INTO Member (id, phone, name, gender, dateOfBirth, email, address) VALUES (2, '2996009524', 'Dehlia Scotchmoor', 'Other', '2003-07-17', 'dscotchmoor1@blog.com', NULL);
 INSERT INTO Member (id, phone, name, gender, dateOfBirth, email, address) VALUES (3, '4724008955', 'Sarajane Keslake', 'Female', '1994-04-08', 'skeslake2@angelfire.com', '0 Weeping Birch Pass');
