@@ -9,24 +9,23 @@ import java.util.List;
 import java.util.ArrayList;
 import com.group06.bsms.Repository;
 import com.group06.bsms.accounts.AccountRepository;
-import com.group06.bsms.books.BookRepository;
-import com.group06.bsms.books.Book;
+import com.group06.bsms.members.MemberRepository;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import javax.swing.SortOrder;
 
 public class OrderSheetRepository extends Repository<OrderSheet> implements OrderSheetDAO {
 
-    private final BookRepository bookRepository;
     private final AccountRepository accountRepository;
+    private final MemberRepository memberRepository;
 
-    public OrderSheetRepository(Connection db, BookRepository bookRepository, AccountRepository accountRepository) {
+    public OrderSheetRepository(Connection db,AccountRepository accountRepository,
+            MemberRepository memberRepository) {
         super(db, OrderSheet.class);
-        this.bookRepository = bookRepository;
         this.accountRepository = accountRepository;
+        this.memberRepository = memberRepository;
 
     }
 
@@ -41,28 +40,28 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                 throw new Exception("The imported books is empty");
             }
 
-            try (PreparedStatement insertorderSheetQuery = db.prepareStatement(
-                    "INSERT INTO orderSheet (employeeInChargeId, importDate, totalCost) "
-                    + "VALUES (?, ?, ?)",
+            try (PreparedStatement insertOrderSheetQuery = db.prepareStatement(
+                    "INSERT INTO OrderSheet (memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS)) {
 
-                insertorderSheetQuery.setInt(1, orderSheet.employeeInChargeId);
-                insertorderSheetQuery.setDate(2, orderSheet.orderDate);
-                insertorderSheetQuery.setDouble(3, orderSheet.totalCost);
+                insertOrderSheetQuery.setInt(1, orderSheet.member.id);
+                insertOrderSheetQuery.setInt(2, orderSheet.employeeInChargeId);
+                insertOrderSheetQuery.setDate(3, orderSheet.orderDate);
+                insertOrderSheetQuery.setDouble(4, orderSheet.discountedTotalCost);
 
-                int rowsAffected = insertorderSheetQuery.executeUpdate();
+                int rowsAffected = insertOrderSheetQuery.executeUpdate();
                 if (rowsAffected == 0) {
                     throw new SQLException("Insertion failed, no rows affected.");
                 }
 
-                ResultSet generatedKeys = insertorderSheetQuery.getGeneratedKeys();
+                ResultSet generatedKeys = insertOrderSheetQuery.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     orderSheet.id = generatedKeys.getInt(1);
                 } else {
                     throw new SQLException("Insertion failed, no ID obtained.");
                 }
 
-                insertImportedBooksList(orderSheet.id, orderSheet.importedBooks);
+                insertOrderedBooksList(orderSheet.id, orderSheet.orderedBooks);
 
             }
         } catch (Exception e) {
@@ -72,123 +71,96 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
     }
 
-    private void insertImportedBooksList(int orderSheetId, List<ImportedBook> importedBooks) throws Exception {
+    private void insertOrderedBooksList(int orderSheetId, List<OrderedBook> OrderedBooks) throws Exception {
         try {
             db.setAutoCommit(false);
-            if (importedBooks == null || importedBooks.isEmpty()) {
+            if (OrderedBooks == null || OrderedBooks.isEmpty()) {
                 throw new NullPointerException("The parameter cannot be null or empty");
             }
-            int importedBookResults[] = null;
+            int orderedBookResults[] = null;
 
-            String insertQuery = "INSERT INTO ImportedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (?, ?, ?, ?)";
-            try (var importedBookStatement = db.prepareStatement(insertQuery)) {
-                for (ImportedBook importedBook : importedBooks) {
+            String insertQuery = "INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (?, ?, ?, ?)";
+            try (var orderedBookStatement = db.prepareStatement(insertQuery)) {
+                for (OrderedBook orderedBook : OrderedBooks) {
 
-                    importedBookStatement.setInt(1, orderSheetId);
-                    importedBookStatement.setInt(2, importedBook.bookId);
-                    importedBookStatement.setInt(3, importedBook.quantity);
-                    importedBookStatement.setDouble(4, importedBook.pricePerBook);
-                    importedBookStatement.addBatch();
+                    orderedBookStatement.setInt(1, orderSheetId);
+                    orderedBookStatement.setInt(2, orderedBook.bookId);
+                    orderedBookStatement.setInt(3, orderedBook.quantity);
+                    orderedBookStatement.setDouble(4, orderedBook.pricePerBook);
+                    orderedBookStatement.addBatch();
                 }
-                importedBookResults = importedBookStatement.executeBatch();
+                orderedBookResults = orderedBookStatement.executeBatch();
 
                 db.commit();
 
-                for (int importedBookResult : importedBookResults) {
-                    if (importedBookResult == PreparedStatement.EXECUTE_FAILED) {
-                        throw new Exception("Cannot insert imported books");
+                for (int orderedBookResult : orderedBookResults) {
+                    if (orderedBookResult == PreparedStatement.EXECUTE_FAILED) {
+                        throw new Exception("Cannot insert ordered books");
                     }
                 }
 
-                for (ImportedBook importedBook : importedBooks) {
-                    updateMaxImportPriceAndSalePriceOfBook(importedBook.bookId, importedBook.pricePerBook);
-                }
             }
         } catch (Exception e) {
             db.rollback();
-            throw e;
-        }
-
-    }
-
-    private void updateMaxImportPriceAndSalePriceOfBook(int id, Double maxImportPrice) throws Exception {
-        try {
-
-            if (maxImportPrice == null) {
-                throw new NullPointerException("The parameter cannot be null or empty");
-            }
-
-            Book book = bookRepository.selectById(id);
-            if (book == null) {
-                throw new NullPointerException("Cannot find book");
-            }
-
-            if (book.maxImportPrice == null || book.maxImportPrice < maxImportPrice) {
-                book.maxImportPrice = maxImportPrice;
-            }
-            if (book.salePrice == null || book.salePrice < 1.1 * book.maxImportPrice) {
-                book.salePrice = 1.1 * book.maxImportPrice;
-            }
-            bookRepository.updateBookAttributeById(id, "maxImportPrice", book.salePrice);
-            bookRepository.updateBookAttributeById(id, "salePrice", book.salePrice);
-
-        } catch (Exception e) {
             throw e;
         }
 
     }
 
     @Override
-    public orderSheet selectorderSheet(int id) throws Exception {
+    public OrderSheet selectOrderSheet(int id) throws Exception {
         try {
-            orderSheet orderSheet = selectById(id);
+            OrderSheet orderSheet = selectById(id);
             if (orderSheet == null) {
                 throw new Exception("Entity not found");
             }
             db.setAutoCommit(false);
-            try (var selectImportedBooksQuery = db.prepareStatement(
-                    "SELECT ib.bookId, b.title, ib.quantity, ib.pricePerBook FROM ImportedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.orderSheetId = ?")) {
-                selectImportedBooksQuery.setInt(1, id);
-                var result = selectImportedBooksQuery.executeQuery();
+            try (var selectOrderedBooksQuery = db.prepareStatement(
+                    "SELECT ib.bookId, b.title, ib.quantity, ib.salePrice FROM OrderedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.orderSheetId = ?")) {
+                selectOrderedBooksQuery.setInt(1, id);
+                var result = selectOrderedBooksQuery.executeQuery();
 
-                if (orderSheet.importedBooks == null) {
-                    orderSheet.importedBooks = new ArrayList<>();
+                if (orderSheet.orderedBooks == null) {
+                    orderSheet.orderedBooks = new ArrayList<>();
                 }
 
                 while (result.next()) {
-                    orderSheet.importedBooks.add(new ImportedBook(id,
+                    orderSheet.orderedBooks.add(new OrderedBook(id,
                             result.getInt("bookId"),
                             result.getString("title"),
                             result.getInt("quantity"),
-                            result.getDouble("pricePerBook")));
+                            result.getDouble("salePrice")));
                 }
 
                 db.commit();
             }
             orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
+            orderSheet.member = memberRepository.selectById(orderSheet.memberId);
 
             return orderSheet;
 
         } catch (Exception e) {
-
+            db.rollback();
             throw e;
 
         }
     }
 
     @Override
-    public List<orderSheet> selectSearchSortFilterorderSheets(
+    public List<OrderSheet> selectSearchSortFilterOrderSheets(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
-            String searchString, String searchChoice
-    ) throws Exception {
-        List<orderSheet> result = new ArrayList<>();
+            String searchString, String searchChoice) throws Exception {
+        List<OrderSheet> result = new ArrayList<>();
 
         try {
             db.setAutoCommit(false);
 
-            String stringQuery = "SELECT orderSheet.id, orderSheet.employeeInChargeId, orderSheet.totalCost, orderSheet.importDate, Account.phone FROM orderSheet JOIN Account ON Account.id = orderSheet.employeeInChargeId";
+            String stringQuery = "SELECT OrderSheet.id, OrderSheet.employeeInChargeId, OrderSheet.memberId, OrderSheet.discountedTotalCost, OrderSheet.orderDate, Account.phone, Member.phone FROM OrderSheet JOIN Account ON Account.id = OrderSheet.employeeInChargeId JOIN Meber ON Member.id = OrderSheet.memberId";
 
-            stringQuery += " WHERE " + searchChoice + (searchChoice.trim().equals("Account.phone") ? " LIKE ?" : " = ? ");
+            stringQuery += " WHERE " + searchChoice
+                    + ((searchChoice.trim().equals("Account.phone") || searchChoice.trim().equals("Member.phone"))
+                            ? " LIKE ?"
+                            : " = ? ");
 
             if (!sortValue.isEmpty()) {
                 stringQuery += " ORDER BY ";
@@ -201,9 +173,11 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                         case 0 ->
                             sortKey = "Account.phone";
                         case 1 ->
-                            sortKey = "orderSheet.importDate";
+                            sortKey = "Member.phone";
                         case 2 ->
-                            sortKey = "orderSheet.totalCost";
+                            sortKey = "OrderSheet.orderDate";
+                        case 3 ->
+                            sortKey = "OrderSheet.discountedTotalCost";
                         default ->
                             throw new IllegalArgumentException("Invalid sort key: " + key);
                     }
@@ -219,7 +193,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
                 int parameterIndex = 1;
 
-                if (searchChoice.trim().equals("orderSheet.importDate")) {
+                if (searchChoice.trim().equals("OrderSheet.orderDate")) {
                     if (searchString == null || searchString.isEmpty()) {
                         return result;
                     } else {
@@ -232,7 +206,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                         }
 
                     }
-                } else if (searchChoice.trim().equals("orderSheet.totalCost")) {
+                } else if (searchChoice.trim().equals("OrderSheet.discountedTotalCost")) {
                     if (searchString == null || searchString.isEmpty()) {
                         return result;
                     } else {
@@ -253,14 +227,15 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        orderSheet orderSheet = new orderSheet(resultSet.getInt("id"),
+                        OrderSheet OrderSheet = new OrderSheet(resultSet.getInt("id"),
                                 resultSet.getInt("employeeInChargeId"),
-                                resultSet.getDate("importDate"),
-                                resultSet.getDouble("totalCost"), null
-                        );
-                        orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
+                                resultSet.getInt("MemberId"),
+                                resultSet.getDate("orderDate"),
+                                resultSet.getDouble("discountedTotalCost"), null);
+                        OrderSheet.employee = accountRepository.selectAccount(OrderSheet.employeeInChargeId);
+                        OrderSheet.member = memberRepository.selectById(OrderSheet.memberId);
 
-                        result.add(orderSheet);
+                        result.add(OrderSheet);
                     }
                 }
             }
@@ -276,20 +251,23 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
     }
 
     @Override
-    public List<orderSheet> selectTop10orderSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder, java.sql.Date startDate, java.sql.Date endDate) throws Exception {
+    public List<OrderSheet> selectOrderSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+            java.sql.Date startDate, java.sql.Date endDate) throws Exception {
 
-        List<orderSheet> result = new ArrayList<>();
+        List<OrderSheet> result = new ArrayList<>();
         try {
             db.setAutoCommit(false);
             String stringQuery = """
-                                 SELECT * FROM
-                                 (SELECT orderSheet.id, orderSheet.employeeInChargeId, orderSheet.totalCost, orderSheet.importDate, Account.phone 
-                                      FROM orderSheet JOIN Account ON Account.id = orderSheet.employeeInChargeId   
-                                      WHERE orderSheet.importDate BETWEEN ? AND ?
-                                      ORDER BY orderSheet.totalCost DESC
-                                      LIMIT 10)
-                                 AS top_10
-                                 """;
+                    SELECT * FROM
+                    (SELECT OrderSheet.id, OrderSheet.employeeInChargeId, OrderSheet.memberId, OrderSheet.discountedTotalCost, OrderSheet.orderDate, Account.phone AS employeePhone, Member.phone AS memberPhone
+                         FROM OrderSheet
+                         JOIN Account ON Account.id = OrderSheet.employeeInChargeId
+                         JOIN Memvber ON Member.id = OrderSheet.memberId
+                         WHERE OrderSheet.orderDate BETWEEN ? AND ?
+                         ORDER BY OrderSheet.discountedTotalCost DESC
+                        )
+                    AS order_sheets
+                    """;
 
             if (!sortAttributeAndOrder.isEmpty()) {
                 stringQuery += " ORDER BY ";
@@ -300,11 +278,13 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                     String sortKey;
                     switch (key) {
                         case 0 ->
-                            sortKey = "top_10.phone";
+                            sortKey = "order_sheets.employeePhone";
                         case 1 ->
-                            sortKey = "top_10.importDate";
+                            sortKey = "order_sheets.memberPhone";
                         case 2 ->
-                            sortKey = "top_10.totalCost";
+                            sortKey = "order_sheets.orderDate";
+                        case 3 ->
+                            sortKey = "order_sheets.discountedTotalCost";
                         default ->
                             throw new IllegalArgumentException("Invalid sort key: " + key);
                     }
@@ -323,12 +303,13 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        orderSheet orderSheet = new orderSheet(resultSet.getInt("id"),
+                        OrderSheet orderSheet = new OrderSheet(resultSet.getInt("id"),
                                 resultSet.getInt("employeeInChargeId"),
-                                resultSet.getDate("importDate"),
-                                resultSet.getDouble("totalCost"), null
-                        );
+                                resultSet.getInt("memberId"),
+                                resultSet.getDate("orderDate"),
+                                resultSet.getDouble("discountedTotalCost"), null);
                         orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
+                        orderSheet.employee = accountRepository.selectById(orderSheet.memberId);
 
                         result.add(orderSheet);
                     }
@@ -340,7 +321,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
         } catch (Exception e) {
             db.rollback();
             if (e.getMessage().equals("Entity not found")) {
-                throw new Exception("Book not found");
+                throw new Exception("Order sheet not found");
             }
             throw e;
         }

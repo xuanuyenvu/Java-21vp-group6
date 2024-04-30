@@ -11,10 +11,10 @@ public interface OrderSheetDAO {
 
         OrderSheet selectOrderSheet(int id) throws Exception;
 
-        public List<OrderSheet> selectSearchSortFilterImportSheets(
+        public List<OrderSheet> selectSearchSortFilterOrderSheets(
                         int offset, int limit, Map<Integer, SortOrder> sortValue,
                         String searchString, String searchChoice) throws Exception;
 
-        List<OrderSheet> selectTop10ImportSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+        List<OrderSheet> selectOrderSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
                         Date startDate, Date endDate) throws Exception;
 }
