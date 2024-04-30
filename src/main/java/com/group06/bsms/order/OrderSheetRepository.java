@@ -18,51 +18,51 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.SortOrder;
 
-public class ImportSheetRepository extends Repository<ImportSheet> implements ImportSheetDAO {
+public class OrderSheetRepository extends Repository<OrderSheet> implements OrderSheetDAO {
 
     private final BookRepository bookRepository;
     private final AccountRepository accountRepository;
 
-    public ImportSheetRepository(Connection db, BookRepository bookRepository, AccountRepository accountRepository) {
-        super(db, ImportSheet.class);
+    public OrderSheetRepository(Connection db, BookRepository bookRepository, AccountRepository accountRepository) {
+        super(db, OrderSheet.class);
         this.bookRepository = bookRepository;
         this.accountRepository = accountRepository;
 
     }
 
     @Override
-    public void insertImportSheet(ImportSheet importSheet) throws Exception {
+    public void insertOrderSheet(OrderSheet orderSheet) throws Exception {
         try {
             db.setAutoCommit(false);
-            if (importSheet == null) {
+            if (orderSheet == null) {
                 throw new NullPointerException("The parameer cannot be null");
             }
-            if (importSheet.importedBooks.isEmpty()) {
+            if (orderSheet.orderedBooks.isEmpty()) {
                 throw new Exception("The imported books is empty");
             }
 
-            try (PreparedStatement insertImportSheetQuery = db.prepareStatement(
-                    "INSERT INTO ImportSheet (employeeInChargeId, importDate, totalCost) "
+            try (PreparedStatement insertorderSheetQuery = db.prepareStatement(
+                    "INSERT INTO orderSheet (employeeInChargeId, importDate, totalCost) "
                     + "VALUES (?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS)) {
 
-                insertImportSheetQuery.setInt(1, importSheet.employeeInChargeId);
-                insertImportSheetQuery.setDate(2, importSheet.importDate);
-                insertImportSheetQuery.setDouble(3, importSheet.totalCost);
+                insertorderSheetQuery.setInt(1, orderSheet.employeeInChargeId);
+                insertorderSheetQuery.setDate(2, orderSheet.orderDate);
+                insertorderSheetQuery.setDouble(3, orderSheet.totalCost);
 
-                int rowsAffected = insertImportSheetQuery.executeUpdate();
+                int rowsAffected = insertorderSheetQuery.executeUpdate();
                 if (rowsAffected == 0) {
                     throw new SQLException("Insertion failed, no rows affected.");
                 }
 
-                ResultSet generatedKeys = insertImportSheetQuery.getGeneratedKeys();
+                ResultSet generatedKeys = insertorderSheetQuery.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    importSheet.id = generatedKeys.getInt(1);
+                    orderSheet.id = generatedKeys.getInt(1);
                 } else {
                     throw new SQLException("Insertion failed, no ID obtained.");
                 }
 
-                insertImportedBooksList(importSheet.id, importSheet.importedBooks);
+                insertImportedBooksList(orderSheet.id, orderSheet.importedBooks);
 
             }
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
     }
 
-    private void insertImportedBooksList(int importSheetId, List<ImportedBook> importedBooks) throws Exception {
+    private void insertImportedBooksList(int orderSheetId, List<ImportedBook> importedBooks) throws Exception {
         try {
             db.setAutoCommit(false);
             if (importedBooks == null || importedBooks.isEmpty()) {
@@ -80,11 +80,11 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             }
             int importedBookResults[] = null;
 
-            String insertQuery = "INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO ImportedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (?, ?, ?, ?)";
             try (var importedBookStatement = db.prepareStatement(insertQuery)) {
                 for (ImportedBook importedBook : importedBooks) {
 
-                    importedBookStatement.setInt(1, importSheetId);
+                    importedBookStatement.setInt(1, orderSheetId);
                     importedBookStatement.setInt(2, importedBook.bookId);
                     importedBookStatement.setInt(3, importedBook.quantity);
                     importedBookStatement.setDouble(4, importedBook.pricePerBook);
@@ -139,24 +139,24 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
     }
 
     @Override
-    public ImportSheet selectImportSheet(int id) throws Exception {
+    public orderSheet selectorderSheet(int id) throws Exception {
         try {
-            ImportSheet importSheet = selectById(id);
-            if (importSheet == null) {
+            orderSheet orderSheet = selectById(id);
+            if (orderSheet == null) {
                 throw new Exception("Entity not found");
             }
             db.setAutoCommit(false);
             try (var selectImportedBooksQuery = db.prepareStatement(
-                    "SELECT ib.bookId, b.title, ib.quantity, ib.pricePerBook FROM ImportedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.importSheetId = ?")) {
+                    "SELECT ib.bookId, b.title, ib.quantity, ib.pricePerBook FROM ImportedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.orderSheetId = ?")) {
                 selectImportedBooksQuery.setInt(1, id);
                 var result = selectImportedBooksQuery.executeQuery();
 
-                if (importSheet.importedBooks == null) {
-                    importSheet.importedBooks = new ArrayList<>();
+                if (orderSheet.importedBooks == null) {
+                    orderSheet.importedBooks = new ArrayList<>();
                 }
 
                 while (result.next()) {
-                    importSheet.importedBooks.add(new ImportedBook(id,
+                    orderSheet.importedBooks.add(new ImportedBook(id,
                             result.getInt("bookId"),
                             result.getString("title"),
                             result.getInt("quantity"),
@@ -165,9 +165,9 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
                 db.commit();
             }
-            importSheet.employee = accountRepository.selectAccount(importSheet.employeeInChargeId);
+            orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
 
-            return importSheet;
+            return orderSheet;
 
         } catch (Exception e) {
 
@@ -177,16 +177,16 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
     }
 
     @Override
-    public List<ImportSheet> selectSearchSortFilterImportSheets(
+    public List<orderSheet> selectSearchSortFilterorderSheets(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice
     ) throws Exception {
-        List<ImportSheet> result = new ArrayList<>();
+        List<orderSheet> result = new ArrayList<>();
 
         try {
             db.setAutoCommit(false);
 
-            String stringQuery = "SELECT ImportSheet.id, ImportSheet.employeeInChargeId, ImportSheet.totalCost, ImportSheet.importDate, Account.phone FROM ImportSheet JOIN Account ON Account.id = ImportSheet.employeeInChargeId";
+            String stringQuery = "SELECT orderSheet.id, orderSheet.employeeInChargeId, orderSheet.totalCost, orderSheet.importDate, Account.phone FROM orderSheet JOIN Account ON Account.id = orderSheet.employeeInChargeId";
 
             stringQuery += " WHERE " + searchChoice + (searchChoice.trim().equals("Account.phone") ? " LIKE ?" : " = ? ");
 
@@ -201,9 +201,9 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                         case 0 ->
                             sortKey = "Account.phone";
                         case 1 ->
-                            sortKey = "ImportSheet.importDate";
+                            sortKey = "orderSheet.importDate";
                         case 2 ->
-                            sortKey = "ImportSheet.totalCost";
+                            sortKey = "orderSheet.totalCost";
                         default ->
                             throw new IllegalArgumentException("Invalid sort key: " + key);
                     }
@@ -219,7 +219,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
                 int parameterIndex = 1;
 
-                if (searchChoice.trim().equals("ImportSheet.importDate")) {
+                if (searchChoice.trim().equals("orderSheet.importDate")) {
                     if (searchString == null || searchString.isEmpty()) {
                         return result;
                     } else {
@@ -232,7 +232,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                         }
 
                     }
-                } else if (searchChoice.trim().equals("ImportSheet.totalCost")) {
+                } else if (searchChoice.trim().equals("orderSheet.totalCost")) {
                     if (searchString == null || searchString.isEmpty()) {
                         return result;
                     } else {
@@ -253,14 +253,14 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        ImportSheet importSheet = new ImportSheet(resultSet.getInt("id"),
+                        orderSheet orderSheet = new orderSheet(resultSet.getInt("id"),
                                 resultSet.getInt("employeeInChargeId"),
                                 resultSet.getDate("importDate"),
                                 resultSet.getDouble("totalCost"), null
                         );
-                        importSheet.employee = accountRepository.selectAccount(importSheet.employeeInChargeId);
+                        orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
 
-                        result.add(importSheet);
+                        result.add(orderSheet);
                     }
                 }
             }
@@ -276,17 +276,17 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
     }
 
     @Override
-    public List<ImportSheet> selectTop10ImportSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder, java.sql.Date startDate, java.sql.Date endDate) throws Exception {
+    public List<orderSheet> selectTop10orderSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder, java.sql.Date startDate, java.sql.Date endDate) throws Exception {
 
-        List<ImportSheet> result = new ArrayList<>();
+        List<orderSheet> result = new ArrayList<>();
         try {
             db.setAutoCommit(false);
             String stringQuery = """
                                  SELECT * FROM
-                                 (SELECT ImportSheet.id, ImportSheet.employeeInChargeId, ImportSheet.totalCost, ImportSheet.importDate, Account.phone 
-                                      FROM ImportSheet JOIN Account ON Account.id = ImportSheet.employeeInChargeId   
-                                      WHERE ImportSheet.importDate BETWEEN ? AND ?
-                                      ORDER BY ImportSheet.totalCost DESC
+                                 (SELECT orderSheet.id, orderSheet.employeeInChargeId, orderSheet.totalCost, orderSheet.importDate, Account.phone 
+                                      FROM orderSheet JOIN Account ON Account.id = orderSheet.employeeInChargeId   
+                                      WHERE orderSheet.importDate BETWEEN ? AND ?
+                                      ORDER BY orderSheet.totalCost DESC
                                       LIMIT 10)
                                  AS top_10
                                  """;
@@ -323,14 +323,14 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        ImportSheet importSheet = new ImportSheet(resultSet.getInt("id"),
+                        orderSheet orderSheet = new orderSheet(resultSet.getInt("id"),
                                 resultSet.getInt("employeeInChargeId"),
                                 resultSet.getDate("importDate"),
                                 resultSet.getDouble("totalCost"), null
                         );
-                        importSheet.employee = accountRepository.selectAccount(importSheet.employeeInChargeId);
+                        orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
 
-                        result.add(importSheet);
+                        result.add(orderSheet);
                     }
                 }
                 db.commit();
