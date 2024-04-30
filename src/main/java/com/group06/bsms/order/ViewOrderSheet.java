@@ -14,6 +14,7 @@ import javax.swing.table.*;
 import com.group06.bsms.books.BookService;
 import com.group06.bsms.components.CustomTableCellRenderer;
 import com.group06.bsms.dashboard.Dashboard;
+import com.group06.bsms.members.MemberRepository;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
 import com.group06.bsms.utils.SVGHelper;
@@ -28,61 +29,56 @@ import javax.swing.UIManager;
 
 public class ViewOrderSheet extends javax.swing.JPanel {
 
-    
-    private BookService bookService;
-    private ImportSheetService importSheetService;
-    private Map<String, Book> bookMap;
-    private ImportSheet importSheet;
-     private OrderCRUD importSheetCRUD;
-    public void setImportSheetCRUD(OrderCRUD importSheetCRUD) {
-        this.importSheetCRUD = importSheetCRUD;
+    private OrderSheetService orderSheetService;
+    private OrderSheet orderSheet;
+    private OrderSheetCRUD orderSheetCRUD;
+
+    public void setOrderSheetCRUD(OrderSheetCRUD importSheetCRUD) {
+        this.orderSheetCRUD = importSheetCRUD;
     }
 
     public ViewOrderSheet() {
 
-        this(new BookService(
-                new BookRepository(DB.db()),
-                new AuthorService(new AuthorRepository(DB.db())),
-                new PublisherService(new PublisherRepository(DB.db()))),
-                new ImportSheetService(
-                        new ImportSheetRepository(DB.db(), new BookRepository(DB.db()), new AccountRepository(DB.db()))));
+        this(
+                new OrderSheetService(
+                        new OrderSheetRepository(DB.db(),
+                                new AccountRepository(DB.db()),
+                                new MemberRepository(DB.db()))));
 
     }
 
-    public ViewOrderSheet(BookService bookService, ImportSheetService importSheetService) {
+    public ViewOrderSheet(OrderSheetService orderSheetService) {
 
-        this.bookService = bookService;
-        this.importSheetService = importSheetService;
-        this.bookMap = new HashMap<>();
-
+        this.orderSheetService = orderSheetService;
+       
         initComponents();
 
         importBooksTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         importBooksTable.setShowVerticalLines(true);
         importBooksTable.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
 
-        ((ImportedBooksTableModel) importBooksTable.getModel()).setTableEnabled(false);
+        ((OrderedBooksTableModel) importBooksTable.getModel()).setTableEnabled(false);
     }
 
-    public void loadImportSheet(int id) {
+    public void loadOrderSheet(int id) {
         try {
-            title.setText("IMPORT SHEET: "+ id);
-            importSheet = importSheetService.selectImportSheet(id);
-            employeeField.setText(importSheet.employee.phone);
+            title.setText("IMPORT SHEET: " + id);
+            orderSheet = orderSheetService.selectOrderSheet(id);
+            employeeField.setText(orderSheet.employee.phone);
             SimpleDateFormat sdfTarget = new SimpleDateFormat("dd/MM/yyyy");
-            String dateFormatted = sdfTarget.format(importSheet.importDate);
+            String dateFormatted = sdfTarget.format(orderSheet.orderDate);
             importDateField.setText(dateFormatted);
-            List<ImportedBook> importedBooks = importSheet.importedBooks;
+            List<OrderedBook> orderedBooks = orderSheet.orderedBooks;
             DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
             model.setRowCount(0);
-            for (ImportedBook importedBook : importedBooks) {
+            for (OrderedBook orderedBook : orderedBooks) {
 
-                Object[] rowData = {importedBook.title, importedBook.quantity, importedBook.pricePerBook};
-                
+                Object[] rowData = { orderedBook.title, orderedBook.quantity, orderedBook.pricePerBook };
+
                 model.addRow(rowData);
             }
 
-            totalCostField.setText(importSheet.totalCost.toString());
+            totalCostField.setText(orderSheet.discountedTotalCost.toString());
         } catch (Exception e) {
 
         }
@@ -97,7 +93,8 @@ public class ViewOrderSheet extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         formScrollPane = new javax.swing.JScrollPane();
@@ -162,50 +159,70 @@ public class ViewOrderSheet extends javax.swing.JPanel {
         javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
         groupFieldPanel.setLayout(groupFieldPanelLayout);
         groupFieldPanelLayout.setHorizontalGroup(
-            groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addContainerGap(40, Short.MAX_VALUE)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(employeeLabel))
-                        .addGap(18, 18, 18)
-                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                                .addComponent(importDateLabel)
-                                .addGap(152, 152, 152))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanelLayout.createSequentialGroup()
-                                .addComponent(importDateField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(totalCostLabel)
-                            .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(42, Short.MAX_VALUE))
-        );
+                groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                .addContainerGap(40, Short.MAX_VALUE)
+                                .addGroup(groupFieldPanelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 862,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                                .addGroup(groupFieldPanelLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(employeeField,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 156,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(employeeLabel))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(groupFieldPanelLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                                                .addComponent(importDateLabel)
+                                                                .addGap(152, 152, 152))
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                groupFieldPanelLayout.createSequentialGroup()
+                                                                        .addComponent(importDateField,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                                215,
+                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(
+                                                                                javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                                                .addGroup(groupFieldPanelLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(totalCostLabel)
+                                                        .addComponent(totalCostField,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 215,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addContainerGap(42, Short.MAX_VALUE)));
         groupFieldPanelLayout.setVerticalGroup(
-            groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addComponent(importDateLabel)
-                        .addGap(37, 37, 37))
-                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addComponent(employeeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(importDateField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addComponent(totalCostLabel)
-                        .addGap(2, 2, 2)
-                        .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1005, Short.MAX_VALUE))
-        );
+                groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                .addGap(23, 23, 23)
+                                .addGroup(groupFieldPanelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                                .addComponent(importDateLabel)
+                                                .addGap(37, 37, 37))
+                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                                .addComponent(employeeLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(groupFieldPanelLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(importDateField,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(employeeField,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                                .addComponent(totalCostLabel)
+                                                .addGap(2, 2, 2)
+                                                .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(1005, Short.MAX_VALUE)));
 
         formScrollPane.setViewportView(groupFieldPanel);
 
@@ -216,10 +233,9 @@ public class ViewOrderSheet extends javax.swing.JPanel {
         backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         backButton.setForeground(UIManager.getColor("mutedColor"));
         backButton.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/arrow-back.svg", 
-            Color.white, Color.white,
-            18, 18
-        ));
+                "icons/arrow-back.svg",
+                Color.white, Color.white,
+                18, 18));
         backButton.setMnemonic(java.awt.event.KeyEvent.VK_BACK_SPACE);
         backButton.setToolTipText("Back to previous page");
         backButton.setBorderPainted(false);
@@ -232,6 +248,7 @@ public class ViewOrderSheet extends javax.swing.JPanel {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 backButtonMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 backButtonMouseExited(evt);
             }
@@ -248,45 +265,46 @@ public class ViewOrderSheet extends javax.swing.JPanel {
         javax.swing.GroupLayout titleBarLayout = new javax.swing.GroupLayout(titleBar);
         titleBar.setLayout(titleBarLayout);
         titleBarLayout.setHorizontalGroup(
-            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titleBarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(title)
-                .addContainerGap(779, Short.MAX_VALUE))
-            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
+                titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(titleBarLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(title)
+                                .addContainerGap(779, Short.MAX_VALUE))
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING));
         titleBarLayout.setVerticalGroup(
-            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titleBarLayout.createSequentialGroup()
-                .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(titleBarLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(title))
-                    .addGroup(titleBarLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(10, 10, 10)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
-        );
+                titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(titleBarLayout.createSequentialGroup()
+                                .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(titleBarLayout.createSequentialGroup()
+                                                .addGap(14, 14, 14)
+                                                .addComponent(title))
+                                        .addGroup(titleBarLayout.createSequentialGroup()
+                                                .addGap(10, 10, 10)
+                                                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(10, 10, 10)
+                                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)));
 
         add(titleBar, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
+    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
         // TODO add your handling code here:
-    }//GEN-LAST:event_backButtonMouseEntered
+    }// GEN-LAST:event_backButtonMouseEntered
 
-    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
+    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseExited
         // TODO add your handling code here:
-    }//GEN-LAST:event_backButtonMouseExited
+    }// GEN-LAST:event_backButtonMouseExited
 
-    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_backButtonActionPerformed
         Dashboard.dashboard.switchTab("importSheetCRUD");
-    }//GEN-LAST:event_backButtonActionPerformed
-
+    }// GEN-LAST:event_backButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;

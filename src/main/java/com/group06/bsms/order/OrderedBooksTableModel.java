@@ -2,13 +2,13 @@ package com.group06.bsms.order;
 
 import javax.swing.table.DefaultTableModel;
 
-public class ImportedBooksTableModel extends DefaultTableModel {
+public class OrderedBooksTableModel extends DefaultTableModel {
 
     private boolean tableEnabled;
 
-    public ImportedBooksTableModel() {
+    public OrderedBooksTableModel() {
         super(new Object[][]{{"", "", ""}},
-                new String[]{"Title", "Quantity", "Price per book"});
+                new String[]{"Title", "Quantity", "Sale price"});
         this.tableEnabled = true; 
     }
 

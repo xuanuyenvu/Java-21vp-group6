@@ -230,7 +230,18 @@ public class BookService {
 
     public List<Book> searchBooksByTitle(String title) throws Exception {
         try {
-            return bookDAO.searchBooksByTitle(title);
+            return bookDAO.getBooksByTitle(title);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public List<Book> searchAvailableBooksByTitle(String title) throws Exception {
+        try {
+
+            return bookDAO.getAvailableBooksByTitle(title);
+
+
         } catch (Exception e) {
             throw e;
         }

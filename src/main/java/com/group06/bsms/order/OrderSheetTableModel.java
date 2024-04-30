@@ -20,11 +20,12 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 class DateCellRenderer extends DefaultTableCellRenderer {
-   
+
     private static final SimpleDateFormat sdfTarget = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
         if (value instanceof java.sql.Date) {
             value = sdfTarget.format((java.sql.Date) value);
         }
@@ -43,8 +44,8 @@ class TableActionCellEditor extends DefaultCellEditor {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        ImportSheetTableModel model = (ImportSheetTableModel) table.getModel();
-        
+        OrderSheetTableModel model = (OrderSheetTableModel) table.getModel();
+
         int modelRow = table.convertRowIndexToModel(row);
 
         UpdateActionBtn action = new UpdateActionBtn();
@@ -61,8 +62,7 @@ class TableActionCellRender extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(
             JTable table, Object value,
-            boolean isSelected, boolean hasFocus, int row, int column
-    ) {
+            boolean isSelected, boolean hasFocus, int row, int column) {
 
         UpdateActionBtn action = new UpdateActionBtn();
         action.setBackground(Color.WHITE);
@@ -71,18 +71,18 @@ class TableActionCellRender extends DefaultTableCellRenderer {
     }
 }
 
-public class ImportSheetTableModel extends AbstractTableModel {
-    private List<ImportSheet> importSheets = new ArrayList<>();
-    private String[] columns = { "Employee", "Import Date", "Total Cost", "Actions" };
-    private final ImportSheetService importSheetService;
+public class OrderSheetTableModel extends AbstractTableModel {
+    private List<OrderSheet> orderSheets = new ArrayList<>();
+    private String[] columns = { "Employee", "Member", "Order Date", "Total Cost", "Actions" };
+    private final OrderSheetService orderSheetService;
 
-    public ImportSheetTableModel(ImportSheetService importSheetService) {
-        this.importSheetService = importSheetService;
+    public OrderSheetTableModel(OrderSheetService orderSheetService) {
+        this.orderSheetService = orderSheetService;
     }
 
     @Override
     public int getRowCount() {
-        return importSheets.size();
+        return orderSheets.size();
     }
 
     @Override
@@ -97,14 +97,15 @@ public class ImportSheetTableModel extends AbstractTableModel {
      */
     @Override
     public Object getValueAt(int row, int col) {
-        if (row >= importSheets.size()) {
+        if (row >= orderSheets.size()) {
             return null;
         }
-        ImportSheet importSheet = importSheets.get(row);
+        OrderSheet orderSheet = orderSheets.get(row);
         return switch (col) {
-            case 0 -> importSheet.employee.phone;
-            case 1 -> importSheet.importDate;
-            case 2 -> importSheet.totalCost;
+            case 0 -> orderSheet.employee.phone;
+            case 1 -> orderSheet.member.phone;
+            case 2 -> orderSheet.orderDate;
+            case 3 -> orderSheet.discountedTotalCost;
             default -> null;
         };
     }
@@ -114,8 +115,8 @@ public class ImportSheetTableModel extends AbstractTableModel {
 
     }
 
-    public ImportSheet getImportSheet(int row) {
-        return importSheets.get(row);
+    public OrderSheet getOrderSheet(int row) {
+        return orderSheets.get(row);
     }
 
     @Override
@@ -124,7 +125,7 @@ public class ImportSheetTableModel extends AbstractTableModel {
     }
 
     public boolean contains(int id) {
-        Optional<ImportSheet> foundBook = importSheets.stream()
+        Optional<OrderSheet> foundBook = orderSheets.stream()
                 .filter(importSheet -> importSheet.id == id)
                 .findFirst();
         return foundBook.isPresent();
@@ -134,42 +135,43 @@ public class ImportSheetTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int col) {
         return switch (col) {
             case 0 -> String.class;
-            case 1 -> java.sql.Date.class;
-            case 2 -> Double.class;
+            case 1 -> String.class;
+            case 2 -> java.sql.Date.class;
+            case 3 -> Double.class;
             default -> null;
         };
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 3;
+        return columnIndex == 4;
     }
 
-    public void reloadAllImportSheets(List<ImportSheet> newImportSheets) {
-        if (newImportSheets != null) {
-            importSheets.clear();
+    public void reloadAllOrderSheets(List<OrderSheet> newOrderSheets) {
+        if (newOrderSheets != null) {
+            orderSheets.clear();
             fireTableDataChanged();
-            for (var importSheet : newImportSheets) {
-                if (!contains(importSheet.id)) {
-                    addRow(importSheet);
+            for (var orderSheet : newOrderSheets) {
+                if (!contains(orderSheet.id)) {
+                    addRow(orderSheet);
                 }
             }
         }
 
     }
 
-    public void loadNewImportSheets(List<ImportSheet> newImportSheets) {
-        if (newImportSheets != null) {
-            for (var importSheet : newImportSheets) {
-                if (!contains(importSheet.id)) {
-                    addRow(importSheet);
+    public void loadNewOrderSheets(List<OrderSheet> newOrderSheets) {
+        if (newOrderSheets != null) {
+            for (var orderSheet : newOrderSheets) {
+                if (!contains(orderSheet.id)) {
+                    addRow(orderSheet);
                 }
             }
         }
     }
 
-    private void addRow(ImportSheet importSheet) {
-        importSheets.add(importSheet);
+    private void addRow(OrderSheet orderSheet) {
+        orderSheets.add(orderSheet);
     }
 
 }

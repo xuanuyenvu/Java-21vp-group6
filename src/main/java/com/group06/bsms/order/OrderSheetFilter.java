@@ -4,9 +4,9 @@ import com.group06.bsms.components.DatePickerPanel;
 import java.time.LocalDate;
 import javax.swing.JOptionPane;
 
-public class OrderFilter extends javax.swing.JPanel {
+public class OrderSheetFilter extends javax.swing.JPanel {
 
-    private final OrderCRUD importSheetCRUD;
+    private final OrderSheetCRUD importSheetCRUD;
 
     private static String previousComboBoxSelection;
     private LocalDate endDate = LocalDate.now();
@@ -20,12 +20,12 @@ public class OrderFilter extends javax.swing.JPanel {
         return endDatePicker;
     }
 
-    public OrderFilter() {
+    public OrderSheetFilter() {
         this(null);
     }
 
-    public OrderFilter(
-            OrderCRUD importSheetCRUD
+    public OrderSheetFilter(
+            OrderSheetCRUD importSheetCRUD
     ) {
         this.importSheetCRUD = importSheetCRUD;
 
@@ -169,14 +169,14 @@ public class OrderFilter extends javax.swing.JPanel {
                 startDate = LocalDate.now().minusDays(7);
                 isVisibleDatePicker(false);
                 previousComboBoxSelection = "by Week";
-                importSheetCRUD.loadImportSheetsIntoTableByFilter(startDate, endDate);
+                importSheetCRUD.loadOrderSheetsIntoTableByFilter(startDate, endDate);
             }
             case "by Month" -> {
                 endDate = LocalDate.now();
                 startDate = LocalDate.now().minusDays(30);
                 isVisibleDatePicker(false);
                 previousComboBoxSelection = "by Month";
-                importSheetCRUD.loadImportSheetsIntoTableByFilter(startDate, endDate);
+                importSheetCRUD.loadOrderSheetsIntoTableByFilter(startDate, endDate);
             }
             case "Date to Date" -> {
                 isVisibleDatePicker(true);
@@ -196,7 +196,7 @@ public class OrderFilter extends javax.swing.JPanel {
         } else {
             startDate = start;
             endDate = end;
-            importSheetCRUD.loadImportSheetsIntoTableByFilter(startDate, endDate);
+            importSheetCRUD.loadOrderSheetsIntoTableByFilter(startDate, endDate);
         }
     }//GEN-LAST:event_confimrBtnActionPerformed
 
