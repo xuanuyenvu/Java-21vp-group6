@@ -30,7 +30,7 @@ public class ChangePassword extends javax.swing.JPanel {
     public void setAccountById(int accountId) {
         this.accountId = accountId;
     }
-    
+
     private void resetField() {
         currentPasswordField.setText("");
         newPasswordField.setText("");
@@ -63,12 +63,13 @@ public class ChangePassword extends javax.swing.JPanel {
 
         confirmNewPasswordLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         confirmNewPasswordLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        confirmNewPasswordLabel.setLabelFor(confirmNewPasswordField);
         confirmNewPasswordLabel.setText("Confirm new password");
 
         updateButton.setBackground(new java.awt.Color(65, 105, 225));
         updateButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         updateButton.setForeground(new java.awt.Color(255, 255, 255));
-        updateButton.setMnemonic(java.awt.event.KeyEvent.VK_U);
+        updateButton.setMnemonic(java.awt.event.KeyEvent.VK_C);
         updateButton.setText("Change password");
         updateButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         updateButton.setMaximumSize(new java.awt.Dimension(440, 31));
@@ -82,6 +83,7 @@ public class ChangePassword extends javax.swing.JPanel {
 
         newPasswordLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         newPasswordLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        newPasswordLabel.setLabelFor(newPasswordField);
         newPasswordLabel.setText("New password");
 
         pageName.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -95,8 +97,8 @@ public class ChangePassword extends javax.swing.JPanel {
         confirmNewPasswordField.setMinimumSize(new java.awt.Dimension(440, 31));
         confirmNewPasswordField.setPreferredSize(new java.awt.Dimension(440, 31));
 
-        currentPasswordLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
         currentPasswordLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        currentPasswordLabel.setLabelFor(currentPasswordField);
         currentPasswordLabel.setText("Current password");
 
         currentPasswordField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -116,8 +118,8 @@ public class ChangePassword extends javax.swing.JPanel {
                     .addComponent(newPasswordLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(newPasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pageName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(updateButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(currentPasswordField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(currentPasswordField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(updateButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(160, Short.MAX_VALUE))
         );
         groupFieldPanelLayout.setVerticalGroup(
