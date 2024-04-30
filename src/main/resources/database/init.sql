@@ -1047,10 +1047,7 @@ INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES 
 UPDATE BOOK SET maxImportPrice = 8.45 WHERE id = 166;
 INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (4, 44, 9, 5.37);
 UPDATE BOOK SET maxImportPrice = 5.37 WHERE id = 44;
-<<<<<<< Updated upstream
 UPDATE ImportSheet set totalCost = 1924.77 where id = 4;
-=======
-UPDATE ImportSheet set totalCost = 1866.93 where id = 4;
 INSERT INTO ImportSheet (id, employeeInChargeId, importDate, totalCost) VALUES (5, 3, '2024-04-23', 0);
 INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (5, 89, 44, 7.82);
 UPDATE BOOK SET maxImportPrice = 7.82 WHERE id = 89 and 7.82 > maximportPrice;
@@ -1575,7 +1572,6 @@ UPDATE BOOK SET maxImportPrice = 9.88 WHERE id = 151 and 9.88 > maximportPrice;
 INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (23, 149, 76, 9.64);
 UPDATE BOOK SET maxImportPrice = 9.64 WHERE id = 149 and 9.64 > maximportPrice;
 UPDATE ImportSheet set totalCost = 5187.8 where id = 23;
->>>>>>> Stashed changes
 INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (1, 101, 3, '2024-02-20', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES
 (1, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 1 (2022)'), 1, 9),
