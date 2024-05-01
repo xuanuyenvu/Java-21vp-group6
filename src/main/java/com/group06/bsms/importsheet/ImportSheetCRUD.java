@@ -389,13 +389,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(24, 24, 24)
-<<<<<<< HEAD
-            .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(840, Short.MAX_VALUE))
-=======
             .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 1287, Short.MAX_VALUE)
             .addGap(50, 50, 50))
->>>>>>> fb99dd859e9821b76b6f07fdec0b1bcd5ec20364
     );
     }// </editor-fold>//GEN-END:initComponents
 
