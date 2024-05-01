@@ -29,6 +29,7 @@ import java.util.Vector;
 import javax.swing.event.TableModelEvent;
 import javax.swing.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +72,8 @@ public class AddImportSheet extends javax.swing.JPanel {
         this.bookMap = new HashMap<>();
 
         initComponents();
-
+        
+        this.importDatePicker.setDate(java.sql.Date.valueOf(LocalDate.now()));
         importBooksTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
         importBooksTable.getActionMap().put("enter", new AbstractAction() {
             @Override

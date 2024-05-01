@@ -89,6 +89,13 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             columnSortOrders.put(columnIndex, newOrder);
         }
     }
+    
+    public void reloadTables(){
+        searchBar.setText(""); 
+        searchComboBox.setSelectedIndex(0);
+        reloadImportSheets();
+        
+    }
 
     class CustomHeaderRenderer extends DefaultTableCellRenderer {
 
@@ -365,9 +372,9 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                     .addGap(18, 18, 18)
                     .addComponent(filterBtn))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
                     .addComponent(importSheetLabel)))
-            .addContainerGap(40, Short.MAX_VALUE))
+            .addGap(40, 40, 40))
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -381,8 +388,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(24, 24, 24)
-            .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(935, Short.MAX_VALUE))
+            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
+            .addGap(840, 840, 840))
     );
     }// </editor-fold>//GEN-END:initComponents
 
