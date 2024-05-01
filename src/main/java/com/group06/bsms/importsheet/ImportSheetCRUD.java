@@ -68,7 +68,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         this.model = new ImportSheetTableModel(importSheetService);
 
         initComponents();
-       
+
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
         searchBar.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
                 "icons/search.svg",
@@ -89,12 +89,12 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             columnSortOrders.put(columnIndex, newOrder);
         }
     }
-    
-    public void reloadTables(){
-        searchBar.setText(""); 
+
+    public void reloadTables() {
+        searchBar.setText("");
         searchComboBox.setSelectedIndex(0);
         reloadImportSheets();
-        
+
     }
 
     class CustomHeaderRenderer extends DefaultTableCellRenderer {
@@ -372,9 +372,9 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                     .addGap(18, 18, 18)
                     .addComponent(filterBtn))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
+                    .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
                     .addComponent(importSheetLabel)))
-            .addGap(40, 40, 40))
+            .addGap(50, 50, 50))
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -388,8 +388,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(24, 24, 24)
-            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
-            .addGap(840, 840, 840))
+            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 1287, Short.MAX_VALUE)
+            .addGap(50, 50, 50))
     );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -421,7 +421,6 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
 
         importSheetFilter.setVisible(!importSheetFilter.isVisible());
     }//GEN-LAST:event_filterBtnActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createBtn;

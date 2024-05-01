@@ -72,7 +72,7 @@ public class AddImportSheet extends javax.swing.JPanel {
         this.bookMap = new HashMap<>();
 
         initComponents();
-        
+
         this.importDatePicker.setDate(java.sql.Date.valueOf(LocalDate.now()));
         importBooksTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
         importBooksTable.getActionMap().put("enter", new AbstractAction() {
@@ -88,7 +88,7 @@ public class AddImportSheet extends javax.swing.JPanel {
                     }
                     importBooksTable.changeSelection(editingRow + 1, 0, false, false);
                     importBooksTable.editCellAt(editingRow + 1, 0);
-                    importBooksTable.transferFocus(); 
+                    importBooksTable.transferFocus();
                 }
             }
         });
@@ -323,7 +323,7 @@ public class AddImportSheet extends javax.swing.JPanel {
         groupFieldPanelLayout.setHorizontalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addContainerGap(130, Short.MAX_VALUE)
+                .addGap(42, 42, 42)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(saveButton)
                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -341,8 +341,8 @@ public class AddImportSheet extends javax.swing.JPanel {
                                 .addGroup(groupFieldPanelLayout.createSequentialGroup()
                                     .addGap(1, 1, 1)
                                     .addComponent(totalCostLabel))))
-                        .addComponent(importBookScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 827, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(130, Short.MAX_VALUE))
+                        .addComponent(importBookScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1003, Short.MAX_VALUE)))
+                .addGap(42, 42, 42))
         );
         groupFieldPanelLayout.setVerticalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -363,10 +363,10 @@ public class AddImportSheet extends javax.swing.JPanel {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                             .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
-                .addComponent(importBookScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(importBookScrollPane)
                 .addGap(18, 18, 18)
                 .addComponent(saveButton)
-                .addContainerGap(937, Short.MAX_VALUE))
+                .addGap(50, 50, 50))
         );
 
         formScrollPane.setViewportView(groupFieldPanel);
@@ -416,7 +416,7 @@ public class AddImportSheet extends javax.swing.JPanel {
                 .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pageName)
-                .addContainerGap(827, Short.MAX_VALUE))
+                .addContainerGap(886, Short.MAX_VALUE))
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         titleBarLayout.setVerticalGroup(
@@ -604,7 +604,6 @@ public class AddImportSheet extends javax.swing.JPanel {
             return comboBox.getEditor().getItem();
         }
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
