@@ -112,7 +112,7 @@ public class MemberService {
         memberDAO.insertMember(member);
     }
 
-    public List<Member> searchSortFilterAccounts(
+    public List<Member> searchSortFilterMembers(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
             String searchString, String searchChoice) throws Exception {
 

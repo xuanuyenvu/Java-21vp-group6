@@ -17,6 +17,9 @@ import com.group06.bsms.publishers.UpdatePublisher;
 import com.group06.bsms.importsheet.ImportSheetCRUD;
 import com.group06.bsms.importsheet.AddImportSheet;
 import com.group06.bsms.importsheet.ViewImportSheet;
+import com.group06.bsms.members.MemberCRUD;
+import com.group06.bsms.order.OrderSheetCRUD;
+import com.group06.bsms.order.ViewOrderSheet;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -45,13 +48,20 @@ public class Dashboard extends javax.swing.JPanel {
     private final PublisherCRUD publisherCRUD = new PublisherCRUD(updatePublisher, addPublisherInfo, bookCRUD);
 
     private final UpdateAccount updateUser = new UpdateAccount();
-    
+
     private final AddImportSheet addImportSheet = new AddImportSheet();
     private final ViewImportSheet viewImportSheet = new ViewImportSheet();
-    private final ImportSheetCRUD importSheetCRUD = new ImportSheetCRUD(viewImportSheet, addImportSheet); 
-    
-    
+    private final ImportSheetCRUD importSheetCRUD = new ImportSheetCRUD(viewImportSheet, addImportSheet);
 
+    
+    
+    private final MemberCRUD memberCRUD = new MemberCRUD();
+    private final ViewOrderSheet viewOrderSheet = new ViewOrderSheet();
+    private final OrderSheetCRUD orderSheetCRUD = new OrderSheetCRUD(viewOrderSheet, null, memberCRUD);
+    
+            
+            
+            
     private Dashboard() {
         initComponents();
         layout = new CardLayout();
@@ -82,13 +92,17 @@ public class Dashboard extends javax.swing.JPanel {
         main.add(addPublisherInfo, "addPublisherInformation");
 
         main.add(updateUser, "updateUser");
-        
+
         addImportSheet.setImportSheetCRUD(importSheetCRUD);
         main.add(importSheetCRUD, "importSheetCRUD");
-        main.add(addImportSheet,"addImportSheet");
+        main.add(addImportSheet, "addImportSheet");
         main.add(viewImportSheet, "viewImportSheet");
         
+        main.add(orderSheetCRUD, "orderSheetCRUD");
+        main.add(viewOrderSheet, "viewOrderSheet");
         
+        main.add(memberCRUD, "memberCRUD");
+
     }
 
     public void switchTab(String tab) {
@@ -383,6 +397,8 @@ public class Dashboard extends javax.swing.JPanel {
 
     private void orderSheetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orderSheetActionPerformed
         // TODO add your handling code here:
+        switchTab("orderSheetCRUD");
+        orderSheetCRUD.reloadOrderSheets();
     }//GEN-LAST:event_orderSheetActionPerformed
 
     private java.awt.CardLayout layout;

@@ -213,7 +213,9 @@ public class MemberRepository extends Repository<Member> implements MemberDAO {
         try {
             db.setAutoCommit(false);
 
-            String stringQuery = "SELECT * FROM Member";
+            String stringQuery = """ 
+                                 SELECT Member.* FROM Member
+                                 """;
 
             stringQuery += " WHERE " + searchChoice
                     + (searchChoice.trim().equals("Member.dateOfBirth") ? " = ? " : " LIKE ?");
@@ -221,14 +223,14 @@ public class MemberRepository extends Repository<Member> implements MemberDAO {
             for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
                 Integer key = entry.getKey();
                 SortOrder value = entry.getValue();
-
                 var sortKeys = new ArrayList<String>(List.of(
-                        " ORDER BY Member.phone ",
                         " ORDER BY Member.name ",
-                        " ORDER BY Member.gender ",
                         " ORDER BY Member.email ",
+                        " ORDER BY Member.phone ",
                         " ORDER BY Member.address ",
-                        " ORDER BY Member.dateOfBirht "));
+                        " ORDER BY Member.dateOfBirth ",
+                        " ORDER BY Member.gender"
+                       ));
 
                 var sortValues = new HashMap<SortOrder, String>();
                 sortValues.put(SortOrder.ASCENDING, " ASC ");
@@ -246,10 +248,14 @@ public class MemberRepository extends Repository<Member> implements MemberDAO {
 
                 preparedStatement.setInt(parameterIndex++, offset);
                 preparedStatement.setInt(parameterIndex++, limit);
+                
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    
                     while (resultSet.next()) {
-                        result.add(populate(resultSet));
+                        var member = populate(resultSet);
+                        
+                        result.add(member);
                     }
                 }
             }

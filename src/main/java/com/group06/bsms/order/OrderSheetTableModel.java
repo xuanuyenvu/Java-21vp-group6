@@ -73,7 +73,7 @@ class TableActionCellRender extends DefaultTableCellRenderer {
 
 public class OrderSheetTableModel extends AbstractTableModel {
     private List<OrderSheet> orderSheets = new ArrayList<>();
-    private String[] columns = { "Employee", "Member", "Order Date", "Total Cost", "Actions" };
+    private String[] columns = { "Employee", "Member", "Order Date", "Total Cost", "Actions"};
     private final OrderSheetService orderSheetService;
 
     public OrderSheetTableModel(OrderSheetService orderSheetService) {
@@ -126,7 +126,7 @@ public class OrderSheetTableModel extends AbstractTableModel {
 
     public boolean contains(int id) {
         Optional<OrderSheet> foundBook = orderSheets.stream()
-                .filter(importSheet -> importSheet.id == id)
+                .filter(orderSheet -> orderSheet.id == id)
                 .findFirst();
         return foundBook.isPresent();
     }

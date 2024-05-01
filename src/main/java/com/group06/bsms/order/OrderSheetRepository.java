@@ -155,7 +155,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
         try {
             db.setAutoCommit(false);
 
-            String stringQuery = "SELECT OrderSheet.id, OrderSheet.employeeInChargeId, OrderSheet.memberId, OrderSheet.discountedTotalCost, OrderSheet.orderDate, Account.phone, Member.phone FROM OrderSheet JOIN Account ON Account.id = OrderSheet.employeeInChargeId JOIN Meber ON Member.id = OrderSheet.memberId";
+            String stringQuery = "SELECT OrderSheet.id, OrderSheet.employeeInChargeId, OrderSheet.memberId, OrderSheet.discountedTotalCost, OrderSheet.orderDate, Account.phone, Member.phone FROM OrderSheet JOIN Account ON Account.id = OrderSheet.employeeInChargeId JOIN Member ON Member.id = OrderSheet.memberId";
 
             stringQuery += " WHERE " + searchChoice
                     + ((searchChoice.trim().equals("Account.phone") || searchChoice.trim().equals("Member.phone"))

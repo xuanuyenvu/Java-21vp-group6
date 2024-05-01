@@ -581,13 +581,14 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
 
             try (var query = db.prepareStatement(
-                    "SELECT * FROM BOOK WHERE isHidden = TRUE AND hiddenParentCount = 0 AND title LIKE ?")) {
+                    "SELECT * FROM BOOK WHERE isHidden = FALSE AND hiddenParentCount = 0 AND Book.title ILIKE ? || '%'")) {
                         query.setString(1, title);
                 try (ResultSet resultSet = query.executeQuery()) {
                     while (resultSet.next()) {
                         Book book = new Book();
                         book.id = resultSet.getInt("id");
                         book.title = resultSet.getString("title");
+                        book.salePrice = resultSet.getDouble("salePrice");
                         result.add(book);
                     }
                 }

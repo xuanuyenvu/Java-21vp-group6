@@ -164,7 +164,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             public void onEdit(int row) {
                 int importSheetId = model.getImportSheet(row).id;
                 viewImportSheet.loadImportSheet(importSheetId);
-
+                System.out.println("3");
                 Dashboard.dashboard.switchTab("viewImportSheet");
             }
 
