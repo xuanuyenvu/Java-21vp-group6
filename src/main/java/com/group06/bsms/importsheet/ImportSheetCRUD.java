@@ -79,7 +79,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         setUpTable();
 
         loadImportSheetsIntoTable();
-        addImportSheet.loadEmployee(1);
+       
     }
 
     private void toggleSortOrder(int columnIndex) {
