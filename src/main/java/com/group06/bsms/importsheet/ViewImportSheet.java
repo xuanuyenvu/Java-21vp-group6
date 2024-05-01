@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.group06.bsms.importsheet;
 
 import com.group06.bsms.DB;
@@ -28,12 +24,12 @@ import javax.swing.UIManager;
 
 public class ViewImportSheet extends javax.swing.JPanel {
 
-    
     private BookService bookService;
     private ImportSheetService importSheetService;
     private Map<String, Book> bookMap;
     private ImportSheet importSheet;
-     private ImportSheetCRUD importSheetCRUD;
+    private ImportSheetCRUD importSheetCRUD;
+
     public void setImportSheetCRUD(ImportSheetCRUD importSheetCRUD) {
         this.importSheetCRUD = importSheetCRUD;
     }
@@ -66,7 +62,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
 
     public void loadImportSheet(int id) {
         try {
-            title.setText("IMPORT SHEET: "+ id);
+            title.setText("IMPORT SHEET: " + id);
             importSheet = importSheetService.selectImportSheet(id);
             employeeField.setText(importSheet.employee.phone);
             SimpleDateFormat sdfTarget = new SimpleDateFormat("dd/MM/yyyy");
@@ -78,7 +74,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
             for (ImportedBook importedBook : importedBooks) {
 
                 Object[] rowData = {importedBook.title, importedBook.quantity, importedBook.pricePerBook};
-                
+
                 model.addRow(rowData);
             }
 
@@ -164,9 +160,9 @@ public class ViewImportSheet extends javax.swing.JPanel {
         groupFieldPanelLayout.setHorizontalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addContainerGap(40, Short.MAX_VALUE)
+                .addGap(42, 42, 42)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
                         .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -182,7 +178,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
                         .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(totalCostLabel)
                             .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addGap(50, 50, 50))
         );
         groupFieldPanelLayout.setVerticalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -203,8 +199,8 @@ public class ViewImportSheet extends javax.swing.JPanel {
                         .addGap(2, 2, 2)
                         .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1005, Short.MAX_VALUE))
+                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         formScrollPane.setViewportView(groupFieldPanel);
@@ -286,7 +282,6 @@ public class ViewImportSheet extends javax.swing.JPanel {
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
         Dashboard.dashboard.switchTab("importSheetCRUD");
     }//GEN-LAST:event_backButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
