@@ -465,7 +465,7 @@ public class AddImportSheet extends javax.swing.JPanel {
 
             if (!(title.equals("") && quantityStr.equals("") && pricePerBookStr.equals(""))) {
                 if (title.equals("") || quantityStr.equals("") || pricePerBookStr.equals("")) {
-                    System.out.println("hi");
+                    
                     isTableValid = false;
                     break;
                 }

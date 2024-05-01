@@ -58,8 +58,8 @@
                   <Component id="searchComboBox" alignment="3" min="-2" pref="37" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-              <Component id="main" pref="497" max="32767" attributes="0"/>
-              <EmptySpace min="-2" pref="840" max="-2" attributes="0"/>
+              <Component id="main" min="-2" pref="497" max="-2" attributes="0"/>
+              <EmptySpace pref="840" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

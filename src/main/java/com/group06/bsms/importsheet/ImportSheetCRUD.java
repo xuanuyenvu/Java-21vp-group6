@@ -79,6 +79,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         setUpTable();
 
         loadImportSheetsIntoTable();
+        addImportSheet.loadEmployee(1);
     }
 
     private void toggleSortOrder(int columnIndex) {
@@ -388,8 +389,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(24, 24, 24)
-            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
-            .addGap(840, 840, 840))
+            .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(840, Short.MAX_VALUE))
     );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -40,6 +40,16 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             if (importSheet.importedBooks.isEmpty()) {
                 throw new Exception("The imported books is empty");
             }
+            if (importSheet.employeeInChargeId == 0) {
+                throw new Exception("The employee id is empty");
+
+            }
+            if(importSheet.importDate == null ){
+                throw new Exception("The import date is empty");
+            }
+            if(importSheet.totalCost == null || importSheet.totalCost < 0){
+                throw new Exception("Invalid total cost");
+            }
 
             try (PreparedStatement insertImportSheetQuery = db.prepareStatement(
                     "INSERT INTO ImportSheet (employeeInChargeId, importDate, totalCost) "
