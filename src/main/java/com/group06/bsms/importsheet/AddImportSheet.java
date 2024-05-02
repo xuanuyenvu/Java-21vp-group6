@@ -542,12 +542,19 @@ public class AddImportSheet extends javax.swing.JPanel {
                 }
 
                 ImportSheet importSheet = new ImportSheet(employeeInChargeId, importDate, totalCost, importedBooks);
-                System.out.println(importSheet);
-
+              
                 try {
                     importSheetService.insertImportSheet(importSheet);
                     JOptionPane.showMessageDialog(null, "Import sheet added successfully.", "BSMS Information",
                             JOptionPane.INFORMATION_MESSAGE);
+                    totalCostField.setText("");
+                    while (model.getRowCount() > 0) {
+                        model.removeRow(0);
+                    }
+                    model.addRow(new Object[model.getColumnCount()]);
+                    importBooksTable.requestFocusInWindow();
+                    importBooksTable.changeSelection(model.getRowCount() - 1, 0, false, false);
+                    
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(),
                             "BSMS Error",
