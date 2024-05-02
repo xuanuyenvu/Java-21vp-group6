@@ -17,6 +17,7 @@ import com.group06.bsms.publishers.UpdatePublisher;
 import com.group06.bsms.importsheet.ImportSheetCRUD;
 import com.group06.bsms.importsheet.AddImportSheet;
 import com.group06.bsms.importsheet.ViewImportSheet;
+import com.group06.bsms.members.AddMember;
 import com.group06.bsms.members.MemberCRUD;
 import com.group06.bsms.order.OrderSheetCRUD;
 import com.group06.bsms.order.ViewOrderSheet;
@@ -53,9 +54,9 @@ public class Dashboard extends javax.swing.JPanel {
     private final ViewImportSheet viewImportSheet = new ViewImportSheet();
     private final ImportSheetCRUD importSheetCRUD = new ImportSheetCRUD(viewImportSheet, addImportSheet);
 
+    private final AddMember addMember = new AddMember();
     
-    
-    private final MemberCRUD memberCRUD = new MemberCRUD();
+    private final MemberCRUD memberCRUD = new MemberCRUD(); 
     private final ViewOrderSheet viewOrderSheet = new ViewOrderSheet();
     private final OrderSheetCRUD orderSheetCRUD = new OrderSheetCRUD(viewOrderSheet, null, memberCRUD);
     
@@ -97,11 +98,13 @@ public class Dashboard extends javax.swing.JPanel {
         main.add(importSheetCRUD, "importSheetCRUD");
         main.add(addImportSheet, "addImportSheet");
         main.add(viewImportSheet, "viewImportSheet");
+       
+        main.add(memberCRUD, "memberCRUD");
+        main.add(addMember, "addMember");
         
         main.add(orderSheetCRUD, "orderSheetCRUD");
         main.add(viewOrderSheet, "viewOrderSheet");
         
-        main.add(memberCRUD, "memberCRUD");
 
     }
 

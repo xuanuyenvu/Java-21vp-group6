@@ -26,6 +26,7 @@ public class MemberCRUD extends javax.swing.JPanel {
 
     private final MemberService memberService;
     private MemberCRUDTableModel model;
+    private AddMember addMember;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
 
@@ -37,15 +38,24 @@ public class MemberCRUD extends javax.swing.JPanel {
     private boolean isScrollAtBottom = false;
 
     public MemberCRUD() {
-        this(
+        this(null,
                 new MemberService(
                         new MemberRepository(DB.db())
                 )
         );
     }
 
-    public MemberCRUD(MemberService memberService) {
+    public MemberCRUD(AddMember addMember) {
+        this(addMember,
+                new MemberService(
+                        new MemberRepository(DB.db())
+                )
+        );
+    }
+
+    public MemberCRUD(AddMember addMember, MemberService memberService) {
         this.memberService = memberService;
+        this.addMember = addMember;
         this.model = new MemberCRUDTableModel(memberService);
         initComponents();
         setUpTable();
@@ -69,7 +79,7 @@ public class MemberCRUD extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int columnIndex = table.columnAtPoint(e.getPoint());
                 toggleSortOrder(columnIndex);
-               
+
                 reloadMembers();
                 table.getTableHeader().repaint();
             }
@@ -191,7 +201,7 @@ public class MemberCRUD extends javax.swing.JPanel {
         searchComboBox = new javax.swing.JComboBox<>();
 
         memberRevenueLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        memberRevenueLabel.setText("TOP BUYERS");
+        memberRevenueLabel.setText("MEMBERS");
 
         table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         table.setModel(this.model);
@@ -308,7 +318,7 @@ public class MemberCRUD extends javax.swing.JPanel {
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
-        Dashboard.dashboard.switchTab("addBookInformation");
+        Dashboard.dashboard.switchTab("addMember");
     }//GEN-LAST:event_createBtnActionPerformed
 
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
