@@ -2103,6 +2103,9 @@ INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (2
 (28, (SELECT id FROM Book WHERE title = 'Mickey Mouse Funhouse: Adventures in Dino-Sitting (2023)'),5,11.82);
 UPDATE OrderSheet set discountedTotalCost = 233.38 where id = 28;
 
+DROP TRIGGER IF EXISTS update_saleprice_trigger ON OrderedBook;
+DROP TRIGGER IF EXISTS update_quantity_postorder_trigger ON OrderedBook;
+
 SELECT setval('account_id_seq', (SELECT MAX(id) FROM Account) + 1);
 SELECT setval('publisher_id_seq', (SELECT MAX(id) FROM Publisher) + 1);
 SELECT setval('author_id_seq', (SELECT MAX(id) FROM Author) + 1);
