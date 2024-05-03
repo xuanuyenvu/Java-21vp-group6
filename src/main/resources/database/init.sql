@@ -1922,7 +1922,7 @@ INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (3
 UPDATE OrderSheet set discountedTotalCost = 25.4 where id = 3;
 INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (4, 25, 3, '2024-02-20', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (4, (SELECT id FROM Book WHERE title = 'Love, Theoretically (2023)'), 1, 10.17),(4, (SELECT id FROM Book WHERE title = 'Love on the Brain (2022)'), 1, 11.35),(4, (SELECT id FROM Book WHERE title = 'The Murder of Roger Ackroyd & The Hollow Bundle (2022)'), 1, 9.63);UPDATE OrderSheet set discountedTotalCost = 29.5925 where id = 4;
-INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (7, 6, 10, '2024-04-24', 0);
+INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (7, 6, 10, '2024-04-29', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (7, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 9 (2024)'),1,7.87),
 (7, (SELECT id FROM Book WHERE title = 'One Piece, Vol. 99 (2022)'),1,7.87),
 (7, (SELECT id FROM Book WHERE title = 'The Grapes of Wrath - 75th Anniversary Edition (2014)'),6,6.1),
@@ -1932,7 +1932,7 @@ INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (7
 (7, (SELECT id FROM Book WHERE title = 'The Hobbit Collector''s Edition (2024)'),5,11.42),
 (7, (SELECT id FROM Book WHERE title = 'The Lord of the Rings Illustrated (2021)'),10,8.47);
 UPDATE OrderSheet set discountedTotalCost = 312.72 where id = 7;
-INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (8, 6, 7, '2024-04-22', 0);
+INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (8, 6, 7, '2024-04-30', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (8, (SELECT id FROM Book WHERE title = 'The Apothecary Diaries: Volume 10 (Light Novel) (2024)'),10,8.4),
 (8, (SELECT id FROM Book WHERE title = 'Blue Period 8 (2022)'),8,10.3),
 (8, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 13 (2016)'),10,10.43),
