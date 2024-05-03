@@ -44,7 +44,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                     "INSERT INTO OrderSheet (memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS)) {
 
-                insertOrderSheetQuery.setInt(1, orderSheet.member.id);
+                insertOrderSheetQuery.setInt(1, orderSheet.memberId);
                 insertOrderSheetQuery.setInt(2, orderSheet.employeeInChargeId);
                 insertOrderSheetQuery.setDate(3, orderSheet.orderDate);
                 insertOrderSheetQuery.setDouble(4, orderSheet.discountedTotalCost);

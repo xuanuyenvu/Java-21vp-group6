@@ -35,7 +35,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class OrderSheetCRUD extends javax.swing.JPanel {
 
     private final ViewOrderSheet viewOrderSheet;
-    private final AddOrderSheet addOrderSheet;
     private final OrderSheetService orderSheetService;
     private final MemberCRUD memberCRUD;
     private OrderSheetTableModel model;
@@ -50,23 +49,22 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
     private boolean isScrollAtBottom = false;
 
     public OrderSheetCRUD() {
-        this(null, null,null,
+        this(null, null,
                 new OrderSheetService(new OrderSheetRepository(DB.db(), new AccountRepository(DB.db()),
                         new MemberRepository(DB.db()))));
 
     }
 
-    public OrderSheetCRUD(ViewOrderSheet viewOrderSheet, AddOrderSheet addOrderSheet,MemberCRUD memberCRUD) {
+    public OrderSheetCRUD(ViewOrderSheet viewOrderSheet, MemberCRUD memberCRUD) {
         this(viewOrderSheet,
-                addOrderSheet,
                 memberCRUD,
                 new OrderSheetService(new OrderSheetRepository(DB.db(), new AccountRepository(DB.db()),
                         new MemberRepository(DB.db()))));
     }
 
-    public OrderSheetCRUD(ViewOrderSheet viewOrderSheet, AddOrderSheet addOrderSheet, MemberCRUD memberCRUD,
+    public OrderSheetCRUD(ViewOrderSheet viewOrderSheet, MemberCRUD memberCRUD,
             OrderSheetService orderSheetService) {
-        this.addOrderSheet = addOrderSheet;
+
         this.viewOrderSheet = viewOrderSheet;
         this.orderSheetService = orderSheetService;
         this.memberCRUD = memberCRUD;
@@ -360,19 +358,23 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(layout.createSequentialGroup()
             .addGap(42, 42, 42)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                    .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(main, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(importSheetLabel)
+                            .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(40, 40, 40))
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
-                    .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
-                    .addComponent(createBtn)
+                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
-                    .addComponent(filterBtn))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, 862, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(importSheetLabel)))
-            .addContainerGap(40, Short.MAX_VALUE))
+                    .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -386,7 +388,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(24, 24, 24)
-            .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addContainerGap(935, Short.MAX_VALUE))
     );
     }// </editor-fold>//GEN-END:initComponents
@@ -410,7 +412,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
                 searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
             case "by Import Date" ->
                 searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "dd/MM/yyyy");
-            case "by Total Cost 1" ->
+            case "by Total Cost" ->
                 searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
             default -> {
             }

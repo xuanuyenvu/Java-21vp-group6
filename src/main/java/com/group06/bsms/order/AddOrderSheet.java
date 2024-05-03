@@ -33,6 +33,7 @@ import java.util.Vector;
 import javax.swing.event.TableModelEvent;
 import javax.swing.*;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,10 +50,11 @@ public class AddOrderSheet extends javax.swing.JPanel {
     private boolean isSettingValue = false;
     private Account employee;
     private Member member;
+    private double discount = 0;
 
     private OrderSheetCRUD orderSheetCRUD;
 
-    public void setImportSheetCRUD(OrderSheetCRUD orderSheetCRUD) {
+    public void setOrderSheetCRUD(OrderSheetCRUD orderSheetCRUD) {
         this.orderSheetCRUD = orderSheetCRUD;
     }
 
@@ -76,41 +78,46 @@ public class AddOrderSheet extends javax.swing.JPanel {
         this.bookService = bookService;
         this.accountService = accountService;
         this.orderSheetService = orderSheetService;
+        this.memberService = memberService;
         this.bookMap = new HashMap<>();
 
         initComponents();
 
-        importBooksTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
-        importBooksTable.getActionMap().put("enter", new AbstractAction() {
+        orderDatePicker.setDate(new java.util.Date());
+        var sm = new SimpleDateFormat("dd/MM/yyyy");
+        orderDatePicker.setText(sm.format(orderDatePicker.getDate()));
+
+        orderBookTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
+        orderBookTable.getActionMap().put("enter", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                int editingRow = importBooksTable.getEditingRow();
-                int editingColumn = importBooksTable.getEditingColumn();
-                int rowCount = importBooksTable.getRowCount();
+                int editingRow = orderBookTable.getEditingRow();
+                int editingColumn = orderBookTable.getEditingColumn();
+                int rowCount = orderBookTable.getRowCount();
                 if (editingColumn == 2) {
                     if (editingRow == rowCount - 1) {
-                        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+                        DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
                         model.addRow(new Object[model.getColumnCount()]);
                     }
-                    importBooksTable.changeSelection(editingRow + 1, 0, false, false);
-                    importBooksTable.editCellAt(editingRow + 1, 0);
-                    importBooksTable.transferFocus();
+                    orderBookTable.changeSelection(editingRow + 1, 0, false, false);
+                    orderBookTable.editCellAt(editingRow + 1, 0);
+                    orderBookTable.transferFocus();
                 }
             }
         });
 
-        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
         model.addTableModelListener((TableModelEvent e) -> {
             if (e.getType() == TableModelEvent.UPDATE) {
                 updateTotalCost();
             }
         });
 
-        importBooksTable.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
+        orderBookTable.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
 
-        importBooksTable.getColumnModel().getColumn(0).setCellEditor(new AutoSuggestComboBoxEditor());
+        orderBookTable.getColumnModel().getColumn(0).setCellEditor(new AutoSuggestComboBoxEditor());
 
-        importBooksTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField() {
+        orderBookTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new JTextField() {
             {
                 addKeyListener(new KeyAdapter() {
                     @Override
@@ -128,7 +135,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
             }
         }));
 
-        importBooksTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField() {
+        orderBookTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(new JTextField() {
             {
                 addKeyListener(new KeyAdapter() {
                     @Override
@@ -145,7 +152,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
             }
         }));
 
-        importBooksTable.getModel().addTableModelListener((TableModelEvent e) -> {
+        orderBookTable.getModel().addTableModelListener((TableModelEvent e) -> {
             if (e.getType() == TableModelEvent.UPDATE) {
                 int row = e.getFirstRow();
                 int column = e.getColumn();
@@ -153,16 +160,16 @@ public class AddOrderSheet extends javax.swing.JPanel {
                 if (column == 0) {
 
                     if (!isSettingValue) {
-                        String newTitle = (String) importBooksTable.getValueAt(row, column);
+                        String newTitle = (String) orderBookTable.getValueAt(row, column);
                         if (isDuplicateTitle(newTitle, row)) {
 
                             isSettingValue = true;
-                            importBooksTable.setValueAt("", row, column);
+                            orderBookTable.setValueAt("", row, column);
                             isSettingValue = false;
 
                             JOptionPane.showMessageDialog(null, "There's already a " + newTitle + " row.", "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE);
-                            importBooksTable.requestFocusInWindow();
+                            orderBookTable.requestFocusInWindow();
 
                         }
                     }
@@ -170,18 +177,18 @@ public class AddOrderSheet extends javax.swing.JPanel {
                 if (column == 1) {
 
                     if (!isSettingValue) {
-                        String newQuantityStr = (String) importBooksTable.getValueAt(row, column);
+                        String newQuantityStr = (String) orderBookTable.getValueAt(row, column);
                         try {
                             int newQuantity = Integer.parseInt(newQuantityStr);
                             if (newQuantity == 0) {
 
                                 isSettingValue = true;
-                                importBooksTable.setValueAt("", row, column);
+                                orderBookTable.setValueAt("", row, column);
                                 isSettingValue = false;
 
                                 JOptionPane.showMessageDialog(null, "Cannot have zero quantity", "BSMS Error",
                                         JOptionPane.ERROR_MESSAGE);
-                                importBooksTable.requestFocusInWindow();
+                                orderBookTable.requestFocusInWindow();
                             }
 
                         } catch (NumberFormatException nfe) {
@@ -193,15 +200,17 @@ public class AddOrderSheet extends javax.swing.JPanel {
             }
         });
 
-        importBooksTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
-        importBooksTable.getTableHeader().setReorderingAllowed(false);
-        importBooksTable.setShowVerticalLines(true);
+        orderBookTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
+        orderBookTable.getTableHeader().setReorderingAllowed(false);
+        orderBookTable.setShowVerticalLines(true);
     }
 
     public void loadEmployee(int id) {
         try {
             this.employee = accountService.selectAccount(id);
+            employeeField.setText(employee.phone);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         if (employee != null) {
             employeeField.setText(employee.phone);
@@ -211,16 +220,25 @@ public class AddOrderSheet extends javax.swing.JPanel {
     public void loadMember(int id) {
         try {
             this.member = memberService.selectMember(id);
+            memberNameField.setText(member.name);
+            memberPhoneField.setText(member.phone);
+            if (member.name.equals("Annonymous")) {
+                discountField.setText("0%");
+            } else {
+                discountField.setText("5%");
+                discount = 0.05;
+            }
         } catch (Exception e) {
+            
         }
         if (employee != null) {
-            memberField.setText(member.phone);
+            memberNameField.setText(member.phone);
         }
     }
 
     private void updateTotalCost() {
         double totalCost = 0.0;
-        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
 
             String quantityStr = (String) model.getValueAt(i, 1);
@@ -236,11 +254,11 @@ public class AddOrderSheet extends javax.swing.JPanel {
                 }
             }
         }
-        totalCostField.setText(String.format("%.2f", totalCost));
+        totalCostField.setText(String.format("%.2f", totalCost * (1 - discount)));
     }
 
     private boolean isDuplicateTitle(String newTitle, int currentRow) {
-        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
         int rowCount = model.getRowCount();
 
         for (int i = 0; i < rowCount; i++) {
@@ -271,15 +289,19 @@ public class AddOrderSheet extends javax.swing.JPanel {
         groupFieldPanel = new javax.swing.JPanel();
         totalCostField = new javax.swing.JTextField();
         totalCostLabel = new javax.swing.JLabel();
-        importBookScrollPane = new javax.swing.JScrollPane();
-        importBooksTable = new javax.swing.JTable();
+        orderBookScrollPane = new javax.swing.JScrollPane();
+        orderBookTable = new javax.swing.JTable();
         saveButton = new javax.swing.JButton();
         employeeLabel = new javax.swing.JLabel();
         employeeField = new javax.swing.JTextField();
-        importDatePicker = new com.group06.bsms.components.DatePickerPanel();
-        importDateLabel = new javax.swing.JLabel();
-        memberLabel = new javax.swing.JLabel();
-        memberField = new javax.swing.JTextField();
+        orderDatePicker = new com.group06.bsms.components.DatePickerPanel();
+        orderDateLabel = new javax.swing.JLabel();
+        memberNameLabel = new javax.swing.JLabel();
+        memberNameField = new javax.swing.JTextField();
+        memberPhoneLabel = new javax.swing.JLabel();
+        memberPhoneField = new javax.swing.JTextField();
+        discountField = new javax.swing.JTextField();
+        discountLabel = new javax.swing.JLabel();
         titleBar = new javax.swing.JPanel();
         backButton = new javax.swing.JButton();
         pageName = new javax.swing.JLabel();
@@ -302,10 +324,10 @@ public class AddOrderSheet extends javax.swing.JPanel {
         totalCostLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         totalCostLabel.setText("Total sale price");
 
-        importBooksTable.setModel(new com.group06.bsms.order.OrderedBooksTableModel());
-        importBooksTable.setRowHeight(40);
-        importBooksTable.setRowSelectionAllowed(false);
-        importBookScrollPane.setViewportView(importBooksTable);
+        orderBookTable.setModel(new com.group06.bsms.order.OrderedBooksTableModel());
+        orderBookTable.setRowHeight(40);
+        orderBookTable.setRowSelectionAllowed(false);
+        orderBookScrollPane.setViewportView(orderBookTable);
 
         saveButton.setBackground(new java.awt.Color(65, 105, 225));
         saveButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -330,88 +352,137 @@ public class AddOrderSheet extends javax.swing.JPanel {
         employeeField.setMinimumSize(new java.awt.Dimension(440, 31));
         employeeField.setPreferredSize(new java.awt.Dimension(440, 31));
 
-        importDatePicker.setMaximumSize(new java.awt.Dimension(215, 31));
-        importDatePicker.setPlaceholder("dd/mm/yyyy");
-        importDatePicker.setPreferredSize(new java.awt.Dimension(215, 31));
+        orderDatePicker.setMaximumSize(new java.awt.Dimension(215, 31));
+        orderDatePicker.setPlaceholder("dd/mm/yyyy");
+        orderDatePicker.setPreferredSize(new java.awt.Dimension(215, 31));
 
-        importDateLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        importDateLabel.setText("Order Date");
+        orderDateLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        orderDateLabel.setText("Order Date");
 
-        memberLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
-        memberLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        memberLabel.setText("Member");
+        memberNameLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
+        memberNameLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        memberNameLabel.setText("Member");
 
-        memberField.setEditable(false);
-        memberField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        memberField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        memberField.setFocusable(false);
-        memberField.setMinimumSize(new java.awt.Dimension(440, 31));
-        memberField.setPreferredSize(new java.awt.Dimension(440, 31));
-        memberField.addActionListener(new java.awt.event.ActionListener() {
+        memberNameField.setEditable(false);
+        memberNameField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        memberNameField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        memberNameField.setFocusable(false);
+        memberNameField.setMinimumSize(new java.awt.Dimension(440, 31));
+        memberNameField.setPreferredSize(new java.awt.Dimension(440, 31));
+        memberNameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                memberFieldActionPerformed(evt);
+                memberNameFieldActionPerformed(evt);
             }
         });
+
+        memberPhoneLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
+        memberPhoneLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        memberPhoneLabel.setText("Member's phone");
+
+        memberPhoneField.setEditable(false);
+        memberPhoneField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        memberPhoneField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        memberPhoneField.setFocusable(false);
+        memberPhoneField.setMinimumSize(new java.awt.Dimension(440, 31));
+        memberPhoneField.setPreferredSize(new java.awt.Dimension(440, 31));
+        memberPhoneField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                memberPhoneFieldActionPerformed(evt);
+            }
+        });
+
+        discountField.setEditable(false);
+        discountField.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        discountField.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        discountField.setFocusable(false);
+        discountField.setMinimumSize(new java.awt.Dimension(440, 31));
+        discountField.setPreferredSize(new java.awt.Dimension(440, 31));
+
+        discountLabel.setDisplayedMnemonic(java.awt.event.KeyEvent.VK_T);
+        discountLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        discountLabel.setText("Discount");
 
         javax.swing.GroupLayout groupFieldPanelLayout = new javax.swing.GroupLayout(groupFieldPanel);
         groupFieldPanel.setLayout(groupFieldPanelLayout);
         groupFieldPanelLayout.setHorizontalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addContainerGap(130, Short.MAX_VALUE)
+                .addGap(42, 42, 42)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(importBookScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 839, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 778, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(saveButton))
                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                            .addGap(755, 755, 755)
-                            .addComponent(saveButton))
+                        .addComponent(orderBookScrollPane)
                         .addGroup(groupFieldPanelLayout.createSequentialGroup()
                             .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(orderDateLabel)
+                                        .addComponent(orderDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                            .addGap(19, 19, 19)
+                                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(memberNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(memberNameLabel)))
+                                        .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                            .addGap(18, 18, 18)
+                                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(discountField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                                                    .addGap(1, 1, 1)
+                                                    .addComponent(discountLabel))))))
                                 .addComponent(employeeLabel))
                             .addGap(18, 18, 18)
                             .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(memberField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(memberLabel))
-                            .addGap(18, 18, 18)
-                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(importDateLabel)
-                                .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(memberPhoneField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(memberPhoneLabel)
                                 .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(groupFieldPanelLayout.createSequentialGroup()
                                     .addGap(1, 1, 1)
-                                    .addComponent(totalCostLabel))))))
-                .addContainerGap(118, Short.MAX_VALUE))
+                                    .addComponent(totalCostLabel)))
+                            .addGap(0, 0, Short.MAX_VALUE))))
+                .addGap(42, 42, 42))
         );
         groupFieldPanelLayout.setVerticalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addContainerGap()
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
                         .addComponent(employeeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(employeeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                        .addComponent(memberLabel)
+                        .addComponent(memberNameLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(memberField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(memberNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addComponent(memberPhoneLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(memberPhoneField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                            .addComponent(importDateLabel)
+                            .addComponent(orderDateLabel)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(importDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(orderDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(groupFieldPanelLayout.createSequentialGroup()
                             .addComponent(totalCostLabel)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(groupFieldPanelLayout.createSequentialGroup()
+                        .addComponent(discountLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(discountField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(importBookScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(orderBookScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(saveButton)
-                .addContainerGap(937, Short.MAX_VALUE))
+                .addGap(943, 943, 943))
         );
 
         formScrollPane.setViewportView(groupFieldPanel);
@@ -482,9 +553,13 @@ public class AddOrderSheet extends javax.swing.JPanel {
         add(titleBar, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void memberFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberFieldActionPerformed
+    private void memberNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberNameFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_memberFieldActionPerformed
+    }//GEN-LAST:event_memberNameFieldActionPerformed
+
+    private void memberPhoneFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memberPhoneFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_memberPhoneFieldActionPerformed
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
         // TODO add your handling code here:
@@ -495,7 +570,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
     }// GEN-LAST:event_backButtonMouseExited
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_backButtonActionPerformed
-        Dashboard.dashboard.switchTab("importSheetCRUD");
+        Dashboard.dashboard.switchTab("orderSheetCRUD");
     }// GEN-LAST:event_backButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_saveButtonActionPerformed
@@ -505,11 +580,11 @@ public class AddOrderSheet extends javax.swing.JPanel {
         Double totalCost;
 
         boolean isTableValid = true;
-        DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+        DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
 
         for (int i = 0; i < model.getRowCount(); i++) {
             String title = (String) model.getValueAt(i, 0);
-           
+
             String quantityStr = (String) model.getValueAt(i, 1);
             String pricePerBookStr = (String) model.getValueAt(i, 2);
 
@@ -528,10 +603,10 @@ public class AddOrderSheet extends javax.swing.JPanel {
 
         if (isTableValid) {
             try {
-                employeeInChargeId = Integer.parseInt(employeeField.getText());
-                orderDate = new java.sql.Date(importDatePicker.getDate().getTime());
-                memberId = Integer.parseInt(memberField.getText());
-                
+                employeeInChargeId = employee.id;
+                orderDate = new java.sql.Date(orderDatePicker.getDate().getTime());
+                memberId = member.id;
+
                 if (totalCostField.getText().isEmpty()) {
                     throw new Exception("Please input the books sheet");
                 }
@@ -567,7 +642,9 @@ public class AddOrderSheet extends javax.swing.JPanel {
                     orderSheetService.insertOrderSheet(orderSheet);
                     JOptionPane.showMessageDialog(null, "Order sheet added successfully.", "BSMS Information",
                             JOptionPane.INFORMATION_MESSAGE);
+                    
                 } catch (Exception e) {
+                   
                     JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(),
                             "BSMS Error",
                             JOptionPane.ERROR_MESSAGE);
@@ -641,10 +718,10 @@ public class AddOrderSheet extends javax.swing.JPanel {
                     if (selectedBookTitle != null) {
                         Book selectedBook = bookMap.get(selectedBookTitle);
                         if (selectedBook != null) {
-                            int row = importBooksTable.getEditingRow();
+                            int row = orderBookTable.getEditingRow();
 
-                            importBooksTable.setValueAt(selectedBook.salePrice.toString(), row, 2);
-                            DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
+                            orderBookTable.setValueAt(selectedBook.salePrice.toString(), row, 2);
+                            DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
                             model.addRow(new Object[model.getColumnCount()]);
                         }
                     }
@@ -683,17 +760,21 @@ public class AddOrderSheet extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
+    private javax.swing.JTextField discountField;
+    private javax.swing.JLabel discountLabel;
     private javax.swing.JTextField employeeField;
     private javax.swing.JLabel employeeLabel;
     private javax.swing.JScrollPane formScrollPane;
     private javax.swing.JPanel groupFieldPanel;
-    private javax.swing.JScrollPane importBookScrollPane;
-    private javax.swing.JTable importBooksTable;
-    private javax.swing.JLabel importDateLabel;
-    private com.group06.bsms.components.DatePickerPanel importDatePicker;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JTextField memberField;
-    private javax.swing.JLabel memberLabel;
+    private javax.swing.JTextField memberNameField;
+    private javax.swing.JLabel memberNameLabel;
+    private javax.swing.JTextField memberPhoneField;
+    private javax.swing.JLabel memberPhoneLabel;
+    private javax.swing.JScrollPane orderBookScrollPane;
+    private javax.swing.JTable orderBookTable;
+    private javax.swing.JLabel orderDateLabel;
+    private com.group06.bsms.components.DatePickerPanel orderDatePicker;
     private javax.swing.JLabel pageName;
     private javax.swing.JButton saveButton;
     private javax.swing.JPanel titleBar;

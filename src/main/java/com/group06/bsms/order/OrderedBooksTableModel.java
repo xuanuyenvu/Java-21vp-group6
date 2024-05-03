@@ -14,7 +14,7 @@ public class OrderedBooksTableModel extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return tableEnabled;
+        return column != 2;
     }
 
     public void setTableEnabled(boolean enabled) {

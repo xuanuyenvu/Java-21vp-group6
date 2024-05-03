@@ -1,22 +1,27 @@
 package com.group06.bsms.members;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
 import com.group06.bsms.dashboard.Dashboard;
+import com.group06.bsms.order.AddOrderSheet;
 import com.group06.bsms.utils.SVGHelper;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -27,6 +32,7 @@ public class MemberCRUD extends javax.swing.JPanel {
     private final MemberService memberService;
     private MemberCRUDTableModel model;
     private AddMember addMember;
+    private AddOrderSheet addOrderSheet;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
 
@@ -38,29 +44,34 @@ public class MemberCRUD extends javax.swing.JPanel {
     private boolean isScrollAtBottom = false;
 
     public MemberCRUD() {
-        this(null,
+        this(null, null,
                 new MemberService(
-                        new MemberRepository(DB.db())
-                )
-        );
+                        new MemberRepository(DB.db())));
     }
 
-    public MemberCRUD(AddMember addMember) {
-        this(addMember,
+    public MemberCRUD(AddMember addMember, AddOrderSheet addOrderSheet) {
+        this(addMember, addOrderSheet,
                 new MemberService(
-                        new MemberRepository(DB.db())
-                )
-        );
+                        new MemberRepository(DB.db())));
     }
 
-    public MemberCRUD(AddMember addMember, MemberService memberService) {
+    public MemberCRUD(AddMember addMember, AddOrderSheet addOrderSheet, MemberService memberService) {
         this.memberService = memberService;
+        this.addOrderSheet = addOrderSheet;
         this.addMember = addMember;
         this.model = new MemberCRUDTableModel(memberService);
         initComponents();
+        
+        
+        searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
+        searchBar.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
+                "icons/search.svg",
+                Color.black, Color.black,
+                14, 14
+        ));
+
         setUpTable();
         loadMembersIntoTable();
-        System.out.println(model.getColumnCount());
 
     }
 
@@ -71,6 +82,7 @@ public class MemberCRUD extends javax.swing.JPanel {
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
         table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
         table.getColumnModel().getColumn(4).setCellRenderer(new DateCellRenderer());
 
@@ -79,7 +91,6 @@ public class MemberCRUD extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 int columnIndex = table.columnAtPoint(e.getPoint());
                 toggleSortOrder(columnIndex);
-
                 reloadMembers();
                 table.getTableHeader().repaint();
             }
@@ -98,9 +109,9 @@ public class MemberCRUD extends javax.swing.JPanel {
 
         scrollBar.getVerticalScrollBar().addAdjustmentListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                //Check if scrolled to the bottom
-                isScrollAtBottom
-                        = e.getAdjustable().getMaximum() == e.getAdjustable().getValue() + e.getAdjustable().getVisibleAmount();
+                // Check if scrolled to the bottom
+                isScrollAtBottom = e.getAdjustable().getMaximum() == e.getAdjustable().getValue()
+                        + e.getAdjustable().getVisibleAmount();
                 if (isScrollAtBottom) {
                     loadMembersIntoTable();
                 }
@@ -109,8 +120,7 @@ public class MemberCRUD extends javax.swing.JPanel {
     }
 
     public void loadMembersIntoTable() {
-        var searchString
-                = searchBar == null || searchBar.getText() == null
+        var searchString = searchBar == null || searchBar.getText() == null
                 ? ""
                 : searchBar.getText();
 
@@ -130,8 +140,7 @@ public class MemberCRUD extends javax.swing.JPanel {
             do {
                 List<Member> membersList = memberService.searchSortFilterMembers(
                         currentOffset, limit, columnSortOrders,
-                        searchString, searchChoiceValue
-                );
+                        searchString, searchChoiceValue);
 
                 if (currentOffset > 0) {
                     model.loadNewMembers(membersList);
@@ -149,13 +158,12 @@ public class MemberCRUD extends javax.swing.JPanel {
             } while (currentRowCount < 2 * limit);
 
         } catch (Exception e) {
-            e.printStackTrace();
+
             JOptionPane.showMessageDialog(
                     this,
                     e.getMessage(),
                     "BSMS Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -169,8 +177,10 @@ public class MemberCRUD extends javax.swing.JPanel {
     class CustomHeaderRenderer extends DefaultTableCellRenderer {
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+                    column);
             int modelColumn = table.convertColumnIndexToModel(column);
             SortOrder sortOrder = columnSortOrders.getOrDefault(modelColumn, SortOrder.UNSORTED);
             Icon sortIcon = null;
@@ -189,19 +199,21 @@ public class MemberCRUD extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        memberRevenueLabel = new javax.swing.JLabel();
         tablePanel = new javax.swing.JPanel();
         scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         searchBar = new javax.swing.JTextField();
         createBtn = new javax.swing.JButton();
         searchComboBox = new javax.swing.JComboBox<>();
-
-        memberRevenueLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        memberRevenueLabel.setText("MEMBERS");
+        nextButton = new javax.swing.JButton();
+        titleBar = new javax.swing.JPanel();
+        backButton = new javax.swing.JButton();
+        pageName = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
 
         table.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         table.setModel(this.model);
@@ -214,7 +226,7 @@ public class MemberCRUD extends javax.swing.JPanel {
         tablePanel.setLayout(tablePanelLayout);
         tablePanelLayout.setHorizontalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 828, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
             .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE))
         );
@@ -263,42 +275,133 @@ public class MemberCRUD extends javax.swing.JPanel {
             }
         });
 
+        nextButton.setBackground(new java.awt.Color(65, 105, 225));
+        nextButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        nextButton.setForeground(new java.awt.Color(255, 255, 255));
+        nextButton.setMnemonic(java.awt.event.KeyEvent.VK_A);
+        nextButton.setText("Next");
+        nextButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        nextButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextButtonActionPerformed(evt);
+            }
+        });
+
+        titleBar.setPreferredSize(new java.awt.Dimension(849, 57));
+
+        backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        backButton.setForeground(UIManager.getColor("mutedColor"));
+        backButton.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/arrow-back.svg", 
+            Color.white, Color.white,
+            18, 18
+        ));
+        backButton.setMnemonic(java.awt.event.KeyEvent.VK_BACK_SPACE);
+        backButton.setToolTipText("Back to previous page");
+        backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        backButton.setFocusable(false);
+        backButton.setMargin(new java.awt.Insets(4, 14, 3, 14));
+        backButton.setPreferredSize(new java.awt.Dimension(33, 33));
+        backButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                backButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                backButtonMouseExited(evt);
+            }
+        });
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
+            }
+        });
+
+        pageName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        pageName.setText("Choose a member");
+
+        javax.swing.GroupLayout titleBarLayout = new javax.swing.GroupLayout(titleBar);
+        titleBar.setLayout(titleBarLayout);
+        titleBarLayout.setHorizontalGroup(
+            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(titleBarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pageName)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+        titleBarLayout.setVerticalGroup(
+            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(titleBarLayout.createSequentialGroup()
+                .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(titleBarLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(pageName))
+                    .addGroup(titleBarLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, 915, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(42, 42, 42)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(807, Short.MAX_VALUE)
+                        .addComponent(nextButton))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(memberRevenueLabel)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(49, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(20, 20, 20)
-                                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(20, 20, 20)
-                                .addComponent(createBtn))
-                            .addComponent(tablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 42, Short.MAX_VALUE))))
+                                .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addComponent(memberRevenueLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(searchBar, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                    .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, Short.MAX_VALUE)
+                    .addComponent(searchComboBox, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
                 .addGap(33, 33, 33)
-                .addComponent(tablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addComponent(tablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(47, 47, 47))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_backButtonMouseEntered
+
+    private void backButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_backButtonMouseExited
+
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        // TODO add your handling code here:
+        Dashboard.dashboard.switchTab("orderSheetCRUD");
+    }//GEN-LAST:event_backButtonActionPerformed
 
     public void reloadMembers() {
         reloadMembers(false);
@@ -309,29 +412,53 @@ public class MemberCRUD extends javax.swing.JPanel {
         loadMembersIntoTable();
 
         if (reloadFilter) {
-//            bookCRUD.loadAccountInto();
+            // bookCRUD.loadAccountInto();
         }
     }
 
-    private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarActionPerformed
+    private void searchBarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_searchBarActionPerformed
         reloadMembers();
-    }//GEN-LAST:event_searchBarActionPerformed
+    }// GEN-LAST:event_searchBarActionPerformed
 
-    private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
+    private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_createBtnActionPerformed
         Dashboard.dashboard.switchTab("addMember");
-    }//GEN-LAST:event_createBtnActionPerformed
+    }// GEN-LAST:event_createBtnActionPerformed
 
-    private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
+    private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_searchComboBoxActionPerformed
 
-    }//GEN-LAST:event_searchComboBoxActionPerformed
+    }// GEN-LAST:event_searchComboBoxActionPerformed
+
+    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_nextButtonActionPerformed
+        // TODO add your handling code here:
+        if (table.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please choose a member",
+                    "BSMS Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+
+            Member member = model.getMember(table.getSelectedRow());
+           
+            addOrderSheet.loadEmployee(1);
+            addOrderSheet.loadMember(member.id);
+            Dashboard.dashboard.switchTab("addOrderSheet");
+
+        }
+
+    }// GEN-LAST:event_nextButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backButton;
     private javax.swing.JButton createBtn;
-    private javax.swing.JLabel memberRevenueLabel;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JButton nextButton;
+    private javax.swing.JLabel pageName;
     private javax.swing.JScrollPane scrollBar;
     private javax.swing.JTextField searchBar;
     private javax.swing.JComboBox<String> searchComboBox;
     private javax.swing.JTable table;
     private javax.swing.JPanel tablePanel;
+    private javax.swing.JPanel titleBar;
     // End of variables declaration//GEN-END:variables
 }

@@ -19,6 +19,7 @@ import com.group06.bsms.importsheet.AddImportSheet;
 import com.group06.bsms.importsheet.ViewImportSheet;
 import com.group06.bsms.members.AddMember;
 import com.group06.bsms.members.MemberCRUD;
+import com.group06.bsms.order.AddOrderSheet;
 import com.group06.bsms.order.OrderSheetCRUD;
 import com.group06.bsms.order.ViewOrderSheet;
 import com.group06.bsms.utils.SVGHelper;
@@ -55,14 +56,11 @@ public class Dashboard extends javax.swing.JPanel {
     private final ImportSheetCRUD importSheetCRUD = new ImportSheetCRUD(viewImportSheet, addImportSheet);
 
     private final AddMember addMember = new AddMember();
-    
-    private final MemberCRUD memberCRUD = new MemberCRUD(); 
+    private final AddOrderSheet addOrderSheet = new AddOrderSheet();
+    private final MemberCRUD memberCRUD = new MemberCRUD(addMember, addOrderSheet);
     private final ViewOrderSheet viewOrderSheet = new ViewOrderSheet();
-    private final OrderSheetCRUD orderSheetCRUD = new OrderSheetCRUD(viewOrderSheet, null, memberCRUD);
-    
-            
-            
-            
+    private final OrderSheetCRUD orderSheetCRUD = new OrderSheetCRUD(viewOrderSheet, memberCRUD);
+
     private Dashboard() {
         initComponents();
         layout = new CardLayout();
@@ -98,13 +96,13 @@ public class Dashboard extends javax.swing.JPanel {
         main.add(importSheetCRUD, "importSheetCRUD");
         main.add(addImportSheet, "addImportSheet");
         main.add(viewImportSheet, "viewImportSheet");
-       
+
         main.add(memberCRUD, "memberCRUD");
         main.add(addMember, "addMember");
-        
+
         main.add(orderSheetCRUD, "orderSheetCRUD");
         main.add(viewOrderSheet, "viewOrderSheet");
-        
+        main.add(addOrderSheet, "addOrderSheet");
 
     }
 

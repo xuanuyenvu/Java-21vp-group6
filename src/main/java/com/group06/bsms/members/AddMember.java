@@ -2,10 +2,7 @@ package com.group06.bsms.members;
 
 import com.group06.bsms.DB;
 import com.group06.bsms.components.*;
-import com.group06.bsms.authors.*;
-import com.group06.bsms.categories.*;
 import com.group06.bsms.dashboard.Dashboard;
-import com.group06.bsms.publishers.*;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.*;
 import java.awt.event.*;
@@ -244,7 +241,7 @@ public class AddMember extends javax.swing.JPanel {
         addressField.setPreferredSize(new java.awt.Dimension(215, 31));
 
         genderComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        genderComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Male", "Female" }));
+        genderComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Male", "Female", "Other" }));
         genderComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         genderComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
