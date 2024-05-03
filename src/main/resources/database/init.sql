@@ -1572,23 +1572,23 @@ UPDATE BOOK SET maxImportPrice = 9.88 WHERE id = 151 and 9.88 > maximportPrice;
 INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (23, 149, 76, 9.64);
 UPDATE BOOK SET maxImportPrice = 9.64 WHERE id = 149 and 9.64 > maximportPrice;
 UPDATE ImportSheet set totalCost = 5187.8 where id = 23;
-INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (1, 101, 3, '2024-02-20', 0);
+INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (1, 101, 3, '2024-04-30', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES
 (1, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 1 (2022)'), 1, 9),
 (1, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 10 (2024)'), 1, 9.28),
 (1, (SELECT id FROM Book WHERE title = 'Dandadan, Vol. 9 (2024)'), 1, 7.87);
 UPDATE OrderSheet set discountedTotalCost = 26.15 where id = 1;
-INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (2, 2, 3, '2024-01-12', 0);
+INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (2, 2, 3, '2024-03-10', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (2, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 10 (2011)'), 1, 10.02),
 (2, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 11 (2012)'), 1, 7.52),
 (2, (SELECT id FROM Book WHERE title = 'Yotsuba&!, Vol. 12 (2013)'), 1, 6.54);
 UPDATE OrderSheet set discountedTotalCost = 22.876 where id = 2;
-INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (3, 101, 3, '2024-01-12', 0);
+INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (3, 101, 3, '2024-03-20', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (3, (SELECT id FROM Book WHERE title = 'Delicious in Dungeon, Vol. 1 (2017)'), 1, 6.12),
 (3, (SELECT id FROM Book WHERE title = 'Delicious in Dungeon, Vol. 4 (2018)'), 1, 7.80),
 (3, (SELECT id FROM Book WHERE title = 'Delicious in Dungeon, Vol. 5 (2018)'), 1, 11.48);
 UPDATE OrderSheet set discountedTotalCost = 25.4 where id = 3;
-INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (4, 25, 3, '2024-02-20', 0);
+INSERT INTO OrderSheet (id, memberId, employeeInChargeId, orderDate, discountedTotalCost) VALUES (4, 25, 3, '2024-04-20', 0);
 INSERT INTO OrderedBook (orderSheetId, bookId, quantity, pricePerBook) VALUES (4, (SELECT id FROM Book WHERE title = 'Love, Theoretically (2023)'), 1, 10.17),(4, (SELECT id FROM Book WHERE title = 'Love on the Brain (2022)'), 1, 11.35),(4, (SELECT id FROM Book WHERE title = 'The Murder of Roger Ackroyd & The Hollow Bundle (2022)'), 1, 9.63);UPDATE OrderSheet set discountedTotalCost = 29.5925 where id = 4;
 
 SELECT setval('account_id_seq', (SELECT MAX(id) FROM Account) + 1);
