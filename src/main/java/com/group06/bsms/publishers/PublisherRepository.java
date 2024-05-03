@@ -214,7 +214,7 @@ public class PublisherRepository extends Repository<Publisher> implements Publis
 
             String stringQuery = "SELECT * FROM Publisher";
 
-            stringQuery += " WHERE name LIKE ? ";
+            stringQuery += " WHERE LOWER(name) LIKE LOWER(?) ";
 
             for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
                 Integer key = entry.getKey();

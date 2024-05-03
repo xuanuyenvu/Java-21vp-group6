@@ -358,7 +358,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                     + " JOIN Author ON Author.id = book.AuthorId "
                     + " JOIN Publisher ON Publisher.id = Book.publisherId ";
 
-            stringQuery += " WHERE " + searchChoice + " LIKE ? ";
+            stringQuery += " WHERE LOWER(" + searchChoice + ") LIKE LOWER(?) ";
 
             if (authorId > 0) {
                 stringQuery += " AND Book.authorId = ? ";
