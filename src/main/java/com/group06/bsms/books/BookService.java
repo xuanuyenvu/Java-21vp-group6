@@ -57,6 +57,10 @@ public class BookService {
                 throw new Exception("Overview cannot be empty");
             }
 
+            if (updatedBook.salePrice == null && book.salePrice != null) {
+                throw new Exception("Sale price cannot be null. Please enter a sale price.");
+            }
+
             if (book.maxImportPrice != null && updatedBook.salePrice <= 1.1 * book.maxImportPrice) {
                 throw new Exception("Sale price must be greater than 1.1 * import price");
             }

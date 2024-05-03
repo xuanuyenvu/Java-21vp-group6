@@ -63,7 +63,6 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                 stringQuery += sortOrders.get(sortOrder);
             }
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
-                System.err.println(preparedStatement);
                 preparedStatement.setDate(1, startDate);
                 preparedStatement.setDate(2, endDate);
 
@@ -254,7 +253,7 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
 
             String stringQuery = "SELECT * FROM Account";
 
-            stringQuery += " WHERE " + searchChoice + " LIKE ? ";
+            stringQuery += " WHERE LOWER(" + searchChoice + ") LIKE LOWER(?) ";
 
             for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
                 Integer key = entry.getKey();

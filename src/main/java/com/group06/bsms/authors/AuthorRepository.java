@@ -211,7 +211,7 @@ public class AuthorRepository extends Repository<Author> implements AuthorDAO {
 
             String stringQuery = "SELECT * FROM Author";
 
-            stringQuery += " WHERE name LIKE ? ";
+            stringQuery += " WHERE LOWER(name) LIKE LOWER(?) ";
 
             for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
                 Integer key = entry.getKey();

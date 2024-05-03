@@ -124,7 +124,9 @@ public class BookTableModel extends AbstractTableModel {
         if (!editable) {
             editable = true;
         }
-
+        if (row >= books.size()) {
+            return;
+        }
         Book book = books.get(row);
         switch (col) {
             case 0:
@@ -165,6 +167,15 @@ public class BookTableModel extends AbstractTableModel {
                             JOptionPane.showMessageDialog(
                                     Main.getApp(),
                                     "Book must be imported before its sale price can be edited",
+                                    "BSMS Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                            return;
+                        }
+                        if ((Double) val == null) {
+                            JOptionPane.showMessageDialog(
+                                    Main.getApp(),
+                                    "Sale price cannot be null. Please enter a sale price.",
                                     "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE
                             );

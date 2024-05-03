@@ -112,7 +112,7 @@
         <Component class="javax.swing.JButton" name="accounts">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/person.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    28, 28&#xd;&#xa;)" type="code"/>
+              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/employee.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    28, 28&#xd;&#xa;)" type="code"/>
             </Property>
             <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="&apos;1&apos;" type="code"/>
@@ -138,7 +138,7 @@
         <Component class="javax.swing.JButton" name="books">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/book.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    28, 28&#xd;&#xa;)" type="code"/>
+              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/book-stat.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    48, 48&#xd;&#xa;)" type="code"/>
             </Property>
             <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="&apos;2&apos;" type="code"/>
@@ -162,7 +162,7 @@
         <Component class="javax.swing.JButton" name="categories">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/category.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    28, 28&#xd;&#xa;)" type="code"/>
+              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/category-stat.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    48, 48&#xd;&#xa;)" type="code"/>
             </Property>
             <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="&apos;3&apos;" type="code"/>
@@ -188,7 +188,7 @@
         <Component class="javax.swing.JButton" name="authors">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/person.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    28, 28&#xd;&#xa;)" type="code"/>
+              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/author-stat.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    48, 48&#xd;&#xa;)" type="code"/>
             </Property>
             <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="&apos;4&apos;" type="code"/>
@@ -212,7 +212,7 @@
         <Component class="javax.swing.JButton" name="publishers">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/person.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    28, 28&#xd;&#xa;)" type="code"/>
+              <Connection code="SVGHelper.createSVGIconWithFilter(&#xd;&#xa;    &quot;icons/employee-stat.svg&quot;, &#xd;&#xa;    Color.black, Color.black,&#xd;&#xa;    48, 48&#xd;&#xa;)" type="code"/>
             </Property>
             <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="&apos;5&apos;" type="code"/>
