@@ -1,4 +1,4 @@
-package com.group06.bsms.order;
+package com.group06.bsms.ordersheet;
 
 import javax.swing.table.DefaultTableModel;
 

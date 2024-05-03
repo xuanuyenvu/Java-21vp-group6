@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package com.group06.bsms.order;
+package com.group06.bsms.ordersheet;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
@@ -277,7 +277,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
         main = new javax.swing.JPanel();
         scrollBar = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        orderSheetFilter = new com.group06.bsms.order.OrderSheetFilter(this);
+        orderSheetFilter = new com.group06.bsms.ordersheet.OrderSheetFilter(this);
 
         setMinimumSize(new java.awt.Dimension(928, 1503));
         setPreferredSize(new java.awt.Dimension(944, 1503));
@@ -430,7 +430,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
     private javax.swing.JButton filterBtn;
     private javax.swing.JLabel importSheetLabel;
     private javax.swing.JPanel main;
-    private com.group06.bsms.order.OrderSheetFilter orderSheetFilter;
+    private com.group06.bsms.ordersheet.OrderSheetFilter orderSheetFilter;
     private javax.swing.JScrollPane scrollBar;
     private javax.swing.JTextField searchBar;
     private javax.swing.JComboBox<String> searchComboBox;

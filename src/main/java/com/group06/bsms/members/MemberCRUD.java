@@ -4,7 +4,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
 import com.group06.bsms.dashboard.Dashboard;
-import com.group06.bsms.order.AddOrderSheet;
+import com.group06.bsms.ordersheet.AddOrderSheet;
 import com.group06.bsms.utils.SVGHelper;
 
 import java.awt.Color;

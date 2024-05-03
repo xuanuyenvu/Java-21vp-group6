@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package com.group06.bsms.order;
+package com.group06.bsms.ordersheet;
 
 import com.group06.bsms.DB;
 import com.group06.bsms.accounts.Account;
@@ -324,7 +324,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
         totalCostLabel.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         totalCostLabel.setText("Total sale price");
 
-        orderBookTable.setModel(new com.group06.bsms.order.OrderedBooksTableModel());
+        orderBookTable.setModel(new com.group06.bsms.ordersheet.OrderedBooksTableModel());
         orderBookTable.setRowHeight(40);
         orderBookTable.setRowSelectionAllowed(false);
         orderBookScrollPane.setViewportView(orderBookTable);

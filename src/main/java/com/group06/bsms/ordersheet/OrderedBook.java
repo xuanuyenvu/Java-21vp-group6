@@ -1,4 +1,4 @@
-package com.group06.bsms.order;
+package com.group06.bsms.ordersheet;
 
 public class OrderedBook {
     public int orderSheetId;

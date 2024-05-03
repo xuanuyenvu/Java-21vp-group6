@@ -206,9 +206,9 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="com.group06.bsms.order.OrderSheetFilter" name="orderSheetFilter">
+        <Component class="com.group06.bsms.ordersheet.OrderSheetFilter" name="orderSheetFilter">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.group06.bsms.order.OrderSheetFilter(this)"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.group06.bsms.ordersheet.OrderSheetFilter(this)"/>
             <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="OrderSheetCRUD_orderSheetFilter"/>
           </AuxValues>
           <Constraints>
