@@ -179,7 +179,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             // Insert into Book table
             try (PreparedStatement insertBookQuery = db.prepareStatement(
                     "INSERT INTO Book (authorId, publisherId, title, pageCount, publishDate, dimension, translatorName, overview, isHidden, hiddenParentCount, quantity, salePrice) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
+                            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, null)",
                     Statement.RETURN_GENERATED_KEYS)) {
                 insertBookQuery.setInt(1, book.authorId);
                 insertBookQuery.setInt(2, book.publisherId);
@@ -206,7 +206,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                 }
                 try (PreparedStatement insertCategoryBookQuery = db.prepareStatement(
                         "INSERT INTO BookCategory (bookId, categoryId) "
-                        + "VALUES (?, ?)")) {
+                                + "VALUES (?, ?)")) {
                     for (Category category : book.categories) {
                         insertCategoryBookQuery.setInt(1, bookId);
                         insertCategoryBookQuery.setInt(2, category.id);
@@ -473,9 +473,9 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
             try (var query = db.prepareStatement(
                     "SELECT *\n"
-                    + "FROM Book B\n"
-                    + "ORDER BY B.publishDate DESC\n"
-                    + "LIMIT 20;")) {
+                            + "FROM Book B\n"
+                            + "ORDER BY B.publishDate DESC\n"
+                            + "LIMIT 20;")) {
                 try (ResultSet resultSet = query.executeQuery()) {
                     while (resultSet.next()) {
                         result.add(populate(resultSet));
@@ -504,11 +504,11 @@ public class BookRepository extends Repository<Book> implements BookDAO {
             db.setAutoCommit(false);
             try (var query = db.prepareStatement(
                     "SELECT B.*, COALESCE(SUM(OB.quantity), 0) AS total_quantity_ordered\n"
-                    + "FROM Book B\n"
-                    + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
-                    + "GROUP BY B.id\n"
-                    + "ORDER BY total_quantity_ordered DESC\n"
-                    + "LIMIT 20;")) {
+                            + "FROM Book B\n"
+                            + "LEFT JOIN OrderedBook OB ON OB.bookId = B.id\n"
+                            + "GROUP BY B.id\n"
+                            + "ORDER BY total_quantity_ordered DESC\n"
+                            + "LIMIT 20;")) {
                 try (ResultSet resultSet = query.executeQuery()) {
                     while (resultSet.next()) {
                         result.add(populate(resultSet));
@@ -560,7 +560,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
     }
 
     @Override
-    public List<Book> searchBooksByTitle(String title) throws Exception {
+    public List<Book> getBooksByTitle(String title) throws Exception {
         try {
             Map<String, Object> searchParams = new HashMap<>();
             searchParams.put("title", title);
@@ -574,6 +574,34 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         }
 
     }
+
+    public List<Book> getAvailableBooksByTitle(String title) throws Exception {
+        List<Book> result = new ArrayList<>();
+        try {
+            db.setAutoCommit(false);
+
+            try (var query = db.prepareStatement(
+                    "SELECT * FROM BOOK WHERE isHidden = FALSE AND hiddenParentCount = 0 AND Book.title ILIKE ? || '%'")) {
+                        query.setString(1, title);
+                try (ResultSet resultSet = query.executeQuery()) {
+                    while (resultSet.next()) {
+                        Book book = new Book();
+                        book.id = resultSet.getInt("id");
+                        book.title = resultSet.getString("title");
+                        book.salePrice = resultSet.getDouble("salePrice");
+                        result.add(book);
+                    }
+                }
+                db.commit();
+
+            }
+            return result;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
     @Override
     public List<Book> selectTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
             Date startDate, Date endDate) throws Exception {
@@ -581,21 +609,21 @@ public class BookRepository extends Repository<Book> implements BookDAO {
         try {
             db.setAutoCommit(false);
             String stringQuery = """
-                                 SELECT top_10.*
-                                 FROM
-                                     (SELECT Book.*,
-                                      COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
-                                 	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
-                                      FROM Book
-                                      LEFT JOIN OrderedBook ON OrderedBook.bookid = Book.id
-                                      LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id
-                                      WHERE orderDate BETWEEN ? AND ?
-                                      GROUP BY Book.id
-                                      ORDER BY revenue DESC
-                                      LIMIT 10) AS top_10
-                                 JOIN Author ON Author.id = top_10.authorId
-                                 JOIN Publisher ON Publisher.id = top_10.publisherId
-                                 """;
+                    SELECT top_10.*
+                    FROM
+                        (SELECT Book.*,
+                         COALESCE(SUM(OrderedBook.pricePerbook * OrderedBook.quantity), 0) AS revenue,
+                    	 COALESCE(SUM(OrderedBook.quantity), 0) AS saleQuantity
+                         FROM Book
+                         LEFT JOIN OrderedBook ON OrderedBook.bookid = Book.id
+                         LEFT JOIN OrderSheet ON OrderedBook.orderSheetId = OrderSheet.id
+                         WHERE orderDate BETWEEN ? AND ?
+                         GROUP BY Book.id
+                         ORDER BY revenue DESC
+                         LIMIT 10) AS top_10
+                    JOIN Author ON Author.id = top_10.authorId
+                    JOIN Publisher ON Publisher.id = top_10.publisherId
+                    """;
 
             for (Map.Entry<Integer, SortOrder> entry : sortAttributeAndOrder.entrySet()) {
                 Integer attribute = entry.getKey();
@@ -627,8 +655,7 @@ public class BookRepository extends Repository<Book> implements BookDAO {
                         var book = populate(resultSet);
                         book.revenue = new Revenue(
                                 resultSet.getDouble("revenue"),
-                                resultSet.getInt("saleQuantity")
-                        );
+                                resultSet.getInt("saleQuantity"));
                         result.add(book);
                     }
                 }

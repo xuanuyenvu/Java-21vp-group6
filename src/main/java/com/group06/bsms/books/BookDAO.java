@@ -39,7 +39,9 @@ public interface BookDAO {
 
         List<Book> getOutOfStockBooks() throws Exception;
 
-        List<Book> searchBooksByTitle(String title) throws Exception;
+        List<Book> getBooksByTitle(String title) throws Exception;
+
+        List<Book> getAvailableBooksByTitle(String title) throws Exception;
 
         List<Book> selectTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
                         Date startDate, Date endDate) throws Exception;

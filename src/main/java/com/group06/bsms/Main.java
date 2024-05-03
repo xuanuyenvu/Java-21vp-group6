@@ -8,11 +8,6 @@ import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.group06.bsms.auth.Login;
 import com.group06.bsms.dashboard.AdminDashboard;
 import com.group06.bsms.dashboard.Dashboard;
-import com.group06.bsms.importsheet.AddImportSheet;
-import com.group06.bsms.importsheet.ImportSheetCRUD;
-import com.group06.bsms.importsheet.ImportSheetFilter;
-import com.group06.bsms.importsheet.ViewImportSheet;
-import com.group06.bsms.members.MemberRevenue;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -48,10 +43,10 @@ public class Main extends JFrame {
         initComponents();
         layout = new CardLayout();
         panel.setLayout(layout);
-        panel.add(new Login(), "login");
-        panel.add(Dashboard.dashboard, "dashboard");
-        panel.add(AdminDashboard.dashboard, "adminDashboard");
-
+         panel.add(new Login(), "login");
+         panel.add(Dashboard.dashboard, "dashboard");
+         panel.add(AdminDashboard.dashboard, "adminDashboard");
+        
         if (INDEV) {
             setSize(BREAK_POINT * 2, BREAK_POINT);
         }
