@@ -226,7 +226,7 @@ public class Dashboard extends javax.swing.JPanel {
             28, 28
         ));
         importSheets.setMnemonic('4');
-        importSheets.setToolTipText("Categories");
+        importSheets.setToolTipText("Import sheets");
         importSheets.setFocusable(false);
         importSheets.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         importSheets.setMaximumSize(new java.awt.Dimension(58, 58));
@@ -246,7 +246,7 @@ public class Dashboard extends javax.swing.JPanel {
             28, 28
         ));
         orderSheet.setMnemonic('4');
-        orderSheet.setToolTipText("Categories");
+        orderSheet.setToolTipText("Order sheets");
         orderSheet.setFocusable(false);
         orderSheet.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         orderSheet.setMaximumSize(new java.awt.Dimension(58, 58));
