@@ -114,7 +114,7 @@ public class AdminDashboard extends javax.swing.JPanel {
         jToolBar1.add(filler1);
 
         accounts.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/person.svg", 
+            "icons/employee.svg", 
             Color.black, Color.black,
             28, 28
         ));
@@ -134,9 +134,9 @@ public class AdminDashboard extends javax.swing.JPanel {
         jToolBar1.add(accounts);
 
         books.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/book.svg", 
+            "icons/book-stat.svg", 
             Color.black, Color.black,
-            28, 28
+            48, 48
         ));
         books.setMnemonic('2');
         books.setToolTipText("Books");
@@ -152,9 +152,9 @@ public class AdminDashboard extends javax.swing.JPanel {
         jToolBar1.add(books);
 
         categories.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/category.svg", 
+            "icons/category-stat.svg", 
             Color.black, Color.black,
-            28, 28
+            48, 48
         ));
         categories.setMnemonic('3');
         categories.setToolTipText("Categories");
@@ -172,9 +172,9 @@ public class AdminDashboard extends javax.swing.JPanel {
         jToolBar1.add(categories);
 
         authors.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/person.svg", 
+            "icons/author-stat.svg", 
             Color.black, Color.black,
-            28, 28
+            48, 48
         ));
         authors.setMnemonic('4');
         authors.setToolTipText("Customer");
@@ -190,9 +190,9 @@ public class AdminDashboard extends javax.swing.JPanel {
         jToolBar1.add(authors);
 
         publishers.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/person.svg", 
+            "icons/employee-stat.svg", 
             Color.black, Color.black,
-            28, 28
+            48, 48
         ));
         publishers.setMnemonic('5');
         publishers.setToolTipText("Employees");
