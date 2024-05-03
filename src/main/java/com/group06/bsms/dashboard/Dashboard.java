@@ -402,8 +402,8 @@ public class Dashboard extends javax.swing.JPanel {
         orderSheetCRUD.reloadOrderSheets();
     }//GEN-LAST:event_orderSheetActionPerformed
 
-    private java.awt.CardLayout layout;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.CardLayout layout;
     private javax.swing.JButton account;
     private javax.swing.JButton authors;
     private javax.swing.JButton books;

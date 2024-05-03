@@ -211,6 +211,12 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
             // bookCRUD.loadAccountInto();
         }
     }
+    
+    public void reloadTable(){
+        searchBar.setText("");
+        searchComboBox.setSelectedIndex(0);
+        reloadOrderSheets();
+    }
 
     public void loadOrderSheetsIntoTable() {
         var searchString = searchBar == null || searchBar.getText() == null

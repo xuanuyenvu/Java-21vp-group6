@@ -3,6 +3,7 @@ package com.group06.bsms.ordersheet;
 import com.group06.bsms.components.DatePickerPanel;
 import java.time.LocalDate;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 public class OrderSheetFilter extends javax.swing.JPanel {
 
@@ -30,7 +31,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         this.importSheetCRUD = importSheetCRUD;
 
         initComponents();
-        isVisibleDatePicker(false);
+        isVisibleDatePicker(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -46,6 +47,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         endDatePicker = new com.group06.bsms.components.DatePickerPanel();
         endDateLabel = new javax.swing.JLabel();
         confimrBtn = new javax.swing.JButton();
+        removeAllBtn = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -63,7 +65,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         label.setDisplayedMnemonicIndex(1);
 
         durationDaysComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Week", "by Month", "Date to Date" }));
+        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Date to Date", "by Week", "by Month" }));
         durationDaysComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         durationDaysComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -97,6 +99,19 @@ public class OrderSheetFilter extends javax.swing.JPanel {
             }
         });
 
+        removeAllBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        removeAllBtn.setForeground(UIManager.getColor("mutedColor")
+        );
+        removeAllBtn.setMnemonic(java.awt.event.KeyEvent.VK_L);
+        removeAllBtn.setText("Clear");
+        removeAllBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        removeAllBtn.setDisplayedMnemonicIndex(1);
+        removeAllBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeAllBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout groupFieldPanel1Layout = new javax.swing.GroupLayout(groupFieldPanel1);
         groupFieldPanel1.setLayout(groupFieldPanel1Layout);
         groupFieldPanel1Layout.setHorizontalGroup(
@@ -108,10 +123,13 @@ public class OrderSheetFilter extends javax.swing.JPanel {
                         .addComponent(label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(553, 553, 553))
                     .addGroup(groupFieldPanel1Layout.createSequentialGroup()
-                        .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(endDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(endDateLabel)
-                            .addComponent(confimrBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanel1Layout.createSequentialGroup()
+                                .addComponent(removeAllBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(confimrBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -142,7 +160,9 @@ public class OrderSheetFilter extends javax.swing.JPanel {
                         .addGap(3, 3, 3)
                         .addComponent(endDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(confimrBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(confimrBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(removeAllBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
 
@@ -200,6 +220,11 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_confimrBtnActionPerformed
 
+    private void removeAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllBtnActionPerformed
+
+        importSheetCRUD.reloadTable();
+    }//GEN-LAST:event_removeAllBtnActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton confimrBtn;
@@ -209,6 +234,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
     private javax.swing.JPanel groupFieldPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel label;
+    private javax.swing.JButton removeAllBtn;
     private javax.swing.JLabel startDateLabel;
     private com.group06.bsms.components.DatePickerPanel startDatePicker;
     // End of variables declaration//GEN-END:variables

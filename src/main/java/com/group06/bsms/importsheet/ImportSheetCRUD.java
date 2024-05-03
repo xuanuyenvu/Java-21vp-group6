@@ -91,7 +91,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         }
     }
 
-    public void reloadTables() {
+    public void reloadTable() {
         searchBar.setText("");
         searchComboBox.setSelectedIndex(0);
         reloadImportSheets();

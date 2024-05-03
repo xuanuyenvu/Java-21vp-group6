@@ -223,7 +223,7 @@ public class ImportSheetFilter extends javax.swing.JPanel {
 
     private void removeAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllBtnActionPerformed
 
-        importSheetCRUD.reloadTables();
+        importSheetCRUD.reloadTable();
     }//GEN-LAST:event_removeAllBtnActionPerformed
 
 
