@@ -40,9 +40,7 @@ public class AddMember extends javax.swing.JPanel {
         initComponents();
         hiddenPropLabel.setVisible(false);
 
-        dobPicker.setDate(new Date());
-        var sm = new SimpleDateFormat("dd/MM/yyyy");
-        dobPicker.setText(sm.format(dobPicker.getDate()));
+       
 
         CustomLabelInForm.setColoredText(phoneLabel);
         CustomLabelInForm.setColoredText(nameLabel);
@@ -346,9 +344,8 @@ public class AddMember extends javax.swing.JPanel {
         nameField.setText("");
         emailField.setText("");
         addressField.setText("");
-        dobPicker.setDate(new Date());
-        var sm = new SimpleDateFormat("dd/MM/yyyy");
-        dobPicker.setText(sm.format(dobPicker.getDate()));
+        
+        dobPicker.setText("");
 
     }// GEN-LAST:event_cancelButtonActionPerformed
 

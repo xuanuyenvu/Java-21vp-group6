@@ -642,6 +642,14 @@ public class AddOrderSheet extends javax.swing.JPanel {
                     orderSheetService.insertOrderSheet(orderSheet);
                     JOptionPane.showMessageDialog(null, "Order sheet added successfully.", "BSMS Information",
                             JOptionPane.INFORMATION_MESSAGE);
+                            totalCostField.setText("");
+                            while (model.getRowCount() > 0) {
+                                model.removeRow(0);
+                            }
+                            model.addRow(new Object[model.getColumnCount()]);
+                            orderBookTable.requestFocusInWindow();
+                            orderBookTable.changeSelection(model.getRowCount() - 1, 0, false, false);
+                            
                     
                 } catch (Exception e) {
                    
