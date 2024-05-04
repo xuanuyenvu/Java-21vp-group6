@@ -62,7 +62,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
 
     public void loadImportSheet(int id) {
         try {
-            title.setText("IMPORT SHEET: " + id);
+            
             importSheet = importSheetService.selectImportSheet(id);
             employeeField.setText(importSheet.employee.phone);
             SimpleDateFormat sdfTarget = new SimpleDateFormat("dd/MM/yyyy");

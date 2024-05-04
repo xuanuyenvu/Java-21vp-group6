@@ -52,7 +52,7 @@ public class ViewOrderSheet extends javax.swing.JPanel {
 
     public void loadOrderSheet(int id) {
         try {
-            title.setText("Order Sheet: " + id);
+            
             orderSheet = orderSheetService.selectOrderSheet(id);
             employeeField.setText(orderSheet.employee.phone);
             memberField.setText(orderSheet.member.phone);
