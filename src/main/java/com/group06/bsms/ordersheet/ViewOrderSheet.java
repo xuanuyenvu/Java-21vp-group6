@@ -6,6 +6,7 @@ package com.group06.bsms.ordersheet;
 
 import com.group06.bsms.DB;
 import com.group06.bsms.accounts.AccountRepository;
+import com.group06.bsms.books.BookRepository;
 import javax.swing.table.*;
 import com.group06.bsms.components.CustomTableCellRenderer;
 import com.group06.bsms.dashboard.Dashboard;
@@ -31,9 +32,9 @@ public class ViewOrderSheet extends javax.swing.JPanel {
 
         this(
                 new OrderSheetService(
-                        new OrderSheetRepository(DB.db(),
-                                new AccountRepository(DB.db()),
-                                new MemberRepository(DB.db()))));
+                        new OrderSheetRepository(
+                                DB.db(), new AccountRepository(DB.db()),
+                                new MemberRepository(DB.db()), new BookRepository(DB.db()))));
 
     }
 

@@ -31,6 +31,7 @@ import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
+import com.group06.bsms.books.BookRepository;
 
 public class OrderSheetCRUD extends javax.swing.JPanel {
 
@@ -51,8 +52,10 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
 
     public OrderSheetCRUD() {
         this(null, null, null,
-                new OrderSheetService(new OrderSheetRepository(DB.db(), new AccountRepository(DB.db()),
-                        new MemberRepository(DB.db()))));
+                new OrderSheetService(
+                        new OrderSheetRepository(
+                                DB.db(), new AccountRepository(DB.db()),
+                                new MemberRepository(DB.db()), new BookRepository(DB.db()))));
 
     }
 
@@ -64,7 +67,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
                 new OrderSheetService(
                         new OrderSheetRepository(
                                 DB.db(), new AccountRepository(DB.db()),
-                                new MemberRepository(DB.db()))));
+                                new MemberRepository(DB.db()), new BookRepository(DB.db()))));
     }
 
     public OrderSheetCRUD(
@@ -160,6 +163,19 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
             }
         });
 
+        table.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int column = table.columnAtPoint(e.getPoint());
+
+                if (column == 4) {
+                    table.editCellAt(row, column);
+                    table.setRowSelectionInterval(row, row);
+                }
+            }
+        });
+
         scrollBar.getVerticalScrollBar().addAdjustmentListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 // Check if scrolled to the bottom
@@ -246,7 +262,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
                 List<OrderSheet> orderSheets = orderSheetService.searchSortFilterOrderSheets(
                         currentOffset, limit, columnSortOrders,
                         searchString, searchChoiceValue);
-                
+
                 if (currentOffset > 0) {
                     model.loadNewOrderSheets(orderSheets);
                 } else {

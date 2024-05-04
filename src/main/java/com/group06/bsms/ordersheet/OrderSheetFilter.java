@@ -47,7 +47,6 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         endDatePicker = new com.group06.bsms.components.DatePickerPanel();
         endDateLabel = new javax.swing.JLabel();
         confimrBtn = new javax.swing.JButton();
-        removeAllBtn = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -65,7 +64,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         label.setDisplayedMnemonicIndex(1);
 
         durationDaysComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Date to Date", "by Week", "by Month" }));
+        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Date to Date", "choose all", "by Week", "by Month" }));
         durationDaysComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         durationDaysComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -99,19 +98,6 @@ public class OrderSheetFilter extends javax.swing.JPanel {
             }
         });
 
-        removeAllBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        removeAllBtn.setForeground(UIManager.getColor("mutedColor")
-        );
-        removeAllBtn.setMnemonic(java.awt.event.KeyEvent.VK_L);
-        removeAllBtn.setText("Clear");
-        removeAllBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        removeAllBtn.setDisplayedMnemonicIndex(1);
-        removeAllBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeAllBtnActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout groupFieldPanel1Layout = new javax.swing.GroupLayout(groupFieldPanel1);
         groupFieldPanel1.setLayout(groupFieldPanel1Layout);
         groupFieldPanel1Layout.setHorizontalGroup(
@@ -125,9 +111,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
                     .addGroup(groupFieldPanel1Layout.createSequentialGroup()
                         .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(groupFieldPanel1Layout.createSequentialGroup()
-                                .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(removeAllBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(endDateLabel))
+                                .addComponent(endDateLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(confimrBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(endDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -161,9 +145,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
                         .addGap(3, 3, 3)
                         .addComponent(endDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(confimrBtn)
-                            .addComponent(removeAllBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(confimrBtn)))
                 .addContainerGap(35, Short.MAX_VALUE))
         );
 
@@ -203,12 +185,18 @@ public class OrderSheetFilter extends javax.swing.JPanel {
                 isVisibleDatePicker(true);
                 previousComboBoxSelection = "by Date";
             }
+            case "choose all"->{
+                importSheetCRUD.reloadTable();
+                isVisibleDatePicker(false);
+                previousComboBoxSelection = "choose all";
+            }
             default -> {
             }
         }
     }//GEN-LAST:event_durationDaysComboBoxActionPerformed
 
     private void confimrBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confimrBtnActionPerformed
+        
         LocalDate start = startDatePicker.getDateSQL().toLocalDate();
         LocalDate end = endDatePicker.getDateSQL().toLocalDate();
 
@@ -221,11 +209,6 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_confimrBtnActionPerformed
 
-    private void removeAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllBtnActionPerformed
-
-        importSheetCRUD.reloadTable();
-    }//GEN-LAST:event_removeAllBtnActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton confimrBtn;
     private javax.swing.JComboBox<String> durationDaysComboBox;
@@ -234,7 +217,6 @@ public class OrderSheetFilter extends javax.swing.JPanel {
     private javax.swing.JPanel groupFieldPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel label;
-    private javax.swing.JButton removeAllBtn;
     private javax.swing.JLabel startDateLabel;
     private com.group06.bsms.components.DatePickerPanel startDatePicker;
     // End of variables declaration//GEN-END:variables

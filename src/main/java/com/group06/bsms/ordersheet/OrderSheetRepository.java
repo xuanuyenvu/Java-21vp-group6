@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.ArrayList;
 import com.group06.bsms.Repository;
 import com.group06.bsms.accounts.AccountRepository;
+import com.group06.bsms.books.Book;
+import com.group06.bsms.books.BookRepository;
 import com.group06.bsms.members.MemberRepository;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,12 +22,14 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
+    private final BookRepository bookRepository;
 
     public OrderSheetRepository(Connection db, AccountRepository accountRepository,
-            MemberRepository memberRepository) {
+            MemberRepository memberRepository, BookRepository bookRepository) {
         super(db, OrderSheet.class);
         this.accountRepository = accountRepository;
         this.memberRepository = memberRepository;
+        this.bookRepository = bookRepository;
 
     }
 
@@ -61,8 +65,15 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                     throw new SQLException("Insertion failed, no ID obtained.");
                 }
 
+                for (var orderedBook : orderSheet.orderedBooks) {
+                    var book = bookRepository.selectById(orderedBook.bookId);
+                    if (book.quantity - orderedBook.quantity < 0) {
+                        throw new Exception("We now only have " + book.quantity + " Book: " + book.title);
+                    } else {
+                        book.quantity = book.quantity - orderedBook.quantity;
+                    }
+                }
                 insertOrderedBooksList(orderSheet.id, orderSheet.orderedBooks);
-
             }
         } catch (Exception e) {
             db.rollback();
@@ -90,9 +101,6 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                     orderedBookStatement.addBatch();
                 }
                 orderedBookResults = orderedBookStatement.executeBatch();
-
-                db.commit();
-
                 for (int orderedBookResult : orderedBookResults) {
                     if (orderedBookResult == PreparedStatement.EXECUTE_FAILED) {
                         throw new Exception("Cannot insert ordered books");
@@ -100,6 +108,25 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                 }
 
             }
+            String minusQuery = "UPDATE Book SET quantity = ? WHERE id = ?";
+            try (var orderedBookStatement = db.prepareStatement(minusQuery)) {
+                for (OrderedBook orderedBook : OrderedBooks) {
+                    Book book = bookRepository.selectById(orderedBook.bookId);
+                    orderedBookStatement.setInt(1, book.quantity - orderedBook.quantity);
+                    orderedBookStatement.setInt(2, book.id);
+                    orderedBookStatement.addBatch();
+                }
+                orderedBookResults = orderedBookStatement.executeBatch();
+
+                for (int orderedBookResult : orderedBookResults) {
+                    if (orderedBookResult == PreparedStatement.EXECUTE_FAILED) {
+                        throw new Exception("Cannot minus books");
+                    }
+                }
+
+            }
+
+            db.commit();
         } catch (Exception e) {
             db.rollback();
             throw e;
@@ -136,7 +163,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
             orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
             orderSheet.member = memberRepository.selectById(orderSheet.memberId);
             db.commit();
-            
+
             return orderSheet;
 
         } catch (Exception e) {
@@ -234,7 +261,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                                 resultSet.getDouble("discountedTotalCost"), null);
                         OrderSheet.employee = accountRepository.selectAccount(OrderSheet.employeeInChargeId);
                         OrderSheet.member = memberRepository.selectMember(OrderSheet.memberId);
-                        
+
                         result.add(OrderSheet);
                     }
                 }
@@ -299,7 +326,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
                 preparedStatement.setDate(1, startDate);
                 preparedStatement.setDate(2, endDate);
-              
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         OrderSheet orderSheet = new OrderSheet(resultSet.getInt("id"),
@@ -307,15 +334,15 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                                 resultSet.getInt("memberId"),
                                 resultSet.getDate("orderDate"),
                                 resultSet.getDouble("discountedTotalCost"), null);
-                        orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);      
+                        orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
                         orderSheet.member = memberRepository.selectMember(orderSheet.memberId);
-                        
+
                         result.add(orderSheet);
                     }
                 }
-                
+
             }
-            
+
             db.commit();
             return result;
         } catch (Exception e) {

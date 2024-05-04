@@ -70,8 +70,9 @@ public class AddOrderSheet extends javax.swing.JPanel {
                 new AuthorService(new AuthorRepository(DB.db())),
                 new PublisherService(new PublisherRepository(DB.db()))),
                 new OrderSheetService(
-                        new OrderSheetRepository(DB.db(), new AccountRepository(DB.db()),
-                                new MemberRepository(DB.db()))),
+                        new OrderSheetRepository(
+                                DB.db(), new AccountRepository(DB.db()),
+                                new MemberRepository(DB.db()), new BookRepository(DB.db()))),
                 new AccountService(new AccountRepository(DB.db())),
                 new MemberService(new MemberRepository(DB.db())));
 
@@ -215,7 +216,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
             this.employee = accountService.selectAccount(id);
             employeeField.setText(employee.name);
         } catch (Exception e) {
-            e.printStackTrace();
+           
         }
         if (employee != null) {
             employeeField.setText(employee.phone);
@@ -655,7 +656,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
                     
                 } catch (Exception e) {
 
-                    JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(),
+                    JOptionPane.showMessageDialog(null,  e.getMessage(),
                             "BSMS Error",
                             JOptionPane.ERROR_MESSAGE);
 
@@ -729,7 +730,6 @@ public class AddOrderSheet extends javax.swing.JPanel {
                         Book selectedBook = bookMap.get(selectedBookTitle);
                         if (selectedBook != null) {
                             int row = orderBookTable.getEditingRow();
-
                             orderBookTable.setValueAt(selectedBook.salePrice.toString(), row, 2);
                             DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
                             model.addRow(new Object[model.getColumnCount()]);
