@@ -39,6 +39,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
     private ImportSheetTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
+    private java.sql.Date startDate = new java.sql.Date(75, 3, 30);
+    private java.sql.Date endDate = java.sql.Date.valueOf(LocalDate.now());
 
     public void setCurrentOffset(int currentOffset) {
         this.currentOffset = currentOffset;
@@ -229,6 +231,11 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             // bookCRUD.loadAccountInto();
         }
     }
+    
+    public void setDates(Date startDate, Date endDate){
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
     public void loadImportSheetsIntoTable() {
         var searchString = searchBar == null || searchBar.getText() == null
@@ -248,7 +255,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             do {
                 List<ImportSheet> importSheets = importSheetService.searchSortFilterImportSheets(
                         currentOffset, limit, columnSortOrders,
-                        searchString, searchChoiceValue);
+                        searchString, searchChoiceValue, startDate, endDate
+                );
 
                 if (currentOffset > 0) {
                     model.loadNewImportSheets(importSheets);

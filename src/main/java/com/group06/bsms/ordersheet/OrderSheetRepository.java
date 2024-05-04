@@ -176,15 +176,15 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
     @Override
     public List<OrderSheet> selectSearchSortFilterOrderSheets(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
-            String searchString, String searchChoice) throws Exception {
+            String searchString, String searchChoice, java.sql.Date startDate, java.sql.Date endDate) throws Exception {
         List<OrderSheet> result = new ArrayList<>();
 
         try {
             db.setAutoCommit(false);
 
-            String stringQuery = "SELECT OrderSheet.id, OrderSheet.employeeInChargeId, OrderSheet.memberId, OrderSheet.discountedTotalCost, OrderSheet.orderDate, Account.phone, Member.phone FROM OrderSheet JOIN Account ON Account.id = OrderSheet.employeeInChargeId JOIN Member ON Member.id = OrderSheet.memberId";
+            String stringQuery = "SELECT OrderSheet.id, OrderSheet.employeeInChargeId, OrderSheet.memberId, OrderSheet.discountedTotalCost, OrderSheet.orderDate, Account.phone, Member.phone FROM OrderSheet JOIN Account ON Account.id = OrderSheet.employeeInChargeId JOIN Member ON Member.id = OrderSheet.memberId WHERE OrderSheet.orderDate BETWEEN ? AND ?";
 
-            stringQuery += " WHERE " + searchChoice
+            stringQuery += " AND " + searchChoice
                     + ((searchChoice.trim().equals("Account.phone") || searchChoice.trim().equals("Member.phone"))
                     ? " LIKE ?"
                     : " = ? ");
@@ -219,6 +219,8 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
                 int parameterIndex = 1;
+                preparedStatement.setDate(parameterIndex++, startDate);
+                preparedStatement.setDate(parameterIndex++, endDate);
 
                 if (searchChoice.trim().equals("OrderSheet.orderDate")) {
                     if (searchString == null || searchString.isEmpty()) {

@@ -176,6 +176,7 @@ public class ImportSheetFilter extends javax.swing.JPanel {
                 startDate = LocalDate.now().minusDays(7);
                 isVisibleDatePicker(false);
                 previousComboBoxSelection = "By Week";
+                importSheetCRUD.setDates(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
                 importSheetCRUD.loadImportSheetsIntoTableByFilter(startDate, endDate);
             }
             case "By Month" -> {
@@ -183,15 +184,22 @@ public class ImportSheetFilter extends javax.swing.JPanel {
                 startDate = LocalDate.now().minusDays(30);
                 isVisibleDatePicker(false);
                 previousComboBoxSelection = "By Month";
+                
+                importSheetCRUD.setDates(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
                 importSheetCRUD.loadImportSheetsIntoTableByFilter(startDate, endDate);
             }
             case "Date to Date" -> {
                 isVisibleDatePicker(true);
+                
+                importSheetCRUD.setDates(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
                 previousComboBoxSelection = "Date to Date";
             }
             case "All"->{
                 importSheetCRUD.reloadTable();
                 isVisibleDatePicker(false);
+                endDate = LocalDate.now();
+                startDate = new java.sql.Date(75,3,30).toLocalDate();
+                importSheetCRUD.setDates(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
                 previousComboBoxSelection = "All";
             }
             default -> {

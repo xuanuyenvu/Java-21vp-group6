@@ -753,10 +753,13 @@ public class AddOrderSheet extends javax.swing.JPanel {
                 public void actionPerformed(ActionEvent e) {
 
                     String selectedBookTitle = (String) comboBox.getSelectedItem();
+                    
                     if (selectedBookTitle != null) {
                         Book selectedBook = bookMap.get(selectedBookTitle);
+                        
                         if (selectedBook != null) {
                             int row = orderBookTable.getEditingRow();
+                            if(row == -1) return;
                             orderBookTable.setValueAt(selectedBook.salePrice.toString(), row, 2);
                             DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
                             model.addRow(new Object[model.getColumnCount()]);

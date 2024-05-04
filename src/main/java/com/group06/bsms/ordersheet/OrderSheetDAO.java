@@ -13,7 +13,7 @@ public interface OrderSheetDAO {
 
         public List<OrderSheet> selectSearchSortFilterOrderSheets(
                         int offset, int limit, Map<Integer, SortOrder> sortValue,
-                        String searchString, String searchChoice) throws Exception;
+                        String searchString, String searchChoice, Date startDate, Date endDate) throws Exception;
 
         List<OrderSheet> selectOrderSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
                         Date startDate, Date endDate) throws Exception;

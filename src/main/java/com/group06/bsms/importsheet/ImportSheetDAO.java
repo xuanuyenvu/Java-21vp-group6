@@ -7,15 +7,14 @@ import javax.swing.SortOrder;
 
 public interface ImportSheetDAO {
 
-    void insertImportSheet(ImportSheet importSheet) throws Exception;
+        void insertImportSheet(ImportSheet importSheet) throws Exception;
 
-    ImportSheet selectImportSheet(int id) throws Exception;
+        ImportSheet selectImportSheet(int id) throws Exception;
 
-    public List<ImportSheet> selectSearchSortFilterImportSheets(
-            int offset, int limit, Map<Integer, SortOrder> sortValue,
-            String searchString, String searchChoice
-    ) throws Exception;
+        List<ImportSheet> selectSearchSortFilterImportSheets(
+                        int offset, int limit, Map<Integer, SortOrder> sortValue,
+                        String searchString, String searchChoice, Date startDate, Date endDate) throws Exception;
 
-    List<ImportSheet> selectTop10ImportSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
+        List<ImportSheet> selectTop10ImportSheetsWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
                         Date startDate, Date endDate) throws Exception;
 }

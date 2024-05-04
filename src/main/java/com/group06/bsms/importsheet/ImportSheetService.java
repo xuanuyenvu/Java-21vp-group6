@@ -31,11 +31,11 @@ public class ImportSheetService {
 
     public List<ImportSheet> searchSortFilterImportSheets(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
-            String searchString, String searchChoice
+            String searchString, String searchChoice, Date startDate, Date endDate
     ) throws Exception {
 
         List<ImportSheet> importSheets = importSheetDAO.selectSearchSortFilterImportSheets(
-                offset, limit, sortValue, searchString, searchChoice
+                offset, limit, sortValue, searchString, searchChoice, startDate, endDate
         );
 
         return importSheets;

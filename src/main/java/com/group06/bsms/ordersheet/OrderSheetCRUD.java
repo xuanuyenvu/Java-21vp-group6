@@ -42,6 +42,9 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
     private OrderSheetTableModel model;
     private Map<Integer, SortOrder> columnSortOrders = new HashMap<>();
     private int currentOffset = 0;
+       private java.sql.Date startDate = new java.sql.Date(75, 3, 30);
+    private java.sql.Date endDate = java.sql.Date.valueOf(LocalDate.now());
+
 
     public void setCurrentOffset(int currentOffset) {
         this.currentOffset = currentOffset;
@@ -240,7 +243,10 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
         searchComboBox.setSelectedIndex(0);
         reloadOrderSheets();
     }
-
+    public void setDates(Date startDate, Date endDate){
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
     public void loadOrderSheetsIntoTable() {
         var searchString = searchBar == null || searchBar.getText() == null
                 ? ""
@@ -261,7 +267,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
             do {
                 List<OrderSheet> orderSheets = orderSheetService.searchSortFilterOrderSheets(
                         currentOffset, limit, columnSortOrders,
-                        searchString, searchChoiceValue);
+                        searchString, searchChoiceValue, startDate, endDate);
 
                 if (currentOffset > 0) {
                     model.loadNewOrderSheets(orderSheets);

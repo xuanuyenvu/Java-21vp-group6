@@ -31,10 +31,10 @@ public class OrderSheetService {
 
     public List<OrderSheet> searchSortFilterOrderSheets(
             int offset, int limit, Map<Integer, SortOrder> sortValue,
-            String searchString, String searchChoice) throws Exception {
+            String searchString, String searchChoice, Date startDate, Date endDate) throws Exception {
 
         List<OrderSheet> orderSheets = orderSheetDAO.selectSearchSortFilterOrderSheets(
-                offset, limit, sortValue, searchString, searchChoice);
+                offset, limit, sortValue, searchString, searchChoice, startDate, endDate);
 
         return orderSheets;
     }
