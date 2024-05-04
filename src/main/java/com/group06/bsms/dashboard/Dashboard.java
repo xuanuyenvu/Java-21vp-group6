@@ -15,6 +15,14 @@ import com.group06.bsms.categories.UpdateCategory;
 import com.group06.bsms.publishers.AddPublisherInformation;
 import com.group06.bsms.publishers.PublisherCRUD;
 import com.group06.bsms.publishers.UpdatePublisher;
+import com.group06.bsms.importsheet.ImportSheetCRUD;
+import com.group06.bsms.importsheet.AddImportSheet;
+import com.group06.bsms.importsheet.ViewImportSheet;
+import com.group06.bsms.members.AddMember;
+import com.group06.bsms.members.MemberCRUD;
+import com.group06.bsms.ordersheet.AddOrderSheet;
+import com.group06.bsms.ordersheet.OrderSheetCRUD;
+import com.group06.bsms.ordersheet.ViewOrderSheet;
 import com.group06.bsms.utils.SVGHelper;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -44,6 +52,16 @@ public class Dashboard extends javax.swing.JPanel {
 
     private final UpdateProfile updateProfile = new UpdateProfile();
     private final ChangePassword changePassword = new ChangePassword();
+
+    private final AddImportSheet addImportSheet = new AddImportSheet();
+    private final ViewImportSheet viewImportSheet = new ViewImportSheet();
+    private final ImportSheetCRUD importSheetCRUD = new ImportSheetCRUD(viewImportSheet, addImportSheet);
+
+    private final AddMember addMember = new AddMember();
+    private final AddOrderSheet addOrderSheet = new AddOrderSheet();
+    private final MemberCRUD memberCRUD = new MemberCRUD(addMember, addOrderSheet);
+    private final ViewOrderSheet viewOrderSheet = new ViewOrderSheet();
+    private final OrderSheetCRUD orderSheetCRUD = new OrderSheetCRUD(viewOrderSheet, addOrderSheet, memberCRUD);
 
     private Dashboard() {
         initComponents();
@@ -76,6 +94,19 @@ public class Dashboard extends javax.swing.JPanel {
 
         main.add(updateProfile, "updateProfile");
         main.add(changePassword, "changePassword");
+
+        addImportSheet.setImportSheetCRUD(importSheetCRUD);
+        main.add(importSheetCRUD, "importSheetCRUD");
+        main.add(addImportSheet, "addImportSheet");
+        main.add(viewImportSheet, "viewImportSheet");
+
+        main.add(memberCRUD, "memberCRUD");
+        main.add(addMember, "addMember");
+
+        main.add(orderSheetCRUD, "orderSheetCRUD");
+        main.add(viewOrderSheet, "viewOrderSheet");
+        main.add(addOrderSheet, "addOrderSheet");
+
     }
 
     public void switchTab(String tab) {
@@ -96,6 +127,8 @@ public class Dashboard extends javax.swing.JPanel {
         authors = new javax.swing.JButton();
         publishers = new javax.swing.JButton();
         categories = new javax.swing.JButton();
+        importSheets = new javax.swing.JButton();
+        orderSheet = new javax.swing.JButton();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         account = new javax.swing.JButton();
         logout = new javax.swing.JButton();
@@ -225,6 +258,46 @@ public class Dashboard extends javax.swing.JPanel {
             }
         });
         jToolBar1.add(categories);
+
+        importSheets.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/import-sheet.svg", 
+            Color.black, Color.black,
+            28, 28
+        ));
+        importSheets.setMnemonic('4');
+        importSheets.setToolTipText("Import sheets");
+        importSheets.setFocusable(false);
+        importSheets.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        importSheets.setMaximumSize(new java.awt.Dimension(58, 58));
+        importSheets.setMinimumSize(new java.awt.Dimension(58, 58));
+        importSheets.setPreferredSize(new java.awt.Dimension(58, 58));
+        importSheets.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        importSheets.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importSheetsActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(importSheets);
+
+        orderSheet.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/order-sheet.svg", 
+            Color.black, Color.black,
+            28, 28
+        ));
+        orderSheet.setMnemonic('4');
+        orderSheet.setToolTipText("Order sheets");
+        orderSheet.setFocusable(false);
+        orderSheet.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        orderSheet.setMaximumSize(new java.awt.Dimension(58, 58));
+        orderSheet.setMinimumSize(new java.awt.Dimension(58, 58));
+        orderSheet.setPreferredSize(new java.awt.Dimension(58, 58));
+        orderSheet.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        orderSheet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                orderSheetActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(orderSheet);
         jToolBar1.add(filler2);
 
         account.setIcon(SVGHelper.createSVGIconWithFilter(
@@ -351,8 +424,19 @@ public class Dashboard extends javax.swing.JPanel {
         switchTab("changePassword");
     }//GEN-LAST:event_passwordActionPerformed
 
-    private java.awt.CardLayout layout;
+    private void importSheetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importSheetsActionPerformed
+        switchTab("importSheetCRUD");
+        importSheetCRUD.reloadImportSheets();
+    }//GEN-LAST:event_importSheetsActionPerformed
+
+    private void orderSheetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orderSheetActionPerformed
+        // TODO add your handling code here:
+        switchTab("orderSheetCRUD");
+        orderSheetCRUD.reloadOrderSheets();
+    }//GEN-LAST:event_orderSheetActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.CardLayout layout;
     private javax.swing.JButton account;
     private javax.swing.JButton authors;
     private javax.swing.JButton books;
@@ -361,12 +445,14 @@ public class Dashboard extends javax.swing.JPanel {
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JPopupMenu itemsOfAccount;
+    private javax.swing.JButton importSheets;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton logo;
     private javax.swing.JButton logout;
     private javax.swing.JPanel main;
     private javax.swing.JMenuItem password;
     private javax.swing.JMenuItem profile;
+    private javax.swing.JButton orderSheet;
     private javax.swing.JButton publishers;
     // End of variables declaration//GEN-END:variables
 }

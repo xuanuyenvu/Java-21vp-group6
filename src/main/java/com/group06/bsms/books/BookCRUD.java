@@ -118,7 +118,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 : searchBar.getText();
 
         String minPriceField = bookFilter.getMinPriceField().getText();
-        Double minPrice = minPriceField.isEmpty() ? Double.MIN_VALUE : Double.valueOf(minPriceField);
+        Double minPrice = minPriceField.isEmpty() ? 0 : Double.valueOf(minPriceField);
         String maxPriceField = bookFilter.getMaxPriceField().getText();
         Double maxPrice = maxPriceField.isEmpty() ? Double.MAX_VALUE : Double.valueOf(maxPriceField);
 
@@ -388,21 +388,21 @@ public class BookCRUD extends javax.swing.JPanel {
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(layout.createSequentialGroup()
             .addGap(42, 42, 42)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                     .addComponent(bookLabel)
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(20, 20, 20)
+                            .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
                             .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(20, 20, 20)
                             .addComponent(createBtn)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
-                            .addComponent(filterBtn)))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(filterBtn))
+                        .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE))
                     .addGap(50, 50, 50))))
     );
     layout.setVerticalGroup(

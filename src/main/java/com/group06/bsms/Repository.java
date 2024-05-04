@@ -128,7 +128,7 @@ public class Repository<Entity extends Object> {
             // search query (different from filter, because of partially identical mapping)
             var conditionQuery = new StringBuilder();
             Map<String, String> allowedSearches = new HashMap<>();
-
+            
             allowedSearches.put("title", "title ilike ?");
             allowedSearches.put("author", "author.name ilike ?");
             allowedSearches.put("publisher", "publisher.name ilike ?");

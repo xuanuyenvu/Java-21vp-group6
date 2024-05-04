@@ -62,5 +62,6 @@ public class Book {
                 + ", translatorName=" + translatorName + ", overview=" + overview + ", quantity=" + quantity
                 + ", salePrice=" + salePrice + ", isHidden=" + isHidden + ", hiddenParentCount=" + hiddenParentCount
                 + ", author=" + author + ", publisher=" + publisher + ", maxImportPrice=" + maxImportPrice + ", category= " + categories + "}";
+
     }
 }

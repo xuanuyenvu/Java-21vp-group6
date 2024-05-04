@@ -23,7 +23,7 @@ public class BookService {
         this.publisherService = publisherService;
     }
 
-    public void updateBook(Book book, Book updatedBook) throws Exception, IllegalArgumentException {
+    public void updateBook(Book book, Book updatedBook) throws Exception {
         try {
             if (updatedBook.title == null || updatedBook.title.equals("")) {
                 throw new Exception("Title cannot be empty");
@@ -144,8 +144,7 @@ public class BookService {
     public void insertBook(
             String title, Author author, Publisher publisher, ArrayList<Category> categoriesList,
             Date publishDate, String dimension, Object pages, String translator,
-            String overview, boolean hideChecked
-    ) throws Exception {
+            String overview, boolean hideChecked) throws Exception {
         if (title == null || title.equals("")) {
             throw new Exception("Title cannot be empty");
         }
@@ -231,6 +230,25 @@ public class BookService {
     List<Book> getOutOfStockBooks() throws Exception {
         List<Book> books = bookDAO.getOutOfStockBooks();
         return books;
+    }
+
+    public List<Book> searchBooksByTitle(String title) throws Exception {
+        try {
+            return bookDAO.getBooksByTitle(title);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public List<Book> searchAvailableBooksByTitle(String title) throws Exception {
+        try {
+
+            return bookDAO.getAvailableBooksByTitle(title);
+
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     List<Book> getTop10BooksWithHighestRevenue(Map<Integer, SortOrder> sortAttributeAndOrder,
