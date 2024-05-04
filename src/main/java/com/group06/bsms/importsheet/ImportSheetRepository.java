@@ -51,8 +51,11 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             }
 
             try (PreparedStatement insertImportSheetQuery = db.prepareStatement(
-                    "INSERT INTO ImportSheet (employeeInChargeId, importDate, totalCost) "
-                    + "VALUES (?, ?, ?)",
+                    """
+                        INSERT INTO ImportSheet (employeeInChargeId, importDate, totalCost)
+                        VALUES (?, ?, ?)
+                        
+                    """,
                     Statement.RETURN_GENERATED_KEYS)) {
 
                 insertImportSheetQuery.setInt(1, importSheet.employeeInChargeId);
@@ -89,7 +92,10 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             }
             int importedBookResults[] = null;
 
-            String insertQuery = "INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (?, ?, ?, ?)";
+            String insertQuery = """
+                INSERT INTO ImportedBook (importSheetId, bookId, quantity, pricePerBook) VALUES (?, ?, ?, ?)
+                UPDATE Book SET Book.quantity = Book.quantity + ?
+            """;;
             try (var importedBookStatement = db.prepareStatement(insertQuery)) {
                 for (ImportedBook importedBook : importedBooks) {
 
@@ -97,6 +103,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                     importedBookStatement.setInt(2, importedBook.bookId);
                     importedBookStatement.setInt(3, importedBook.quantity);
                     importedBookStatement.setDouble(4, importedBook.pricePerBook);
+                    importedBookStatement.setInt(3, importedBook.quantity);
                     importedBookStatement.addBatch();
                 }
                 importedBookResults = importedBookStatement.executeBatch();
@@ -225,7 +232,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
                 stringQuery = stringQuery.substring(0, stringQuery.length() - 2);
             }
-           
+
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
 
                 preparedStatement.setDate(1, startDate);
@@ -242,7 +249,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                         result.add(importSheet);
                     }
                 }
-                 
+
                 db.commit();
 
             }
@@ -258,7 +265,9 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
     }
 
     @Override
-    public List<ImportSheet> selectSearchSortFilterImportSheets(int offset, int limit, Map<Integer, SortOrder> sortValue, String searchString, String searchChoice, java.sql.Date startDate, java.sql.Date endDate) throws Exception {
+    public List<ImportSheet> selectSearchSortFilterImportSheets(int offset, int limit,
+            Map<Integer, SortOrder> sortValue, String searchString, String searchChoice, java.sql.Date startDate,
+            java.sql.Date endDate) throws Exception {
 
         List<ImportSheet> result = new ArrayList<>();
         try {
@@ -331,7 +340,7 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                 preparedStatement.setInt(parameterIndex++, offset);
 
                 preparedStatement.setInt(parameterIndex++, limit);
-               
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         ImportSheet importSheet = new ImportSheet(resultSet.getInt("id"),
