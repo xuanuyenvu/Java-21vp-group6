@@ -5,6 +5,7 @@
 package com.group06.bsms.ordersheet;
 
 import com.group06.bsms.DB;
+import com.group06.bsms.Main;
 import com.group06.bsms.accounts.Account;
 import com.group06.bsms.accounts.AccountRepository;
 import com.group06.bsms.accounts.AccountService;
@@ -175,7 +176,6 @@ public class AddOrderSheet extends javax.swing.JPanel {
 
                             JOptionPane.showMessageDialog(null, "There's already a " + newTitle + " row.", "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE);
-                            orderBookTable.requestFocusInWindow();
 
                         }
                     }
@@ -194,7 +194,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
 
                                 JOptionPane.showMessageDialog(null, "Cannot have zero quantity", "BSMS Error",
                                         JOptionPane.ERROR_MESSAGE);
-                                orderBookTable.requestFocusInWindow();
+
                             }
 
                         } catch (NumberFormatException nfe) {
@@ -576,12 +576,12 @@ public class AddOrderSheet extends javax.swing.JPanel {
     private void removeAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllBtnActionPerformed
         DefaultTableModel model = (DefaultTableModel) orderBookTable.getModel();
         totalCostField.setText("");
+        orderBookTable.changeSelection(-1, 0, false, false);
         while (model.getRowCount() > 0) {
             model.removeRow(0);
         }
         model.addRow(new Object[model.getColumnCount()]);
-        orderBookTable.requestFocusInWindow();
-        orderBookTable.changeSelection(0, 0, false, false);
+
     }//GEN-LAST:event_removeAllBtnActionPerformed
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
@@ -670,8 +670,8 @@ public class AddOrderSheet extends javax.swing.JPanel {
                         model.removeRow(0);
                     }
                     model.addRow(new Object[model.getColumnCount()]);
-                    orderBookTable.requestFocusInWindow();
-                    orderBookTable.changeSelection(0, 0, false, false);
+                    
+                   
 
                 } catch (Exception e) {
 

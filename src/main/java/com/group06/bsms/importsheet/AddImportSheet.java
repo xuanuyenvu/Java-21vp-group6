@@ -61,18 +61,7 @@ public class AddImportSheet extends javax.swing.JPanel {
 
     }
 
-    public AddImportSheet(BookService bookService, ImportSheetService importSheetService,
-            AccountService accountService) {
-
-        this.bookService = bookService;
-        this.accountService = accountService;
-        this.importSheetService = importSheetService;
-        this.bookMap = new HashMap<>();
-        this.loadEmployee(Main.getUserId());
-
-        initComponents();
-
-        this.importDatePicker.setDate(java.sql.Date.valueOf(LocalDate.now()));
+    private void createTable() {
         importBooksTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
         importBooksTable.getActionMap().put("enter", new AbstractAction() {
             @Override
@@ -155,7 +144,6 @@ public class AddImportSheet extends javax.swing.JPanel {
 
                             JOptionPane.showMessageDialog(null, "There's already a " + newTitle + " row.", "BSMS Error",
                                     JOptionPane.ERROR_MESSAGE);
-                            importBooksTable.requestFocusInWindow();
 
                         }
                     }
@@ -174,7 +162,7 @@ public class AddImportSheet extends javax.swing.JPanel {
 
                                 JOptionPane.showMessageDialog(null, "Cannot have zero quantity", "BSMS Error",
                                         JOptionPane.ERROR_MESSAGE);
-                                importBooksTable.requestFocusInWindow();
+
                             }
 
                         } catch (NumberFormatException nfe) {
@@ -189,6 +177,21 @@ public class AddImportSheet extends javax.swing.JPanel {
         importBooksTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
         importBooksTable.getTableHeader().setReorderingAllowed(false);
         importBooksTable.setShowVerticalLines(true);
+
+    }
+
+    public AddImportSheet(BookService bookService, ImportSheetService importSheetService,
+            AccountService accountService) {
+
+        this.bookService = bookService;
+        this.accountService = accountService;
+        this.importSheetService = importSheetService;
+        this.bookMap = new HashMap<>();
+        this.loadEmployee(Main.getUserId());
+
+        initComponents();
+        this.importDatePicker.setDate(java.sql.Date.valueOf(LocalDate.now()));
+        createTable();
     }
 
     public void loadEmployee(int id) {
@@ -446,12 +449,12 @@ public class AddImportSheet extends javax.swing.JPanel {
     private void removeAllBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllBtnActionPerformed
         DefaultTableModel model = (DefaultTableModel) importBooksTable.getModel();
         totalCostField.setText("");
+        importBooksTable.changeSelection(-1, 0, false, false);
         while (model.getRowCount() > 0) {
             model.removeRow(0);
         }
         model.addRow(new Object[model.getColumnCount()]);
-        importBooksTable.requestFocusInWindow();
-        importBooksTable.changeSelection(0, 0, false, false);
+
     }//GEN-LAST:event_removeAllBtnActionPerformed
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_backButtonMouseEntered
@@ -533,12 +536,11 @@ public class AddImportSheet extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(null, "Import sheet added successfully.", "BSMS Information",
                             JOptionPane.INFORMATION_MESSAGE);
                     totalCostField.setText("");
+
                     while (model.getRowCount() > 0) {
                         model.removeRow(0);
                     }
                     model.addRow(new Object[model.getColumnCount()]);
-                    importBooksTable.requestFocusInWindow();
-                    importBooksTable.changeSelection(0, 0, false, false);
 
                 } catch (Exception e) {
                     if (e.getMessage().contains("importedbook_priceperbook_check")) {
