@@ -32,7 +32,7 @@ public class ImportSheetFilter extends javax.swing.JPanel {
 
         initComponents();
 
-        isVisibleDatePicker(true);
+        isVisibleDatePicker(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -65,7 +65,7 @@ public class ImportSheetFilter extends javax.swing.JPanel {
         label.setDisplayedMnemonicIndex(1);
 
         durationDaysComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Date to Date", "All", "By Week", "By Month" }));
+        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Date to Date", "By Week", "By Month" }));
         durationDaysComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         durationDaysComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
