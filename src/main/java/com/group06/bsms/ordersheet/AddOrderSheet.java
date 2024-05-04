@@ -228,8 +228,9 @@ public class AddOrderSheet extends javax.swing.JPanel {
             this.member = memberService.selectMember(id);
             memberNameField.setText(member.name);
             memberPhoneField.setText(member.phone);
-            if (member.name.equals("Anonymous")) {
+            if (member.name.equals("Annonymous")) {
                 discountField.setText("0%");
+                discount = 0;
             } else {
                 discountField.setText("5%");
                 discount = 0.05;
