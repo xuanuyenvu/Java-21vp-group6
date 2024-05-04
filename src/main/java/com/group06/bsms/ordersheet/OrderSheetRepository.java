@@ -132,11 +132,11 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                             result.getDouble("salePrice")));
                 }
 
-                db.commit();
             }
             orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
             orderSheet.member = memberRepository.selectById(orderSheet.memberId);
-
+            db.commit();
+            
             return orderSheet;
 
         } catch (Exception e) {
@@ -233,8 +233,8 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                                 resultSet.getDate("orderDate"),
                                 resultSet.getDouble("discountedTotalCost"), null);
                         OrderSheet.employee = accountRepository.selectAccount(OrderSheet.employeeInChargeId);
-                        OrderSheet.member = memberRepository.selectById(OrderSheet.memberId);
-
+                        OrderSheet.member = memberRepository.selectMember(OrderSheet.memberId);
+                        
                         result.add(OrderSheet);
                     }
                 }
@@ -262,7 +262,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                     (SELECT OrderSheet.id, OrderSheet.employeeInChargeId, OrderSheet.memberId, OrderSheet.discountedTotalCost, OrderSheet.orderDate, Account.phone AS employeePhone, Member.phone AS memberPhone
                          FROM OrderSheet
                          JOIN Account ON Account.id = OrderSheet.employeeInChargeId
-                         JOIN Memvber ON Member.id = OrderSheet.memberId
+                         JOIN Member ON Member.id = OrderSheet.memberId
                          WHERE OrderSheet.orderDate BETWEEN ? AND ?
                          ORDER BY OrderSheet.discountedTotalCost DESC
                         )
@@ -299,8 +299,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
                 preparedStatement.setDate(1, startDate);
                 preparedStatement.setDate(2, endDate);
-                System.out.println(preparedStatement.toString());
-
+              
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         OrderSheet orderSheet = new OrderSheet(resultSet.getInt("id"),
@@ -309,14 +308,16 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                                 resultSet.getDate("orderDate"),
                                 resultSet.getDouble("discountedTotalCost"), null);
                         orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
-                        orderSheet.employee = accountRepository.selectById(orderSheet.memberId);
-
+                       
+                        orderSheet.member = memberRepository.selectMember(orderSheet.memberId);
+                        
                         result.add(orderSheet);
                     }
                 }
-                db.commit();
-
+                
             }
+            
+            db.commit();
             return result;
         } catch (Exception e) {
             db.rollback();

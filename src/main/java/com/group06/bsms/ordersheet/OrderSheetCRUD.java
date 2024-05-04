@@ -168,7 +168,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
             public void onEdit(int row) {
                 int orderSheetId = model.getOrderSheet(row).id;
                 viewOrderSheet.loadOrderSheet(orderSheetId);
-                System.out.print("Hi");
+               
                 dashboard.switchTab("viewOrderSheet");
             }
 
@@ -239,7 +239,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
                 List<OrderSheet> orderSheets = orderSheetService.searchSortFilterOrderSheets(
                         currentOffset, limit, columnSortOrders,
                         searchString, searchChoiceValue);
-
+                
                 if (currentOffset > 0) {
                     model.loadNewOrderSheets(orderSheets);
                 } else {
