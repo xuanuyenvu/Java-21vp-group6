@@ -247,7 +247,7 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
 
             String stringQuery = "SELECT * FROM Account";
 
-            stringQuery += " WHERE " + searchChoice + " LIKE ? ";
+            stringQuery += " WHERE LOWER(" + searchChoice + ") LIKE LOWER(?) ";
 
             for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
                 Integer key = entry.getKey();

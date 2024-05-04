@@ -163,7 +163,7 @@ public class CategoryRepository extends Repository<Category> implements Category
 
             String stringQuery = "SELECT * FROM Category";
 
-            stringQuery += " WHERE name LIKE ? ";
+            stringQuery += " WHERE LOWER(name) LIKE LOWER(?) ";
 
             for (Map.Entry<Integer, SortOrder> entry : sortValue.entrySet()) {
                 Integer key = entry.getKey();
