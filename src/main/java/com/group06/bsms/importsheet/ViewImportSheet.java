@@ -96,7 +96,10 @@ public class ViewImportSheet extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        formScrollPane = new javax.swing.JScrollPane();
+        titleBar = new javax.swing.JPanel();
+        backButton = new javax.swing.JButton();
+        title = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
         groupFieldPanel = new javax.swing.JPanel();
         employeeLabel = new javax.swing.JLabel();
         employeeField = new javax.swing.JTextField();
@@ -106,15 +109,72 @@ public class ViewImportSheet extends javax.swing.JPanel {
         jScrollPane = new javax.swing.JScrollPane();
         importBooksTable = new javax.swing.JTable();
         importDateField = new javax.swing.JTextField();
-        titleBar = new javax.swing.JPanel();
-        backButton = new javax.swing.JButton();
-        title = new javax.swing.JLabel();
-        jSeparator2 = new javax.swing.JSeparator();
 
         setPreferredSize(new java.awt.Dimension(944, 1503));
         setLayout(new java.awt.BorderLayout());
 
-        formScrollPane.setBorder(null);
+        titleBar.setPreferredSize(new java.awt.Dimension(849, 57));
+
+        backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        backButton.setForeground(UIManager.getColor("mutedColor"));
+        backButton.setIcon(SVGHelper.createSVGIconWithFilter(
+            "icons/arrow-back.svg", 
+            Color.white, Color.white,
+            18, 18
+        ));
+        backButton.setMnemonic(java.awt.event.KeyEvent.VK_BACK_SPACE);
+        backButton.setToolTipText("Back to previous page");
+        backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        backButton.setFocusable(false);
+        backButton.setMargin(new java.awt.Insets(4, 14, 3, 14));
+        backButton.setPreferredSize(new java.awt.Dimension(33, 33));
+        backButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                backButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                backButtonMouseExited(evt);
+            }
+        });
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
+            }
+        });
+
+        title.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        title.setText("Import sheet");
+
+        javax.swing.GroupLayout titleBarLayout = new javax.swing.GroupLayout(titleBar);
+        titleBar.setLayout(titleBarLayout);
+        titleBarLayout.setHorizontalGroup(
+            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(titleBarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(title)
+                .addContainerGap(783, Short.MAX_VALUE))
+            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+        titleBarLayout.setVerticalGroup(
+            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(titleBarLayout.createSequentialGroup()
+                .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(titleBarLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(title))
+                    .addGroup(titleBarLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+
+        add(titleBar, java.awt.BorderLayout.PAGE_START);
 
         groupFieldPanel.setPreferredSize(new java.awt.Dimension(944, 1503));
 
@@ -160,7 +220,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
         groupFieldPanelLayout.setHorizontalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupFieldPanelLayout.createSequentialGroup()
-                .addContainerGap(46, Short.MAX_VALUE)
+                .addContainerGap(42, Short.MAX_VALUE)
                 .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 852, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(groupFieldPanelLayout.createSequentialGroup()
@@ -178,7 +238,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
                         .addGroup(groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(totalCostLabel)
                             .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         groupFieldPanelLayout.setVerticalGroup(
             groupFieldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -199,76 +259,11 @@ public class ViewImportSheet extends javax.swing.JPanel {
                         .addGap(2, 2, 2)
                         .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(162, Short.MAX_VALUE))
+                .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1300, Short.MAX_VALUE)
+                .addGap(50, 50, 50))
         );
 
-        formScrollPane.setViewportView(groupFieldPanel);
-
-        add(formScrollPane, java.awt.BorderLayout.CENTER);
-
-        titleBar.setPreferredSize(new java.awt.Dimension(849, 57));
-
-        backButton.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        backButton.setForeground(UIManager.getColor("mutedColor"));
-        backButton.setIcon(SVGHelper.createSVGIconWithFilter(
-            "icons/arrow-back.svg", 
-            Color.white, Color.white,
-            18, 18
-        ));
-        backButton.setMnemonic(java.awt.event.KeyEvent.VK_BACK_SPACE);
-        backButton.setToolTipText("Back to previous page");
-        backButton.setBorderPainted(false);
-        backButton.setContentAreaFilled(false);
-        backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        backButton.setFocusable(false);
-        backButton.setMargin(new java.awt.Insets(4, 14, 3, 14));
-        backButton.setPreferredSize(new java.awt.Dimension(33, 33));
-        backButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                backButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                backButtonMouseExited(evt);
-            }
-        });
-        backButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backButtonActionPerformed(evt);
-            }
-        });
-
-        title.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        title.setText("Import sheet:");
-
-        javax.swing.GroupLayout titleBarLayout = new javax.swing.GroupLayout(titleBar);
-        titleBar.setLayout(titleBarLayout);
-        titleBarLayout.setHorizontalGroup(
-            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titleBarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(title)
-                .addContainerGap(779, Short.MAX_VALUE))
-            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
-        titleBarLayout.setVerticalGroup(
-            titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titleBarLayout.createSequentialGroup()
-                .addGroup(titleBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(titleBarLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(title))
-                    .addGroup(titleBarLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(10, 10, 10)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
-        );
-
-        add(titleBar, java.awt.BorderLayout.PAGE_START);
+        add(groupFieldPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void backButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonMouseEntered
@@ -287,7 +282,6 @@ public class ViewImportSheet extends javax.swing.JPanel {
     private javax.swing.JButton backButton;
     private javax.swing.JTextField employeeField;
     private javax.swing.JLabel employeeLabel;
-    private javax.swing.JScrollPane formScrollPane;
     private javax.swing.JPanel groupFieldPanel;
     private javax.swing.JTable importBooksTable;
     private javax.swing.JTextField importDateField;

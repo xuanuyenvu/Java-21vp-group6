@@ -66,7 +66,7 @@ public class ImportSheetFilter extends javax.swing.JPanel {
 
         durationDaysComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Date to Date", "By Week", "By Month" }));
-        durationDaysComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
+        durationDaysComboBox.setPreferredSize(new java.awt.Dimension(299, 28));
         durationDaysComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 durationDaysComboBoxActionPerformed(evt);
@@ -107,7 +107,7 @@ public class ImportSheetFilter extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupFieldPanel1Layout.createSequentialGroup()
-                        .addComponent(label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(label, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                         .addGap(553, 553, 553))
                     .addGroup(groupFieldPanel1Layout.createSequentialGroup()
                         .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,10 +123,12 @@ public class ImportSheetFilter extends javax.swing.JPanel {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(groupFieldPanel1Layout.createSequentialGroup()
-                        .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(durationDaysComboBox, 0, 0, Short.MAX_VALUE)
+                        .addGap(290, 290, 290))
+                    .addGroup(groupFieldPanel1Layout.createSequentialGroup()
+                        .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(startDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(durationDaysComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(startDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
+                            .addComponent(startDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         groupFieldPanel1Layout.setVerticalGroup(
@@ -194,7 +196,7 @@ public class ImportSheetFilter extends javax.swing.JPanel {
                 importSheetCRUD.setDates(java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
                 previousComboBoxSelection = "Date to Date";
             }
-            case "All"->{
+            case "All" -> {
                 importSheetCRUD.reloadTable();
                 isVisibleDatePicker(false);
                 endDate = LocalDate.now();
