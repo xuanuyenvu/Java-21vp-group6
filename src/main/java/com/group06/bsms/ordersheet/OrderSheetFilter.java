@@ -65,7 +65,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
 
         durationDaysComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Date to Date", "By Week", "By Month" }));
-        durationDaysComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
+        durationDaysComboBox.setPreferredSize(new java.awt.Dimension(295, 28));
         durationDaysComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 durationDaysComboBoxActionPerformed(evt);
@@ -122,7 +122,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
                         .addGroup(groupFieldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(startDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(durationDaysComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(startDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE))
+                            .addComponent(startDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         groupFieldPanel1Layout.setVerticalGroup(
@@ -185,7 +185,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
                 isVisibleDatePicker(true);
                 previousComboBoxSelection = "Date to Date";
             }
-            case "All"->{
+            case "All" -> {
                 importSheetCRUD.reloadTable();
                 isVisibleDatePicker(false);
                 previousComboBoxSelection = "All";
@@ -196,7 +196,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
     }//GEN-LAST:event_durationDaysComboBoxActionPerformed
 
     private void confimrBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confimrBtnActionPerformed
-        
+
         LocalDate start = startDatePicker.getDateSQL().toLocalDate();
         LocalDate end = endDatePicker.getDateSQL().toLocalDate();
 
