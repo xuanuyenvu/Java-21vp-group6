@@ -343,7 +343,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
         });
 
         searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Employee's phone", "by Member's phone", "by Import Date", "by Total Cost" }));
+        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Employee's phone", "by Member's phone", "by Order Date", "by Total Cost" }));
         searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         searchComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

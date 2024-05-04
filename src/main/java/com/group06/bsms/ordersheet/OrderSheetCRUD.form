@@ -125,7 +125,7 @@
           <StringArray count="4">
             <StringItem index="0" value="by Employee&apos;s phone"/>
             <StringItem index="1" value="by Member&apos;s phone"/>
-            <StringItem index="2" value="by Import Date"/>
+            <StringItem index="2" value="by Order Date"/>
             <StringItem index="3" value="by Total Cost"/>
           </StringArray>
         </Property>
