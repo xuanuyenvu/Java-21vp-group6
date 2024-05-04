@@ -14,6 +14,11 @@ database: bsms
 username: bsms 
 password: bsmssecretpassword
 ```
+Run the .sql script for the created database, located at
+```
+\Java-21vp-group6\src\main\resources\database\init.sql
+```
+
 ### Run the app
 Clone repository
 ```
