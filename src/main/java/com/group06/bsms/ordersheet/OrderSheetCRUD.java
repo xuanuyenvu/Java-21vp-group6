@@ -292,8 +292,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
         table = new javax.swing.JTable();
         orderSheetFilter = new com.group06.bsms.ordersheet.OrderSheetFilter(this);
 
-        setMinimumSize(new java.awt.Dimension(928, 1503));
-        setPreferredSize(new java.awt.Dimension(944, 1503));
+        setPreferredSize(new java.awt.Dimension(1033, 624));
 
         importSheetLabel.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         importSheetLabel.setText("ORDER SHEET");
@@ -373,21 +372,18 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
             .addGap(42, 42, 42)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(main, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 862, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addComponent(importSheetLabel)
-                            .addGap(0, 0, Short.MAX_VALUE)))
-                    .addGap(40, 40, 40))
-                .addGroup(layout.createSequentialGroup()
                     .addComponent(searchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
                     .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(18, 18, 18)
                     .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, 951, Short.MAX_VALUE)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(importSheetLabel)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGap(40, 40, 40))
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,8 +397,8 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
                 .addComponent(filterBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(24, 24, 24)
-            .addComponent(main, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(935, Short.MAX_VALUE))
+            .addComponent(main, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(50, 50, 50))
     );
     }// </editor-fold>//GEN-END:initComponents
 

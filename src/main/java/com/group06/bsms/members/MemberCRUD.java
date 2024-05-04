@@ -3,6 +3,7 @@ package com.group06.bsms.members;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.group06.bsms.DB;
 import com.group06.bsms.Main;
+import com.group06.bsms.components.DatePickerPanel;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.ordersheet.AddOrderSheet;
 import com.group06.bsms.utils.SVGHelper;
@@ -101,8 +102,8 @@ public class MemberCRUD extends javax.swing.JPanel {
                 int row = table.rowAtPoint(e.getPoint());
                 int column = table.columnAtPoint(e.getPoint());
 
-                table.editCellAt(row, column);
-                table.setRowSelectionInterval(row, row);
+//                table.editCellAt(row, column);
+//                table.setRowSelectionInterval(row, row);
             }
         });
 
@@ -219,6 +220,11 @@ public class MemberCRUD extends javax.swing.JPanel {
         table.setToolTipText("");
         table.setRowHeight(40);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMouseClicked(evt);
+            }
+        });
         scrollBar.setViewportView(table);
 
         javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
@@ -231,7 +237,7 @@ public class MemberCRUD extends javax.swing.JPanel {
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 298, Short.MAX_VALUE)
+            .addGap(0, 299, Short.MAX_VALUE)
             .addGroup(tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(scrollBar, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
         );
@@ -353,12 +359,13 @@ public class MemberCRUD extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, 905, Short.MAX_VALUE))
+                .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, 906, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nextButton))
+                        .addComponent(nextButton)
+                        .addGap(15, 15, 15))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(42, 42, 42)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -369,13 +376,13 @@ public class MemberCRUD extends javax.swing.JPanel {
                                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(createBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addGap(42, 42, 42))
+                                .addGap(0, 284, Short.MAX_VALUE)))))
+                .addGap(27, 27, 27))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(titleBar, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchBar, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
@@ -401,6 +408,15 @@ public class MemberCRUD extends javax.swing.JPanel {
         // TODO add your handling code here:
         Dashboard.dashboard.switchTab("orderSheetCRUD");
     }//GEN-LAST:event_backButtonActionPerformed
+
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+        if (evt.getClickCount() == 2) {
+            int row = table.rowAtPoint(evt.getPoint());
+            int column = table.columnAtPoint(evt.getPoint());
+
+            table.editCellAt(row, column);
+        }
+    }//GEN-LAST:event_tableMouseClicked
 
     public void reloadMembers() {
         reloadMembers(false);
@@ -441,8 +457,11 @@ public class MemberCRUD extends javax.swing.JPanel {
 
             addOrderSheet.loadEmployee(Main.getUserId());
             addOrderSheet.loadMember(member.id);
+            DatePickerPanel orderDatePicker = addOrderSheet.getOrderDatePickerPanel();
+            orderDatePicker.setDate(new java.util.Date());
+            var sm = new SimpleDateFormat("dd/MM/yyyy");
+            orderDatePicker.setText(sm.format(orderDatePicker.getDate()));
             Dashboard.dashboard.switchTab("addOrderSheet");
-
         }
 
     }// GEN-LAST:event_nextButtonActionPerformed

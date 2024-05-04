@@ -17,6 +17,7 @@ import com.group06.bsms.books.BookService;
 import com.group06.bsms.publishers.PublisherRepository;
 import com.group06.bsms.publishers.PublisherService;
 import com.group06.bsms.components.CustomTableCellRenderer;
+import com.group06.bsms.components.DatePickerPanel;
 import com.group06.bsms.dashboard.Dashboard;
 import com.group06.bsms.members.MemberRepository;
 import com.group06.bsms.members.MemberService;
@@ -56,6 +57,10 @@ public class AddOrderSheet extends javax.swing.JPanel {
 
     public void setOrderSheetCRUD(OrderSheetCRUD orderSheetCRUD) {
         this.orderSheetCRUD = orderSheetCRUD;
+    }
+
+    public DatePickerPanel getOrderDatePickerPanel() {
+        return orderDatePicker;
     }
 
     public AddOrderSheet() {
@@ -567,7 +572,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
     }// GEN-LAST:event_backButtonMouseExited
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_backButtonActionPerformed
-        Dashboard.dashboard.switchTab("orderSheetCRUD");
+        Dashboard.dashboard.switchTab("memberCRUD");
     }// GEN-LAST:event_backButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_saveButtonActionPerformed
