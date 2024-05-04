@@ -208,7 +208,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
     public void loadEmployee(int id) {
         try {
             this.employee = accountService.selectAccount(id);
-            employeeField.setText(employee.phone);
+            employeeField.setText(employee.name);
         } catch (Exception e) {
             e.printStackTrace();
         }
