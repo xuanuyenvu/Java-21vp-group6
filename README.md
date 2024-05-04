@@ -1,4 +1,4 @@
-# BSMS (Ờm bỏ cái jar vô zùm nha Đăng)
+# BSMS
 
 A simple Bookstore Management System made using Java.
 
