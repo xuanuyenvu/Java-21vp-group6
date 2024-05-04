@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SortOrder;
+import java.time.LocalDate;
 
 public class MemberService {
 
@@ -95,6 +96,9 @@ public class MemberService {
         }
         if (member.dateOfBirth == null) {
             throw new Exception("Date of Birth cannot be empty");
+        }
+        if(member.dateOfBirth.equals(Date.valueOf(LocalDate.now()))){
+            throw new Exception("your date of birth must be before today");
         }
         if (member.name == null || member.name.equals("")) {
             throw new Exception("Name cannot be empty");

@@ -246,7 +246,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
                 List<OrderSheet> orderSheets = orderSheetService.searchSortFilterOrderSheets(
                         currentOffset, limit, columnSortOrders,
                         searchString, searchChoiceValue);
-
+                
                 if (currentOffset > 0) {
                     model.loadNewOrderSheets(orderSheets);
                 } else {

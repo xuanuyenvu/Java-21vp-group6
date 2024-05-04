@@ -213,7 +213,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
     public void loadEmployee(int id) {
         try {
             this.employee = accountService.selectAccount(id);
-            employeeField.setText(employee.phone);
+            employeeField.setText(employee.name);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -644,7 +644,15 @@ public class AddOrderSheet extends javax.swing.JPanel {
                     orderSheetService.insertOrderSheet(orderSheet);
                     JOptionPane.showMessageDialog(null, "Order sheet added successfully.", "BSMS Information",
                             JOptionPane.INFORMATION_MESSAGE);
-
+                            totalCostField.setText("");
+                            while (model.getRowCount() > 0) {
+                                model.removeRow(0);
+                            }
+                            model.addRow(new Object[model.getColumnCount()]);
+                            orderBookTable.requestFocusInWindow();
+                            orderBookTable.changeSelection(model.getRowCount() - 1, 0, false, false);
+                            
+                    
                 } catch (Exception e) {
 
                     JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(),

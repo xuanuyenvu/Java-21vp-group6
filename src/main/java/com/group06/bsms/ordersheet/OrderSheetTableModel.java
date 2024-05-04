@@ -101,6 +101,8 @@ public class OrderSheetTableModel extends AbstractTableModel {
             return null;
         }
         OrderSheet orderSheet = orderSheets.get(row);
+        
+        
         return switch (col) {
             case 0 -> orderSheet.employee.phone;
             case 1 -> orderSheet.member.phone;
@@ -161,6 +163,7 @@ public class OrderSheetTableModel extends AbstractTableModel {
     }
 
     public void loadNewOrderSheets(List<OrderSheet> newOrderSheets) {
+        
         if (newOrderSheets != null) {
             for (var orderSheet : newOrderSheets) {
                 if (!contains(orderSheet.id)) {
