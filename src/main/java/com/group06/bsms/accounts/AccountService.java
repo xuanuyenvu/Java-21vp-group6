@@ -1,5 +1,7 @@
 package com.group06.bsms.accounts;
 
+import com.group06.bsms.auth.AuthService;
+
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,4 +132,30 @@ public class AccountService {
 
         return accounts;
     }
+
+    public void updatePasswordById(int id, String currentPassword, String newPassword, String confirmPassword) throws Exception {
+        try {
+            if (newPassword == null || newPassword.equals("")
+                    || confirmPassword == null || confirmPassword.equals("")) {
+                throw new Exception("Password and confirm password cannot be empty");
+            }
+
+            if (!newPassword.equals(confirmPassword)) {
+                throw new Exception("Passwords do not match");
+            }
+
+            if (!accountDAO.checkPasswordById(id, currentPassword)) {
+                throw new Exception("Incorrect current password");
+            }
+
+            if (newPassword.length() <= 4) {
+                throw new Exception("Insufficient password length");
+            }
+
+            accountDAO.updatePasswordById(id, newPassword);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 }

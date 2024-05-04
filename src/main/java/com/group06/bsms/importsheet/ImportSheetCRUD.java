@@ -79,7 +79,7 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
         setUpTable();
 
         loadImportSheetsIntoTable();
-       
+
     }
 
     private void toggleSortOrder(int columnIndex) {
@@ -172,7 +172,6 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
             public void onEdit(int row) {
                 int importSheetId = model.getImportSheet(row).id;
                 viewImportSheet.loadImportSheet(importSheetId);
-                System.out.println("3");
                 Dashboard.dashboard.switchTab("viewImportSheet");
             }
 
@@ -399,8 +398,8 @@ public class ImportSheetCRUD extends javax.swing.JPanel {
     }//GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createBtnActionPerformed
-        //AdminDashboard.dashboard.switchTab("addAccountInformation");
         Dashboard.dashboard.switchTab("addImportSheet");
+        this.addImportSheet.loadEmployee(Main.getUserId());
     }//GEN-LAST:event_createBtnActionPerformed
 
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed

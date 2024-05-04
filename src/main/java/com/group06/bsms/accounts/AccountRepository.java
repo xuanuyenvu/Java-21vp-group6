@@ -63,7 +63,6 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
                 stringQuery += sortOrders.get(sortOrder);
             }
             try (PreparedStatement preparedStatement = db.prepareStatement(stringQuery)) {
-                System.err.println(preparedStatement);
                 preparedStatement.setDate(1, startDate);
                 preparedStatement.setDate(2, endDate);
 
@@ -289,6 +288,46 @@ public class AccountRepository extends Repository<Account> implements AccountDAO
             db.commit();
 
             return result;
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    public boolean checkPasswordById(int id, String password) throws Exception {
+        try {
+            db.setAutoCommit(false);
+
+            var query = db.prepareStatement(
+                    "SELECT password FROM Account WHERE id = ?"
+            );
+
+            query.setInt(1, id);
+
+            var result = query.executeQuery();
+
+            db.commit();
+
+            if (result.next()) {
+                String hashedPassword = result.getString("password");
+                return Hasher.checkPassword(password, hashedPassword);
+            } else {
+                throw new Exception("Account not found");
+            }
+        } catch (Exception e) {
+            db.rollback();
+            throw e;
+        }
+    }
+
+    public void updatePasswordById(int id, String password) throws Exception {
+
+        try {
+            db.setAutoCommit(false);
+
+            updateById(id, "password", Hasher.encryptPassword(password));
+
+            db.commit();
         } catch (Exception e) {
             db.rollback();
             throw e;

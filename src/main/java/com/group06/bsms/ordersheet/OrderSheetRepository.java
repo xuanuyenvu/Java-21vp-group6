@@ -21,7 +21,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
 
-    public OrderSheetRepository(Connection db,AccountRepository accountRepository,
+    public OrderSheetRepository(Connection db, AccountRepository accountRepository,
             MemberRepository memberRepository) {
         super(db, OrderSheet.class);
         this.accountRepository = accountRepository;
@@ -34,7 +34,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
         try {
             db.setAutoCommit(false);
             if (orderSheet == null) {
-                throw new NullPointerException("The parameer cannot be null");
+                throw new NullPointerException("The parameter cannot be null");
             }
             if (orderSheet.orderedBooks.isEmpty()) {
                 throw new Exception("The imported books is empty");
@@ -116,7 +116,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
             }
             db.setAutoCommit(false);
             try (var selectOrderedBooksQuery = db.prepareStatement(
-                    "SELECT ib.bookId, b.title, ib.quantity, ib.salePrice FROM OrderedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.orderSheetId = ?")) {
+                    "SELECT ib.bookId, b.title, ib.quantity, ib.pricePerBook FROM OrderedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.orderSheetId = ?")) {
                 selectOrderedBooksQuery.setInt(1, id);
                 var result = selectOrderedBooksQuery.executeQuery();
 
@@ -129,7 +129,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                             result.getInt("bookId"),
                             result.getString("title"),
                             result.getInt("quantity"),
-                            result.getDouble("salePrice")));
+                            result.getDouble("pricePerBook")));
                 }
 
             }
@@ -159,8 +159,8 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
             stringQuery += " WHERE " + searchChoice
                     + ((searchChoice.trim().equals("Account.phone") || searchChoice.trim().equals("Member.phone"))
-                            ? " LIKE ?"
-                            : " = ? ");
+                    ? " LIKE ?"
+                    : " = ? ");
 
             if (!sortValue.isEmpty()) {
                 stringQuery += " ORDER BY ";
@@ -307,8 +307,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                                 resultSet.getInt("memberId"),
                                 resultSet.getDate("orderDate"),
                                 resultSet.getDouble("discountedTotalCost"), null);
-                        orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
-                       
+                        orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);      
                         orderSheet.member = memberRepository.selectMember(orderSheet.memberId);
                         
                         result.add(orderSheet);
