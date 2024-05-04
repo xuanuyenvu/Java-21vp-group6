@@ -118,7 +118,7 @@ public class BookCRUD extends javax.swing.JPanel {
                 : searchBar.getText();
 
         String minPriceField = bookFilter.getMinPriceField().getText();
-        Double minPrice = minPriceField.isEmpty() ? Double.MIN_VALUE : Double.valueOf(minPriceField);
+        Double minPrice = minPriceField.isEmpty() ? 0 : Double.valueOf(minPriceField);
         String maxPriceField = bookFilter.getMaxPriceField().getText();
         Double maxPrice = maxPriceField.isEmpty() ? Double.MAX_VALUE : Double.valueOf(maxPriceField);
 

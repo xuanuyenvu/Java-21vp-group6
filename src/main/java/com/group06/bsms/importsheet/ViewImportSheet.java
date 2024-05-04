@@ -62,7 +62,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
 
     public void loadImportSheet(int id) {
         try {
-            
+
             importSheet = importSheetService.selectImportSheet(id);
             employeeField.setText(importSheet.employee.phone);
             SimpleDateFormat sdfTarget = new SimpleDateFormat("dd/MM/yyyy");
@@ -200,7 +200,7 @@ public class ViewImportSheet extends javax.swing.JPanel {
                         .addComponent(totalCostField, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50))
+                .addContainerGap(162, Short.MAX_VALUE))
         );
 
         formScrollPane.setViewportView(groupFieldPanel);
