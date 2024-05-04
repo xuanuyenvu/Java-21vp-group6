@@ -69,7 +69,7 @@ public class AddImportSheet extends javax.swing.JPanel {
         this.importSheetService = importSheetService;
         this.bookMap = new HashMap<>();
         this.loadEmployee(Main.getUserId());
-        
+
         initComponents();
 
         this.importDatePicker.setDate(java.sql.Date.valueOf(LocalDate.now()));
@@ -231,7 +231,7 @@ public class AddImportSheet extends javax.swing.JPanel {
                 continue;
             }
             String title = (String) model.getValueAt(i, 0);
-            if (newTitle.equalsIgnoreCase(title)) {
+            if (newTitle.equalsIgnoreCase(title) && !newTitle.equals("")) {
                 return true;
             }
         }

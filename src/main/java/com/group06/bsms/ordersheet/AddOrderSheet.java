@@ -269,7 +269,7 @@ public class AddOrderSheet extends javax.swing.JPanel {
                 continue;
             }
             String title = (String) model.getValueAt(i, 0);
-            if (newTitle.equalsIgnoreCase(title)) {
+            if (newTitle.equalsIgnoreCase(title) && !newTitle.equals("")) {
                 return true;
             }
         }
