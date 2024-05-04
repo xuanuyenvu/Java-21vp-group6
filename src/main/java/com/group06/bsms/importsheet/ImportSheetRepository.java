@@ -44,10 +44,10 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
                 throw new Exception("The employee id is empty");
 
             }
-            if(importSheet.importDate == null ){
+            if (importSheet.importDate == null) {
                 throw new Exception("The import date is empty");
             }
-            if(importSheet.totalCost == null || importSheet.totalCost < 0){
+            if (importSheet.totalCost == null || importSheet.totalCost < 0) {
                 throw new Exception("Invalid total cost");
             }
 
@@ -293,8 +293,8 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
             db.setAutoCommit(false);
             String stringQuery = """
                                  SELECT * FROM
-                                 (SELECT ImportSheet.id, ImportSheet.employeeInChargeId, ImportSheet.totalCost, ImportSheet.importDate, Account.phone 
-                                      FROM ImportSheet JOIN Account ON Account.id = ImportSheet.employeeInChargeId   
+                                 (SELECT ImportSheet.id, ImportSheet.employeeInChargeId, ImportSheet.totalCost, ImportSheet.importDate, Account.phone
+                                      FROM ImportSheet JOIN Account ON Account.id = ImportSheet.employeeInChargeId
                                       WHERE ImportSheet.importDate BETWEEN ? AND ?
                                       ORDER BY ImportSheet.totalCost DESC
                                       LIMIT 10)
@@ -329,7 +329,6 @@ public class ImportSheetRepository extends Repository<ImportSheet> implements Im
 
                 preparedStatement.setDate(1, startDate);
                 preparedStatement.setDate(2, endDate);
-                System.out.println(preparedStatement.toString());
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {

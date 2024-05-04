@@ -1,7 +1,8 @@
 package com.group06.bsms.dashboard;
 
 import com.group06.bsms.Main;
-import com.group06.bsms.accounts.UpdateAccount;
+import com.group06.bsms.accounts.ChangePassword;
+import com.group06.bsms.accounts.UpdateProfile;
 import com.group06.bsms.authors.AddAuthorInformation;
 import com.group06.bsms.authors.AuthorCRUD;
 import com.group06.bsms.authors.UpdateAuthor;
@@ -49,7 +50,8 @@ public class Dashboard extends javax.swing.JPanel {
     private final AddPublisherInformation addPublisherInfo = new AddPublisherInformation();
     private final PublisherCRUD publisherCRUD = new PublisherCRUD(updatePublisher, addPublisherInfo, bookCRUD);
 
-    private final UpdateAccount updateUser = new UpdateAccount();
+    private final UpdateProfile updateProfile = new UpdateProfile();
+    private final ChangePassword changePassword = new ChangePassword();
 
     private final AddImportSheet addImportSheet = new AddImportSheet();
     private final ViewImportSheet viewImportSheet = new ViewImportSheet();
@@ -59,7 +61,7 @@ public class Dashboard extends javax.swing.JPanel {
     private final AddOrderSheet addOrderSheet = new AddOrderSheet();
     private final MemberCRUD memberCRUD = new MemberCRUD(addMember, addOrderSheet);
     private final ViewOrderSheet viewOrderSheet = new ViewOrderSheet();
-    private final OrderSheetCRUD orderSheetCRUD = new OrderSheetCRUD(viewOrderSheet, memberCRUD);
+    private final OrderSheetCRUD orderSheetCRUD = new OrderSheetCRUD(viewOrderSheet, addOrderSheet, memberCRUD);
 
     private Dashboard() {
         initComponents();
@@ -90,7 +92,8 @@ public class Dashboard extends javax.swing.JPanel {
         main.add(updatePublisher, "updatePublisher");
         main.add(addPublisherInfo, "addPublisherInformation");
 
-        main.add(updateUser, "updateUser");
+        main.add(updateProfile, "updateProfile");
+        main.add(changePassword, "changePassword");
 
         addImportSheet.setImportSheetCRUD(importSheetCRUD);
         main.add(importSheetCRUD, "importSheetCRUD");
@@ -114,6 +117,9 @@ public class Dashboard extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        itemsOfAccount = new javax.swing.JPopupMenu();
+        profile = new javax.swing.JMenuItem();
+        password = new javax.swing.JMenuItem();
         jToolBar1 = new javax.swing.JToolBar();
         logo = new javax.swing.JButton();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
@@ -128,6 +134,24 @@ public class Dashboard extends javax.swing.JPanel {
         logout = new javax.swing.JButton();
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 8), new java.awt.Dimension(0, 8), new java.awt.Dimension(32767, 8));
         main = new javax.swing.JPanel();
+
+        profile.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        profile.setText("Update profile");
+        profile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                profileActionPerformed(evt);
+            }
+        });
+        itemsOfAccount.add(profile);
+
+        password.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        password.setText("Change password");
+        password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passwordActionPerformed(evt);
+            }
+        });
+        itemsOfAccount.add(password);
 
         setLayout(new java.awt.BorderLayout());
 
@@ -291,9 +315,9 @@ public class Dashboard extends javax.swing.JPanel {
         account.setMinimumSize(new java.awt.Dimension(58, 58));
         account.setPreferredSize(new java.awt.Dimension(58, 58));
         account.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        account.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                accountActionPerformed(evt);
+        account.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                accountMousePressed(evt);
             }
         });
         jToolBar1.add(account);
@@ -386,10 +410,19 @@ public class Dashboard extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_logoutActionPerformed
 
-    private void accountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountActionPerformed
-        updateUser.setAccountById(Main.getUserId());
-        switchTab("updateAccount");
-    }//GEN-LAST:event_accountActionPerformed
+    private void accountMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_accountMousePressed
+        itemsOfAccount.show(evt.getComponent(), evt.getX(), evt.getY());
+    }//GEN-LAST:event_accountMousePressed
+
+    private void profileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_profileActionPerformed
+        updateProfile.setAccountById(Main.getUserId());
+        switchTab("updateProfile");
+    }//GEN-LAST:event_profileActionPerformed
+
+    private void passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordActionPerformed
+        changePassword.setAccountById(Main.getUserId());
+        switchTab("changePassword");
+    }//GEN-LAST:event_passwordActionPerformed
 
     private void importSheetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importSheetsActionPerformed
         switchTab("importSheetCRUD");
@@ -411,11 +444,14 @@ public class Dashboard extends javax.swing.JPanel {
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
+    private javax.swing.JPopupMenu itemsOfAccount;
     private javax.swing.JButton importSheets;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton logo;
     private javax.swing.JButton logout;
     private javax.swing.JPanel main;
+    private javax.swing.JMenuItem password;
+    private javax.swing.JMenuItem profile;
     private javax.swing.JButton orderSheet;
     private javax.swing.JButton publishers;
     // End of variables declaration//GEN-END:variables

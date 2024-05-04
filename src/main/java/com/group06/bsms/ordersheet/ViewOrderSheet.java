@@ -14,7 +14,6 @@ import com.group06.bsms.utils.SVGHelper;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 
-
 import java.util.List;
 import javax.swing.UIManager;
 
@@ -41,7 +40,7 @@ public class ViewOrderSheet extends javax.swing.JPanel {
     public ViewOrderSheet(OrderSheetService orderSheetService) {
 
         this.orderSheetService = orderSheetService;
-       
+
         initComponents();
 
         importBooksTable.getTableHeader().setFont(new java.awt.Font("Segoe UI", 0, 16));
@@ -65,14 +64,14 @@ public class ViewOrderSheet extends javax.swing.JPanel {
             model.setRowCount(0);
             for (OrderedBook orderedBook : orderedBooks) {
 
-                Object[] rowData = { orderedBook.title, orderedBook.quantity, orderedBook.pricePerBook };
+                Object[] rowData = {orderedBook.title, orderedBook.quantity, orderedBook.pricePerBook};
 
                 model.addRow(rowData);
             }
 
             totalCostField.setText(orderSheet.discountedTotalCost.toString());
         } catch (Exception e) {
-
+            System.err.println(e);
         }
 
     }

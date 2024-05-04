@@ -35,6 +35,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class OrderSheetCRUD extends javax.swing.JPanel {
 
     private final ViewOrderSheet viewOrderSheet;
+    private final AddOrderSheet addOrderSheet;
     private final OrderSheetService orderSheetService;
     private final MemberCRUD memberCRUD;
     private OrderSheetTableModel model;
@@ -49,23 +50,30 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
     private boolean isScrollAtBottom = false;
 
     public OrderSheetCRUD() {
-        this(null, null,
+        this(null, null, null,
                 new OrderSheetService(new OrderSheetRepository(DB.db(), new AccountRepository(DB.db()),
                         new MemberRepository(DB.db()))));
 
     }
 
-    public OrderSheetCRUD(ViewOrderSheet viewOrderSheet, MemberCRUD memberCRUD) {
-        this(viewOrderSheet,
+    public OrderSheetCRUD(ViewOrderSheet viewOrderSheet, AddOrderSheet addOrderSheet, MemberCRUD memberCRUD) {
+        this(
+                viewOrderSheet,
+                addOrderSheet,
                 memberCRUD,
-                new OrderSheetService(new OrderSheetRepository(DB.db(), new AccountRepository(DB.db()),
-                        new MemberRepository(DB.db()))));
+                new OrderSheetService(
+                        new OrderSheetRepository(
+                                DB.db(), new AccountRepository(DB.db()),
+                                new MemberRepository(DB.db()))));
     }
 
-    public OrderSheetCRUD(ViewOrderSheet viewOrderSheet, MemberCRUD memberCRUD,
+    public OrderSheetCRUD(
+            ViewOrderSheet viewOrderSheet, AddOrderSheet addOrderSheet,
+            MemberCRUD memberCRUD,
             OrderSheetService orderSheetService) {
 
         this.viewOrderSheet = viewOrderSheet;
+        this.addOrderSheet = addOrderSheet;
         this.orderSheetService = orderSheetService;
         this.memberCRUD = memberCRUD;
         this.model = new OrderSheetTableModel(orderSheetService);
@@ -168,7 +176,6 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
             public void onEdit(int row) {
                 int orderSheetId = model.getOrderSheet(row).id;
                 viewOrderSheet.loadOrderSheet(orderSheetId);
-                System.out.print("Hi");
                 dashboard.switchTab("viewOrderSheet");
             }
 
@@ -211,8 +218,8 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
             // bookCRUD.loadAccountInto();
         }
     }
-    
-    public void reloadTable(){
+
+    public void reloadTable() {
         searchBar.setText("");
         searchComboBox.setSelectedIndex(0);
         reloadOrderSheets();
@@ -404,9 +411,9 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
     }// GEN-LAST:event_searchBarActionPerformed
 
     private void createBtnActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_createBtnActionPerformed
-        // AdminDashboard.dashboard.switchTab("addAccountInformation");
         memberCRUD.reloadMembers();
         Dashboard.dashboard.switchTab("memberCRUD");
+        this.addOrderSheet.loadEmployee(Main.getUserId());
     }// GEN-LAST:event_createBtnActionPerformed
 
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_searchComboBoxActionPerformed

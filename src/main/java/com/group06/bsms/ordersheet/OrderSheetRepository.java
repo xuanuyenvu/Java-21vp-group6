@@ -21,7 +21,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
 
-    public OrderSheetRepository(Connection db,AccountRepository accountRepository,
+    public OrderSheetRepository(Connection db, AccountRepository accountRepository,
             MemberRepository memberRepository) {
         super(db, OrderSheet.class);
         this.accountRepository = accountRepository;
@@ -34,7 +34,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
         try {
             db.setAutoCommit(false);
             if (orderSheet == null) {
-                throw new NullPointerException("The parameer cannot be null");
+                throw new NullPointerException("The parameter cannot be null");
             }
             if (orderSheet.orderedBooks.isEmpty()) {
                 throw new Exception("The imported books is empty");
@@ -116,7 +116,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
             }
             db.setAutoCommit(false);
             try (var selectOrderedBooksQuery = db.prepareStatement(
-                    "SELECT ib.bookId, b.title, ib.quantity, ib.salePrice FROM OrderedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.orderSheetId = ?")) {
+                    "SELECT ib.bookId, b.title, ib.quantity, ib.pricePerBook FROM OrderedBook ib JOIN Book b ON ib.bookId = b.id WHERE ib.orderSheetId = ?")) {
                 selectOrderedBooksQuery.setInt(1, id);
                 var result = selectOrderedBooksQuery.executeQuery();
 
@@ -129,7 +129,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                             result.getInt("bookId"),
                             result.getString("title"),
                             result.getInt("quantity"),
-                            result.getDouble("salePrice")));
+                            result.getDouble("pricePerBook")));
                 }
 
                 db.commit();
@@ -159,8 +159,8 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
             stringQuery += " WHERE " + searchChoice
                     + ((searchChoice.trim().equals("Account.phone") || searchChoice.trim().equals("Member.phone"))
-                            ? " LIKE ?"
-                            : " = ? ");
+                    ? " LIKE ?"
+                    : " = ? ");
 
             if (!sortValue.isEmpty()) {
                 stringQuery += " ORDER BY ";
@@ -262,7 +262,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                     (SELECT OrderSheet.id, OrderSheet.employeeInChargeId, OrderSheet.memberId, OrderSheet.discountedTotalCost, OrderSheet.orderDate, Account.phone AS employeePhone, Member.phone AS memberPhone
                          FROM OrderSheet
                          JOIN Account ON Account.id = OrderSheet.employeeInChargeId
-                         JOIN Memvber ON Member.id = OrderSheet.memberId
+                         JOIN Member ON Member.id = OrderSheet.memberId
                          WHERE OrderSheet.orderDate BETWEEN ? AND ?
                          ORDER BY OrderSheet.discountedTotalCost DESC
                         )
@@ -299,7 +299,6 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
 
                 preparedStatement.setDate(1, startDate);
                 preparedStatement.setDate(2, endDate);
-                System.out.println(preparedStatement.toString());
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
@@ -309,7 +308,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                                 resultSet.getDate("orderDate"),
                                 resultSet.getDouble("discountedTotalCost"), null);
                         orderSheet.employee = accountRepository.selectAccount(orderSheet.employeeInChargeId);
-                        orderSheet.employee = accountRepository.selectById(orderSheet.memberId);
+                        orderSheet.member = memberRepository.selectById(orderSheet.memberId);
 
                         result.add(orderSheet);
                     }

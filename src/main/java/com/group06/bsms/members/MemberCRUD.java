@@ -61,8 +61,7 @@ public class MemberCRUD extends javax.swing.JPanel {
         this.addMember = addMember;
         this.model = new MemberCRUDTableModel(memberService);
         initComponents();
-        
-        
+
         searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
         searchBar.putClientProperty(FlatClientProperties.TEXT_FIELD_LEADING_ICON, SVGHelper.createSVGIconWithFilter(
                 "icons/search.svg",
@@ -439,9 +438,8 @@ public class MemberCRUD extends javax.swing.JPanel {
         } else {
 
             Member member = model.getMember(table.getSelectedRow());
-           
-            //addOrderSheet.loadEmployee();
-            
+
+            addOrderSheet.loadEmployee(Main.getUserId());
             addOrderSheet.loadMember(member.id);
             Dashboard.dashboard.switchTab("addOrderSheet");
 

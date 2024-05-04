@@ -222,17 +222,14 @@ public class AddOrderSheet extends javax.swing.JPanel {
             this.member = memberService.selectMember(id);
             memberNameField.setText(member.name);
             memberPhoneField.setText(member.phone);
-            if (member.name.equals("Annonymous")) {
+            if (member.name.equals("Anonymous")) {
                 discountField.setText("0%");
             } else {
                 discountField.setText("5%");
                 discount = 0.05;
             }
         } catch (Exception e) {
-            
-        }
-        if (employee != null) {
-            memberNameField.setText(member.phone);
+
         }
     }
 
@@ -642,9 +639,9 @@ public class AddOrderSheet extends javax.swing.JPanel {
                     orderSheetService.insertOrderSheet(orderSheet);
                     JOptionPane.showMessageDialog(null, "Order sheet added successfully.", "BSMS Information",
                             JOptionPane.INFORMATION_MESSAGE);
-                    
+
                 } catch (Exception e) {
-                   
+
                     JOptionPane.showMessageDialog(null, "An unspecified error occurred: " + e.getMessage(),
                             "BSMS Error",
                             JOptionPane.ERROR_MESSAGE);
