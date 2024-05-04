@@ -68,7 +68,7 @@ public class OrderSheetRepository extends Repository<OrderSheet> implements Orde
                 for (var orderedBook : orderSheet.orderedBooks) {
                     var book = bookRepository.selectById(orderedBook.bookId);
                     if (book.quantity - orderedBook.quantity < 0) {
-                        throw new Exception("We now only have " + book.quantity + " Book: " + book.title);
+                        throw new Exception("We only have " + book.quantity + " of " + book.title);
                     } else {
                         book.quantity = book.quantity - orderedBook.quantity;
                     }

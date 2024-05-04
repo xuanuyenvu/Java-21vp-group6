@@ -64,7 +64,7 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         label.setDisplayedMnemonicIndex(1);
 
         durationDaysComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Date to Date", "choose all", "by Week", "by Month" }));
+        durationDaysComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Date to Date", "All", "By Week", "By Month" }));
         durationDaysComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         durationDaysComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,28 +167,28 @@ public class OrderSheetFilter extends javax.swing.JPanel {
         }
 
         switch (durationDaysComboBox.getSelectedItem().toString()) {
-            case "by Week" -> {
+            case "By Week" -> {
                 endDate = LocalDate.now();
                 startDate = LocalDate.now().minusDays(7);
                 isVisibleDatePicker(false);
-                previousComboBoxSelection = "by Week";
+                previousComboBoxSelection = "By Week";
                 importSheetCRUD.loadOrderSheetsIntoTableByFilter(startDate, endDate);
             }
-            case "by Month" -> {
+            case "By Month" -> {
                 endDate = LocalDate.now();
                 startDate = LocalDate.now().minusDays(30);
                 isVisibleDatePicker(false);
-                previousComboBoxSelection = "by Month";
+                previousComboBoxSelection = "By Month";
                 importSheetCRUD.loadOrderSheetsIntoTableByFilter(startDate, endDate);
             }
             case "Date to Date" -> {
                 isVisibleDatePicker(true);
-                previousComboBoxSelection = "by Date";
+                previousComboBoxSelection = "Date to Date";
             }
-            case "choose all"->{
+            case "All"->{
                 importSheetCRUD.reloadTable();
                 isVisibleDatePicker(false);
-                previousComboBoxSelection = "choose all";
+                previousComboBoxSelection = "All";
             }
             default -> {
             }

@@ -248,9 +248,9 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
 
         var searchChoiceKey = searchComboBox.getSelectedItem().toString();
         var searchChoiceMap = new HashMap<String, String>();
-        searchChoiceMap.put("by Employee's phone", "Account.phone");
-        searchChoiceMap.put("by Member's phone", "Member.phone");
-        searchChoiceMap.put("by Order Date", "OrderSheet.orderDate");
+        searchChoiceMap.put("By Employee's phone", "Account.phone");
+        searchChoiceMap.put("By Member's phone", "Member.phone");
+        searchChoiceMap.put("By Order Date", "OrderSheet.orderDate");
         searchChoiceMap.put("by Total Cost", "OrderSheet.discountedTotalCost");
 
         var searchChoiceValue = searchChoiceMap.get(searchChoiceKey);
@@ -343,7 +343,7 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
         });
 
         searchComboBox.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "by Employee's phone", "by Member's phone", "by Order Date", "by Total Cost" }));
+        searchComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "By Employee's phone", "By Member's phone", "By Order Date" }));
         searchComboBox.setPreferredSize(new java.awt.Dimension(154, 28));
         searchComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -431,13 +431,13 @@ public class OrderSheetCRUD extends javax.swing.JPanel {
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_searchComboBoxActionPerformed
         String choice = (String) searchComboBox.getSelectedItem();
         switch (choice) {
-            case "by Employee's phone" ->
+            case "By Employee's phone" ->
                 searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
-            case "by Member's phone" ->
+            case "By Member's phone" ->
                 searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
-            case "by Import Date" ->
+            case "By Import Date" ->
                 searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "dd/MM/yyyy");
-            case "by Total Cost" ->
+            case "By Total Cost" ->
                 searchBar.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Search");
             default -> {
             }
