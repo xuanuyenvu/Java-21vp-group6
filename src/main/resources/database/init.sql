@@ -157,6 +157,23 @@ FOR EACH ROW
 EXECUTE FUNCTION update_saleprice();
 
 
+CREATE OR REPLACE FUNCTION update_saleprice_postimport()
+RETURNS TRIGGER AS $$
+BEGIN	
+    UPDATE BOOK
+    SET SALEPRICE = NEW.maxImportPrice * 1.1
+    WHERE BOOK.ID = NEW.ID;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_saleprice_postimport_trigger
+AFTER UPDATE OF maxImportPrice ON BOOK
+FOR EACH ROW
+EXECUTE FUNCTION update_saleprice_postimport();
+
+
 CREATE OR REPLACE FUNCTION update_quantity_postorder()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -2105,6 +2122,7 @@ UPDATE OrderSheet set discountedTotalCost = 233.38 where id = 28;
 
 DROP TRIGGER IF EXISTS update_saleprice_trigger ON OrderedBook;
 DROP TRIGGER IF EXISTS update_quantity_postorder_trigger ON OrderedBook;
+DROP TRIGGER IF EXISTS update_saleprice_postimport_trigger ON OrderedBook;
 
 SELECT setval('account_id_seq', (SELECT MAX(id) FROM Account) + 1);
 SELECT setval('publisher_id_seq', (SELECT MAX(id) FROM Publisher) + 1);
